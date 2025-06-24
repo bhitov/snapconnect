@@ -7,6 +7,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text, View, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { CameraScreen } from '../../features/camera/screens/CameraScreen';
 import { ChatsScreen, ChatScreen } from '../../features/chat/screens';
@@ -218,6 +219,9 @@ export function MainNavigator() {
         component={ChatStackNavigator}
         options={{
           tabBarLabel: 'Chats',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubble" size={size} color={color} />
+          ),
         }}
       />
       <Tab.Screen
@@ -225,6 +229,9 @@ export function MainNavigator() {
         component={CameraScreen}
         options={{
           tabBarLabel: 'Camera',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="camera" size={size} color={color} />
+          ),
         }}
       />
       <Tab.Screen
@@ -232,6 +239,9 @@ export function MainNavigator() {
         component={FriendsStackNavigator}
         options={{
           tabBarLabel: 'Friends',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="people" size={size} color={color} />
+          ),
         }}
       />
       <Tab.Screen
@@ -239,6 +249,9 @@ export function MainNavigator() {
         component={StoriesStackNavigator}
         options={{
           tabBarLabel: 'Stories',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book" size={size} color={color} />
+          ),
         }}
       />
     </Tab.Navigator>

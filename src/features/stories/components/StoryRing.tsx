@@ -84,7 +84,7 @@ export function StoryRing({
       addIcon: 16,
     },
     medium: {
-      container: 80,
+      container: 96,
       avatar: 68,
       ring: 84,
       addIcon: 20,
@@ -366,10 +366,10 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
   },
   username: {
-    marginTop: 4,
+    marginTop: 6,
     textAlign: 'center',
     fontWeight: '500',
-    maxWidth: 80,
+    maxWidth: 90,
   },
   unviewedIndicator: {
     position: 'absolute',
