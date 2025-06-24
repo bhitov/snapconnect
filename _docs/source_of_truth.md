@@ -31,7 +31,7 @@
 ##### Navigation (src/shared/navigation/)
 - `RootNavigator.tsx` - Root navigation with auth flow detection, loading screen, and modal screens (SnapPreview, RecipientSelection, ViewSnap)
 - `AuthNavigator.tsx` - Authentication screens navigator with Login, Register, ProfileSetup, ForgotPassword
-- `MainNavigator.tsx` - Main tab navigation with Chats, Camera, Friends, Stories tabs and separate stack navigators for Chats and Friends (snap-focused, no traditional chat screens), includes notification badge on Friends tab for pending friend requests
+- `MainNavigator.tsx` - Main tab navigation with Chats, Camera, Friends, Stories tabs and separate stack navigators for Chats and Friends (snap-focused, no traditional chat screens), includes notification badge on Friends tab for pending friend requests, ChatsScreen has headerShown: false to prevent duplicate headers
 - `types.ts` - Navigation type definitions for all stack param lists including simplified ChatStackParamList and FriendsStackParamList
 
 ##### Components (src/shared/components/)

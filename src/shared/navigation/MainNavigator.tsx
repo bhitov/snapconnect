@@ -78,7 +78,7 @@ function ChatStackNavigator() {
         name='ChatsList'
         component={ChatsScreen}
         options={{
-          title: 'Chats',
+          headerShown: false,
         }}
       />
       <ChatStack.Screen
