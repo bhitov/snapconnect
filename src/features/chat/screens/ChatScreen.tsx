@@ -27,6 +27,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { useTheme } from '@/shared/hooks/useTheme';
 
+import { usePolling } from '../hooks';
 import {
   useChatStore,
   useCurrentMessages,
@@ -273,6 +274,7 @@ export function ChatScreen() {
   // Chat actions
   const {
     loadMessages,
+    silentLoadMessages,
     sendTextMessage,
     markMessageAsViewed,
     markAllMessagesAsDelivered,
@@ -284,6 +286,27 @@ export function ChatScreen() {
   const [messageText, setMessageText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+
+  /**
+   * Polling function for messages - only refreshes when data changes (no loading animations)
+   */
+  const pollMessages = useCallback(async () => {
+    console.log('🔄 ChatScreen: Silent polling messages for updates');
+    try {
+      await silentLoadMessages(conversationId);
+    } catch (error) {
+      console.error('❌ ChatScreen: Silent message polling failed:', error);
+    }
+  }, [silentLoadMessages, conversationId]);
+
+  /**
+   * Set up polling for messages (twice per second)
+   */
+  usePolling(pollMessages, {
+    interval: 500, // 2 times per second
+    immediate: false, // Don't call immediately, let the initial load handle it
+    focusOnly: true, // Only poll when screen is focused
+  });
 
   /**
    * Load messages when screen focuses and mark all as delivered

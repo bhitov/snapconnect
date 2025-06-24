@@ -210,10 +210,12 @@ export interface ChatActions {
   // Conversations
   loadConversations: () => Promise<void>;
   refreshConversations: () => Promise<void>;
+  silentRefreshConversations: () => Promise<void>;
   createConversation: (otherUserId: string) => Promise<string>;
 
   // Messages
   loadMessages: (conversationId: string) => Promise<void>;
+  silentLoadMessages: (conversationId: string) => Promise<void>;
   sendTextMessage: (data: TextMessageCreationData) => Promise<void>;
   sendSnap: (data: SnapCreationData) => Promise<void>;
   markMessageAsViewed: (messageId: string) => Promise<void>;

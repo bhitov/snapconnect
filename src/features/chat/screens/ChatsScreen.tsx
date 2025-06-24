@@ -26,6 +26,7 @@ import {
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
 
+import { usePolling } from '../hooks';
 import {
   useChatStore,
   useConversations,
@@ -135,9 +136,30 @@ export function ChatsScreen() {
   const storiesLoading = useStoriesLoading();
 
   // Store actions
-  const { loadConversations, refreshConversations, clearError } =
+  const { loadConversations, refreshConversations, silentRefreshConversations, clearError } =
     useChatStore();
   const { loadStories, refreshStories } = useStoriesStore();
+
+  /**
+   * Polling function for conversations - only refreshes when data changes (no loading animations)
+   */
+  const pollConversations = useCallback(async () => {
+    console.log('🔄 ChatsScreen: Silent polling conversations for updates');
+    try {
+      await silentRefreshConversations();
+    } catch (error) {
+      console.error('❌ ChatsScreen: Silent polling failed:', error);
+    }
+  }, [silentRefreshConversations]);
+
+  /**
+   * Set up polling for conversations (twice per second)
+   */
+  usePolling(pollConversations, {
+    interval: 500, // 2 times per second
+    immediate: false, // Don't call immediately, let the initial load handle it
+    focusOnly: true, // Only poll when screen is focused
+  });
 
   /**
    * Load conversations and stories on component mount and focus

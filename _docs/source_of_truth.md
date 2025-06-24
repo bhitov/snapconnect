@@ -128,14 +128,18 @@
 ##### Chat Feature (src/features/chat/) - **IMPLEMENTED IN PHASES 2.6-2.8**
 
 ###### Chat Screens (src/features/chat/screens/)
-- `ChatsScreen.tsx` - Main chats list showing conversations with real-time updates and snap/message previews
+- `ChatsScreen.tsx` - Main chats list showing conversations with real-time updates and snap/message previews, includes silent polling every 500ms for live updates (no loading animations)
 - `RecipientSelectionScreen.tsx` - Recipient selection and duration controls for snap sending
 - `SnapViewingScreen.tsx` - Snap viewing with timer, pause/resume functionality, and viewed status updates
-- `ChatScreen.tsx` - Individual chat screen with hybrid text and snap messaging, message list, text input, and camera button that navigates to Camera tab using parent navigation
+- `ChatScreen.tsx` - Individual chat screen with hybrid text and snap messaging, message list, text input, camera button that navigates to Camera tab using parent navigation, and silent polling every 500ms for live message updates (no loading animations)
 - `index.ts` - Chat screens export
 
+###### Chat Hooks (src/features/chat/hooks/)
+- `usePolling.ts` - Custom hook for polling data updates at regular intervals with automatic start/stop on screen focus/unfocus, only triggers rerenders when data changes
+- `index.ts` - Chat hooks export
+
 ###### Chat Store (src/features/chat/store/)
-- `chatStore.ts` - Zustand store for chat state with conversations, messages (both text and snaps), sending progress, viewing sessions, and recipient selection
+- `chatStore.ts` - Zustand store for chat state with conversations, messages (both text and snaps), sending progress, viewing sessions, recipient selection, and silent refresh functions for polling without loading animations
 
 ###### Chat Services (src/features/chat/services/)
 - `chatService.ts` - Firebase service for chat operations with text messaging, snap sending, conversation management, real-time listeners, and hybrid message handling
@@ -314,6 +318,15 @@
 - `handleStoryPress()` - Navigate to user's own story viewer
 - `getTimeAgo(timestamp)` - Format timestamp to relative time string
 - **Features**: Story thumbnail, viewer count, tap to view viewers, story navigation
+
+### Chat Feature Functions
+
+#### src/features/chat/hooks/usePolling.ts
+- `usePolling(pollingFunction, options)` - Custom hook for data polling with focus-based lifecycle management, polls twice per second by default
+- `startPolling()` - Manually start polling interval
+- `stopPolling()` - Manually stop polling interval
+- **Features**: Automatic start/stop on screen focus/unfocus, prevents rerenders on unchanged data, configurable interval
+
 - `register(email, password, username)` - Register new user
 - `logout()` - Logout current user
 - `updateProfile(updates)` - Update user profile

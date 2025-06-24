@@ -64,9 +64,9 @@ function initializeFirebase(): void {
     console.log('🌐 Platform:', Platform.OS);
 
     // Connect to emulators in development
-    if (__DEV__) {
+    // if (__DEV__) {
       connectToEmulators();
-    }
+    // }
   } catch (error) {
     console.error('❌ Firebase initialization failed:', error);
     throw new Error('Firebase initialization failed');
@@ -79,7 +79,8 @@ function initializeFirebase(): void {
 function connectToEmulators(): void {
   try {
     // Use 10.0.2.2 for Android emulator, localhost for iOS simulator and web
-    const host = Platform.OS === 'android' ? '10.0.2.2' : 'localhost';
+    // const host = Platform.OS === 'android' ? '10.0.2.2' : 'localhost';
+    const host = '10.0.2.2';
 
     console.log(`🔧 Connecting to Firebase emulators on ${host}`);
 

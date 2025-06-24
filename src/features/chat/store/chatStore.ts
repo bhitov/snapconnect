@@ -114,6 +114,27 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
   },
 
+  silentRefreshConversations: async () => {
+    console.log('🔄 ChatStore: Silent refresh conversations (no loading state)');
+
+    try {
+      const conversations = await chatService.getConversations();
+      set({
+        conversations,
+        conversationsError: null,
+      });
+
+      console.log(
+        '✅ ChatStore: Silent refresh completed',
+        conversations.length,
+        'conversations'
+      );
+    } catch (error) {
+      console.error('❌ ChatStore: Silent refresh failed:', error);
+      // Don't set error state for silent refresh to avoid UI disruption
+    }
+  },
+
   createConversation: async (otherUserId: string) => {
     console.log('💬 ChatStore: Creating conversation with:', otherUserId);
 
@@ -155,6 +176,26 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         messagesLoading: false,
         messagesError: (error as any).message || 'Failed to load messages',
       });
+    }
+  },
+
+  silentLoadMessages: async (conversationId: string) => {
+    console.log(
+      '📥 ChatStore: Silent loading messages for conversation:',
+      conversationId
+    );
+
+    try {
+      const messages = await chatService.getMessages(conversationId);
+      set({
+        currentMessages: messages,
+        messagesError: null,
+      });
+
+      console.log('✅ ChatStore: Silent load completed', messages.length, 'messages');
+    } catch (error) {
+      console.error('❌ ChatStore: Silent load failed:', error);
+      // Don't set error state for silent refresh to avoid UI disruption
     }
   },
 
