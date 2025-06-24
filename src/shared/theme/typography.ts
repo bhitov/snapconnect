@@ -17,11 +17,11 @@ export const fontFamilies = {
 
 // Font Sizes (using 8px base scale)
 export const fontSizes = {
-  xs: 12,    // 0.75rem
-  sm: 14,    // 0.875rem
-  base: 16,  // 1rem - base size
-  lg: 18,    // 1.125rem
-  xl: 20,    // 1.25rem
+  xs: 12, // 0.75rem
+  sm: 14, // 0.875rem
+  base: 16, // 1rem - base size
+  lg: 18, // 1.125rem
+  xl: 20, // 1.25rem
   '2xl': 24, // 1.5rem
   '3xl': 30, // 1.875rem
   '4xl': 36, // 2.25rem
@@ -56,101 +56,101 @@ export const textStyles = {
     fontWeight: fontWeights.bold,
     lineHeight: fontSizes['4xl'] * lineHeights.tight,
   } as TextStyle,
-  
+
   h2: {
     fontSize: fontSizes['3xl'],
     fontWeight: fontWeights.bold,
     lineHeight: fontSizes['3xl'] * lineHeights.tight,
   } as TextStyle,
-  
+
   h3: {
     fontSize: fontSizes['2xl'],
     fontWeight: fontWeights.semibold,
     lineHeight: fontSizes['2xl'] * lineHeights.tight,
   } as TextStyle,
-  
+
   h4: {
     fontSize: fontSizes.xl,
     fontWeight: fontWeights.semibold,
     lineHeight: fontSizes.xl * lineHeights.normal,
   } as TextStyle,
-  
+
   h5: {
     fontSize: fontSizes.lg,
     fontWeight: fontWeights.medium,
     lineHeight: fontSizes.lg * lineHeights.normal,
   } as TextStyle,
-  
+
   h6: {
     fontSize: fontSizes.base,
     fontWeight: fontWeights.medium,
     lineHeight: fontSizes.base * lineHeights.normal,
   } as TextStyle,
-  
+
   // Body Text
   bodyLarge: {
     fontSize: fontSizes.lg,
     fontWeight: fontWeights.normal,
     lineHeight: fontSizes.lg * lineHeights.normal,
   } as TextStyle,
-  
+
   body: {
     fontSize: fontSizes.base,
     fontWeight: fontWeights.normal,
     lineHeight: fontSizes.base * lineHeights.normal,
   } as TextStyle,
-  
+
   bodySmall: {
     fontSize: fontSizes.sm,
     fontWeight: fontWeights.normal,
     lineHeight: fontSizes.sm * lineHeights.normal,
   } as TextStyle,
-  
+
   // Labels and Captions
   label: {
     fontSize: fontSizes.sm,
     fontWeight: fontWeights.medium,
     lineHeight: fontSizes.sm * lineHeights.normal,
   } as TextStyle,
-  
+
   caption: {
     fontSize: fontSizes.xs,
     fontWeight: fontWeights.normal,
     lineHeight: fontSizes.xs * lineHeights.normal,
   } as TextStyle,
-  
+
   // Buttons
   buttonLarge: {
     fontSize: fontSizes.lg,
     fontWeight: fontWeights.semibold,
     lineHeight: fontSizes.lg * lineHeights.tight,
   } as TextStyle,
-  
+
   button: {
     fontSize: fontSizes.base,
     fontWeight: fontWeights.semibold,
     lineHeight: fontSizes.base * lineHeights.tight,
   } as TextStyle,
-  
+
   buttonSmall: {
     fontSize: fontSizes.sm,
     fontWeight: fontWeights.medium,
     lineHeight: fontSizes.sm * lineHeights.tight,
   } as TextStyle,
-  
+
   // Special Styles
   username: {
     fontSize: fontSizes.base,
     fontWeight: fontWeights.bold,
     lineHeight: fontSizes.base * lineHeights.normal,
   } as TextStyle,
-  
+
   timestamp: {
     fontSize: fontSizes.xs,
     fontWeight: fontWeights.normal,
     lineHeight: fontSizes.xs * lineHeights.normal,
   } as TextStyle,
-  
+
   snapText: {
     fontSize: fontSizes.lg,
     fontWeight: fontWeights.semibold,
@@ -161,4 +161,4 @@ export const textStyles = {
 
 export type FontSize = keyof typeof fontSizes;
 export type FontWeight = keyof typeof fontWeights;
-export type TextStyleName = keyof typeof textStyles; 
+export type TextStyleName = keyof typeof textStyles;

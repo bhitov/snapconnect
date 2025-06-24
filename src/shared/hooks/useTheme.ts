@@ -5,18 +5,19 @@
  */
 
 import { useColorScheme } from 'react-native';
+
 import { lightTheme, darkTheme, type AppTheme } from '../theme';
 
 /**
  * Hook for accessing the current theme
  * Automatically switches between light and dark theme based on system preference
- * 
+ *
  * @returns {AppTheme} Current theme object with colors, typography, spacing, etc.
- * 
+ *
  * @example
  * ```tsx
  * const theme = useTheme();
- * 
+ *
  * const styles = StyleSheet.create({
  *   container: {
  *     backgroundColor: theme.colors.background,
@@ -31,16 +32,16 @@ import { lightTheme, darkTheme, type AppTheme } from '../theme';
  */
 export function useTheme(): AppTheme {
   const colorScheme = useColorScheme();
-  
+
   // Return dark theme if system preference is dark, otherwise light theme
   return colorScheme === 'dark' ? darkTheme : lightTheme;
 }
 
 /**
  * Hook for checking if current theme is dark mode
- * 
+ *
  * @returns {boolean} True if current theme is dark mode
- * 
+ *
  * @example
  * ```tsx
  * const isDark = useIsDarkMode();
@@ -55,9 +56,9 @@ export function useIsDarkMode(): boolean {
 /**
  * Hook for getting theme colors only
  * Convenient shortcut when you only need colors
- * 
+ *
  * @returns {AppTheme['colors']} Current theme colors
- * 
+ *
  * @example
  * ```tsx
  * const colors = useThemeColors();
@@ -67,4 +68,4 @@ export function useIsDarkMode(): boolean {
 export function useThemeColors() {
   const theme = useTheme();
   return theme.colors;
-} 
+}

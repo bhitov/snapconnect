@@ -28,8 +28,8 @@
 #### Shared Components (src/shared/)
 
 ##### Navigation (src/shared/navigation/)
-- `RootNavigator.tsx` - Root navigation with auth flow and modal screens
-- `AuthNavigator.tsx` - Authentication screens navigator (placeholder)
+- `RootNavigator.tsx` - Root navigation with auth flow detection, loading screen, and modal screens
+- `AuthNavigator.tsx` - Authentication screens navigator with Login, Register, ProfileSetup, ForgotPassword
 - `MainNavigator.tsx` - Main tab navigation with Camera, Chats, Stories
 - `types.ts` - Navigation type definitions for all stack param lists
 
@@ -58,55 +58,31 @@
 
 #### Features (src/features/)
 
-##### Auth Feature (src/features/auth/)
-- `README.md` - Authentication feature documentation
-- `components/` - Auth-specific components (empty)
-- `hooks/` - Auth hooks (empty)
-- `screens/` - Auth screens (empty)
-- `services/` - Auth API calls (empty)
-- `store/` - Auth Zustand store (empty)
-- `types/` - Auth TypeScript types (empty)
-- `utils/` - Auth utilities (empty)
+##### Auth Feature (src/features/auth/) - **IMPLEMENTED IN PHASE 2.1**
 
-##### Camera Feature (src/features/camera/)
-- `README.md` - Camera feature documentation
-- `components/` - Camera components (empty)
-- `hooks/` - Camera hooks (empty)
-- `screens/` - Camera screens (empty)
-- `services/` - Camera services (empty)
-- `store/` - Camera state management (empty)
-- `types/` - Camera types (empty)
-- `utils/` - Camera utilities (empty)
+###### Auth Screens (src/features/auth/screens/)
+- `LoginScreen.tsx` - Email/password login with form validation, error handling, navigation to register/forgot password
+- `RegisterScreen.tsx` - User registration with email, password, username validation and availability checking
+- `ForgotPasswordScreen.tsx` - Password reset screen (placeholder for future implementation)
+- `ProfileSetupScreen.tsx` - Profile completion screen (placeholder for future implementation)
 
-##### Chat Feature (src/features/chat/)
-- `README.md` - Chat/messaging feature documentation
-- `components/` - Chat components (empty)
-- `hooks/` - Chat hooks (empty)
-- `screens/` - Chat screens (empty)
-- `services/` - Chat services (empty)
-- `store/` - Chat state management (empty)
-- `types/` - Chat types (empty)
-- `utils/` - Chat utilities (empty)
+###### Auth Store (src/features/auth/store/)
+- `authStore.ts` - Zustand store for authentication state with login, register, logout actions, session persistence
 
-##### Friends Feature (src/features/friends/)
-- `README.md` - Friends management feature documentation
-- `components/` - Friends components (empty)
-- `hooks/` - Friends hooks (empty)
-- `screens/` - Friends screens (empty)
-- `services/` - Friends services (empty)
-- `store/` - Friends state management (empty)
-- `types/` - Friends types (empty)
-- `utils/` - Friends utilities (empty)
+###### Auth Services (src/features/auth/services/)
+- `authService.ts` - Firebase authentication service with login, register, logout, user profile management, error handling
 
-##### Stories Feature (src/features/stories/)
-- `README.md` - Stories feature documentation
-- `components/` - Stories components (empty)
-- `hooks/` - Stories hooks (empty)
-- `screens/` - Stories screens (empty)
-- `services/` - Stories services (empty)
-- `store/` - Stories state management (empty)
-- `types/` - Stories types (empty)
-- `utils/` - Stories utilities (empty)
+###### Auth Types (src/features/auth/types/)
+- `authTypes.ts` - TypeScript interfaces for User, LoginForm, RegisterForm, ProfileUpdate, AuthError, UserProfileData
+
+###### Auth Hooks (src/features/auth/hooks/)
+- `useAuthInitialization.ts` - Hook for setting up Firebase auth state listener and syncing with Zustand store
+
+##### Other Features (Empty - To Be Implemented)
+- `camera/` - Camera feature (empty)
+- `chat/` - Chat/messaging feature (empty)  
+- `friends/` - Friends management feature (empty)
+- `stories/` - Stories feature (empty)
 
 ### Documentation (_docs/)
 - `project-overview.md` - Product requirements and feature specifications
@@ -127,7 +103,10 @@
 - `App()` - Main application component, returns GestureHandlerRootView with RootNavigator and StatusBar
 
 ### src/shared/navigation/RootNavigator.tsx
-- `RootNavigator()` - Root navigation component managing auth state and main navigation flow
+- `RootNavigator()` - Root navigation component managing auth state and main navigation flow with loading screen
+
+### src/shared/navigation/AuthNavigator.tsx
+- `AuthNavigator()` - Authentication navigator with Login, Register, ProfileSetup, ForgotPassword screens
 
 ### src/shared/hooks/useTheme.ts
 - `useTheme()` - Hook for accessing current theme, auto-switches between light/dark based on system preference
@@ -149,6 +128,65 @@
 
 ### src/shared/theme/index.ts
 - Exports `lightTheme`, `darkTheme`, `defaultTheme` objects
+
+### Authentication Feature Functions
+
+#### src/features/auth/store/authStore.ts
+- `useAuthStore()` - Zustand store hook for authentication state
+- `login(email, password)` - Login user with email and password
+- `register(email, password, username)` - Register new user
+- `logout()` - Logout current user
+- `updateProfile(updates)` - Update user profile
+- `clearError()` - Clear authentication errors
+- `setUser(user)` - Set current user
+- `setLoading(loading)` - Set loading state
+- `setInitializing(initializing)` - Set initialization state
+- `isProfileComplete()` - Check if user profile is complete
+- `useAuthUser()` - Selector for current user
+- `useIsAuthenticated()` - Selector for authentication status
+- `useAuthLoading()` - Selector for loading state
+- `useAuthError()` - Selector for error state
+- `useIsInitializing()` - Selector for initialization state
+
+#### src/features/auth/services/authService.ts
+- `login(email, password)` - Firebase authentication login
+- `register(email, password, username)` - Firebase user registration with profile creation
+- `logout()` - Firebase logout
+- `resetPassword(email)` - Send password reset email
+- `getCurrentUser()` - Get current authenticated user
+- `onAuthStateChanged(callback)` - Set up auth state change listener
+- `checkUsernameAvailability(username)` - Check if username is available
+- `createUserProfile(profile)` - Create user profile in database
+- `getUserProfile(uid)` - Get user profile from database
+- `updateLastActive(uid)` - Update user's last active timestamp
+- `handleAuthError(error)` - Handle Firebase auth errors with user-friendly messages
+
+#### src/features/auth/hooks/useAuthInitialization.ts
+- `useAuthInitialization()` - Hook for setting up Firebase auth state listener and syncing with store
+
+#### src/features/auth/screens/LoginScreen.tsx
+- `LoginScreen({ navigation })` - Login screen component with form validation
+- `onSubmit(data)` - Handle login form submission
+- `navigateToRegister()` - Navigate to registration screen
+- `navigateToForgotPassword()` - Navigate to forgot password screen
+- `togglePasswordVisibility()` - Toggle password field visibility
+
+#### src/features/auth/screens/RegisterScreen.tsx
+- `RegisterScreen({ navigation })` - Registration screen component with form validation
+- `onSubmit(data)` - Handle registration form submission
+- `navigateToLogin()` - Navigate back to login screen
+- `togglePasswordVisibility()` - Toggle password field visibility
+- `toggleConfirmPasswordVisibility()` - Toggle confirm password field visibility
+
+#### src/features/auth/screens/ForgotPasswordScreen.tsx
+- `ForgotPasswordScreen({ navigation })` - Forgot password screen (placeholder)
+- `navigateToLogin()` - Navigate back to login screen
+- `handlePasswordReset()` - Handle password reset (placeholder)
+
+#### src/features/auth/screens/ProfileSetupScreen.tsx
+- `ProfileSetupScreen({ navigation })` - Profile setup screen (placeholder)
+- `handleCompleteSetup()` - Handle profile setup completion (placeholder)
+- `handleSkipSetup()` - Skip profile setup
 
 ## Variables and Data Structures
 
@@ -200,33 +238,54 @@
 - `storage` - FirebaseStorage service instance
 - `functions` - Functions service instance
 
+### Authentication Feature Variables
+
+#### src/features/auth/types/authTypes.ts
+- `User` - Interface with uid, email, username, displayName, photoURL, createdAt, lastActive
+- `LoginForm` - Interface with email, password
+- `RegisterForm` - Interface with email, password, confirmPassword, username, displayName
+- `ProfileUpdate` - Interface with optional displayName, username, photoURL
+- `AuthError` - Interface with code, message
+- `FirebaseUserData` - Interface with uid, email, displayName, photoURL, emailVerified
+- `UserProfileData` - Interface with uid, email, username, displayName, photoURL, createdAt, lastActive
+- `AuthAction` - Union type for auth reducer actions
+
+#### src/features/auth/store/authStore.ts
+- `AuthState` - Interface defining auth store state and actions
+- `initialState` - Initial auth state object
+- `useAuthStore` - Zustand store instance with auth state and actions
+
+#### src/features/auth/services/authService.ts
+- `AuthService` - Class containing all Firebase auth operations
+- `authService` - Singleton instance of AuthService
+
 ## Naming Conventions
 
 ### Files
-- **PascalCase**: React components and screens (`Button.tsx`, `CameraScreen.tsx`)
-- **camelCase**: Hooks, services, and utilities (`useAuth.ts`, `formatDate.ts`)
+- **PascalCase**: React components and screens (`Button.tsx`, `LoginScreen.tsx`, `CameraScreen.tsx`)
+- **camelCase**: Hooks, services, and utilities (`useAuth.ts`, `authService.ts`, `formatDate.ts`)
 - **kebab-case**: Folders and configuration files (`user-profile/`, `api-config.json`)
-- **dot.notation**: Type and config files (`firebase.config.ts`, `types.ts`)
+- **dot.notation**: Type and config files (`firebase.config.ts`, `authTypes.ts`)
 
 ### Components
-- **PascalCase**: All React components (`Button`, `Screen`, `RootNavigator`)
-- **Interface naming**: ComponentName + Props (`ButtonProps`, `ScreenProps`)
+- **PascalCase**: All React components (`Button`, `Screen`, `RootNavigator`, `LoginScreen`)
+- **Interface naming**: ComponentName + Props (`ButtonProps`, `ScreenProps`, `LoginScreenProps`)
 
 ### Functions
-- **camelCase**: All functions (`useTheme`, `initializeFirebase`, `handlePress`)
-- **Descriptive names**: Action verb + noun (`getFirebaseConfig`, `connectToEmulators`)
+- **camelCase**: All functions (`useTheme`, `initializeFirebase`, `handlePress`, `onSubmit`)
+- **Descriptive names**: Action verb + noun (`getFirebaseConfig`, `connectToEmulators`, `navigateToRegister`)
 
 ### Variables
-- **camelCase**: All variables (`isDark`, `firebaseConfig`, `textStyles`)
+- **camelCase**: All variables (`isDark`, `firebaseConfig`, `textStyles`, `isAuthenticated`)
 - **UPPER_SNAKE_CASE**: Constants (`BASE_UNIT`, `ANIMATION_CONFIG`)
-- **Descriptive names**: Clear purpose indication (`semanticSpacing`, `borderRadius`)
+- **Descriptive names**: Clear purpose indication (`semanticSpacing`, `borderRadius`, `authService`)
 
 ### Types and Interfaces
-- **PascalCase**: All types and interfaces (`AppTheme`, `ColorScheme`, `ButtonProps`)
-- **Descriptive suffixes**: Props, List, Config, etc.
+- **PascalCase**: All types and interfaces (`AppTheme`, `ColorScheme`, `ButtonProps`, `User`, `AuthState`)
+- **Descriptive suffixes**: Props, List, Config, State, etc.
 
 ### Folders
-- **kebab-case**: All folder names (`shared/`, `components/`, `base/`)
+- **kebab-case**: All folder names (`shared/`, `components/`, `base/`, `auth/`)
 - **Feature-based**: Organized by domain (`auth/`, `camera/`, `chat/`)
 
 ## Development Scripts (package.json)
@@ -268,6 +327,12 @@
 - `firebase` - Firebase SDK
 - `@react-native-async-storage/async-storage` - Local storage
 
+### State Management
+- `zustand` - State management library
+
+### Forms and Validation
+- `react-hook-form` - Form handling library
+
 ### Development Tools
 - `typescript` - TypeScript compiler
 - `eslint` - Code linting
@@ -284,9 +349,23 @@
 - Firebase configuration ready
 - Development environment set up
 
-### Next Phase - MVP Development
-- User authentication implementation
-- Camera functionality
+### Phase 2.1 - User Authentication (✅ COMPLETE)
+- ✅ Registration screen with email/password/username fields
+- ✅ Login screen with form validation
+- ✅ Firebase Auth integration with error handling
+- ✅ Auth store with Zustand for state management
+- ✅ Session persistence and auto-login
+- ✅ Auth state initialization and listener setup
+- ✅ App opens to login page when not authenticated
+- ✅ Navigation flow between auth screens
+- ✅ Password visibility toggles
+- ✅ Form validation with proper error messages
+- ✅ Username availability checking
+- ✅ User profile creation in Firebase Realtime Database
+- ✅ Auth error handling with user-friendly messages
+
+### Next Phase - MVP Continuation
+- Camera functionality implementation
 - Basic messaging features
-- Friend system
-- Stories feature 
+- Friend system development
+- Stories feature implementation 

@@ -10,78 +10,78 @@ const BASE_UNIT = 8;
 export const spacing = {
   // Base spacing units (8px grid)
   0: 0,
-  1: BASE_UNIT * 0.5,    // 4px
-  2: BASE_UNIT,          // 8px
-  3: BASE_UNIT * 1.5,    // 12px
-  4: BASE_UNIT * 2,      // 16px
-  5: BASE_UNIT * 2.5,    // 20px
-  6: BASE_UNIT * 3,      // 24px
-  7: BASE_UNIT * 3.5,    // 28px
-  8: BASE_UNIT * 4,      // 32px
-  10: BASE_UNIT * 5,     // 40px
-  12: BASE_UNIT * 6,     // 48px
-  16: BASE_UNIT * 8,     // 64px
-  20: BASE_UNIT * 10,    // 80px
-  24: BASE_UNIT * 12,    // 96px
-  32: BASE_UNIT * 16,    // 128px
-  40: BASE_UNIT * 20,    // 160px
-  48: BASE_UNIT * 24,    // 192px
-  56: BASE_UNIT * 28,    // 224px
-  64: BASE_UNIT * 32,    // 256px
+  1: BASE_UNIT * 0.5, // 4px
+  2: BASE_UNIT, // 8px
+  3: BASE_UNIT * 1.5, // 12px
+  4: BASE_UNIT * 2, // 16px
+  5: BASE_UNIT * 2.5, // 20px
+  6: BASE_UNIT * 3, // 24px
+  7: BASE_UNIT * 3.5, // 28px
+  8: BASE_UNIT * 4, // 32px
+  10: BASE_UNIT * 5, // 40px
+  12: BASE_UNIT * 6, // 48px
+  16: BASE_UNIT * 8, // 64px
+  20: BASE_UNIT * 10, // 80px
+  24: BASE_UNIT * 12, // 96px
+  32: BASE_UNIT * 16, // 128px
+  40: BASE_UNIT * 20, // 160px
+  48: BASE_UNIT * 24, // 192px
+  56: BASE_UNIT * 28, // 224px
+  64: BASE_UNIT * 32, // 256px
 } as const;
 
 // Semantic spacing for common use cases
 export const semanticSpacing = {
   // Component spacing
-  buttonPadding: spacing[4],           // 16px
-  buttonPaddingSmall: spacing[3],      // 12px
-  buttonPaddingLarge: spacing[6],      // 24px
-  
+  buttonPadding: spacing[4], // 16px
+  buttonPaddingSmall: spacing[3], // 12px
+  buttonPaddingLarge: spacing[6], // 24px
+
   // Input spacing
-  inputPadding: spacing[4],            // 16px
-  inputMargin: spacing[3],             // 12px
-  
+  inputPadding: spacing[4], // 16px
+  inputMargin: spacing[3], // 12px
+
   // Card spacing
-  cardPadding: spacing[4],             // 16px
-  cardMargin: spacing[3],              // 12px
-  cardGap: spacing[2],                 // 8px
-  
+  cardPadding: spacing[4], // 16px
+  cardMargin: spacing[3], // 12px
+  cardGap: spacing[2], // 8px
+
   // Screen spacing
-  screenPadding: spacing[4],           // 16px
-  screenMargin: spacing[6],            // 24px
-  
+  screenPadding: spacing[4], // 16px
+  screenMargin: spacing[6], // 24px
+
   // List spacing
-  listItemPadding: spacing[4],         // 16px
-  listItemGap: spacing[2],             // 8px
-  listSectionGap: spacing[6],          // 24px
-  
+  listItemPadding: spacing[4], // 16px
+  listItemGap: spacing[2], // 8px
+  listSectionGap: spacing[6], // 24px
+
   // Header spacing
-  headerPadding: spacing[4],           // 16px
-  headerHeight: 56,                    // 56px
-  
+  headerPadding: spacing[4], // 16px
+  headerHeight: 56, // 56px
+
   // Tab bar spacing
-  tabBarHeight: spacing[10],           // 40px
-  tabBarPadding: spacing[2],           // 8px
-  
+  tabBarHeight: spacing[10], // 40px
+  tabBarPadding: spacing[2], // 8px
+
   // Modal spacing
-  modalPadding: spacing[6],            // 24px
-  modalMargin: spacing[8],             // 32px
-  
+  modalPadding: spacing[6], // 24px
+  modalMargin: spacing[8], // 32px
+
   // Camera interface
-  cameraButtonSize: spacing[20],       // 80px
-  cameraControlsGap: spacing[8],       // 32px
-  
+  cameraButtonSize: spacing[20], // 80px
+  cameraControlsGap: spacing[8], // 32px
+
   // Snap elements
-  snapPreviewMargin: spacing[4],       // 16px
-  snapTextPadding: spacing[3],         // 12px
-  
+  snapPreviewMargin: spacing[4], // 16px
+  snapTextPadding: spacing[3], // 12px
+
   // Friends list
-  friendItemHeight: spacing[16],       // 64px
-  friendAvatarSize: spacing[12],       // 48px
-  
+  friendItemHeight: spacing[16], // 64px
+  friendAvatarSize: spacing[12], // 48px
+
   // Stories
-  storyRingSize: spacing[20],          // 80px
-  storyGap: spacing[2],                // 8px
+  storyRingSize: spacing[20], // 80px
+  storyGap: spacing[2], // 8px
 } as const;
 
 // Border radius values
@@ -127,4 +127,4 @@ export const shadows = {
 export type SpacingValue = keyof typeof spacing;
 export type SemanticSpacingValue = keyof typeof semanticSpacing;
 export type BorderRadiusValue = keyof typeof borderRadius;
-export type ShadowValue = keyof typeof shadows; 
+export type ShadowValue = keyof typeof shadows;

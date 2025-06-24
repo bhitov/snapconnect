@@ -38,7 +38,7 @@ export function Screen({
   testID,
 }: ScreenProps) {
   const theme = useTheme();
-  
+
   const styles = StyleSheet.create({
     safeArea: {
       flex: 1,
@@ -57,28 +57,22 @@ export function Screen({
       padding: padding ? theme.semanticSpacing.screenPadding : 0,
     },
   });
-  
+
   const content = scrollable ? (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
-      keyboardShouldPersistTaps="handled"
+      keyboardShouldPersistTaps='handled'
     >
       {children}
     </ScrollView>
   ) : (
-    <View style={[styles.container, styles.content]}>
-      {children}
-    </View>
+    <View style={[styles.container, styles.content]}>{children}</View>
   );
-  
+
   return (
-    <SafeAreaView 
-      style={styles.safeArea} 
-      edges={edges}
-      testID={testID}
-    >
+    <SafeAreaView style={styles.safeArea} edges={edges} testID={testID}>
       <StatusBar
         barStyle={theme.isDark ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundColor || theme.colors.background}
@@ -86,4 +80,4 @@ export function Screen({
       {content}
     </SafeAreaView>
   );
-} 
+}

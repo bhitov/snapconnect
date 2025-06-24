@@ -6,18 +6,37 @@
 
 import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth, connectAuthEmulator } from 'firebase/auth';
-import { getDatabase, Database, connectDatabaseEmulator } from 'firebase/database';
-import { getStorage, FirebaseStorage, connectStorageEmulator } from 'firebase/storage';
-import { getFunctions, Functions, connectFunctionsEmulator } from 'firebase/functions';
+import {
+  getDatabase,
+  Database,
+  connectDatabaseEmulator,
+} from 'firebase/database';
+import {
+  getFunctions,
+  Functions,
+  connectFunctionsEmulator,
+} from 'firebase/functions';
+import {
+  getStorage,
+  FirebaseStorage,
+  connectStorageEmulator,
+} from 'firebase/storage';
 
 // Firebase configuration from environment variables
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || 'demo-api-key',
-  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || 'snapconnect-demo.firebaseapp.com',
-  databaseURL: process.env.EXPO_PUBLIC_FIREBASE_DATABASE_URL || 'https://snapconnect-demo-default-rtdb.firebaseio.com',
+  authDomain:
+    process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ||
+    'snapconnect-demo.firebaseapp.com',
+  databaseURL:
+    process.env.EXPO_PUBLIC_FIREBASE_DATABASE_URL ||
+    'https://snapconnect-demo-default-rtdb.firebaseio.com',
   projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || 'snapconnect-demo',
-  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET || 'snapconnect-demo.appspot.com',
-  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '123456789012',
+  storageBucket:
+    process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET ||
+    'snapconnect-demo.appspot.com',
+  messagingSenderId:
+    process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '123456789012',
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || '1:123456789012:web:abcdef',
 };
 
@@ -66,7 +85,10 @@ function connectToEmulators(): void {
     console.log('🔧 Connected to Firebase emulators');
     console.log('🚀 Development mode: Using local Firebase emulators');
   } catch (error) {
-    console.warn('⚠️ Failed to connect to emulators (this is normal if not running locally):', error);
+    console.warn(
+      '⚠️ Failed to connect to emulators (this is normal if not running locally):',
+      error
+    );
   }
 }
 
@@ -99,4 +121,4 @@ initializeFirebase();
 
 // Export Firebase services
 export { app, auth, database, storage, functions };
-export { firebaseConfig }; 
+export { firebaseConfig };

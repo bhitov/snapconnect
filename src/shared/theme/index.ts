@@ -5,8 +5,8 @@
  */
 
 import { colors, darkColors } from './colors';
-import { textStyles, fontSizes, fontWeights } from './typography';
 import { spacing, semanticSpacing, borderRadius, shadows } from './spacing';
+import { textStyles, fontSizes, fontWeights } from './typography';
 
 // Theme interface
 export interface AppTheme {
@@ -56,4 +56,4 @@ export * from './typography';
 export * from './spacing';
 
 // Export theme type
-export type { AppTheme as Theme }; 
+export type { AppTheme as Theme };

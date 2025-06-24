@@ -12,8 +12,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { RootNavigator } from './src/shared/navigation/RootNavigator';
 import { useIsDarkMode } from './src/shared/hooks/useTheme';
+import { RootNavigator } from './src/shared/navigation/RootNavigator';
 
 /**
  * Main application component
@@ -21,7 +21,7 @@ import { useIsDarkMode } from './src/shared/hooks/useTheme';
  */
 export default function App() {
   const isDark = useIsDarkMode();
-  
+
   console.log('🚀 SnapConnect App starting...');
   console.log('📱 Phase 1 Setup Complete - Navigation Ready');
 

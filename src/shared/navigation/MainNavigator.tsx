@@ -4,27 +4,31 @@
  * Handles the primary app screens: Chats, Camera, Stories.
  */
 
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View } from 'react-native';
 
-import { MainTabParamList } from './types';
 import { useTheme } from '../hooks/useTheme';
+
+import { MainTabParamList } from './types';
 
 // Placeholder screens - will be implemented in Phase 2
 function ChatsScreen() {
   const theme = useTheme();
   return (
-    <View style={{ 
-      flex: 1, 
-      justifyContent: 'center', 
-      alignItems: 'center',
-      backgroundColor: theme.colors.background 
-    }}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme.colors.background,
+      }}
+    >
       <Text style={{ ...theme.typography.h2, color: theme.colors.textPrimary }}>
         Chats
       </Text>
-      <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>
+      <Text
+        style={{ ...theme.typography.body, color: theme.colors.textSecondary }}
+      >
         Coming in Phase 2
       </Text>
     </View>
@@ -34,12 +38,14 @@ function ChatsScreen() {
 function CameraScreen() {
   const theme = useTheme();
   return (
-    <View style={{ 
-      flex: 1, 
-      justifyContent: 'center', 
-      alignItems: 'center',
-      backgroundColor: theme.colors.black 
-    }}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme.colors.black,
+      }}
+    >
       <Text style={{ ...theme.typography.h2, color: theme.colors.white }}>
         Camera
       </Text>
@@ -53,16 +59,20 @@ function CameraScreen() {
 function StoriesScreen() {
   const theme = useTheme();
   return (
-    <View style={{ 
-      flex: 1, 
-      justifyContent: 'center', 
-      alignItems: 'center',
-      backgroundColor: theme.colors.background 
-    }}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme.colors.background,
+      }}
+    >
       <Text style={{ ...theme.typography.h2, color: theme.colors.textPrimary }}>
         Stories
       </Text>
-      <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>
+      <Text
+        style={{ ...theme.typography.body, color: theme.colors.textSecondary }}
+      >
         Coming in Phase 2
       </Text>
     </View>
@@ -80,7 +90,7 @@ export function MainNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Camera"
+      initialRouteName='Camera'
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
@@ -92,22 +102,22 @@ export function MainNavigator() {
         tabBarInactiveTintColor: theme.colors.textSecondary || '#757575',
       }}
     >
-      <Tab.Screen 
-        name="Chats" 
+      <Tab.Screen
+        name='Chats'
         component={ChatsScreen}
         options={{
           tabBarLabel: 'Chats',
         }}
       />
-      <Tab.Screen 
-        name="Camera" 
+      <Tab.Screen
+        name='Camera'
         component={CameraScreen}
         options={{
           tabBarLabel: 'Camera',
         }}
       />
-      <Tab.Screen 
-        name="Stories" 
+      <Tab.Screen
+        name='Stories'
         component={StoriesScreen}
         options={{
           tabBarLabel: 'Stories',
@@ -115,4 +125,4 @@ export function MainNavigator() {
       />
     </Tab.Navigator>
   );
-} 
+}

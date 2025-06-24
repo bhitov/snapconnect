@@ -56,18 +56,18 @@ export type StoriesStackParamList = {
 };
 
 // Helper types for navigation props
+import type { NavigationProp, RouteProp } from '@react-navigation/native';
+
 export type StackNavigationProps<
   ParamList extends Record<string, object | undefined>,
-  RouteName extends keyof ParamList = keyof ParamList
+  RouteName extends keyof ParamList = keyof ParamList,
 > = {
-  navigation: any; // Will be properly typed with navigation library
-  route: {
-    params: ParamList[RouteName];
-  };
+  navigation: NavigationProp<ParamList, RouteName>;
+  route: RouteProp<ParamList, RouteName>;
 };
 
 declare global {
   namespace ReactNavigation {
     interface RootParamList extends RootStackParamList {}
   }
-} 
+}
