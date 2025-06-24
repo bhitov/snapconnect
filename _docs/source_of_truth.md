@@ -72,6 +72,7 @@
 - `ForgotPasswordScreen.tsx` - Password reset screen (placeholder for future implementation)
 - `ProfileSetupScreen.tsx` - Profile completion screen for post-registration setup with avatar upload and bio
 - `ProfileSettingsScreen.tsx` - Complete profile management screen with avatar upload, bio editing, logout functionality, unsaved changes protection, and modal presentation (display name/username editing removed)
+- `ProfileScreen.tsx` - Simple profile viewing screen displaying user avatar, name, and bio in read-only format
 - `index.ts` - Auth screens export file
 
 ###### Auth Store (src/features/auth/store/)

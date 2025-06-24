@@ -35,13 +35,13 @@ export const ProfileAvatar = memo<ProfileAvatarProps>(
     const user = useAuthUser();
     const navigation = useNavigation<ProfileAvatarNavigationProp>();
 
-    /**
-     * Handle avatar press - navigate to profile settings
-     */
-    const handlePress = useCallback(() => {
-      console.log('👤 ProfileAvatar: Navigating to profile settings');
-      navigation.navigate('ProfileSettings');
-    }, [navigation]);
+      /**
+   * Handle avatar press - navigate to profile settings
+   */
+  const handlePress = useCallback(() => {
+    console.log('👤 ProfileAvatar: Navigating to profile settings');
+    navigation.navigate('ProfileSettings');
+  }, [navigation]);
 
     // Size configuration
     const sizeConfig = {

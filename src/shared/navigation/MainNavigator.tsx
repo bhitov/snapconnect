@@ -9,6 +9,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text, View, TouchableOpacity } from 'react-native';
 
+import { ProfileScreen } from '../../features/auth/screens';
 import { CameraScreen } from '../../features/camera/screens/CameraScreen';
 import { ChatsScreen, ChatScreen } from '../../features/chat/screens';
 import {
@@ -116,7 +117,7 @@ function FriendsStackNavigator() {
       />
       <FriendsStack.Screen
         name='Profile'
-        component={PlaceholderProfileScreen}
+        component={ProfileScreen}
       />
     </FriendsStack.Navigator>
   );

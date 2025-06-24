@@ -8,3 +8,4 @@ export { RegisterScreen } from './RegisterScreen';
 export { ProfileSetupScreen } from './ProfileSetupScreen';
 export { ProfileSettingsScreen } from './ProfileSettingsScreen';
 export { ForgotPasswordScreen } from './ForgotPasswordScreen';
+export { ProfileScreen } from './ProfileScreen';
