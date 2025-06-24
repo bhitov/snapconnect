@@ -30,6 +30,33 @@ import {
 // Chat Stack Navigator
 const ChatStack = createNativeStackNavigator<ChatStackParamList>();
 
+// Chat header back button component
+function ChatHeaderBackButton({ navigation }: { navigation: any }) {
+  const theme = useTheme();
+  return (
+    <TouchableOpacity
+      onPress={() => navigation.goBack()}
+      style={{
+        paddingLeft: 16,
+        paddingRight: 20,
+        paddingVertical: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 16,
+          color: theme.colors.primary || '#007AFF',
+          fontWeight: '500',
+        }}
+      >
+        ← Chats
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
 function ChatStackNavigator() {
   const theme = useTheme();
 
@@ -63,31 +90,7 @@ function ChatStackNavigator() {
             route.params?.otherUser?.username ||
             'Chat',
           headerBackTitleVisible: false,
-          headerLeft: () => {
-            const theme = useTheme();
-            return (
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={{
-                  paddingLeft: 16,
-                  paddingRight: 20,
-                  paddingVertical: 12,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: theme.colors.primary || '#007AFF',
-                    fontWeight: '500',
-                  }}
-                >
-                  ← Chats
-                </Text>
-              </TouchableOpacity>
-            );
-          },
+          headerLeft: () => <ChatHeaderBackButton navigation={navigation} />,
         })}
       />
     </ChatStack.Navigator>

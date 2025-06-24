@@ -71,6 +71,7 @@ export interface RecordingState {
   startTime?: number;
   maxDuration: number; // maximum allowed duration in milliseconds
   intervalRef?: NodeJS.Timeout; // reference to the recording timer interval
+  recordingPromise?: Promise<{ uri: string } | undefined>; // promise from recordAsync
 }
 
 /**
@@ -205,13 +206,13 @@ export interface CameraActions {
 
   // Media capture
   capturePhoto: (
-    cameraRef?: React.RefObject<CameraView>
+    cameraRef?: React.RefObject<CameraView | null>
   ) => Promise<CapturedMedia>;
   startVideoRecording: (
-    cameraRef?: React.RefObject<CameraView>
+    cameraRef?: React.RefObject<CameraView | null>
   ) => Promise<void>;
   stopVideoRecording: (
-    cameraRef?: React.RefObject<CameraView>
+    cameraRef?: React.RefObject<CameraView | null>
   ) => Promise<CapturedMedia>;
 
   // Media processing

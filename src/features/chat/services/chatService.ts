@@ -543,7 +543,7 @@ class ChatService {
       snapshot.forEach(childSnapshot => {
         const messageData = childSnapshot.val() as TextMessageDocument;
         const message: TextMessage = {
-          id: childSnapshot.key!,
+          id: childSnapshot.key || '',
           type: 'text',
           senderId: messageData.senderId,
           recipientId: messageData.recipientId,
@@ -589,7 +589,7 @@ class ChatService {
       snapshot.forEach(childSnapshot => {
         const snapData = childSnapshot.val() as SnapDocument;
         const message: SnapMessage = {
-          id: childSnapshot.key!,
+          id: childSnapshot.key || '',
           type: 'snap',
           senderId: snapData.senderId,
           recipientId: snapData.recipientId,

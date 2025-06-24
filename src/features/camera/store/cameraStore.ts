@@ -218,7 +218,7 @@ export const useCameraStore = create<CameraStore>()(
       },
 
       // Media capture
-      capturePhoto: async (cameraRef?: React.RefObject<CameraView>) => {
+      capturePhoto: async (cameraRef?: React.RefObject<CameraView | null>) => {
         console.log('📸 CameraStore: Capturing photo');
 
         set(state => {
@@ -278,7 +278,9 @@ export const useCameraStore = create<CameraStore>()(
         }
       },
 
-      startVideoRecording: async (cameraRef?: React.RefObject<CameraView>) => {
+      startVideoRecording: async (
+        cameraRef?: React.RefObject<CameraView | null>
+      ) => {
         console.log('🎥 CameraStore: Starting video recording');
 
         set(state => {
@@ -327,7 +329,7 @@ export const useCameraStore = create<CameraStore>()(
           // Store the interval reference and recording promise for cleanup
           set(state => {
             (state.recording as any).intervalRef = recordingInterval;
-            (state.recording as any).recordingPromise = recordingPromise;
+            state.recording.recordingPromise = recordingPromise;
           });
 
           console.log('✅ CameraStore: Video recording started');
@@ -350,7 +352,9 @@ export const useCameraStore = create<CameraStore>()(
         }
       },
 
-      stopVideoRecording: async (cameraRef?: React.RefObject<CameraView>) => {
+      stopVideoRecording: async (
+        cameraRef?: React.RefObject<CameraView | null>
+      ) => {
         console.log('⏹️ CameraStore: Stopping video recording');
 
         const state = get();
@@ -379,7 +383,7 @@ export const useCameraStore = create<CameraStore>()(
           cameraRef.current.stopRecording();
 
           // Get the stored recording promise and await it for the video data
-          const recordingPromise = (state.recording as any).recordingPromise;
+          const recordingPromise = state.recording.recordingPromise;
           if (!recordingPromise) {
             throw new Error('No recording promise found');
           }
