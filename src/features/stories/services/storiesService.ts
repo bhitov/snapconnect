@@ -15,7 +15,8 @@ import type {
   StoryError, 
   StoryDocument, 
   StoryPostDocument,
-  ViewData 
+  ViewData,
+  StoryViewer 
 } from '../types';
 
 class StoriesService {
@@ -38,8 +39,95 @@ class StoriesService {
     };
   }
 
+  /**
+   * Get user data from Firebase
+   */
+  private async getUserData(userId: string): Promise<{ uid: string; username: string; displayName: string; photoURL?: string }> {
+    console.log('👤 StoriesService: Fetching user data for:', userId);
+    
+    try {
+      const userRef = ref(this.database, `users/${userId}`);
+      const snapshot = await get(userRef);
+      
+      if (!snapshot.exists()) {
+        console.warn('⚠️ StoriesService: User not found, using fallback data');
+        return {
+          uid: userId,
+          username: `user_${userId.slice(-6)}`,
+          displayName: `User ${userId.slice(-6)}`,
+          photoURL: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
+        };
+      }
+      
+      const userData = snapshot.val();
+      console.log('✅ StoriesService: User data loaded:', userData.username);
+      
+      return {
+        uid: userId,
+        username: userData.username || `user_${userId.slice(-6)}`,
+        displayName: userData.displayName || userData.username || `User ${userId.slice(-6)}`,
+        photoURL: userData.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
+      };
+    } catch (error) {
+      console.error('❌ StoriesService: Failed to fetch user data:', error);
+      // Return fallback data on error
+      return {
+        uid: userId,
+        username: `user_${userId.slice(-6)}`,
+        displayName: `User ${userId.slice(-6)}`,
+        photoURL: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
+      };
+    }
+  }
+
+  /**
+   * Upload media to Firebase Storage
+   */
+  private async uploadMediaToStorage(
+    mediaUri: string, 
+    mediaType: 'photo' | 'video', 
+    postId: string,
+    onProgress?: (progress: StoryUploadProgress) => void
+  ): Promise<string> {
+    console.log('📤 StoriesService: Starting media upload to Firebase Storage');
+    
+    try {
+      const currentUserId = this.getCurrentUserId();
+      
+      // Create storage reference
+      const fileExtension = mediaType === 'photo' ? 'jpg' : 'mp4';
+      const fileName = `${postId}.${fileExtension}`;
+      const storagePath = `stories/${currentUserId}/${fileName}`;
+      const storageReference = storageRef(this.storage, storagePath);
+      
+      console.log('📤 StoriesService: Uploading to path:', storagePath);
+
+      // Convert URI to blob for upload
+      const response = await fetch(mediaUri);
+      const blob = await response.blob();
+      
+      console.log('📤 StoriesService: File size:', blob.size, 'bytes');
+
+      // Upload with progress tracking
+      const uploadTask = uploadBytes(storageReference, blob);
+      
+      // Wait for upload completion
+      const snapshot = await uploadTask;
+      console.log('📤 StoriesService: Upload completed, metadata:', snapshot.metadata);
+
+      // Get download URL
+      const downloadURL = await getDownloadURL(storageReference);
+      console.log('✅ StoriesService: Download URL obtained:', downloadURL);
+      
+      return downloadURL;
+    } catch (error: any) {
+      console.error('❌ StoriesService: Media upload failed:', error);
+      throw new Error(`Failed to upload media: ${error?.message || 'Unknown error'}`);
+    }
+  }
+
   async createStory(data: StoryCreationData, onProgress?: (progress: StoryUploadProgress) => void): Promise<void> {
-    console.log('📖 StoriesService: Creating story');
+    console.log('📖 StoriesService: Creating story with media:', data.mediaUri);
     
     const currentUserId = this.getCurrentUserId();
     const storyId = currentUserId;
@@ -52,13 +140,16 @@ class StoriesService {
         status: 'uploading',
       });
 
-      // Upload media (simplified implementation)
-      const mediaUrl = `https://example.com/media/${postId}`;
+      // Upload media to Firebase Storage
+      console.log('📤 StoriesService: Uploading media to Firebase Storage');
+      const mediaUrl = await this.uploadMediaToStorage(data.mediaUri, data.mediaType, postId, onProgress);
+      
+      console.log('✅ StoriesService: Media uploaded successfully:', mediaUrl);
       
       onProgress?.({
         storyId,
-        progress: 100,
-        status: 'complete',
+        progress: 90,
+        status: 'processing',
       });
 
       const now = Date.now();
@@ -92,6 +183,13 @@ class StoriesService {
       }
 
       await set(storyRef, storyData);
+      
+      onProgress?.({
+        storyId,
+        progress: 100,
+        status: 'complete',
+      });
+      
       console.log('✅ StoriesService: Story created successfully');
     } catch (error) {
       console.error('❌ StoriesService: Failed to create story:', error);
@@ -135,15 +233,11 @@ class StoriesService {
           !post.views[currentUserId] || !post.views[currentUserId].completed
         );
 
-        // Mock user data (in real implementation, fetch from users collection)
+        // Fetch real user data from Firebase
+        const userData = await this.getUserData(storyDoc.userId);
         const userStory: StoryWithUser = {
           id: storyId,
-          user: {
-            uid: storyDoc.userId,
-            username: `user_${storyDoc.userId.slice(-6)}`,
-            displayName: `User ${storyDoc.userId.slice(-6)}`,
-            photoURL: `https://api.dicebear.com/7.x/avataaars/svg?seed=${storyDoc.userId}`,
-          },
+          user: userData,
           posts: activePosts,
           updatedAt: storyDoc.updatedAt,
           hasUnviewedPosts,
@@ -154,10 +248,22 @@ class StoriesService {
         stories.push(userStory);
       }
 
-      // Sort by latest post timestamp (most recent first)
-      stories.sort((a, b) => b.latestPostTimestamp - a.latestPostTimestamp);
+      // Advanced story ordering algorithm (recent first, with unviewed prioritization)
+      stories.sort((a, b) => {
+        // First priority: Unviewed stories come first
+        if (a.hasUnviewedPosts && !b.hasUnviewedPosts) return -1;
+        if (!a.hasUnviewedPosts && b.hasUnviewedPosts) return 1;
+        
+        // Second priority: More recent stories first
+        if (a.latestPostTimestamp !== b.latestPostTimestamp) {
+          return b.latestPostTimestamp - a.latestPostTimestamp;
+        }
+        
+        // Third priority: Stories with more posts first (more active users)
+        return b.totalPosts - a.totalPosts;
+      });
 
-      console.log('✅ StoriesService: Loaded', stories.length, 'stories');
+      console.log('✅ StoriesService: Loaded', stories.length, 'stories, ordered by recent/unviewed');
       return stories;
     } catch (error) {
       console.error('❌ StoriesService: Failed to load stories:', error);
@@ -263,6 +369,96 @@ class StoriesService {
       console.log('✅ StoriesService: Post marked as viewed');
     } catch (error) {
       console.error('❌ StoriesService: Failed to mark post as viewed:', error);
+      throw this.handleError(error);
+    }
+  }
+
+  async getStoryViewers(storyId: string, postId?: string): Promise<StoryViewer[]> {
+    console.log('👥 StoriesService: Getting story viewers');
+    
+    try {
+      const currentUserId = this.getCurrentUserId();
+      if (storyId !== currentUserId) {
+        throw new Error('Permission denied: Can only view your own story viewers');
+      }
+
+      const storyRef = ref(this.database, `stories/${storyId}`);
+      const snapshot = await get(storyRef);
+
+      if (!snapshot.exists()) {
+        console.log('👥 StoriesService: Story not found');
+        return [];
+      }
+
+      const storyDoc = snapshot.val() as StoryDocument;
+      const viewers: Map<string, StoryViewer> = new Map();
+
+      // If specific post requested, get viewers for that post only
+      if (postId && storyDoc.posts[postId]) {
+        const post = storyDoc.posts[postId];
+        for (const [viewerId, viewData] of Object.entries(post.views || {})) {
+          if (viewData.completed) {
+            viewers.set(viewerId, {
+              userId: viewerId,
+              username: `user_${viewerId.slice(-6)}`, // Mock data
+              displayName: `User ${viewerId.slice(-6)}`, // Mock data
+              photoURL: `https://api.dicebear.com/7.x/avataaars/svg?seed=${viewerId}`,
+              viewedAt: viewData.timestamp,
+              hasViewedAll: true, // Since viewing specific post
+            });
+          }
+        }
+      } else {
+        // Get viewers across all posts
+        for (const [currentPostId, post] of Object.entries(storyDoc.posts || {})) {
+          if (post.status === 'active' && post.expiresAt > Date.now()) {
+            for (const [viewerId, viewData] of Object.entries(post.views || {})) {
+              if (viewData.completed) {
+                const existing = viewers.get(viewerId);
+                if (existing) {
+                  // Update if this view is more recent
+                  if (viewData.timestamp > existing.viewedAt) {
+                    existing.viewedAt = viewData.timestamp;
+                  }
+                } else {
+                  viewers.set(viewerId, {
+                    userId: viewerId,
+                    username: `user_${viewerId.slice(-6)}`, // Mock data
+                    displayName: `User ${viewerId.slice(-6)}`, // Mock data
+                    photoURL: `https://api.dicebear.com/7.x/avataaars/svg?seed=${viewerId}`,
+                    viewedAt: viewData.timestamp,
+                    hasViewedAll: false, // Will be calculated below
+                  });
+                }
+              }
+            }
+          }
+        }
+
+        // Check if each viewer has viewed all posts
+        const activePosts = Object.keys(storyDoc.posts || {}).filter(
+          pid => {
+            const post = storyDoc.posts[pid];
+            return post && post.status === 'active' && post.expiresAt > Date.now();
+          }
+        );
+
+        for (const viewer of viewers.values()) {
+          viewer.hasViewedAll = activePosts.every(
+            pid => {
+              const post = storyDoc.posts[pid];
+              return post && post.views && post.views[viewer.userId]?.completed;
+            }
+          );
+        }
+      }
+
+      const sortedViewers = Array.from(viewers.values()).sort((a, b) => b.viewedAt - a.viewedAt);
+      
+      console.log('✅ StoriesService: Loaded', sortedViewers.length, 'story viewers');
+      return sortedViewers;
+    } catch (error) {
+      console.error('❌ StoriesService: Failed to get story viewers:', error);
       throw this.handleError(error);
     }
   }

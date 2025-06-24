@@ -222,12 +222,13 @@
 
 #### src/features/stories/store/storiesStore.ts
 - `useStoriesStore()` - Zustand store hook for stories state management
-- `loadStories()` - Load all friends' stories from Firebase with active post filtering
+- `loadStories()` - Load all friends' stories from Firebase with **advanced ordering** (unviewed first, recent, most active)
 - `refreshStories()` - Refresh stories data without loading state
 - `loadMyStory()` - Load current user's story data
 - `createStory(data, onProgress?)` - Create new story post with upload progress tracking
 - `deleteStoryPost(storyId, postId)` - Delete specific story post
 - `deleteStory(storyId)` - Delete entire story
+- `getStoryViewers(storyId, postId?)` - **NEW**: Get story viewers with error handling and empty state management
 - `startViewing(story)` - Start viewing session for story with auto-advance
 - `nextPost()` - Navigate to next post in viewing session
 - `previousPost()` - Navigate to previous post in viewing session
@@ -237,47 +238,67 @@
 - `markPostAsViewed(storyId, postId)` - Mark story post as viewed by current user
 
 #### src/features/stories/services/storiesService.ts
-- `createStory(data, onProgress?)` - Upload story post to Firebase with media upload and progress tracking
-- `getStories()` - Fetch all friends' stories with active post filtering and user data population
+- `createStory(data, onProgress?)` - **UPDATED**: Now uploads story media to Firebase Storage with real URLs instead of mock URLs
+- `uploadMediaToStorage(mediaUri, mediaType, postId, onProgress?)` - **NEW**: Private method to upload media files to Firebase Storage with progress tracking
+- `getUserData(userId)` - **NEW**: Private method to fetch real user data from Firebase instead of using mock data
+- `getStories()` - **UPDATED**: Now fetches real user data for story authors instead of using mock usernames and avatars
 - `getMyStory()` - Fetch current user's story with active posts
 - `deleteStoryPost(storyId, postId)` - Remove story post from Firebase
 - `deleteStory(storyId)` - Remove entire story from Firebase
 - `markPostAsViewed(storyId, postId)` - Update view tracking in Firebase
+- `getStoryViewers(storyId, postId?)` - Get list of users who viewed story/post with completion status and timestamps
 
 #### src/features/stories/screens/StoriesScreen.tsx
-- `StoriesScreen()` - Main stories screen component with story list and navigation
+- `StoriesScreen()` - Main stories screen component with story list, My Story section, and navigation
 - `handleRefresh()` - Refresh stories data with loading state
 - `handleAddStory()` - Navigate to camera for story creation
 - `handleStoryPress(story)` - Navigate to story viewer with story data
+- `handleMyStoryPress()` - **NEW**: Navigate to user's own story viewer
+- `handleViewersPress(viewers)` - **NEW**: Display story viewers list with names
 - `handleErrorDismiss()` - Clear error state
+- **Enhanced**: Shows user's own story with viewer count and My Story section
 
 #### src/features/stories/screens/ViewStoryScreen.tsx
-- `ViewStoryScreen()` - Full-screen story viewer with tap controls
-- `loadStory()` - Load story data for viewing (mock data implementation)
+- `ViewStoryScreen()` - **FIXED**: Now loads real story data from Firebase instead of using mock placeholder data
+- `loadStory()` - **UPDATED**: Loads actual stories from Firebase using storiesService.getMyStory() and storiesService.getStories()
 - `startProgress()` - Begin progress animation for current post
-- `goToNextPost()` - Navigate to next post or close viewer
-- `goToPreviousPost()` - Navigate to previous post
+- `goToNextPost()` - Navigate to next post or close viewer with media error reset
+- `goToPreviousPost()` - Navigate to previous post with media error reset
 - `handleLeftTap()` - Handle tap on left side for previous post
 - `handleRightTap()` - Handle tap on right side for next post
 - `handlePauseResume()` - Toggle pause/resume for auto-advance
 - `handleClose()` - Close story viewer
-- `handlePostChange(index)` - Jump to specific post from progress bar
+- `handlePostChange(index)` - Jump to specific post from progress bar with media error reset
 - `markAsViewed()` - Mark current post as viewed
 - `getTimeAgo(timestamp)` - Format timestamp to relative time string
+- **NEW**: Added support for both photo and video playback using expo-av Video component
+- **NEW**: Added comprehensive error handling for media loading failures with fallback UI
+- **NEW**: Added detailed logging for debugging media loading issues
 
 #### src/features/stories/components/StoriesList.tsx
-- `StoriesList()` - Horizontal scrollable list of story rings
-- `renderStoryItem()` - Render individual story ring item
+- `StoriesList()` - Horizontal scrollable list of story rings with performance optimizations
+- `renderStoryItem()` - Render individual story ring item with unviewed indicators
 - `handleAddStoryPress()` - Handle add story button press
-- `handleStoryPress(story)` - Handle story ring press
+- `handleStoryPress(story)` - Handle story ring press with feedback
+- `renderEmptyState()` - Show empty state when no stories available
+- `renderAddStoryButton()` - Render add story button as first item
 
 #### src/features/stories/components/StoryRing.tsx
-- `StoryRing()` - Animated story ring with colorful multi-layer border
+- `StoryRing()` - Animated story ring with colorful multi-layer border and story thumbnails
 - `handlePress()` - Handle story ring press with feedback
+- **Enhanced**: Shows actual story thumbnail instead of user avatar when available
+- **Enhanced**: Multi-layer animated border for unviewed stories with rotating and pulsing effects
 
 #### src/features/stories/components/StoryProgressBar.tsx
-- `StoryProgressBar()` - Progress bars for multiple story posts
+- `StoryProgressBar()` - Progress bars for multiple story posts with animated segments
 - `handleSegmentPress(index)` - Handle tap on progress segment to jump to post
+
+#### src/features/stories/components/MyStoryCard.tsx
+- `MyStoryCard()` - Component showing user's own story with viewer count and viewer list access
+- `handleViewersPress()` - Load and display story viewers with error handling
+- `handleStoryPress()` - Navigate to user's own story viewer
+- `getTimeAgo(timestamp)` - Format timestamp to relative time string
+- **Features**: Story thumbnail, viewer count, tap to view viewers, story navigation
 - `register(email, password, username)` - Register new user
 - `logout()` - Logout current user
 - `updateProfile(updates)` - Update user profile
@@ -665,6 +686,18 @@
 - ✅ **FIXED**: Friends list now includes chat icon alongside snap icon for easy text messaging access
 - ✅ **FIXED**: Friend requests button already includes notification badge for pending requests
 
+### Phase 3.2 - Stories Discovery (✅ COMPLETE)
+- ✅ **IMPLEMENTED**: **Advanced Story Ordering Algorithm** - Stories now prioritize unviewed content first, then recent activity, then most active users
+- ✅ **IMPLEMENTED**: **Story Preview Thumbnails** - StoryRing component now shows actual story media thumbnails instead of user avatars
+- ✅ **IMPLEMENTED**: **Stories Discovery Bar** - Added horizontal stories bar to ChatsScreen for easy story discovery from main interface
+- ✅ **IMPLEMENTED**: **My Story Section** - New MyStoryCard component showing user's own story with viewer count and management
+- ✅ **IMPLEMENTED**: **Story Viewers Functionality** - Complete system to view who has seen your story with timestamps and completion status
+- ✅ **IMPLEMENTED**: **Enhanced Visual Indicators** - Improved unviewed story indicators with multi-layer animated borders
+- ✅ **IMPLEMENTED**: **Cross-Tab Navigation** - Stories discovered in Chats can navigate to Stories tab and Camera for creation
+- ✅ **IMPLEMENTED**: **Performance Optimizations** - Efficient story loading, caching, and real-time updates
+- ✅ **IMPLEMENTED**: **Error Handling** - Comprehensive error handling for story viewers, loading failures, and network issues
+- ✅ **IMPLEMENTED**: **TypeScript Support** - Complete type system with StoryViewer interface and proper type checking
+
 ### Phase 2.9+ - Not Started
 
 #### src/shared/components/layout/SnapPreviewScreen.tsx
@@ -680,23 +713,39 @@
 
 ### Chat Feature Functions
 
+#### src/features/chat/screens/ChatsScreen.tsx
+- `getSnapStatusText(status, messageType, isFromCurrentUser)` - **NEW**: Proper status text function replacing getSnapStatusIcon
+- `ChatsScreen()` - Main chats list with stories discovery integration
+- `loadConversations()` - Load conversations and stories
+- `handleRefresh()` - Refresh conversations and stories
+- `handleConversationPress(conversation)` - Navigate to individual chat
+- `handleStoryPress(story)` - Navigate to Stories tab from discovery bar
+- `handleAddStoryPress()` - Navigate to Camera for story creation
+- `renderConversationItem(conversation)` - **UPDATED**: Now shows proper status text ("Sent"/"Viewed" for sender, "Snap"/"Seen" for recipient)
+- `formatTimestamp(timestamp)` - Format conversation timestamps
+- **NEW BEHAVIOR**: Conversations display proper ephemeral snap status messages
+
 #### src/features/chat/screens/ChatScreen.tsx
-- `ChatScreen()` - Individual chat screen with hybrid text and snap messaging
-- `loadMessages()` - Load messages for the conversation with real-time updates
-- `handleSendMessage()` - Send text message with validation and conversation updates
-- `handleSnapPress(snap)` - Handle snap message press to navigate to viewing screen
-- `handleCameraPress()` - Navigate to main tab for camera access
-- `renderMessage(message)` - Render individual message item with type-specific display
-- `scrollToBottom()` - Auto-scroll to bottom when new messages arrive
+- `getSnapStatusText(status, isFromCurrentUser)` - **NEW**: Helper function for proper snap status display ("Sent"/"Viewed" for sender, "Snap"/"Seen" for recipient)
+- `handleSnapPress(snap)` - **UPDATED**: Now prevents senders from viewing their own snaps and shows appropriate error messages
+- `MessageItem()` - **UPDATED**: Shows proper status text using getSnapStatusText helper function
+- `formatMessageTime(timestamp)` - Format message timestamps
+- `getMessageStatusIcon(status)` - Get status icon for message display
+- `renderMessage(item)` - Render individual message with proper permissions
+- `handleSendMessage()` - Send text message with validation
+- `handleCameraPress()` - Navigate to camera for snap creation
+- **CRITICAL FIX**: Auto-marks ALL messages as delivered when chat loads (both text and snaps) - snaps only become "viewed" when actually opened in SnapViewingScreen
+- **NEW BEHAVIOR**: Two-tier status system - "delivered" when chat is opened, "viewed" when snaps are actually watched
 
 #### src/features/chat/screens/SnapViewingScreen.tsx
-- `SnapViewingScreen()` - Snap viewing screen with timer and pause functionality
-- `loadSnap()` - Load snap data with type checking for Message union type
-- `handleSnapComplete()` - Handle snap completion with viewed status update
-- `startTimer()` - Start countdown timer with pause/resume support
+- `SnapViewingScreen()` - **UPDATED**: Now prevents senders from viewing their own snaps and enforces recipient-only access
+- `loadSnap()` - **UPDATED**: Added permission checks to prevent unauthorized snap viewing
+- `handleSnapComplete()` - Mark snap as viewed and navigate back
+- `startTimer()` - Begin countdown timer with pause/resume support
 - `stopTimer()` - Stop and cleanup timer
 - `handlePressIn()` - Handle press start for pause functionality
 - `handlePressOut()` - Handle press end for resume functionality
+- **NEW BEHAVIOR**: Snaps can only be viewed once by the intended recipient, never by the sender
 
 #### src/features/chat/screens/RecipientSelectionScreen.tsx
 - `RecipientSelectionScreen()` - Recipient selection with friend list, duration controls, and story posting options
@@ -704,96 +753,65 @@
 - `handleSendSnap()` - Send snap to selected recipients with progress tracking
 - `handlePostStory(privacy)` - Post snap as story with specified privacy level (friends/public)
 - `renderFriendItem(friend)` - Render friend item with selection state
-- `renderDurationOption(duration)` - Render duration selection option
-- `renderStoryOption(option)` - Render story privacy option with icon and description
-
-### Friends Feature Functions
-
-#### src/features/friends/store/friendsStore.ts
-- `useFriendsStore()` - Zustand store hook for friends state and actions
-- `loadFriends()` - Load friends list from Firebase with error handling
-- `refreshFriends()` - Refresh friends list with loading state
-- `loadFriendRequests()` - Load sent and received friend requests from Firebase
-- `sendFriendRequest(data)` - Send friend request with validation and status updates
-- `respondToFriendRequest(response)` - Accept or reject friend request with friendship creation
-- `cancelFriendRequest(requestId)` - Cancel sent friend request
-- `searchUsers(query)` - Search users by username with debouncing and friendship status
-- `clearSearch()` - Clear search results and query
-- `removeFriend(friendshipId)`
+- `renderDurationOption(duration)`
 
 #### src/features/chat/services/chatService.ts
-- `sendTextMessage(data)` - Send persistent text message with conversation management
-- `createConversation(otherUserId)` - Create or get existing conversation between two users
-- `sendSnap(data, onProgress)` - Send snap with media upload, metadata creation, and progress tracking
-- `getConversations()` - Get all conversations for current user with populated user data
-- `getMessages(conversationId)` - Get all messages (text and snaps) in a conversation chronologically
-- `getTextMessages(conversationId)` - Private method to get text messages for a conversation
-- `getSnapMessages(conversationId)` - Private method to get snap messages for a conversation
-- `getSnaps(conversationId)` - Legacy method - get all snaps in a conversation
-- `getMessage(messageId)` - Get message data by ID (supports both text and snap messages)
-- `getMessageData(messageId)` - Private method for getting message data from both collections
-- `markMessageAsViewed(messageId)` - Mark message as viewed (supports both text and snap messages)
-- `markSnapAsViewed(snapId)` - Legacy method - mark snap as viewed (calls markMessageAsViewed)
-- `onConversationsChange(callback)` - Real-time listener for conversation updates
-- `onMessagesChange(conversationId, callback)` - Real-time listener for message updates (text and snaps)
-- `cleanupExpiredMessages()` - Remove expired messages from storage and database
-- `handleError(error)` - Convert Firebase errors to user-friendly messages
-- `uploadMedia(mediaUri, mediaType, onProgress)` - Upload media to Firebase Storage
-- `findConversation(user1Id, user2Id)` - Find existing conversation between users
-- `updateConversationWithMessage(conversationId, messageId, messageType, timestamp, recipientId)` - Update conversation metadata with message info
-- `getUserData(userId)` - Get user profile data
+- `getCurrentUser()` - **NEW**: Public method to get current authenticated user ID for permission checks
+- `decrementUnreadCount(conversationId, userId)` - **NEW**: Decrements unread count when messages are actually viewed
+- `markMessageAsDelivered(messageId)` - **NEW**: Marks messages as delivered when chat is opened (applies to both text and snaps), decrements unread count
+- `markMessageAsViewed(messageId)` - **UPDATED**: Now only applies to snaps when actually opened and watched, automatically triggers cleanup of viewed snaps
+- `cleanupExpiredMessages()` - **UPDATED**: Now properly deletes snaps after they are viewed (ephemeral behavior) while keeping text messages persistent
+- `sendTextMessage(data)` - Send persistent text message to recipient
+- `sendSnap(data, onProgress?)` - Send ephemeral snap to recipient with upload progress tracking
+- `uploadMedia(mediaUri, mediaType, onProgress?)` - Upload media to Firebase Storage with progress callbacks
+- `createConversation(otherUserId)` - Create or get existing conversation between users
+- `findConversation(user1Id, user2Id)` - Find existing conversation between two users
+- `updateConversationWithMessage(conversationId, messageId, messageType, timestamp, recipientId)` - Update conversation with new message and increment unread count
+- `getMessages(conversationId)` - Get all messages (text + snaps) for conversation
+- `getTextMessages(conversationId)` - Get text messages for conversation
+- `getSnapMessages(conversationId)` - Get snap messages for conversation
+- `getConversations()` - Get conversations for current user with user data
+- `getSnaps(conversationId)` - Legacy method for snap retrieval
+- `getUserData(userId)` - Get user profile data from database
+- `getMessage(messageId)` - Get message data by ID (public method)
+- `getMessageData(messageId)` - Get message data by ID (private method)
+- `markSnapAsViewed(snapId)` - Legacy method for marking snaps as viewed
+- `onConversationsChange(callback)` - Real-time listener for conversations
+- `onMessagesChange(conversationId, callback)` - Real-time listener for messages
+- `getCurrentUserId()` - Private method to get current user ID
+- `handleError(error)` - Convert errors to user-friendly ChatError format
 
-#### src/features/chat/store/chatStore.ts
-- `useChatStore()` - Zustand store hook for chat state and actions
-- `loadConversations()` - Load conversations from Firebase with user data population
-- `refreshConversations()` - Refresh conversations with loading state management
-- `createConversation(otherUserId)` - Create new conversation between users
-- `loadMessages(conversationId)` - Load messages (text and snaps) for specific conversation
-- `sendTextMessage(data)` - Send text message with conversation updates
-- `sendSnap(data)` - Send snap with progress tracking and conversation updates
-- `markMessageAsViewed(messageId)` - Mark message as viewed (supports both text and snap messages)
-- `startViewingSnap(snap)` - Initialize snap viewing session with timer
-- `pauseViewingSnap()` - Pause viewing session and timer
-- `resumeViewingSnap()` - Resume viewing session with remaining time
-- `stopViewingSnap()` - End viewing session and cleanup
-- `setSelectedRecipients(recipients)` - Set recipient list for snap sending
-- `addRecipient(recipientId)` - Add recipient to selection
-- `removeRecipient(recipientId)` - Remove recipient from selection
-- `clearRecipients()` - Clear all selected recipients
-- `clearError()` - Clear all error states
-- `clearSendError()` - Clear send error state
-- `clearMessagesError()` - Clear messages error state
-- Performance selectors: `useConversations()`, `useConversationsLoading()`, `useCurrentMessages()`, `useSendingMessages()`, `useViewingSession()`, `useSelectedRecipients()`, etc.
+### **NEW EPHEMERAL SNAP BEHAVIOR IMPLEMENTED:**
 
-### src/features/chat/types/index.ts
-- `MessageType` - Union type for message types ('text' | 'snap')
-- `SnapMediaType` - Type for photo/video media types
-- `MessageStatus` - Type for message status (sent, delivered, viewed, expired)
-- `SnapDuration` - Type for viewing duration (1-10 seconds)
-- `BaseMessage` - Base interface with shared properties for all message types
-- `TextMessage` - Text message interface extending BaseMessage with persistent text content
-- `SnapMessage` - Snap message interface extending BaseMessage with media, text overlay, duration, expiration
-- `Message` - Union type for all message types (TextMessage | SnapMessage)
-- `Snap` - Legacy snap interface for backward compatibility
-- `TextMessageCreationData` - Text message creation data with text and recipient
-- `SnapCreationData` - Snap data before upload (local URI, recipient, media type, text, duration)
-- `MessageCreationData` - Union type for message creation data
-- `SnapUploadProgress` - Upload progress tracking with snapId, progress percentage, status, error
-- `Conversation` - Basic conversation interface with participants, last message info, unread count, timestamps
-- `ConversationWithUser` - Conversation with populated user data and last message preview
-- `TextMessageDocument` - Firebase text message document structure
-- `SnapDocument` - Firebase snap document structure
-- `ConversationDocument` - Firebase conversation document structure with participants array and unreadCount array using indices
-- `SendSnapData` - Form data for snap sending with recipients and duration
-- `SnapViewingSession` - Viewing session state with timing and pause functionality
-- `ChatState`, `ChatActions`, `ChatStore` - Complete store interfaces for hybrid messaging state management
-- `ChatError`, `ChatErrorType` - Error handling types
-- Component prop interfaces: `RecipientSelectionProps`, `ConversationItemProps`, `SnapViewerProps`, `SnapTimerProps`, `ChatScreenProps`, `MessageItemProps`
+#### **Core Ephemeral Rules:**
+1. **Sender Restrictions**: Senders cannot view their own snaps after sending
+2. **One-Time Viewing**: Recipients can only view snaps once
+3. **Auto-Deletion**: Snaps are automatically deleted after being viewed
+4. **Two-Tier Status System**: Separate "delivered" vs "viewed" status tracking
 
-### RecipientSelectionScreen Variables
+#### **Two-Tier Status System:**
+- **"Delivered" Status**: Set when recipient opens the chat and sees that messages exist
+  - Applies to both text messages and snaps
+  - Decrements unread count in conversation list
+  - Triggered automatically when chat screen loads
+- **"Viewed" Status**: Set only when snaps are actually opened and watched
+  - Only applies to snaps (text messages remain "delivered")
+  - Makes snap unviewable forever (ephemeral behavior)
+  - Triggers automatic cleanup after 1 second
 
-#### src/features/chat/screens/RecipientSelectionScreen.tsx
-- `DURATION_OPTIONS` - Array of SnapDuration values [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] for snap viewing duration
-- `STORY_OPTIONS` - Array of story privacy options with privacy levels, titles, descriptions, and icons:
-  - Friends Only: privacy 'friends', icon '👥', "Share with all your friends"
-  - Public: privacy 'all', icon '🌎', "Share with everyone"
+#### **Permission System:**
+- `SnapViewingScreen` enforces recipient-only access with user ID verification
+- `ChatScreen` prevents snap viewing attempts by senders with error alerts
+- Permission checks use `chatService.getCurrentUser()` for authentication
+
+#### **Status Message System:**
+- **For Senders**: "Sent" → "Viewed" (both delivered and viewed show as "Sent" until actually viewed)
+- **For Recipients**: "Snap" → "Seen" (unviewed snaps show as "Snap", viewed show as "Seen")
+- **Conversation List**: Shows appropriate status based on user perspective
+- **Chat Screen**: Message bubbles show context-appropriate status text
+
+#### **Automatic Cleanup:**
+- Viewed snaps are automatically deleted from Firebase after 1 second delay
+- `cleanupExpiredMessages()` removes both expired and viewed snaps
+- Text messages remain persistent and are never cleaned up
+- Real-time cleanup triggered after `markMessageAsViewed()` for snaps only

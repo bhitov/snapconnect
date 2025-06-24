@@ -229,6 +229,32 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
   },
 
+  markMessageAsDelivered: async (messageId: string) => {
+    console.log('📬 ChatStore: Marking message as delivered:', messageId);
+
+    try {
+      await chatService.markMessageAsDelivered(messageId);
+
+      // Update local message status
+      const { currentMessages } = get();
+      const updatedMessages = currentMessages.map(message =>
+        message.id === messageId
+          ? { ...message, status: 'delivered' as const, deliveredAt: Date.now() }
+          : message
+      );
+
+      set({ currentMessages: updatedMessages });
+
+      // Refresh conversations to update unread counts
+      await get().refreshConversations();
+
+      console.log('✅ ChatStore: Message marked as delivered');
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to mark message as delivered:', error);
+      throw error;
+    }
+  },
+
   // Snap viewing (for snap messages only)
   startViewingSnap: (snap: SnapMessage) => {
     console.log('👁️ ChatStore: Starting to view snap:', snap.id);

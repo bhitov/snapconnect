@@ -132,6 +132,23 @@ export function SnapViewingScreen() {
         return;
       }
 
+      // Get current user ID to check permissions
+      const currentUserId = chatService.getCurrentUser();
+      
+      // Prevent sender from viewing their own snaps
+      if (snap.senderId === currentUserId) {
+        setError('You cannot view your own snaps');
+        setLoading(false);
+        return;
+      }
+
+      // Ensure only the intended recipient can view the snap
+      if (snap.recipientId !== currentUserId) {
+        setError('You are not authorized to view this snap');
+        setLoading(false);
+        return;
+      }
+
       setSnap(snap);
       setLoading(false);
 

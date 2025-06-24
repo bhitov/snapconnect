@@ -23,6 +23,7 @@ import Animated, {
   withTiming,
   runOnJS,
 } from 'react-native-reanimated';
+import { Video, ResizeMode } from 'expo-av';
 
 import { useTheme } from '@/shared/hooks/useTheme';
 import { StoryProgressBar } from '../components/StoryProgressBar';
@@ -51,6 +52,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
   const [error, setError] = React.useState<string | null>(null);
   const [currentPostIndex, setCurrentPostIndex] = React.useState(0);
   const [isPlaying, setIsPlaying] = React.useState(true);
+  const [mediaLoadError, setMediaLoadError] = React.useState(false);
 
   // Animation values
   const progress = useSharedValue(0);
@@ -61,62 +63,64 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
   const progressIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
   /**
-   * Load story data
+   * Load story data from Firebase
    */
   const loadStory = React.useCallback(async () => {
-    console.log('📖 ViewStoryScreen: Loading story data');
+    console.log('📖 ViewStoryScreen: Loading real story data for story:', storyId, 'user:', userId);
     setIsLoading(true);
     setError(null);
 
     try {
-      // For now, create mock story data
-      const mockStory = {
-        id: storyId,
-        user: {
-          uid: userId,
-          username: 'testuser',
-          displayName: 'Test User',
-          photoURL: 'https://via.placeholder.com/100',
-        },
-        posts: [
-          {
-            id: 'post1',
-            userId: userId,
-            mediaUrl: 'https://via.placeholder.com/400x600/ff6b6b/ffffff?text=Story+1',
-            mediaType: 'photo' as const,
-            text: 'Check out this amazing view!',
-            timestamp: Date.now() - 1000 * 60 * 30, // 30 minutes ago
-            expiresAt: Date.now() + 1000 * 60 * 60 * 23, // 23 hours from now
-            views: {},
-            privacy: 'friends' as const,
-            status: 'active' as const,
-          },
-          {
-            id: 'post2',
-            userId: userId,
-            mediaUrl: 'https://via.placeholder.com/400x600/4ecdc4/ffffff?text=Story+2',
-            mediaType: 'photo' as const,
-            text: 'Another great moment',
-            timestamp: Date.now() - 1000 * 60 * 20, // 20 minutes ago
-            expiresAt: Date.now() + 1000 * 60 * 60 * 23, // 23 hours from now
-            views: {},
-            privacy: 'friends' as const,
-            status: 'active' as const,
-          },
-        ],
-        updatedAt: Date.now() - 1000 * 60 * 20,
-        hasUnviewedPosts: true,
-        totalPosts: 2,
-        latestPostTimestamp: Date.now() - 1000 * 60 * 20,
-      };
+      // Load story from Firebase using stories service
+      if (storyId === userId) {
+        // Loading current user's own story
+        console.log('📖 ViewStoryScreen: Loading my story');
+        const myStory = await storiesService.getMyStory();
+        
+        if (!myStory) {
+          console.warn('⚠️ ViewStoryScreen: My story not found');
+          setError('Story not found');
+          setIsLoading(false);
+          return;
+        }
 
-      setStory(mockStory);
+        // Add user data for my story
+        const storyWithUser = {
+          ...myStory,
+          user: {
+            uid: userId,
+            username: 'You',
+            displayName: 'Your Story',
+            photoURL: undefined,
+          },
+          hasUnviewedPosts: false, // User's own story is always "viewed"
+          totalPosts: myStory.posts.length,
+          latestPostTimestamp: Math.max(...myStory.posts.map(p => p.timestamp)),
+        };
+
+        setStory(storyWithUser);
+        console.log('✅ ViewStoryScreen: My story loaded with', myStory.posts.length, 'posts');
+      } else {
+        // Loading friend's story
+        console.log('📖 ViewStoryScreen: Loading friend story');
+        const allStories = await storiesService.getStories();
+        const targetStory = allStories.find(s => s.id === storyId);
+        
+        if (!targetStory) {
+          console.warn('⚠️ ViewStoryScreen: Friend story not found');
+          setError('Story not found or expired');
+          setIsLoading(false);
+          return;
+        }
+
+        setStory(targetStory);
+        console.log('✅ ViewStoryScreen: Friend story loaded with', targetStory.posts.length, 'posts');
+      }
+
       setIsLoading(false);
-
-      console.log('✅ ViewStoryScreen: Story loaded successfully');
-    } catch (loadError) {
+    } catch (loadError: any) {
       console.error('❌ ViewStoryScreen: Failed to load story:', loadError);
-      setError('Failed to load story');
+      setError(loadError.message || 'Failed to load story');
       setIsLoading(false);
     }
   }, [storyId, userId]);
@@ -174,6 +178,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
     if (currentPostIndex < story.posts.length - 1) {
       setCurrentPostIndex(prev => prev + 1);
       setProgressValue(0);
+      setMediaLoadError(false); // Reset media error for new post
     } else {
       // End of story, close viewer
       console.log('✅ ViewStoryScreen: End of story reached');
@@ -192,6 +197,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
     if (currentPostIndex > 0) {
       setCurrentPostIndex(prev => prev - 1);
       setProgressValue(0);
+      setMediaLoadError(false); // Reset media error for new post
     }
   }, [story, currentPostIndex]);
 
@@ -234,6 +240,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
     console.log('📊 ViewStoryScreen: Post change from progress bar:', index);
     setCurrentPostIndex(index);
     setProgressValue(0);
+    setMediaLoadError(false); // Reset media error for new post
   }, []);
 
   /**
@@ -333,7 +340,17 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
   }
 
   const currentPost = story.posts[currentPostIndex];
+  
+  console.log('🎬 ViewStoryScreen: Rendering post', currentPostIndex + 1, 'of', story.posts.length);
+  console.log('🎬 ViewStoryScreen: Current post data:', {
+    id: currentPost?.id,
+    mediaUrl: currentPost?.mediaUrl,
+    mediaType: currentPost?.mediaType,
+    text: currentPost?.text,
+  });
+  
   if (!currentPost) {
+    console.error('❌ ViewStoryScreen: Current post is null/undefined');
     return (
       <View style={[styles.container, styles.errorContainer, { backgroundColor: theme.colors.background }]}>
         <Text style={[styles.errorText, { color: theme.colors.textPrimary }]}>
@@ -345,12 +362,46 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
 
   return (
     <Animated.View style={[styles.container, fadeStyle]}>
-      {/* Background image */}
-      <Image
-        source={{ uri: currentPost.mediaUrl }}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      />
+      {/* Background media - photo or video */}
+      {mediaLoadError ? (
+        <View style={[styles.backgroundImage, styles.errorBackground]}>
+          <Text style={styles.mediaErrorText}>Failed to load media</Text>
+          <Text style={styles.mediaErrorUrl}>{currentPost.mediaUrl}</Text>
+        </View>
+      ) : currentPost.mediaType === 'video' ? (
+        <Video
+          source={{ uri: currentPost.mediaUrl }}
+          style={styles.backgroundImage}
+          resizeMode={ResizeMode.COVER}
+          shouldPlay={isPlaying}
+          isLooping={false}
+          isMuted={false}
+          onLoadStart={() => {
+            console.log('🎥 ViewStoryScreen: Video loading started for:', currentPost.mediaUrl);
+            setMediaLoadError(false);
+          }}
+          onLoad={() => console.log('✅ ViewStoryScreen: Video loaded successfully')}
+          onError={(error) => {
+            console.error('❌ ViewStoryScreen: Video failed to load:', error);
+            setMediaLoadError(true);
+          }}
+        />
+      ) : (
+        <Image
+          source={{ uri: currentPost.mediaUrl }}
+          style={styles.backgroundImage}
+          resizeMode="cover"
+          onLoadStart={() => {
+            console.log('🖼️ ViewStoryScreen: Image loading started for:', currentPost.mediaUrl);
+            setMediaLoadError(false);
+          }}
+          onLoad={() => console.log('✅ ViewStoryScreen: Image loaded successfully')}
+          onError={(error) => {
+            console.error('❌ ViewStoryScreen: Image failed to load:', error.nativeEvent.error);
+            setMediaLoadError(true);
+          }}
+        />
+      )}
 
       {/* Overlay for better text readability */}
       <View style={styles.overlay} />
@@ -563,5 +614,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     textAlign: 'center',
+  },
+  errorBackground: {
+    backgroundColor: '#333333',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  mediaErrorText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  mediaErrorUrl: {
+    color: '#cccccc',
+    fontSize: 12,
+    textAlign: 'center',
+    opacity: 0.8,
   },
 });

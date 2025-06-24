@@ -17,7 +17,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { Screen } from '@/shared/components/layout/Screen';
 import { StoriesList } from '../components/StoriesList';
-import { useStoriesStore, useStories, useStoriesLoading, useStoriesError } from '../store/storiesStore';
+import { MyStoryCard } from '../components/MyStoryCard';
+import { useStoriesStore, useStories, useMyStory, useStoriesLoading, useStoriesError } from '../store/storiesStore';
 
 import type { StoriesScreenProps, StoryWithUser } from '../types';
 
@@ -32,26 +33,28 @@ export function StoriesScreen({ navigation }: StoriesScreenProps) {
 
   // Stories state
   const stories = useStories();
+  const myStory = useMyStory();
   const isLoading = useStoriesLoading();
   const error = useStoriesError();
 
   // Stories actions
-  const { loadStories, refreshStories, clearError } = useStoriesStore();
+  const { loadStories, loadMyStory, refreshStories, clearError } = useStoriesStore();
 
-  console.log('📖 StoriesScreen: Rendering with', stories.length, 'stories');
+  console.log('📖 StoriesScreen: Rendering with', stories.length, 'stories, myStory:', myStory ? 'exists' : 'null');
 
   /**
    * Load stories when screen comes into focus
    */
   useFocusEffect(
     React.useCallback(() => {
-      console.log('📖 StoriesScreen: Screen focused, loading stories');
+      console.log('📖 StoriesScreen: Screen focused, loading stories and my story');
       loadStories();
+      loadMyStory();
 
       return () => {
         console.log('📖 StoriesScreen: Screen unfocused');
       };
-    }, [loadStories])
+    }, [loadStories, loadMyStory])
   );
 
   /**
@@ -95,6 +98,36 @@ export function StoriesScreen({ navigation }: StoriesScreenProps) {
   const handleErrorDismiss = React.useCallback(() => {
     clearError();
   }, [clearError]);
+
+  /**
+   * Handle my story press - navigate to story viewer
+   */
+  const handleMyStoryPress = React.useCallback(() => {
+    if (!myStory) return;
+    
+    console.log('👁️ StoriesScreen: My story pressed:', myStory.id);
+    
+    // Navigate to story viewer for own story
+    navigation.navigate('ViewStory', {
+      userId: myStory.userId,
+      storyId: myStory.id,
+    });
+  }, [myStory, navigation]);
+
+  /**
+   * Handle viewers press - show viewers list
+   */
+  const handleViewersPress = React.useCallback((viewers: any[]) => {
+    console.log('👥 StoriesScreen: Showing viewers:', viewers.length);
+    
+    // For now, show a simple alert with viewer count
+    // In a full implementation, this would navigate to a viewers screen
+    Alert.alert(
+      'Story Viewers',
+      `${viewers.length} people have viewed your story:\n\n${viewers.map(v => v.displayName).join('\n')}`,
+      [{ text: 'OK', style: 'default' }]
+    );
+  }, []);
 
   /**
    * Show error alert if there's an error
@@ -143,6 +176,15 @@ export function StoriesScreen({ navigation }: StoriesScreenProps) {
             {stories.length > 0 ? `${stories.length} active stories` : 'No stories yet'}
           </Text>
         </View>
+
+        {/* My Story Section */}
+        {myStory && (
+          <MyStoryCard
+            story={myStory}
+            onPress={handleMyStoryPress}
+            onViewersPress={handleViewersPress}
+          />
+        )}
 
         {/* Stories list */}
         <StoriesList

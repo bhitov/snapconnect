@@ -87,6 +87,32 @@ function getMessageStatusIcon(status: string): string {
 }
 
 /**
+ * Get status text for snap display
+ */
+function getSnapStatusText(status: string, isFromCurrentUser: boolean): string {
+  if (isFromCurrentUser) {
+    // For sender: show "Sent" → "Viewed"
+    switch (status) {
+      case 'sent':
+      case 'delivered':
+        return 'Sent';
+      case 'viewed':
+        return 'Viewed';
+      default:
+        return 'Sent';
+    }
+  } else {
+    // For recipient: show "Snap" → "Seen"
+    switch (status) {
+      case 'viewed':
+        return 'Seen';
+      default:
+        return 'Snap';
+    }
+  }
+}
+
+/**
  * Individual message item component
  */
 function MessageItem({ 
@@ -135,7 +161,7 @@ function MessageItem({
             styles.snapText,
             { color: isFromCurrentUser ? theme.colors.background : theme.colors.text }
           ]}>
-            {snapMessage.status === 'viewed' ? 'Viewed' : 'Snap'}
+            {getSnapStatusText(snapMessage.status, isFromCurrentUser)}
           </Text>
           {snapMessage.textOverlay && (
             <Text style={[
@@ -213,6 +239,7 @@ export function ChatScreen() {
     loadMessages, 
     sendTextMessage, 
     markMessageAsViewed,
+    markMessageAsDelivered,
     clearError,
     clearSendError,
   } = useChatStore();
@@ -249,7 +276,7 @@ export function ChatScreen() {
   }, [navigation, otherUser.displayName, theme]);
 
   /**
-   * Mark unread messages as viewed
+   * Mark unread messages as delivered when chat is opened (both text and snaps)
    */
   useEffect(() => {
     if (!currentUser || messages.length === 0) return;
@@ -257,15 +284,17 @@ export function ChatScreen() {
     const unreadMessages = messages.filter(
       message => 
         message.recipientId === currentUser.uid && 
-        message.status !== 'viewed'
+        message.status === 'sent' // Only mark sent messages as delivered
     );
 
     unreadMessages.forEach(message => {
-      markMessageAsViewed(message.id).catch(error => {
-        console.error('Failed to mark message as viewed:', error);
+      // Use markMessageAsDelivered for when chat is opened
+      // This applies to both text messages and snaps
+      markMessageAsDelivered(message.id).catch((error: any) => {
+        console.error('Failed to mark message as delivered:', error);
       });
     });
-  }, [messages, currentUser, markMessageAsViewed]);
+  }, [messages, currentUser]);
 
   /**
    * Scroll to bottom when new messages arrive
@@ -308,13 +337,22 @@ export function ChatScreen() {
    * Handle snap press
    */
   const handleSnapPress = useCallback((snap: SnapMessage) => {
+    if (!currentUser) return;
+
+    // Prevent sender from viewing their own snaps
+    if (snap.senderId === currentUser.uid) {
+      Alert.alert('Cannot View', 'You cannot view your own snaps.');
+      return;
+    }
+
+    // Prevent viewing already viewed snaps
     if (snap.status === 'viewed') {
       Alert.alert('Snap Viewed', 'This snap has already been viewed and is no longer available.');
       return;
     }
 
     navigation.navigate('ViewSnap', { snapId: snap.id });
-  }, [navigation]);
+  }, [navigation, currentUser]);
 
   /**
    * Handle camera button press

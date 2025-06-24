@@ -28,6 +28,18 @@ export interface ViewData {
 }
 
 /**
+ * Story viewer information
+ */
+export interface StoryViewer {
+  userId: string;
+  username: string;
+  displayName: string;
+  photoURL?: string;
+  viewedAt: number;
+  hasViewedAll: boolean;
+}
+
+/**
  * Individual story post
  */
 export interface StoryPost {
@@ -189,6 +201,7 @@ export interface StoriesActions {
   createStory: (data: StoryCreationData, onProgress?: (progress: StoryUploadProgress) => void) => Promise<void>;
   deleteStoryPost: (storyId: string, postId: string) => Promise<void>;
   deleteStory: (storyId: string) => Promise<void>;
+  getStoryViewers: (storyId: string, postId?: string) => Promise<StoryViewer[]>;
   
   // Viewing
   startViewing: (story: Story) => void;

@@ -155,7 +155,9 @@ export function RecipientSelectionScreen() {
 
       console.log('📸 RecipientSelectionScreen: Story data prepared:', storyData);
       
-      await createStory(storyData);
+      await createStory(storyData, (progress) => {
+        console.log('📤 RecipientSelectionScreen: Story upload progress:', progress);
+      });
 
       console.log('✅ RecipientSelectionScreen: Story posted successfully, navigating back to camera');
       

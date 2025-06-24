@@ -18,6 +18,7 @@ import type {
   StoryCreationData,
   StoryUploadProgress,
   StoryViewingSession,
+  StoryViewer,
   StoryError,
 } from '../types';
 
@@ -199,6 +200,25 @@ export const useStoriesStore = create<StoriesStore>()(
           set(state => {
             state.error = error as StoryError;
           });
+        }
+      },
+
+      getStoryViewers: async (storyId: string, postId?: string) => {
+        console.log('👥 StoriesStore: Getting story viewers');
+
+        try {
+          const viewers = await storiesService.getStoryViewers(storyId, postId);
+
+          console.log('✅ StoriesStore: Loaded', viewers.length, 'story viewers');
+          return viewers;
+        } catch (error) {
+          console.error('❌ StoriesStore: Failed to get story viewers:', error);
+
+          set(state => {
+            state.error = error as StoryError;
+          });
+
+          return [];
         }
       },
 

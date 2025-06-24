@@ -153,6 +153,10 @@ export function StoryRing({
     );
   }
 
+  // Get the latest story post for thumbnail
+  const latestPost = story?.posts?.length ? story.posts[story.posts.length - 1] : null;
+  const thumbnailUri = latestPost?.mediaUrl;
+
   // Render story ring
   return (
     <TouchableOpacity
@@ -238,7 +242,20 @@ export function StoryRing({
           },
         ]}
       >
-        {story?.user?.photoURL ? (
+        {thumbnailUri ? (
+          <Image
+            source={{ uri: thumbnailUri }}
+            style={[
+              styles.avatar,
+              {
+                width: config.avatar - (hasUnviewedStories ? 6 : 4),
+                height: config.avatar - (hasUnviewedStories ? 6 : 4),
+                borderRadius: (config.avatar - (hasUnviewedStories ? 6 : 4)) / 2,
+              },
+            ]}
+            resizeMode="cover"
+          />
+        ) : story?.user?.photoURL ? (
           <Image
             source={{ uri: story.user.photoURL }}
             style={[

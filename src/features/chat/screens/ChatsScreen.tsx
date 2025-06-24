@@ -18,6 +18,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/shared/hooks/useTheme';
+import { StoriesList } from '@/features/stories/components/StoriesList';
+import { 
+  useStoriesStore, 
+  useStories, 
+  useStoriesLoading 
+} from '@/features/stories/store/storiesStore';
 
 import {
   useChatStore,
@@ -29,10 +35,15 @@ import {
 } from '../store/chatStore';
 
 import type { ConversationWithUser } from '../types';
-import type { ChatStackParamList } from '@/shared/navigation/types';
+import type { ChatStackParamList, MainTabParamList } from '@/shared/navigation/types';
 import type { StackNavigationProp } from '@react-navigation/stack';
+import type { CompositeNavigationProp } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
-type ChatsScreenNavigationProp = StackNavigationProp<ChatStackParamList>;
+type ChatsScreenNavigationProp = CompositeNavigationProp<
+  StackNavigationProp<ChatStackParamList>,
+  BottomTabNavigationProp<MainTabParamList>
+>;
 
 /**
  * Format timestamp for conversation list
@@ -69,27 +80,31 @@ function formatTimestamp(timestamp: number): string {
 }
 
 /**
- * Get status icon for snap
+ * Get status text for snap display
  */
-function getSnapStatusIcon(status: string, isFromCurrentUser: boolean): string {
+function getSnapStatusText(status: string, messageType: string, isFromCurrentUser: boolean): string {
   if (isFromCurrentUser) {
+    // For sender: show "Sent" → "Viewed"
     switch (status) {
       case 'sent':
-        return '→';
       case 'delivered':
-        return '✓';
+        return 'Sent';
       case 'viewed':
-        return '👁️';
+        return 'Viewed';
       default:
-        return '→';
+        return 'Sent';
     }
   } else {
-    switch (status) {
-      case 'viewed':
-        return '';
-      default:
-        return '🔴'; // New snap indicator
+    // For recipient: show "Snap" → "Seen"
+    if (messageType === 'snap') {
+      switch (status) {
+        case 'viewed':
+          return 'Seen';
+        default:
+          return 'Snap';
+      }
     }
+    return '';
   }
 }
 
@@ -107,15 +122,21 @@ export function ChatsScreen() {
   const isRefreshing = useIsRefreshing();
   const totalUnreadCount = useUnreadCount();
 
+  // Stories hooks
+  const stories = useStories();
+  const storiesLoading = useStoriesLoading();
+
   // Store actions
   const { loadConversations, refreshConversations, clearError } =
     useChatStore();
+  const { loadStories, refreshStories } = useStoriesStore();
 
   /**
-   * Load conversations on component mount and focus
+   * Load conversations and stories on component mount and focus
    */
   useEffect(() => {
     loadConversations();
+    loadStories();
   }, []);
 
   /**
@@ -132,7 +153,32 @@ export function ChatsScreen() {
    */
   const handleRefresh = useCallback(() => {
     refreshConversations();
+    refreshStories();
   }, []);
+
+  /**
+   * Handle story press - navigate to story viewer
+   */
+  const handleStoryPress = useCallback((story: any) => {
+    console.log('📖 ChatsScreen: Story pressed:', story.id);
+    // Navigate to Stories tab using parent navigation
+    const parentNav = navigation.getParent();
+    if (parentNav) {
+      parentNav.navigate('Stories');
+    }
+  }, [navigation]);
+
+  /**
+   * Handle add story press - navigate to camera
+   */
+  const handleAddStoryPress = useCallback(() => {
+    console.log('📸 ChatsScreen: Add story pressed');
+    // Navigate to Camera tab using parent navigation
+    const parentNav = navigation.getParent();
+    if (parentNav) {
+      parentNav.navigate('Camera');
+    }
+  }, [navigation]);
 
   /**
    * Handle conversation press - navigate to individual chat screen
@@ -222,9 +268,10 @@ export function ChatsScreen() {
                       { color: theme.colors.textSecondary },
                     ]}
                   >
-                    {getSnapStatusIcon(
+                    {getSnapStatusText(
                       lastMessage.status,
-                      lastMessage.senderId === conversation.otherUser.uid
+                      lastMessage.type,
+                      lastMessage.senderId !== conversation.otherUser.uid
                     )}
                   </Text>
                 </View>
@@ -351,6 +398,19 @@ export function ChatsScreen() {
         )}
       </View>
 
+      {/* Stories Bar */}
+      {stories.length > 0 && (
+        <View style={styles.storiesContainer}>
+          <StoriesList
+            stories={stories}
+            onStoryPress={handleStoryPress}
+            onAddStoryPress={handleAddStoryPress}
+            refreshing={storiesLoading}
+            onRefresh={refreshStories}
+          />
+        </View>
+      )}
+
       {/* Content */}
       {error ? (
         renderErrorState()
@@ -408,6 +468,10 @@ const styles = StyleSheet.create({
   headerBadgeText: {
     fontSize: 12,
     fontWeight: '600',
+  },
+  storiesContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
   conversationsList: {
     flexGrow: 1,

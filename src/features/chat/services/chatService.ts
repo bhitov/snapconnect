@@ -71,6 +71,13 @@ class ChatService {
   }
 
   /**
+   * Get current authenticated user ID (public method)
+   */
+  getCurrentUser(): string {
+    return this.getCurrentUserId();
+  }
+
+  /**
    * Handle service errors with user-friendly messages
    */
   private handleError(error: any): ChatError {
@@ -383,6 +390,46 @@ class ChatService {
         error: (error as any).message || 'Failed to send snap',
       });
       throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Decrement unread count for a user in a conversation
+   */
+  private async decrementUnreadCount(conversationId: string, userId: string): Promise<void> {
+    console.log('📉 ChatService: Decrementing unread count for user:', userId);
+
+    try {
+      const conversationRef = ref(this.database, `conversations/${conversationId}`);
+      const snapshot = await get(conversationRef);
+
+      if (!snapshot.exists()) {
+        console.warn('⚠️ ChatService: Conversation not found for unread count update');
+        return;
+      }
+
+      const conversation = snapshot.val() as ConversationDocument;
+      
+      // Find user index in participants array
+      const userIndex = conversation.participants.findIndex(id => id === userId);
+      if (userIndex === -1) {
+        console.warn('⚠️ ChatService: User not found in conversation participants');
+        return;
+      }
+
+      // Create new unread count array with decremented value
+      const newUnreadCount = [...conversation.unreadCount];
+      newUnreadCount[userIndex] = Math.max(0, (newUnreadCount[userIndex] || 0) - 1);
+
+      // Update conversation
+      await update(conversationRef, {
+        unreadCount: newUnreadCount,
+        updatedAt: Date.now(),
+      });
+
+      console.log('✅ ChatService: Unread count decremented');
+    } catch (error) {
+      console.error('❌ ChatService: Failed to decrement unread count:', error);
     }
   }
 
@@ -732,10 +779,10 @@ class ChatService {
   }
 
   /**
-   * Mark message as viewed (supports both text messages and snaps)
+   * Mark message as delivered (when chat is opened and message is seen)
    */
-  async markMessageAsViewed(messageId: string): Promise<void> {
-    console.log('👁️ ChatService: Marking message as viewed:', messageId);
+  async markMessageAsDelivered(messageId: string): Promise<void> {
+    console.log('📬 ChatService: Marking message as delivered:', messageId);
 
     try {
       const currentUserId = this.getCurrentUserId();
@@ -752,13 +799,18 @@ class ChatService {
           throw new Error('Access denied');
         }
 
-        // Update message status
-        await update(textMessageRef, {
-          status: 'viewed',
-          viewedAt: Date.now(),
-        });
+        // Only update if not already delivered/viewed
+        if (messageData.status === 'sent') {
+          await update(textMessageRef, {
+            status: 'delivered',
+            deliveredAt: Date.now(),
+          });
 
-        console.log('✅ ChatService: Text message marked as viewed');
+          // Update conversation unread count
+          await this.decrementUnreadCount(messageData.conversationId, currentUserId);
+        }
+
+        console.log('✅ ChatService: Text message marked as delivered');
         return;
       }
 
@@ -774,19 +826,70 @@ class ChatService {
           throw new Error('Access denied');
         }
 
-        // Update snap status
-        await update(snapRef, {
-          status: 'viewed',
-          viewedAt: Date.now(),
-        });
+        // Only update if not already delivered/viewed
+        if (snapData.status === 'sent') {
+          await update(snapRef, {
+            status: 'delivered',
+            deliveredAt: Date.now(),
+          });
 
-        console.log('✅ ChatService: Snap marked as viewed');
+          // Update conversation unread count
+          await this.decrementUnreadCount(snapData.conversationId, currentUserId);
+        }
+
+        console.log('✅ ChatService: Snap marked as delivered');
         return;
       }
 
       throw new Error('Message not found');
     } catch (error) {
-      console.error('❌ ChatService: Failed to mark message as viewed:', error);
+      console.error('❌ ChatService: Failed to mark message as delivered:', error);
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Mark message as viewed (only for snaps when actually opened and watched)
+   */
+  async markMessageAsViewed(messageId: string): Promise<void> {
+    console.log('👁️ ChatService: Marking snap as viewed (opened):', messageId);
+
+    try {
+      const currentUserId = this.getCurrentUserId();
+      
+      // Only snaps can be "viewed" (opened and watched)
+      const snapRef = ref(this.database, `snaps/${messageId}`);
+      const snapSnapshot = await get(snapRef);
+      
+      if (snapSnapshot.exists()) {
+        const snapData = snapSnapshot.val() as SnapDocument;
+
+        // Verify user is the recipient
+        if (snapData.recipientId !== currentUserId) {
+          throw new Error('Access denied');
+        }
+
+        // Update snap status to viewed (making it unviewable)
+        await update(snapRef, {
+          status: 'viewed',
+          viewedAt: Date.now(),
+        });
+
+        console.log('✅ ChatService: Snap marked as viewed (now unviewable)');
+
+        // Automatically cleanup viewed snap after a short delay (ephemeral behavior)
+        setTimeout(() => {
+          this.cleanupExpiredMessages().catch(error => {
+            console.error('❌ ChatService: Auto-cleanup failed:', error);
+          });
+        }, 1000); // 1 second delay to ensure the viewing session completes
+
+        return;
+      }
+
+      throw new Error('Snap not found - only snaps can be marked as viewed');
+    } catch (error) {
+      console.error('❌ ChatService: Failed to mark snap as viewed:', error);
       throw this.handleError(error);
     }
   }
@@ -862,35 +965,39 @@ class ChatService {
     console.log('🧹 ChatService: Cleaning up expired messages');
 
     try {
-      const messagesRef = ref(this.database, 'textMessages');
-      const snapshot = await get(messagesRef);
+      // Clean up snaps (they expire after 24 hours OR when viewed)
+      const snapsRef = ref(this.database, 'snaps');
+      const snapsSnapshot = await get(snapsRef);
 
-      if (!snapshot.exists()) return;
+      if (snapsSnapshot.exists()) {
+        const snaps = snapsSnapshot.val();
+        const now = Date.now();
+        const expiredSnaps: string[] = [];
 
-      const messages = snapshot.val();
-      const now = Date.now();
-      const expiredMessages: string[] = [];
+        for (const [snapId, snapData] of Object.entries(
+          snaps as Record<string, any>
+        )) {
+          // Delete snaps that are expired OR viewed (ephemeral behavior)
+          if (snapData.expiresAt < now || snapData.status === 'viewed') {
+            expiredSnaps.push(snapId);
+          }
+        }
 
-             for (const [messageId, messageData] of Object.entries(
-         messages as Record<string, any>
-       )) {
-         // Only snaps expire, text messages are persistent
-         if (messageData.expiresAt && (messageData.expiresAt < now || messageData.status === 'viewed')) {
-           expiredMessages.push(messageId);
-         }
-       }
+        // Delete expired/viewed snaps
+        for (const snapId of expiredSnaps) {
+          const snapRef = ref(this.database, `snaps/${snapId}`);
+          await set(snapRef, null);
+        }
 
-      // Delete expired messages
-      for (const messageId of expiredMessages) {
-        const messageRef = ref(this.database, `textMessages/${messageId}`);
-        await set(messageRef, null);
+        console.log(
+          '✅ ChatService: Cleaned up',
+          expiredSnaps.length,
+          'expired/viewed snaps'
+        );
       }
 
-      console.log(
-        '✅ ChatService: Cleaned up',
-        expiredMessages.length,
-        'expired messages'
-      );
+      // Text messages are persistent and don't get cleaned up
+      console.log('✅ ChatService: Text messages remain persistent');
     } catch (error) {
       console.error('❌ ChatService: Cleanup failed:', error);
     }

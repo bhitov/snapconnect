@@ -6,4 +6,5 @@
 
 export { StoriesList } from './StoriesList';
 export { StoryRing } from './StoryRing';
-export { StoryProgressBar } from './StoryProgressBar'; 
+export { StoryProgressBar } from './StoryProgressBar';
+export { MyStoryCard } from './MyStoryCard'; 
