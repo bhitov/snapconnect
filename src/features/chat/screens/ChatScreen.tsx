@@ -232,17 +232,19 @@ export function ChatScreen() {
   );
 
   /**
-   * Set navigation title
+   * Set navigation title and back button
    */
   useEffect(() => {
     navigation.setOptions({
       title: otherUser.displayName,
       headerTitleStyle: {
-        color: theme.colors.text,
+        color: theme.colors.text || '#000000',
       },
       headerStyle: {
-        backgroundColor: theme.colors.background,
+        backgroundColor: theme.colors.background || '#FFFFFF',
       },
+      headerBackTitle: 'Chats',
+      headerTintColor: theme.colors.primary || '#FFFC00',
     });
   }, [navigation, otherUser.displayName, theme]);
 
