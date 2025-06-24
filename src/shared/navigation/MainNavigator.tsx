@@ -16,6 +16,7 @@ import {
   FriendRequestsScreen,
   FriendsListScreen,
 } from '../../features/friends/screens';
+import { usePendingRequestsCount } from '../../features/friends/store/friendsStore';
 import { StoriesScreen } from '../../features/stories/screens/StoriesScreen';
 import { ViewStoryScreen } from '../../features/stories/screens/ViewStoryScreen';
 import { useTheme } from '../hooks/useTheme';
@@ -213,6 +214,46 @@ function PlaceholderCreateStoryScreen() {
   );
 }
 
+// Friends tab icon with notification badge
+function FriendsTabIcon({ color, size }: { color: string; size: number }) {
+  const pendingRequestsCount = usePendingRequestsCount();
+  const theme = useTheme();
+
+  return (
+    <View style={{ position: 'relative' }}>
+      <Ionicons name='people' size={size} color={color} />
+      {pendingRequestsCount > 0 && (
+        <View
+          style={{
+            position: 'absolute',
+            top: -2,
+            right: -6,
+            backgroundColor: theme.colors.error || '#FF3B30',
+            borderRadius: 10,
+            minWidth: 20,
+            height: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: 2,
+            borderColor: theme.colors.background || '#FFFFFF',
+          }}
+        >
+          <Text
+            style={{
+              color: '#FFFFFF',
+              fontSize: 12,
+              fontWeight: '600',
+              textAlign: 'center',
+            }}
+          >
+            {pendingRequestsCount > 99 ? '99+' : pendingRequestsCount}
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 /**
@@ -262,7 +303,7 @@ export function MainNavigator() {
         options={{
           tabBarLabel: 'Friends',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name='people' size={size} color={color} />
+            <FriendsTabIcon color={color} size={size} />
           ),
         }}
       />

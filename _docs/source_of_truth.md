@@ -31,7 +31,7 @@
 ##### Navigation (src/shared/navigation/)
 - `RootNavigator.tsx` - Root navigation with auth flow detection, loading screen, and modal screens (SnapPreview, RecipientSelection, ViewSnap)
 - `AuthNavigator.tsx` - Authentication screens navigator with Login, Register, ProfileSetup, ForgotPassword
-- `MainNavigator.tsx` - Main tab navigation with Chats, Camera, Friends, Stories tabs and separate stack navigators for Chats and Friends (snap-focused, no traditional chat screens)
+- `MainNavigator.tsx` - Main tab navigation with Chats, Camera, Friends, Stories tabs and separate stack navigators for Chats and Friends (snap-focused, no traditional chat screens), includes notification badge on Friends tab for pending friend requests
 - `types.ts` - Navigation type definitions for all stack param lists including simplified ChatStackParamList and FriendsStackParamList
 
 ##### Components (src/shared/components/)
@@ -183,6 +183,11 @@
 
 ### src/shared/navigation/AuthNavigator.tsx
 - `AuthNavigator()` - Authentication navigator with Login, Register, ProfileSetup, ForgotPassword screens
+
+### src/shared/navigation/MainNavigator.tsx
+- `FriendsTabIcon()` - Custom tab icon component for Friends tab with notification badge showing pending friend request count
+- `ChatHeaderBackButton()` - Custom header back button component for chat screens
+- `MainNavigator()` - Main tab navigator with four tabs: Chats, Camera, Friends, Stories
 
 ### src/shared/hooks/useTheme.ts
 - `useTheme()` - Hook for accessing current theme, auto-switches between light/dark based on system preference

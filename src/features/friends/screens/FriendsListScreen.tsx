@@ -53,10 +53,13 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
   const { loadFriends, refreshFriends, clearError } = useFriendsStore();
 
   /**
-   * Load friends on mount
+   * Load friends and friend requests on mount
    */
   useEffect(() => {
     loadFriends();
+    // Also load friend requests to ensure badge count is accurate
+    const { loadFriendRequests } = useFriendsStore.getState();
+    loadFriendRequests();
   }, [loadFriends]);
 
   /**
