@@ -13,10 +13,25 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { ref, set, get, update } from 'firebase/database';
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage';
 
-import { auth, database } from '../../../shared/services/firebase/config';
+import {
+  auth,
+  database,
+  storage,
+} from '../../../shared/services/firebase/config';
 
-import type { User, UserProfileData } from '../types/authTypes';
+import type {
+  User,
+  UserProfileData,
+  ProfileSetupForm,
+  AvatarUpload,
+  ProfileCompletionStatus,
+} from '../types/authTypes';
 
 /**
  * Authentication service class
@@ -213,6 +228,181 @@ class AuthService {
         callback(null);
       }
     });
+  }
+
+  /**
+   * Complete user profile setup
+   *
+   * @param {string} uid - User ID
+   * @param {ProfileSetupForm} profileData - Profile setup data
+   * @returns {Promise<User>} Updated user profile
+   */
+  async completeProfileSetup(
+    uid: string,
+    profileData: ProfileSetupForm
+  ): Promise<User> {
+    console.log('📝 AuthService: Completing profile setup for UID:', uid);
+
+    try {
+      const updates: Partial<UserProfileData> = {
+        displayName: profileData.displayName,
+        lastActive: Date.now(),
+      };
+
+      if (profileData.bio) {
+        updates.bio = profileData.bio;
+      }
+
+      if (profileData.photoURL) {
+        updates.photoURL = profileData.photoURL;
+      }
+
+      // Update profile in database
+      const userRef = ref(database, `users/${uid}`);
+      await update(userRef, updates);
+
+      // Update Firebase Auth profile
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, {
+          displayName: profileData.displayName,
+          ...(profileData.photoURL && { photoURL: profileData.photoURL }),
+        });
+      }
+
+      // Get updated profile
+      const updatedProfile = await this.getUserProfile(uid);
+      if (!updatedProfile) {
+        throw new Error('Failed to retrieve updated profile');
+      }
+
+      console.log('✅ AuthService: Profile setup completed successfully');
+      return updatedProfile;
+    } catch (error) {
+      console.error('❌ AuthService: Profile setup failed:', error);
+      throw this.handleAuthError(error);
+    }
+  }
+
+  /**
+   * Upload user avatar to Firebase Storage
+   *
+   * @param {string} uid - User ID
+   * @param {AvatarUpload} avatar - Avatar file data
+   * @returns {Promise<string>} Download URL
+   */
+  async uploadAvatar(uid: string, avatar: AvatarUpload): Promise<string> {
+    console.log('📸 AuthService: Uploading avatar for UID:', uid);
+
+    try {
+      // Create storage reference
+      const avatarRef = storageRef(storage, `avatars/${uid}/${Date.now()}.jpg`);
+
+      // Fetch the image data
+      const response = await fetch(avatar.uri);
+      const blob = await response.blob();
+
+      console.log('📤 AuthService: Uploading blob to Firebase Storage');
+
+      // Upload to Firebase Storage
+      const uploadResult = await uploadBytes(avatarRef, blob);
+
+      // Get download URL
+      const downloadURL = await getDownloadURL(uploadResult.ref);
+
+      console.log(
+        '✅ AuthService: Avatar uploaded successfully, URL:',
+        downloadURL
+      );
+      return downloadURL;
+    } catch (error) {
+      console.error('❌ AuthService: Avatar upload failed:', error);
+      throw this.handleAuthError(error);
+    }
+  }
+
+  /**
+   * Update user profile
+   *
+   * @param {string} uid - User ID
+   * @param {Partial<UserProfileData>} updates - Profile updates
+   * @returns {Promise<User>} Updated user profile
+   */
+  async updateUserProfile(
+    uid: string,
+    updates: Partial<UserProfileData>
+  ): Promise<User> {
+    console.log('🔄 AuthService: Updating profile for UID:', uid);
+
+    try {
+      const profileUpdates = {
+        ...updates,
+        lastActive: Date.now(),
+      };
+
+      // Update profile in database
+      const userRef = ref(database, `users/${uid}`);
+      await update(userRef, profileUpdates);
+
+      // Update Firebase Auth profile if display name or photo changed
+      if (auth.currentUser && (updates.displayName || updates.photoURL)) {
+        const authUpdates: { displayName?: string; photoURL?: string } = {};
+
+        if (updates.displayName) {
+          authUpdates.displayName = updates.displayName;
+        }
+
+        if (updates.photoURL) {
+          authUpdates.photoURL = updates.photoURL;
+        }
+
+        await updateProfile(auth.currentUser, authUpdates);
+      }
+
+      // Get updated profile
+      const updatedProfile = await this.getUserProfile(uid);
+      if (!updatedProfile) {
+        throw new Error('Failed to retrieve updated profile');
+      }
+
+      console.log('✅ AuthService: Profile updated successfully');
+      return updatedProfile;
+    } catch (error) {
+      console.error('❌ AuthService: Profile update failed:', error);
+      throw this.handleAuthError(error);
+    }
+  }
+
+  /**
+   * Get profile completion status
+   *
+   * @param {User} user - User data
+   * @returns {ProfileCompletionStatus} Profile completion status
+   */
+  getProfileCompletionStatus(user: User): ProfileCompletionStatus {
+    const hasUsername = !!user.username;
+    const hasDisplayName = !!user.displayName;
+    const hasPhoto = !!user.photoURL;
+    const hasBio = !!(user as User & { bio?: string }).bio; // Cast to extended User type
+
+    const completedFields = [
+      hasUsername,
+      hasDisplayName,
+      hasPhoto,
+      hasBio,
+    ].filter(Boolean).length;
+    const totalFields = 4;
+    const completionPercentage = Math.round(
+      (completedFields / totalFields) * 100
+    );
+
+    return {
+      hasUsername,
+      hasDisplayName,
+      hasPhoto,
+      hasBio,
+      isComplete: hasUsername && hasDisplayName, // Minimum required fields
+      completionPercentage,
+    };
   }
 
   /**

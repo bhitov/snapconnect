@@ -4,6 +4,9 @@
  * Provides type-safe navigation throughout the application.
  */
 
+// Helper types for navigation props
+import type { NavigationProp, RouteProp } from '@react-navigation/native';
+
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
@@ -55,9 +58,6 @@ export type StoriesStackParamList = {
   };
 };
 
-// Helper types for navigation props
-import type { NavigationProp, RouteProp } from '@react-navigation/native';
-
 export type StackNavigationProps<
   ParamList extends Record<string, object | undefined>,
   RouteName extends keyof ParamList = keyof ParamList,
@@ -66,8 +66,8 @@ export type StackNavigationProps<
   route: RouteProp<ParamList, RouteName>;
 };
 
-declare global {
-  namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
-  }
+// Module declaration for React Navigation type safety
+declare module '@react-navigation/native' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface RootParamList extends RootStackParamList {}
 }

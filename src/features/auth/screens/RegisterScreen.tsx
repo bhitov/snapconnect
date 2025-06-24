@@ -16,6 +16,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  TextInput,
 } from 'react-native';
 
 import { Button } from '../../../shared/components/base/Button/Button';
@@ -81,12 +82,12 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
         );
         console.log('✅ RegisterScreen: Registration successful');
         reset(); // Clear form on success
-      } catch (error) {
-        console.error('❌ RegisterScreen: Registration failed:', error);
+      } catch (registerError) {
+        console.error('❌ RegisterScreen: Registration failed:', registerError);
         Alert.alert(
           'Registration Failed',
-          error instanceof Error
-            ? error.message
+          registerError instanceof Error
+            ? registerError.message
             : 'An unexpected error occurred',
           [{ text: 'OK' }]
         );
@@ -166,34 +167,16 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
                   },
                 }}
                 render={({ field: { onChange, value } }) => (
-                  <View style={styles.inputWrapper}>
-                    <Text style={styles.inputText}>
-                      {value || 'Choose a unique username'}
-                    </Text>
-                    <Button
-                      variant='ghost'
-                      size='small'
-                      onPress={() => {
-                        Alert.prompt(
-                          'Username',
-                          'Choose a unique username',
-                          [
-                            { text: 'Cancel', style: 'cancel' },
-                            {
-                              text: 'OK',
-                              onPress: text => {
-                                if (text) onChange(text.toLowerCase());
-                              },
-                            },
-                          ],
-                          'plain-text',
-                          value
-                        );
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  </View>
+                  <TextInput
+                    style={styles.textInput}
+                    value={value}
+                    onChangeText={text => onChange(text.toLowerCase())}
+                    placeholder='Choose a unique username'
+                    placeholderTextColor={theme.colors.gray400}
+                    autoCapitalize='none'
+                    autoCorrect={false}
+                    autoComplete='username'
+                  />
                 )}
               />
               {errors.username && (
@@ -215,34 +198,17 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
                   },
                 }}
                 render={({ field: { onChange, value } }) => (
-                  <View style={styles.inputWrapper}>
-                    <Text style={styles.inputText}>
-                      {value || 'Enter your email'}
-                    </Text>
-                    <Button
-                      variant='ghost'
-                      size='small'
-                      onPress={() => {
-                        Alert.prompt(
-                          'Email',
-                          'Enter your email address',
-                          [
-                            { text: 'Cancel', style: 'cancel' },
-                            {
-                              text: 'OK',
-                              onPress: text => {
-                                if (text) onChange(text);
-                              },
-                            },
-                          ],
-                          'plain-text',
-                          value
-                        );
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  </View>
+                  <TextInput
+                    style={styles.textInput}
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder='Enter your email'
+                    placeholderTextColor={theme.colors.gray400}
+                    autoCapitalize='none'
+                    autoCorrect={false}
+                    autoComplete='email'
+                    keyboardType='email-address'
+                  />
                 )}
               />
               {errors.email && (
@@ -264,46 +230,25 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
                   },
                 }}
                 render={({ field: { onChange, value } }) => (
-                  <View style={styles.inputWrapper}>
-                    <Text style={styles.inputText}>
-                      {value
-                        ? showPassword
-                          ? value
-                          : '••••••••'
-                        : 'Create a password'}
-                    </Text>
-                    <View style={styles.passwordActions}>
-                      <Button
-                        variant='ghost'
-                        size='small'
-                        onPress={togglePasswordVisibility}
-                      >
-                        {showPassword ? 'Hide' : 'Show'}
-                      </Button>
-                      <Button
-                        variant='ghost'
-                        size='small'
-                        onPress={() => {
-                          Alert.prompt(
-                            'Password',
-                            'Create a password (min 6 characters)',
-                            [
-                              { text: 'Cancel', style: 'cancel' },
-                              {
-                                text: 'OK',
-                                onPress: text => {
-                                  if (text) onChange(text);
-                                },
-                              },
-                            ],
-                            'secure-text',
-                            value
-                          );
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    </View>
+                  <View style={styles.passwordInputContainer}>
+                    <TextInput
+                      style={styles.textInput}
+                      value={value}
+                      onChangeText={onChange}
+                      placeholder='Create a password'
+                      placeholderTextColor={theme.colors.gray400}
+                      secureTextEntry={!showPassword}
+                      autoCapitalize='none'
+                      autoCorrect={false}
+                      autoComplete='password-new'
+                    />
+                    <Button
+                      variant='ghost'
+                      size='small'
+                      onPress={togglePasswordVisibility}
+                    >
+                      {showPassword ? 'Hide' : 'Show'}
+                    </Button>
                   </View>
                 )}
               />
@@ -324,46 +269,25 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
                     value === password || 'Passwords do not match',
                 }}
                 render={({ field: { onChange, value } }) => (
-                  <View style={styles.inputWrapper}>
-                    <Text style={styles.inputText}>
-                      {value
-                        ? showConfirmPassword
-                          ? value
-                          : '••••••••'
-                        : 'Confirm your password'}
-                    </Text>
-                    <View style={styles.passwordActions}>
-                      <Button
-                        variant='ghost'
-                        size='small'
-                        onPress={toggleConfirmPasswordVisibility}
-                      >
-                        {showConfirmPassword ? 'Hide' : 'Show'}
-                      </Button>
-                      <Button
-                        variant='ghost'
-                        size='small'
-                        onPress={() => {
-                          Alert.prompt(
-                            'Confirm Password',
-                            'Re-enter your password',
-                            [
-                              { text: 'Cancel', style: 'cancel' },
-                              {
-                                text: 'OK',
-                                onPress: text => {
-                                  if (text) onChange(text);
-                                },
-                              },
-                            ],
-                            'secure-text',
-                            value
-                          );
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    </View>
+                  <View style={styles.passwordInputContainer}>
+                    <TextInput
+                      style={styles.textInput}
+                      value={value}
+                      onChangeText={onChange}
+                      placeholder='Confirm your password'
+                      placeholderTextColor={theme.colors.gray400}
+                      secureTextEntry={!showConfirmPassword}
+                      autoCapitalize='none'
+                      autoCorrect={false}
+                      autoComplete='password-new'
+                    />
+                    <Button
+                      variant='ghost'
+                      size='small'
+                      onPress={toggleConfirmPasswordVisibility}
+                    >
+                      {showConfirmPassword ? 'Hide' : 'Show'}
+                    </Button>
                   </View>
                 )}
               />
@@ -470,6 +394,26 @@ function createStyles(theme: ReturnType<typeof useTheme>) {
       ...theme.typography.body,
       color: theme.colors.text,
       flex: 1,
+    },
+    textInput: {
+      ...theme.typography.body,
+      color: theme.colors.text,
+      backgroundColor: theme.colors.surfaceSecondary,
+      borderRadius: theme.borderRadius.md,
+      paddingHorizontal: theme.spacing[4],
+      paddingVertical: theme.spacing[4],
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      flex: 1,
+    },
+    passwordInputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.surfaceSecondary,
+      borderRadius: theme.borderRadius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      paddingRight: theme.spacing[2],
     },
     passwordActions: {
       flexDirection: 'row',

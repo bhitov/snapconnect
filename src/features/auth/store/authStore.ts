@@ -33,6 +33,14 @@ interface AuthState {
   ) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<User>) => void;
+  completeProfileSetup: (
+    uid: string,
+    profileData: import('../types/authTypes').ProfileSetupForm
+  ) => Promise<void>;
+  uploadAvatar: (
+    uid: string,
+    avatar: import('../types/authTypes').AvatarUpload
+  ) => Promise<string>;
   clearError: () => void;
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
@@ -141,6 +149,56 @@ export const useAuthStore = create<AuthState>()(
               Object.assign(state.user, updates);
             }
           });
+        },
+
+        completeProfileSetup: async (uid, profileData) => {
+          set(state => {
+            state.isLoading = true;
+            state.error = null;
+          });
+
+          try {
+            const updatedUser = await authService.completeProfileSetup(
+              uid,
+              profileData
+            );
+
+            set(state => {
+              state.user = updatedUser;
+              state.isLoading = false;
+            });
+          } catch (error) {
+            set(state => {
+              state.error =
+                error instanceof Error ? error.message : 'Profile setup failed';
+              state.isLoading = false;
+            });
+            throw error;
+          }
+        },
+
+        uploadAvatar: async (uid, avatar) => {
+          set(state => {
+            state.isLoading = true;
+            state.error = null;
+          });
+
+          try {
+            const photoURL = await authService.uploadAvatar(uid, avatar);
+
+            set(state => {
+              state.isLoading = false;
+            });
+
+            return photoURL;
+          } catch (error) {
+            set(state => {
+              state.error =
+                error instanceof Error ? error.message : 'Avatar upload failed';
+              state.isLoading = false;
+            });
+            throw error;
+          }
         },
 
         clearError: () => {

@@ -78,8 +78,28 @@
 ###### Auth Hooks (src/features/auth/hooks/)
 - `useAuthInitialization.ts` - Hook for setting up Firebase auth state listener and syncing with Zustand store
 
+##### Camera Feature (src/features/camera/) - **IMPLEMENTED IN PHASE 2.3**
+
+###### Camera Screens (src/features/camera/screens/)
+- `CameraScreen.tsx` - Main camera interface with photo/video capture, permissions handling, recording timer, and navigation to preview
+- `index.ts` - Camera screens export
+
+###### Camera Components (src/features/camera/components/)
+- `CameraView.tsx` - Expo Camera wrapper with proper configuration, type mapping, and permission handling
+- `CameraControls.tsx` - Flash mode toggle, camera flip controls with animations, and mode indicators
+- `CaptureButton.tsx` - Snapchat-style shutter button with recording animations, duration display, and responsive feedback
+- `index.ts` - Camera components export
+
+###### Camera Store (src/features/camera/store/)
+- `cameraStore.ts` - Zustand store for camera state with permissions, settings, capture actions, filter system, text overlays, and performance selectors
+
+###### Camera Types (src/features/camera/types/)
+- `index.ts` - Complete TypeScript definitions for camera modes, settings, media capture, filters, text overlays, recording state, errors, and store interfaces
+
+###### Camera Feature Export
+- `index.ts` - Public API export for screens, components, store, and types
+
 ##### Other Features (Empty - To Be Implemented)
-- `camera/` - Camera feature (empty)
 - `chat/` - Chat/messaging feature (empty)  
 - `friends/` - Friends management feature (empty)
 - `stories/` - Stories feature (empty)
@@ -184,9 +204,59 @@
 - `handlePasswordReset()` - Handle password reset (placeholder)
 
 #### src/features/auth/screens/ProfileSetupScreen.tsx
-- `ProfileSetupScreen({ navigation })` - Profile setup screen (placeholder)
-- `handleCompleteSetup()` - Handle profile setup completion (placeholder)
-- `handleSkipSetup()` - Skip profile setup
+- `ProfileSetupScreen({ navigation })` - Profile setup screen with avatar upload, display name input, bio text area, form validation, and image picker integration
+- `pickImage()` - Open image picker from photo library with permissions and validation
+- `takePhoto()` - Capture photo with camera including permissions and error handling
+- `showImagePickerOptions()` - Display camera vs library selection alert
+- `onSubmit(data)` - Handle profile setup form submission with avatar upload and profile completion
+
+### Camera Feature Functions
+
+#### src/features/camera/store/cameraStore.ts
+- `useCameraStore()` - Zustand store hook for camera state and actions
+- `requestPermissions()` - Request camera, microphone, and media library permissions
+- `checkPermissions()` - Check current permission status
+- `updateSettings(settings)` - Update camera settings with partial updates
+- `toggleCamera()` - Switch between front and back camera
+- `setFlashMode(mode)` - Set flash mode (auto, on, off, torch)
+- `capturePhoto()` - Capture photo and create media object with mock implementation
+- `startVideoRecording()` - Start video recording with timer and auto-stop at 3 minutes
+- `stopVideoRecording()` - Stop video recording and create media object
+- `applyFilter(filter)` - Apply image filter to processed media
+- `addTextOverlay(overlay)` - Add text overlay to media
+- `updateTextOverlay(id, updates)` - Update specific text overlay properties
+- `removeTextOverlay(id)` - Remove text overlay by ID
+- `retakeMedia()` - Reset captured media and return to camera view
+- `saveMedia()` - Save processed media to device (mock implementation)
+- `discardMedia()` - Discard captured media and reset state
+- `clearError()` - Clear error state
+- `setError(error)` - Set error with type and message
+- `toggleControls()` - Toggle camera controls visibility
+- `setControlsVisible(visible)` - Set controls visibility state
+- Performance selectors: `useCameraSettings()`, `useCameraPermissions()`, `useRecordingState()`, `useCapturedMedia()`, etc.
+
+#### src/features/camera/screens/CameraScreen.tsx
+- `CameraScreen({ navigation })` - Main camera screen with permissions, capture handling, and navigation
+- `initializeCamera()` - Request permissions and setup camera on screen focus
+- `handleCapture()` - Handle photo/video capture based on mode
+- `handleScreenTap()` - Toggle controls visibility on screen tap
+- `handleErrorDismiss()` - Clear camera errors
+
+#### src/features/camera/components/CameraView.tsx
+- `CameraView({ onTap, style }, ref)` - Expo Camera wrapper component
+- `mapCameraType(type)` - Convert app camera type to Expo camera type
+- `mapFlashMode(flashMode)` - Convert app flash mode to Expo flash mode
+- `handleCameraReady()` - Handle camera ready callback
+
+#### src/features/camera/components/CameraControls.tsx
+- `CameraControls()` - Camera control buttons for flash, flip, and mode display
+- `handleFlip()` - Handle camera flip with spring animation
+- `handleFlashToggle()` - Cycle through flash modes (auto → on → off)
+
+#### src/features/camera/components/CaptureButton.tsx
+- `CaptureButton({ mode, isRecording, recordingDuration, onCapture })` - Animated capture button
+- `handlePress()` - Handle capture button press with animations
+- `formatDuration(duration)` - Format recording duration as MM:SS
 
 ## Variables and Data Structures
 
@@ -364,8 +434,32 @@
 - ✅ User profile creation in Firebase Realtime Database
 - ✅ Auth error handling with user-friendly messages
 
+### Phase 2.2 - User Profile Setup (✅ COMPLETE)
+- ✅ Profile setup screen post-registration
+- ✅ Avatar upload to Firebase Storage with camera/library selection
+- ✅ Display name and bio input with validation
+- ✅ Form validation with character limits
+- ✅ Image picker integration with permissions
+- ✅ Profile completion tracking
+- ✅ Skip profile setup option
+
+### Phase 2.3 - Camera Implementation (✅ COMPLETE)
+- ✅ Camera screen with Expo Camera integration
+- ✅ Photo capture with shutter animations
+- ✅ Video recording with 3-minute limit and timer
+- ✅ Camera flip (front/back) functionality with animations
+- ✅ Flash mode controls (auto/on/off/torch)
+- ✅ Permission handling for camera, microphone, and media library
+- ✅ Real-time recording indicator with duration display
+- ✅ Controls visibility toggle on screen tap
+- ✅ Navigation to preview screen after capture
+- ✅ Comprehensive error handling and loading states
+- ✅ TypeScript type safety throughout
+- ✅ Performance-optimized Zustand store with selectors
+- ✅ Snapchat-style UI with animations
+
 ### Next Phase - MVP Continuation
-- Camera functionality implementation
+- Phase 2.4: Media Preview & Editing implementation
 - Basic messaging features
 - Friend system development
 - Stories feature implementation 

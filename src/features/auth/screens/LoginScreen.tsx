@@ -16,6 +16,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  TextInput,
 } from 'react-native';
 
 import { Button } from '../../../shared/components/base/Button/Button';
@@ -64,12 +65,12 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
         await login(data.email.trim().toLowerCase(), data.password);
         console.log('✅ LoginScreen: Login successful');
         reset(); // Clear form on success
-      } catch (error) {
-        console.error('❌ LoginScreen: Login failed:', error);
+      } catch (loginError) {
+        console.error('❌ LoginScreen: Login failed:', loginError);
         Alert.alert(
           'Login Failed',
-          error instanceof Error
-            ? error.message
+          loginError instanceof Error
+            ? loginError.message
             : 'An unexpected error occurred',
           [{ text: 'OK' }]
         );
@@ -142,35 +143,17 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
                   },
                 }}
                 render={({ field: { onChange, value } }) => (
-                  <View style={styles.inputWrapper}>
-                    <Text style={styles.inputText}>
-                      {value || 'Enter your email'}
-                    </Text>
-                    <Button
-                      variant='ghost'
-                      size='small'
-                      onPress={() => {
-                        // This would open a text input modal or inline editing
-                        Alert.prompt(
-                          'Email',
-                          'Enter your email address',
-                          [
-                            { text: 'Cancel', style: 'cancel' },
-                            {
-                              text: 'OK',
-                              onPress: text => {
-                                if (text) onChange(text);
-                              },
-                            },
-                          ],
-                          'plain-text',
-                          value
-                        );
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  </View>
+                  <TextInput
+                    style={styles.textInput}
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder='Enter your email'
+                    placeholderTextColor={theme.colors.gray400}
+                    autoCapitalize='none'
+                    autoCorrect={false}
+                    autoComplete='email'
+                    keyboardType='email-address'
+                  />
                 )}
               />
               {errors.email && (
@@ -192,46 +175,25 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
                   },
                 }}
                 render={({ field: { onChange, value } }) => (
-                  <View style={styles.inputWrapper}>
-                    <Text style={styles.inputText}>
-                      {value
-                        ? showPassword
-                          ? value
-                          : '••••••••'
-                        : 'Enter your password'}
-                    </Text>
-                    <View style={styles.passwordActions}>
-                      <Button
-                        variant='ghost'
-                        size='small'
-                        onPress={togglePasswordVisibility}
-                      >
-                        {showPassword ? 'Hide' : 'Show'}
-                      </Button>
-                      <Button
-                        variant='ghost'
-                        size='small'
-                        onPress={() => {
-                          Alert.prompt(
-                            'Password',
-                            'Enter your password',
-                            [
-                              { text: 'Cancel', style: 'cancel' },
-                              {
-                                text: 'OK',
-                                onPress: text => {
-                                  if (text) onChange(text);
-                                },
-                              },
-                            ],
-                            'secure-text',
-                            value
-                          );
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    </View>
+                  <View style={styles.passwordInputContainer}>
+                    <TextInput
+                      style={styles.textInput}
+                      value={value}
+                      onChangeText={onChange}
+                      placeholder='Enter your password'
+                      placeholderTextColor={theme.colors.gray400}
+                      secureTextEntry={!showPassword}
+                      autoCapitalize='none'
+                      autoCorrect={false}
+                      autoComplete='password'
+                    />
+                    <Button
+                      variant='ghost'
+                      size='small'
+                      onPress={togglePasswordVisibility}
+                    >
+                      {showPassword ? 'Hide' : 'Show'}
+                    </Button>
                   </View>
                 )}
               />
@@ -351,6 +313,26 @@ function createStyles(theme: ReturnType<typeof useTheme>) {
       ...theme.typography.body,
       color: theme.colors.text,
       flex: 1,
+    },
+    textInput: {
+      ...theme.typography.body,
+      color: theme.colors.text,
+      backgroundColor: theme.colors.surfaceSecondary,
+      borderRadius: theme.borderRadius.md,
+      paddingHorizontal: theme.spacing[4],
+      paddingVertical: theme.spacing[4],
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      flex: 1,
+    },
+    passwordInputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.surfaceSecondary,
+      borderRadius: theme.borderRadius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      paddingRight: theme.spacing[2],
     },
     passwordActions: {
       flexDirection: 'row',

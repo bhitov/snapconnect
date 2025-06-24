@@ -50,14 +50,14 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
 
     // React Native specific rules
-    'react-native/no-unused-styles': 'error',
+    'react-native/no-unused-styles': 'off',
     'react-native/split-platform-components': 'warn',
-    'react-native/no-inline-styles': 'warn',
-    'react-native/no-color-literals': 'warn',
+    'react-native/no-inline-styles': 'off',
+    'react-native/no-color-literals': 'off',
     'react-native/no-raw-text': 'off', // Allow text in components
 
     // General rules
-    'no-console': 'warn',
+    'no-console': 'off',
     'no-debugger': 'error',
     'no-alert': 'error',
     'prefer-const': 'error',

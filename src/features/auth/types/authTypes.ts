@@ -1,11 +1,11 @@
 /**
  * @file authTypes.ts
  * @description TypeScript type definitions for authentication feature.
- * Defines user model, auth state, and form interfaces.
+ * Includes user models, form interfaces, and Firebase-related types.
  */
 
 /**
- * User model interface
+ * User interface defining the structure of user data
  */
 export interface User {
   uid: string;
@@ -37,16 +37,26 @@ export interface RegisterForm {
 }
 
 /**
+ * Profile setup form interface
+ */
+export interface ProfileSetupForm {
+  displayName: string;
+  bio?: string;
+  photoURL?: string;
+}
+
+/**
  * Profile update interface
  */
 export interface ProfileUpdate {
   displayName?: string;
   username?: string;
   photoURL?: string;
+  bio?: string;
 }
 
 /**
- * Auth error types
+ * Authentication error interface
  */
 export interface AuthError {
   code: string;
@@ -54,7 +64,7 @@ export interface AuthError {
 }
 
 /**
- * Firebase auth user data
+ * Firebase user data interface
  */
 export interface FirebaseUserData {
   uid: string;
@@ -65,7 +75,7 @@ export interface FirebaseUserData {
 }
 
 /**
- * User profile data for database
+ * User profile data interface for Firebase
  */
 export interface UserProfileData {
   uid: string;
@@ -73,20 +83,38 @@ export interface UserProfileData {
   username: string;
   displayName: string;
   photoURL?: string;
+  bio?: string;
   createdAt: number;
   lastActive: number;
 }
 
 /**
- * Auth action types
+ * Avatar upload interface
+ */
+export interface AvatarUpload {
+  uri: string;
+  type: string;
+  name: string;
+}
+
+/**
+ * Profile completion status interface
+ */
+export interface ProfileCompletionStatus {
+  hasUsername: boolean;
+  hasDisplayName: boolean;
+  hasPhoto: boolean;
+  hasBio: boolean;
+  isComplete: boolean;
+  completionPercentage: number;
+}
+
+/**
+ * Auth action types for reducer pattern
  */
 export type AuthAction =
-  | { type: 'LOGIN_START' }
-  | { type: 'LOGIN_SUCCESS'; payload: User }
-  | { type: 'LOGIN_ERROR'; payload: string }
-  | { type: 'REGISTER_START' }
-  | { type: 'REGISTER_SUCCESS'; payload: User }
-  | { type: 'REGISTER_ERROR'; payload: string }
-  | { type: 'LOGOUT' }
   | { type: 'SET_USER'; payload: User | null }
-  | { type: 'CLEAR_ERROR' };
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'CLEAR_ERROR' }
+  | { type: 'UPDATE_PROFILE'; payload: Partial<User> };
