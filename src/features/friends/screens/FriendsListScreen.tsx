@@ -4,6 +4,7 @@
  * Shows all friends with options to view profiles and manage friendships.
  */
 
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect } from 'react';
 import {
   View,
@@ -13,12 +14,14 @@ import {
   Image,
   RefreshControl,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 
-import { useTheme } from '@/shared/hooks/useTheme';
 import { Button } from '@/shared/components/base/Button';
+import { useTheme } from '@/shared/hooks/useTheme';
+import { useChatStore } from '@/features/chat/store/chatStore';
+
 import {
   useFriendsStore,
   useFriendsList,
@@ -38,14 +41,14 @@ interface FriendsListScreenProps {
  */
 export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
   const theme = useTheme();
-  
+
   // Store state
   const friends = useFriendsList();
   const friendsLoading = useFriendsLoading();
   const friendsError = useFriendsError();
   const isRefreshing = useIsRefreshing();
   const pendingRequestsCount = usePendingRequestsCount();
-  
+
   // Store actions
   const { loadFriends, refreshFriends, clearError } = useFriendsStore();
 
@@ -60,19 +63,54 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
    * Handle viewing friend profile
    */
   const handleViewProfile = (friend: FriendProfile) => {
-    console.log('👤 FriendsListScreen: Viewing profile for friend:', friend.username);
+    console.log(
+      '👤 FriendsListScreen: Viewing profile for friend:',
+      friend.username
+    );
     navigation.navigate('Profile', { userId: friend.uid });
   };
 
   /**
-   * Handle starting chat with friend
+   * Handle starting chat with friend (snap)
    */
   const handleStartChat = (friend: FriendProfile) => {
-    console.log('💬 FriendsListScreen: Starting chat with friend:', friend.username);
-    navigation.navigate('Chat', { 
-      userId: friend.uid, 
-      username: friend.username 
-    });
+    console.log(
+      '📸 FriendsListScreen: Starting snap with friend:',
+      friend.username
+    );
+    // Navigate to Camera tab to send a snap to this friend
+    navigation.navigate('Camera');
+    // TODO: Pre-select this friend as recipient when sending snap
+  };
+
+  /**
+   * Handle opening text chat with a friend
+   */
+  const handleOpenChat = async (friend: FriendProfile) => {
+    console.log('💬 FriendsListScreen: Opening chat with friend:', friend.username);
+    
+    try {
+      // Create or get conversation
+      const { createConversation } = useChatStore.getState();
+      const conversationId = await createConversation(friend.uid);
+      
+      // Navigate to chat screen
+      navigation.navigate('Chats', {
+        screen: 'ChatScreen',
+        params: {
+          conversationId,
+          otherUser: {
+            uid: friend.uid,
+            username: friend.username,
+            displayName: friend.displayName,
+            photoURL: friend.photoURL,
+          },
+        },
+      });
+    } catch (error) {
+      console.error('❌ FriendsListScreen: Failed to open chat:', error);
+      Alert.alert('Error', 'Failed to open chat. Please try again.');
+    }
   };
 
   /**
@@ -108,14 +146,22 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
       >
         <View style={styles.friendContent}>
           {/* Avatar */}
-          <View style={[styles.avatar, { backgroundColor: theme.colors.background }]}>
+          <View
+            style={[
+              styles.avatar,
+              { backgroundColor: theme.colors.background },
+            ]}
+          >
             {item.photoURL ? (
-              <Image source={{ uri: item.photoURL }} style={styles.avatarImage} />
+              <Image
+                source={{ uri: item.photoURL }}
+                style={styles.avatarImage}
+              />
             ) : (
-              <Ionicons 
-                name="person" 
-                size={24} 
-                color={theme.colors.textSecondary} 
+              <Ionicons
+                name='person'
+                size={24}
+                color={theme.colors.textSecondary}
               />
             )}
           </View>
@@ -125,29 +171,60 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
             <Text style={[styles.displayName, { color: theme.colors.text }]}>
               {item.displayName}
             </Text>
-            <Text style={[styles.username, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[styles.username, { color: theme.colors.textSecondary }]}
+            >
               @{item.username}
             </Text>
-            <Text style={[styles.friendsSince, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[
+                styles.friendsSince,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
               {formatFriendsSince(item.friendsSince)}
             </Text>
             {item.isOnline && (
               <View style={styles.onlineIndicator}>
-                <View style={[styles.onlineDot, { backgroundColor: theme.colors.success }]} />
-                <Text style={[styles.onlineText, { color: theme.colors.success }]}>
+                <View
+                  style={[
+                    styles.onlineDot,
+                    { backgroundColor: theme.colors.success },
+                  ]}
+                />
+                <Text
+                  style={[styles.onlineText, { color: theme.colors.success }]}
+                >
                   Online
                 </Text>
               </View>
             )}
           </View>
 
-          {/* Chat button */}
-          <TouchableOpacity
-            style={[styles.chatButton, { backgroundColor: theme.colors.primary }]}
-            onPress={() => handleStartChat(item)}
-          >
-            <Ionicons name="chatbubble" size={20} color={theme.colors.white} />
-          </TouchableOpacity>
+          {/* Action buttons */}
+          <View style={styles.actionButtons}>
+            {/* Chat button */}
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                { backgroundColor: theme.colors.surface },
+              ]}
+              onPress={() => handleOpenChat(item)}
+            >
+              <Ionicons name='chatbubble' size={18} color={theme.colors.text} />
+            </TouchableOpacity>
+
+            {/* Snap button */}
+            <TouchableOpacity
+              style={[
+                styles.snapButton,
+                { backgroundColor: theme.colors.primary },
+              ]}
+              onPress={() => handleStartChat(item)}
+            >
+              <Ionicons name='camera' size={20} color={theme.colors.white} />
+            </TouchableOpacity>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -159,15 +236,17 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
   const renderEmptyState = () => {
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="people" size={48} color={theme.colors.textSecondary} />
+        <Ionicons name='people' size={48} color={theme.colors.textSecondary} />
         <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
           No friends yet
         </Text>
-        <Text style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}>
-          Add friends to start sending snaps and chatting
+        <Text
+          style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}
+        >
+          Add friends to start sending snaps
         </Text>
         <Button
-          variant="primary"
+          variant='primary'
           onPress={() => navigation.navigate('AddFriends')}
         >
           Add Friends
@@ -183,22 +262,27 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
     return (
       <View style={styles.headerActions}>
         <Button
-          variant="outline"
+          variant='outline'
           onPress={() => navigation.navigate('AddFriends')}
         >
           Add Friends
         </Button>
-        
+
         <TouchableOpacity
-          style={[styles.requestsButton, { backgroundColor: theme.colors.surface }]}
+          style={[
+            styles.requestsButton,
+            { backgroundColor: theme.colors.surface },
+          ]}
           onPress={() => navigation.navigate('FriendRequests')}
         >
-          <Ionicons name="mail" size={20} color={theme.colors.text} />
+          <Ionicons name='mail' size={20} color={theme.colors.text} />
           <Text style={[styles.requestsText, { color: theme.colors.text }]}>
             Requests
           </Text>
           {pendingRequestsCount > 0 && (
-            <View style={[styles.badge, { backgroundColor: theme.colors.error }]}>
+            <View
+              style={[styles.badge, { backgroundColor: theme.colors.error }]}
+            >
               <Text style={[styles.badgeText, { color: theme.colors.white }]}>
                 {pendingRequestsCount}
               </Text>
@@ -210,7 +294,9 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       {/* Header */}
       <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
         <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
@@ -225,7 +311,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
       <FlatList
         data={friends}
         renderItem={renderFriend}
-        keyExtractor={(item) => item.uid}
+        keyExtractor={item => item.uid}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={renderEmptyState}
         showsVerticalScrollIndicator={false}
@@ -240,12 +326,17 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
 
       {/* Error display */}
       {friendsError && (
-        <View style={[styles.errorContainer, { backgroundColor: theme.colors.error }]}>
+        <View
+          style={[
+            styles.errorContainer,
+            { backgroundColor: theme.colors.error },
+          ]}
+        >
           <Text style={[styles.errorText, { color: theme.colors.white }]}>
             {friendsError}
           </Text>
           <TouchableOpacity onPress={clearError}>
-            <Ionicons name="close" size={20} color={theme.colors.white} />
+            <Ionicons name='close' size={20} color={theme.colors.white} />
           </TouchableOpacity>
         </View>
       )}
@@ -361,7 +452,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
   },
-  chatButton: {
+  actionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  actionButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+  },
+  snapButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -398,4 +503,4 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
   },
-}); 
+});

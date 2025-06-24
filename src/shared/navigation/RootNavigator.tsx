@@ -9,10 +9,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
 import { useAuthInitialization } from '../../features/auth/hooks/useAuthInitialization';
-import { useIsAuthenticated, useAuthStore } from '../../features/auth/store/authStore';
+import {
+  useIsAuthenticated,
+  useAuthStore,
+} from '../../features/auth/store/authStore';
+import { RecipientSelectionScreen } from '../../features/chat/screens/RecipientSelectionScreen';
+import { SnapViewingScreen } from '../../features/chat/screens/SnapViewingScreen';
 import { SnapPreviewScreen } from '../components/layout/SnapPreviewScreen';
 import { ViewSnapScreen } from '../components/layout/ViewSnapScreen';
-import { AddFriendsScreen } from '../../features/friends/screens/AddFriendsScreen';
 import { useTheme } from '../hooks/useTheme';
 
 import { AuthNavigator } from './AuthNavigator';
@@ -88,19 +92,19 @@ export function RootNavigator() {
               }}
             />
             <Stack.Screen
-              name='ViewSnap'
-              component={ViewSnapScreen}
-              options={{
-                presentation: 'fullScreenModal',
-                gestureEnabled: false,
-              }}
-            />
-            <Stack.Screen
-              name='AddFriends'
-              component={AddFriendsScreen}
+              name='RecipientSelection'
+              component={RecipientSelectionScreen}
               options={{
                 presentation: 'modal',
                 gestureEnabled: true,
+              }}
+            />
+            <Stack.Screen
+              name='ViewSnap'
+              component={SnapViewingScreen}
+              options={{
+                presentation: 'fullScreenModal',
+                gestureEnabled: false,
               }}
             />
           </>

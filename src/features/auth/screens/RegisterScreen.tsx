@@ -82,7 +82,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
         );
         console.log('✅ RegisterScreen: Registration successful');
         reset(); // Clear form on success
-        
+
         // Navigate to profile setup after successful registration
         console.log('🔄 RegisterScreen: Navigating to ProfileSetup');
         navigation.navigate('ProfileSetup');

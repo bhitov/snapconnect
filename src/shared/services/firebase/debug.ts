@@ -5,6 +5,7 @@
  */
 
 import { Platform } from 'react-native';
+
 import { auth, database, storage, functions } from './config';
 
 /**
@@ -71,7 +72,8 @@ export async function checkNetworkConnectivity(): Promise<void> {
         });
         console.log(`✅ ${url} - Status: ${response.status}`);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         console.log(`❌ ${url} - Failed:`, errorMessage);
       }
     }
@@ -85,7 +87,7 @@ export async function checkNetworkConnectivity(): Promise<void> {
  */
 export function getEmulatorUrls(): Record<string, string> {
   const host = Platform.OS === 'android' ? '10.0.2.2' : 'localhost';
-  
+
   return {
     auth: `http://${host}:9099`,
     database: `http://${host}:9000`,
@@ -100,12 +102,12 @@ export function getEmulatorUrls(): Record<string, string> {
  */
 export function printEmulatorInfo(): void {
   const urls = getEmulatorUrls();
-  
+
   console.log('🔧 Firebase Emulator URLs:');
   Object.entries(urls).forEach(([service, url]) => {
     console.log(`  ${service}: ${url}`);
   });
-  
+
   console.log('\n📱 Android Emulator Network Info:');
   console.log('  Host machine: 10.0.2.2');
   console.log('  Emulator localhost: 127.0.0.1');
@@ -117,15 +119,15 @@ export function printEmulatorInfo(): void {
  */
 export async function runFirebaseDebug(): Promise<void> {
   console.log('\n🚀 Starting Firebase Debug Suite...\n');
-  
+
   printEmulatorInfo();
   console.log('\n');
-  
+
   await testFirebaseConnectivity();
   console.log('\n');
-  
+
   await checkNetworkConnectivity();
   console.log('\n');
-  
+
   console.log('✅ Firebase debug suite completed');
-} 
+}

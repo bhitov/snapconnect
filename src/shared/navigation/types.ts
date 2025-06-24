@@ -14,13 +14,17 @@ export type RootStackParamList = {
     uri: string;
     type: 'photo' | 'video';
   };
+  RecipientSelection: {
+    mediaUri: string;
+    mediaType: 'photo' | 'video';
+    textOverlay?: string;
+  };
   ViewSnap: {
     snapId: string;
   };
   Profile: {
     userId?: string;
   };
-  AddFriends: undefined;
   CreateGroup: undefined;
 };
 
@@ -34,16 +38,30 @@ export type AuthStackParamList = {
 export type MainTabParamList = {
   Chats: undefined;
   Camera: undefined;
+  Friends: undefined;
   Stories: undefined;
 };
 
 export type ChatStackParamList = {
   ChatsList: undefined;
-  Chat: {
-    userId: string;
-    username: string;
+  ChatScreen: {
+    conversationId: string;
+    otherUser: {
+      uid: string;
+      username: string;
+      displayName: string;
+      photoURL?: string;
+    };
   };
+};
+
+export type FriendsStackParamList = {
+  FriendsList: undefined;
+  AddFriends: undefined;
   FriendRequests: undefined;
+  Profile: {
+    userId?: string;
+  };
 };
 
 export type StoriesStackParamList = {

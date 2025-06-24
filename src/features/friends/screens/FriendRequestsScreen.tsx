@@ -4,6 +4,7 @@
  * Shows sent and received friend requests with accept/reject functionality.
  */
 
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -16,10 +17,10 @@ import {
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 
-import { useTheme } from '@/shared/hooks/useTheme';
 import { Button } from '@/shared/components/base/Button';
+import { useTheme } from '@/shared/hooks/useTheme';
+
 import {
   useFriendsStore,
   useSentRequests,
@@ -39,28 +40,32 @@ type TabType = 'received' | 'sent';
 /**
  * FriendRequests screen component
  */
-export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) {
+export function FriendRequestsScreen({
+  navigation,
+}: FriendRequestsScreenProps) {
   const theme = useTheme();
-  
+
   // Store state
   const sentRequests = useSentRequests();
   const receivedRequests = useReceivedRequests();
   const requestsLoading = useRequestsLoading();
   const requestsError = useRequestsError();
   const isRefreshing = useIsRefreshing();
-  
+
   // Store actions
-  const { 
-    loadFriendRequests, 
+  const {
+    loadFriendRequests,
     refreshFriends,
-    respondToFriendRequest, 
+    respondToFriendRequest,
     cancelFriendRequest,
-    clearError 
+    clearError,
   } = useFriendsStore();
-  
+
   // Local state
   const [activeTab, setActiveTab] = useState<TabType>('received');
-  const [processingRequest, setProcessingRequest] = useState<string | null>(null);
+  const [processingRequest, setProcessingRequest] = useState<string | null>(
+    null
+  );
 
   /**
    * Load friend requests on mount
@@ -73,8 +78,11 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
    * Handle accepting friend request
    */
   const handleAcceptRequest = async (request: FriendRequest) => {
-    console.log('✅ FriendRequestsScreen: Accepting friend request from:', request.senderUsername);
-    
+    console.log(
+      '✅ FriendRequestsScreen: Accepting friend request from:',
+      request.senderUsername
+    );
+
     setProcessingRequest(request.id);
 
     try {
@@ -82,15 +90,18 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
         requestId: request.id,
         action: 'accept',
       });
-      
+
       Alert.alert(
         'Friend Request Accepted',
         `You are now friends with ${request.senderDisplayName}!`,
         [{ text: 'OK' }]
       );
     } catch (error: any) {
-      console.error('❌ FriendRequestsScreen: Failed to accept friend request:', error);
-      
+      console.error(
+        '❌ FriendRequestsScreen: Failed to accept friend request:',
+        error
+      );
+
       Alert.alert(
         'Failed to Accept Request',
         error.message || 'Unable to accept friend request. Please try again.',
@@ -105,8 +116,11 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
    * Handle rejecting friend request
    */
   const handleRejectRequest = async (request: FriendRequest) => {
-    console.log('❌ FriendRequestsScreen: Rejecting friend request from:', request.senderUsername);
-    
+    console.log(
+      '❌ FriendRequestsScreen: Rejecting friend request from:',
+      request.senderUsername
+    );
+
     Alert.alert(
       'Reject Friend Request',
       `Are you sure you want to reject the friend request from ${request.senderDisplayName}?`,
@@ -123,18 +137,22 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
                 requestId: request.id,
                 action: 'reject',
               });
-              
+
               Alert.alert(
                 'Friend Request Rejected',
                 `Friend request from ${request.senderDisplayName} has been rejected.`,
                 [{ text: 'OK' }]
               );
             } catch (error: any) {
-              console.error('❌ FriendRequestsScreen: Failed to reject friend request:', error);
-              
+              console.error(
+                '❌ FriendRequestsScreen: Failed to reject friend request:',
+                error
+              );
+
               Alert.alert(
                 'Failed to Reject Request',
-                error.message || 'Unable to reject friend request. Please try again.',
+                error.message ||
+                  'Unable to reject friend request. Please try again.',
                 [{ text: 'OK' }]
               );
             } finally {
@@ -150,8 +168,11 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
    * Handle canceling sent friend request
    */
   const handleCancelRequest = async (request: FriendRequest) => {
-    console.log('🗑️ FriendRequestsScreen: Canceling friend request to:', request.receiverUsername);
-    
+    console.log(
+      '🗑️ FriendRequestsScreen: Canceling friend request to:',
+      request.receiverUsername
+    );
+
     Alert.alert(
       'Cancel Friend Request',
       `Are you sure you want to cancel the friend request to ${request.receiverDisplayName}?`,
@@ -165,18 +186,22 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
 
             try {
               await cancelFriendRequest(request.id);
-              
+
               Alert.alert(
                 'Friend Request Canceled',
                 `Friend request to ${request.receiverDisplayName} has been canceled.`,
                 [{ text: 'OK' }]
               );
             } catch (error: any) {
-              console.error('❌ FriendRequestsScreen: Failed to cancel friend request:', error);
-              
+              console.error(
+                '❌ FriendRequestsScreen: Failed to cancel friend request:',
+                error
+              );
+
               Alert.alert(
                 'Failed to Cancel Request',
-                error.message || 'Unable to cancel friend request. Please try again.',
+                error.message ||
+                  'Unable to cancel friend request. Please try again.',
                 [{ text: 'OK' }]
               );
             } finally {
@@ -223,7 +248,7 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
    */
   const renderReceivedRequest = ({ item }: { item: FriendRequest }) => {
     const isLoading = processingRequest === item.id;
-    
+
     return (
       <TouchableOpacity
         style={[styles.requestItem, { backgroundColor: theme.colors.surface }]}
@@ -232,14 +257,22 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
       >
         <View style={styles.requestContent}>
           {/* Avatar */}
-          <View style={[styles.avatar, { backgroundColor: theme.colors.background }]}>
+          <View
+            style={[
+              styles.avatar,
+              { backgroundColor: theme.colors.background },
+            ]}
+          >
             {item.senderPhotoURL ? (
-              <Image source={{ uri: item.senderPhotoURL }} style={styles.avatarImage} />
+              <Image
+                source={{ uri: item.senderPhotoURL }}
+                style={styles.avatarImage}
+              />
             ) : (
-              <Ionicons 
-                name="person" 
-                size={24} 
-                color={theme.colors.textSecondary} 
+              <Ionicons
+                name='person'
+                size={24}
+                color={theme.colors.textSecondary}
               />
             )}
           </View>
@@ -249,14 +282,20 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
             <Text style={[styles.displayName, { color: theme.colors.text }]}>
               {item.senderDisplayName}
             </Text>
-            <Text style={[styles.username, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[styles.username, { color: theme.colors.textSecondary }]}
+            >
               @{item.senderUsername}
             </Text>
-            <Text style={[styles.timeAgo, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[styles.timeAgo, { color: theme.colors.textSecondary }]}
+            >
               {formatTimeAgo(item.createdAt)}
             </Text>
             {item.message && (
-              <Text style={[styles.message, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[styles.message, { color: theme.colors.textSecondary }]}
+              >
                 "{item.message}"
               </Text>
             )}
@@ -265,8 +304,8 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
           {/* Action buttons */}
           <View style={styles.actionButtons}>
             <Button
-              variant="primary"
-              size="small"
+              variant='primary'
+              size='small'
               disabled={isLoading}
               loading={isLoading}
               onPress={() => handleAcceptRequest(item)}
@@ -274,8 +313,8 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
               Accept
             </Button>
             <Button
-              variant="outline"
-              size="small"
+              variant='outline'
+              size='small'
               disabled={isLoading}
               onPress={() => handleRejectRequest(item)}
             >
@@ -292,7 +331,7 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
    */
   const renderSentRequest = ({ item }: { item: FriendRequest }) => {
     const isLoading = processingRequest === item.id;
-    
+
     return (
       <TouchableOpacity
         style={[styles.requestItem, { backgroundColor: theme.colors.surface }]}
@@ -301,14 +340,22 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
       >
         <View style={styles.requestContent}>
           {/* Avatar */}
-          <View style={[styles.avatar, { backgroundColor: theme.colors.background }]}>
+          <View
+            style={[
+              styles.avatar,
+              { backgroundColor: theme.colors.background },
+            ]}
+          >
             {item.receiverPhotoURL ? (
-              <Image source={{ uri: item.receiverPhotoURL }} style={styles.avatarImage} />
+              <Image
+                source={{ uri: item.receiverPhotoURL }}
+                style={styles.avatarImage}
+              />
             ) : (
-              <Ionicons 
-                name="person" 
-                size={24} 
-                color={theme.colors.textSecondary} 
+              <Ionicons
+                name='person'
+                size={24}
+                color={theme.colors.textSecondary}
               />
             )}
           </View>
@@ -318,14 +365,20 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
             <Text style={[styles.displayName, { color: theme.colors.text }]}>
               {item.receiverDisplayName}
             </Text>
-            <Text style={[styles.username, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[styles.username, { color: theme.colors.textSecondary }]}
+            >
               @{item.receiverUsername}
             </Text>
-            <Text style={[styles.timeAgo, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[styles.timeAgo, { color: theme.colors.textSecondary }]}
+            >
               Sent {formatTimeAgo(item.createdAt)}
             </Text>
             {item.message && (
-              <Text style={[styles.message, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[styles.message, { color: theme.colors.textSecondary }]}
+              >
                 "{item.message}"
               </Text>
             )}
@@ -334,8 +387,8 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
           {/* Cancel button */}
           <View style={styles.singleActionContainer}>
             <Button
-              variant="outline"
-              size="small"
+              variant='outline'
+              size='small'
               disabled={isLoading}
               loading={isLoading}
               onPress={() => handleCancelRequest(item)}
@@ -353,80 +406,102 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
    */
   const renderEmptyState = () => {
     const isReceived = activeTab === 'received';
-    
+
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons 
-          name={isReceived ? "mail-open" : "mail"} 
-          size={48} 
-          color={theme.colors.textSecondary} 
+        <Ionicons
+          name={isReceived ? 'mail-open' : 'mail'}
+          size={48}
+          color={theme.colors.textSecondary}
         />
         <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
           {isReceived ? 'No friend requests' : 'No sent requests'}
         </Text>
-        <Text style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}>
-          {isReceived 
+        <Text
+          style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}
+        >
+          {isReceived
             ? 'When someone sends you a friend request, it will appear here'
-            : 'Friend requests you send will appear here'
-          }
+            : 'Friend requests you send will appear here'}
         </Text>
       </View>
     );
   };
 
-  const currentRequests = activeTab === 'received' ? receivedRequests : sentRequests;
+  const currentRequests =
+    activeTab === 'received' ? receivedRequests : sentRequests;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       {/* Header */}
       <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name='arrow-back' size={24} color={theme.colors.text} />
         </TouchableOpacity>
-        
+
         <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
           Friend Requests
         </Text>
-        
+
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => navigation.navigate('AddFriends')}
         >
-          <Ionicons name="person-add" size={24} color={theme.colors.primary} />
+          <Ionicons name='person-add' size={24} color={theme.colors.primary} />
         </TouchableOpacity>
       </View>
 
       {/* Tabs */}
-      <View style={[styles.tabContainer, { backgroundColor: theme.colors.surface }]}>
+      <View
+        style={[styles.tabContainer, { backgroundColor: theme.colors.surface }]}
+      >
         <TouchableOpacity
           style={[
             styles.tab,
-            activeTab === 'received' && { backgroundColor: theme.colors.primary }
+            activeTab === 'received' && {
+              backgroundColor: theme.colors.primary,
+            },
           ]}
           onPress={() => setActiveTab('received')}
         >
-          <Text style={[
-            styles.tabText,
-            { color: activeTab === 'received' ? theme.colors.white : theme.colors.textSecondary }
-          ]}>
+          <Text
+            style={[
+              styles.tabText,
+              {
+                color:
+                  activeTab === 'received'
+                    ? theme.colors.white
+                    : theme.colors.textSecondary,
+              },
+            ]}
+          >
             Received ({receivedRequests.length})
           </Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           style={[
             styles.tab,
-            activeTab === 'sent' && { backgroundColor: theme.colors.primary }
+            activeTab === 'sent' && { backgroundColor: theme.colors.primary },
           ]}
           onPress={() => setActiveTab('sent')}
         >
-          <Text style={[
-            styles.tabText,
-            { color: activeTab === 'sent' ? theme.colors.white : theme.colors.textSecondary }
-          ]}>
+          <Text
+            style={[
+              styles.tabText,
+              {
+                color:
+                  activeTab === 'sent'
+                    ? theme.colors.white
+                    : theme.colors.textSecondary,
+              },
+            ]}
+          >
             Sent ({sentRequests.length})
           </Text>
         </TouchableOpacity>
@@ -435,8 +510,10 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
       {/* Requests list */}
       <FlatList
         data={currentRequests}
-        renderItem={activeTab === 'received' ? renderReceivedRequest : renderSentRequest}
-        keyExtractor={(item) => item.id}
+        renderItem={
+          activeTab === 'received' ? renderReceivedRequest : renderSentRequest
+        }
+        keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={renderEmptyState}
         showsVerticalScrollIndicator={false}
@@ -454,12 +531,17 @@ export function FriendRequestsScreen({ navigation }: FriendRequestsScreenProps) 
 
       {/* Error display */}
       {requestsError && (
-        <View style={[styles.errorContainer, { backgroundColor: theme.colors.error }]}>
+        <View
+          style={[
+            styles.errorContainer,
+            { backgroundColor: theme.colors.error },
+          ]}
+        >
           <Text style={[styles.errorText, { color: theme.colors.white }]}>
             {requestsError}
           </Text>
           <TouchableOpacity onPress={clearError}>
-            <Ionicons name="close" size={20} color={theme.colors.white} />
+            <Ionicons name='close' size={20} color={theme.colors.white} />
           </TouchableOpacity>
         </View>
       )}
@@ -593,4 +675,4 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
   },
-}); 
+});

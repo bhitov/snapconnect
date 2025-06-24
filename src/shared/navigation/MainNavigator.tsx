@@ -1,7 +1,7 @@
 /**
  * @file MainNavigator.tsx
  * @description Main app navigation with tab navigation.
- * Handles the primary app screens: Chats, Camera, Stories.
+ * Handles the primary app screens: Chats, Camera, Friends, Stories.
  */
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,39 +9,73 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text, View } from 'react-native';
 
 import { CameraScreen } from '../../features/camera/screens/CameraScreen';
-import { FriendsListScreen, FriendRequestsScreen } from '../../features/friends/screens';
+import { ChatsScreen, ChatScreen } from '../../features/chat/screens';
+import { 
+  AddFriendsScreen,
+  FriendRequestsScreen,
+  FriendsListScreen 
+} from '../../features/friends/screens';
 import { useTheme } from '../hooks/useTheme';
 
-import { MainTabParamList, ChatStackParamList } from './types';
+import { MainTabParamList, ChatStackParamList, FriendsStackParamList } from './types';
 
 // Chat Stack Navigator
 const ChatStack = createNativeStackNavigator<ChatStackParamList>();
 
 function ChatStackNavigator() {
+  const theme = useTheme();
+  
   return (
     <ChatStack.Navigator
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: theme.colors.background || '#FFFFFF',
+        },
+        headerTintColor: theme.colors.text || '#000000',
+        headerTitleStyle: {
+          color: theme.colors.text || '#000000',
+        },
       }}
     >
-      <ChatStack.Screen
-        name="ChatsList"
-        component={FriendsListScreen}
+      <ChatStack.Screen 
+        name='ChatsList' 
+        component={ChatsScreen}
+        options={{
+          title: 'Chats',
+        }}
       />
-      <ChatStack.Screen
-        name="FriendRequests"
-        component={FriendRequestsScreen}
-      />
-      <ChatStack.Screen
-        name="Chat"
-        component={PlaceholderChatScreen}
+      <ChatStack.Screen 
+        name='ChatScreen' 
+        component={ChatScreen}
+        options={{
+          headerShown: true,
+        }}
       />
     </ChatStack.Navigator>
   );
 }
 
-// Placeholder chat screen - will be implemented in Phase 2.7
-function PlaceholderChatScreen() {
+// Friends Stack Navigator
+const FriendsStack = createNativeStackNavigator<FriendsStackParamList>();
+
+function FriendsStackNavigator() {
+  return (
+    <FriendsStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <FriendsStack.Screen name='FriendsList' component={FriendsListScreen} />
+      <FriendsStack.Screen name='AddFriends' component={AddFriendsScreen} />
+      <FriendsStack.Screen name='FriendRequests' component={FriendRequestsScreen} />
+      <FriendsStack.Screen name='Profile' component={PlaceholderProfileScreen} />
+    </FriendsStack.Navigator>
+  );
+}
+
+// Placeholder profile screen - will be implemented later
+function PlaceholderProfileScreen() {
   const theme = useTheme();
   return (
     <View
@@ -53,12 +87,12 @@ function PlaceholderChatScreen() {
       }}
     >
       <Text style={{ ...theme.typography.h2, color: theme.colors.textPrimary }}>
-        Chat Screen
+        Profile Screen
       </Text>
       <Text
         style={{ ...theme.typography.body, color: theme.colors.textSecondary }}
       >
-        Coming in Phase 2.7
+        Coming in Phase 3
       </Text>
     </View>
   );
@@ -122,6 +156,13 @@ export function MainNavigator() {
         component={CameraScreen}
         options={{
           tabBarLabel: 'Camera',
+        }}
+      />
+      <Tab.Screen
+        name='Friends'
+        component={FriendsStackNavigator}
+        options={{
+          tabBarLabel: 'Friends',
         }}
       />
       <Tab.Screen

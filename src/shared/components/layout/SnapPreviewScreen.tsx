@@ -4,6 +4,11 @@
  * Allows users to preview captured media, apply filters, add text overlays, and take actions.
  */
 
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Video, ResizeMode } from 'expo-av';
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as MediaLibrary from 'expo-media-library';
 import { useState, useCallback } from 'react';
 import {
   View,
@@ -17,11 +22,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Video, ResizeMode } from 'expo-av';
-import * as ImageManipulator from 'expo-image-manipulator';
-import * as MediaLibrary from 'expo-media-library';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Animated from 'react-native-reanimated';
 
 import { useTheme } from '../../hooks/useTheme';
@@ -30,8 +30,6 @@ import { generateId } from '../../utils/idGenerator';
 
 // Constants
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-
 
 interface TextOverlay {
   id: string;
@@ -51,9 +49,12 @@ interface TextOverlay {
  */
 export function SnapPreviewScreen() {
   const theme = useTheme();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'SnapPreview'>>();
+  const navigation =
+    useNavigation<
+      NativeStackNavigationProp<RootStackParamList, 'SnapPreview'>
+    >();
   const route = useRoute<RouteProp<RootStackParamList, 'SnapPreview'>>();
-  
+
   const { uri, type } = route.params;
 
   // State
@@ -66,52 +67,51 @@ export function SnapPreviewScreen() {
 
   console.log('📷 SnapPreviewScreen: Rendering with URI:', uri, 'Type:', type);
 
-     /**
-    * Apply black and white filter to the image
-    */
-   const applyBlackWhiteFilter = useCallback(async () => {
-     if (type !== 'photo') {
-       Alert.alert('Filter Not Available', 'Filters are only available for photos.');
-       return;
-     }
+  /**
+   * Apply black and white filter to the image
+   */
+  const applyBlackWhiteFilter = useCallback(async () => {
+    if (type !== 'photo') {
+      Alert.alert(
+        'Filter Not Available',
+        'Filters are only available for photos.'
+      );
+      return;
+    }
 
-     console.log('🎨 SnapPreviewScreen: Applying black & white filter');
-     setIsProcessing(true);
+    console.log('🎨 SnapPreviewScreen: Applying black & white filter');
+    setIsProcessing(true);
 
-     try {
-       // Note: expo-image-manipulator doesn't have built-in grayscale filter
-       // This is a simplified implementation that creates a processed version
-       // In a real app, you'd use a more sophisticated image processing library
-                const result = await ImageManipulator.manipulateAsync(
-           uri,
-           [],
-         {
-           format: ImageManipulator.SaveFormat.JPEG,
-           compress: 0.8,
-           base64: false,
-         }
-       );
+    try {
+      // Note: expo-image-manipulator doesn't have built-in grayscale filter
+      // This is a simplified implementation that creates a processed version
+      // In a real app, you'd use a more sophisticated image processing library
+      const result = await ImageManipulator.manipulateAsync(uri, [], {
+        format: ImageManipulator.SaveFormat.JPEG,
+        compress: 0.8,
+        base64: false,
+      });
 
-       // For now, we'll use the same image but mark it as filtered
-       // In a production app, you'd integrate with a proper image filter library
-       setFilteredUri(result.uri);
-       setIsFiltered(true);
-       console.log('✅ SnapPreviewScreen: Filter applied successfully');
-       
-       // Note: This is a placeholder implementation
-       // Real B&W filtering would require additional libraries like react-native-image-filter-kit
-       Alert.alert(
-         'Filter Applied',
-         'Note: This is a placeholder B&W filter. Real implementation would use advanced image processing.',
-         [{ text: 'OK' }]
-       );
-     } catch (error) {
-       console.error('❌ SnapPreviewScreen: Filter application failed:', error);
-       Alert.alert('Filter Error', 'Failed to apply filter. Please try again.');
-     } finally {
-       setIsProcessing(false);
-     }
-   }, [uri, type]);
+      // For now, we'll use the same image but mark it as filtered
+      // In a production app, you'd integrate with a proper image filter library
+      setFilteredUri(result.uri);
+      setIsFiltered(true);
+      console.log('✅ SnapPreviewScreen: Filter applied successfully');
+
+      // Note: This is a placeholder implementation
+      // Real B&W filtering would require additional libraries like react-native-image-filter-kit
+      Alert.alert(
+        'Filter Applied',
+        'Note: This is a placeholder B&W filter. Real implementation would use advanced image processing.',
+        [{ text: 'OK' }]
+      );
+    } catch (error) {
+      console.error('❌ SnapPreviewScreen: Filter application failed:', error);
+      Alert.alert('Filter Error', 'Failed to apply filter. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [uri, type]);
 
   /**
    * Remove filter and show original image
@@ -122,40 +122,40 @@ export function SnapPreviewScreen() {
     setFilteredUri(null);
   }, []);
 
-     /**
-    * Add text overlay
-    */
-   const addTextOverlay = useCallback(() => {
-     if (!newTextInput.trim()) {
-       Alert.alert('Empty Text', 'Please enter some text to add.');
-       return;
-     }
+  /**
+   * Add text overlay
+   */
+  const addTextOverlay = useCallback(() => {
+    if (!newTextInput.trim()) {
+      Alert.alert('Empty Text', 'Please enter some text to add.');
+      return;
+    }
 
-     console.log('✏️ SnapPreviewScreen: Adding text overlay:', newTextInput);
+    console.log('✏️ SnapPreviewScreen: Adding text overlay:', newTextInput);
 
-     const newOverlay: TextOverlay = {
-       id: generateId(),
-       text: newTextInput.trim(),
-       x: 0.5, // Center horizontally
-       y: 0.5, // Center vertically
-       fontSize: 24,
-       color: '#FFFFFF',
-       scale: 1,
-       rotation: 0,
-     };
+    const newOverlay: TextOverlay = {
+      id: generateId(),
+      text: newTextInput.trim(),
+      x: 0.5, // Center horizontally
+      y: 0.5, // Center vertically
+      fontSize: 24,
+      color: '#FFFFFF',
+      scale: 1,
+      rotation: 0,
+    };
 
-     setTextOverlay(newOverlay);
-     setNewTextInput('');
-     setIsAddingText(false);
-   }, [newTextInput]);
+    setTextOverlay(newOverlay);
+    setNewTextInput('');
+    setIsAddingText(false);
+  }, [newTextInput]);
 
-   /**
-    * Remove text overlay
-    */
-   const removeTextOverlay = useCallback(() => {
-     console.log('❌ SnapPreviewScreen: Removing text overlay');
-     setTextOverlay(null);
-   }, []);
+  /**
+   * Remove text overlay
+   */
+  const removeTextOverlay = useCallback(() => {
+    console.log('❌ SnapPreviewScreen: Removing text overlay');
+    setTextOverlay(null);
+  }, []);
 
   /**
    * Save media to device
@@ -176,11 +176,11 @@ export function SnapPreviewScreen() {
 
       const mediaUri = isFiltered && filteredUri ? filteredUri : uri;
       await MediaLibrary.saveToLibraryAsync(mediaUri);
-      
+
       Alert.alert('Saved!', 'Media has been saved to your photo library.', [
-        { text: 'OK' }
+        { text: 'OK' },
       ]);
-      
+
       console.log('✅ SnapPreviewScreen: Media saved successfully');
     } catch (error) {
       console.error('❌ SnapPreviewScreen: Save failed:', error);
@@ -197,80 +197,88 @@ export function SnapPreviewScreen() {
   }, [navigation]);
 
   /**
-   * Send snap (placeholder for future implementation)
+   * Send snap - navigate to recipient selection
    */
   const handleSend = useCallback(() => {
     console.log('📤 SnapPreviewScreen: Sending snap');
-    Alert.alert(
-      'Send Snap',
-      'Snap sending will be implemented in Phase 2.6',
-      [{ text: 'OK' }]
+
+    // Navigate to recipient selection with media data
+    navigation.navigate('RecipientSelection', {
+      mediaUri: uri,
+      mediaType: type,
+      ...(textOverlay?.text && { textOverlay: textOverlay.text }),
+    });
+  }, [navigation, uri, type, textOverlay]);
+
+  /**
+   * Render text overlay
+   */
+  const renderTextOverlay = useCallback(() => {
+    if (!textOverlay) return null;
+
+    return (
+      <Animated.View
+        style={[
+          styles.textOverlay,
+          {
+            left: textOverlay.x * SCREEN_WIDTH - 50,
+            top: textOverlay.y * SCREEN_HEIGHT - 25,
+            transform: [
+              { scale: textOverlay.scale },
+              { rotate: `${textOverlay.rotation}deg` },
+            ],
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.overlayText,
+            {
+              fontSize: textOverlay.fontSize,
+              color: textOverlay.color,
+            },
+          ]}
+        >
+          {textOverlay.text}
+        </Text>
+      </Animated.View>
     );
-  }, []);
-
-     /**
-    * Render text overlay
-    */
-   const renderTextOverlay = useCallback(() => {
-     if (!textOverlay) return null;
-
-     return (
-       <Animated.View
-         style={[
-           styles.textOverlay,
-           {
-             left: textOverlay.x * SCREEN_WIDTH - 50,
-             top: textOverlay.y * SCREEN_HEIGHT - 25,
-             transform: [
-               { scale: textOverlay.scale },
-               { rotate: `${textOverlay.rotation}deg` },
-             ],
-           },
-         ]}
-       >
-         <Text
-           style={[
-             styles.overlayText,
-             {
-               fontSize: textOverlay.fontSize,
-               color: textOverlay.color,
-             },
-           ]}
-         >
-           {textOverlay.text}
-         </Text>
-       </Animated.View>
-     );
-   }, [textOverlay]);
+  }, [textOverlay]);
 
   const displayUri = isFiltered && filteredUri ? filteredUri : uri;
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
+      <StatusBar barStyle='light-content' backgroundColor='#000000' />
+
       {/* Media Display */}
       <View style={styles.mediaContainer}>
         {type === 'photo' ? (
-          <Image source={{ uri: displayUri }} style={styles.media} resizeMode="cover" />
+          <Image
+            source={{ uri: displayUri }}
+            style={styles.media}
+            resizeMode='cover'
+          />
         ) : (
-                     <Video
-             source={{ uri: displayUri }}
-             style={styles.media}
-             shouldPlay={false}
-             isLooping={false}
-             useNativeControls
-             resizeMode={ResizeMode.COVER}
-           />
+          <Video
+            source={{ uri: displayUri }}
+            style={styles.media}
+            shouldPlay={false}
+            isLooping={false}
+            useNativeControls
+            resizeMode={ResizeMode.COVER}
+          />
         )}
 
-                 {/* Text Overlay */}
-         {renderTextOverlay()}
+        {/* Text Overlay */}
+        {renderTextOverlay()}
 
         {/* Processing Overlay */}
         {isProcessing && (
           <View style={styles.processingOverlay}>
-            <Text style={[styles.processingText, { color: theme.colors.white }]}>
+            <Text
+              style={[styles.processingText, { color: theme.colors.white }]}
+            >
               Applying filter...
             </Text>
           </View>
@@ -286,118 +294,181 @@ export function SnapPreviewScreen() {
               style={[
                 styles.filterButton,
                 {
-                  backgroundColor: isFiltered ? theme.colors.primary : theme.colors.gray4,
+                  backgroundColor: isFiltered
+                    ? theme.colors.primary
+                    : theme.colors.gray4,
                 },
               ]}
               onPress={isFiltered ? removeFilter : applyBlackWhiteFilter}
               disabled={isProcessing}
             >
-              <Text style={[styles.filterButtonText, { color: theme.colors.black }]}>
+              <Text
+                style={[styles.filterButtonText, { color: theme.colors.black }]}
+              >
                 {isFiltered ? 'Original' : 'B&W'}
               </Text>
             </TouchableOpacity>
           </View>
         )}
 
-                 {/* Text Controls */}
-         <View style={styles.textControls}>
-           {!isAddingText ? (
-             <View style={styles.textButtonContainer}>
-               {!textOverlay ? (
-                 <TouchableOpacity
-                   style={[styles.textButton, { backgroundColor: theme.colors.white }]}
-                   onPress={() => setIsAddingText(true)}
-                 >
-                   <Text style={[styles.textButtonText, { color: theme.colors.black }]}>
-                     Add Text
-                   </Text>
-                 </TouchableOpacity>
-               ) : (
-                 <View style={styles.textButtonContainer}>
-                   <TouchableOpacity
-                     style={[styles.textButton, { backgroundColor: theme.colors.white, flex: 1, marginRight: 10 }]}
-                     onPress={() => {
-                       setNewTextInput(textOverlay.text);
-                       setIsAddingText(true);
-                     }}
-                   >
-                     <Text style={[styles.textButtonText, { color: theme.colors.black }]}>
-                       Edit Text
-                     </Text>
-                   </TouchableOpacity>
-                   <TouchableOpacity
-                     style={[styles.textButton, { backgroundColor: theme.colors.gray4, flex: 1 }]}
-                     onPress={removeTextOverlay}
-                   >
-                     <Text style={[styles.textButtonText, { color: theme.colors.black }]}>
-                       Remove
-                     </Text>
-                   </TouchableOpacity>
-                 </View>
-               )}
-             </View>
-           ) : (
-             <View style={styles.textInputContainer}>
-               <TextInput
-                 style={[styles.textInput, { color: theme.colors.white }]}
-                 value={newTextInput}
-                 onChangeText={setNewTextInput}
-                 placeholder="Enter text..."
-                 placeholderTextColor={theme.colors.gray2}
-                 autoFocus
-                 multiline
-                 maxLength={100}
-               />
-               <View style={styles.textInputActions}>
-                 <TouchableOpacity
-                   style={[styles.textActionButton, { backgroundColor: theme.colors.gray4 }]}
-                   onPress={() => {
-                     setIsAddingText(false);
-                     setNewTextInput('');
-                   }}
-                 >
-                   <Text style={[styles.textActionText, { color: theme.colors.black }]}>
-                     Cancel
-                   </Text>
-                 </TouchableOpacity>
-                 <TouchableOpacity
-                   style={[styles.textActionButton, { backgroundColor: theme.colors.primary }]}
-                   onPress={addTextOverlay}
-                 >
-                   <Text style={[styles.textActionText, { color: theme.colors.black }]}>
-                     {textOverlay ? 'Update' : 'Add'}
-                   </Text>
-                 </TouchableOpacity>
-               </View>
-             </View>
-           )}
-         </View>
+        {/* Text Controls */}
+        <View style={styles.textControls}>
+          {!isAddingText ? (
+            <View style={styles.textButtonContainer}>
+              {!textOverlay ? (
+                <TouchableOpacity
+                  style={[
+                    styles.textButton,
+                    { backgroundColor: theme.colors.white },
+                  ]}
+                  onPress={() => setIsAddingText(true)}
+                >
+                  <Text
+                    style={[
+                      styles.textButtonText,
+                      { color: theme.colors.black },
+                    ]}
+                  >
+                    Add Text
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.textButtonContainer}>
+                  <TouchableOpacity
+                    style={[
+                      styles.textButton,
+                      {
+                        backgroundColor: theme.colors.white,
+                        flex: 1,
+                        marginRight: 10,
+                      },
+                    ]}
+                    onPress={() => {
+                      setNewTextInput(textOverlay.text);
+                      setIsAddingText(true);
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.textButtonText,
+                        { color: theme.colors.black },
+                      ]}
+                    >
+                      Edit Text
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.textButton,
+                      { backgroundColor: theme.colors.gray4, flex: 1 },
+                    ]}
+                    onPress={removeTextOverlay}
+                  >
+                    <Text
+                      style={[
+                        styles.textButtonText,
+                        { color: theme.colors.black },
+                      ]}
+                    >
+                      Remove
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          ) : (
+            <View style={styles.textInputContainer}>
+              <TextInput
+                style={[styles.textInput, { color: theme.colors.white }]}
+                value={newTextInput}
+                onChangeText={setNewTextInput}
+                placeholder='Enter text...'
+                placeholderTextColor={theme.colors.gray2}
+                autoFocus
+                multiline
+                maxLength={100}
+              />
+              <View style={styles.textInputActions}>
+                <TouchableOpacity
+                  style={[
+                    styles.textActionButton,
+                    { backgroundColor: theme.colors.gray4 },
+                  ]}
+                  onPress={() => {
+                    setIsAddingText(false);
+                    setNewTextInput('');
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.textActionText,
+                      { color: theme.colors.black },
+                    ]}
+                  >
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.textActionButton,
+                    { backgroundColor: theme.colors.primary },
+                  ]}
+                  onPress={addTextOverlay}
+                >
+                  <Text
+                    style={[
+                      styles.textActionText,
+                      { color: theme.colors.black },
+                    ]}
+                  >
+                    {textOverlay ? 'Update' : 'Add'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        </View>
 
         {/* Action Buttons */}
         <View style={styles.actionButtons}>
           <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: theme.colors.gray4 }]}
+            style={[
+              styles.actionButton,
+              { backgroundColor: theme.colors.gray4 },
+            ]}
             onPress={handleRetake}
           >
-            <Text style={[styles.actionButtonText, { color: theme.colors.black }]}>
+            <Text
+              style={[styles.actionButtonText, { color: theme.colors.black }]}
+            >
               Retake
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: theme.colors.white }]}
+            style={[
+              styles.actionButton,
+              { backgroundColor: theme.colors.white },
+            ]}
             onPress={saveToDevice}
           >
-            <Text style={[styles.actionButtonText, { color: theme.colors.black }]}>
+            <Text
+              style={[styles.actionButtonText, { color: theme.colors.black }]}
+            >
               Save
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: theme.colors.primary }]}
+            style={[
+              styles.actionButton,
+              { backgroundColor: theme.colors.primary },
+            ]}
             onPress={handleSend}
           >
-            <Text style={[styles.actionButtonText, { color: theme.colors.black }]}>
+            <Text
+              style={[styles.actionButtonText, { color: theme.colors.black }]}
+            >
               Send
             </Text>
           </TouchableOpacity>

@@ -10,8 +10,8 @@
  */
 
 import { StatusBar } from 'expo-status-bar';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { useIsDarkMode } from './src/shared/hooks/useTheme';
 import { RootNavigator } from './src/shared/navigation/RootNavigator';

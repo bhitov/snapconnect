@@ -12,12 +12,12 @@ export type FriendRequestStatus = 'pending' | 'accepted' | 'rejected';
 /**
  * Friendship status between two users
  */
-export type FriendshipStatus = 
-  | 'none'           // No relationship
-  | 'request_sent'   // Current user sent request
+export type FriendshipStatus =
+  | 'none' // No relationship
+  | 'request_sent' // Current user sent request
   | 'request_received' // Current user received request
-  | 'friends'        // Already friends
-  | 'blocked';       // User is blocked
+  | 'friends' // Already friends
+  | 'blocked'; // User is blocked
 
 /**
  * Friend request interface
@@ -131,22 +131,22 @@ export interface FriendsActions {
   // Friends list
   loadFriends: () => Promise<void>;
   refreshFriends: () => Promise<void>;
-  
+
   // Friend requests
   loadFriendRequests: () => Promise<void>;
   sendFriendRequest: (data: SendFriendRequestData) => Promise<void>;
   respondToFriendRequest: (response: FriendRequestResponse) => Promise<void>;
   cancelFriendRequest: (requestId: string) => Promise<void>;
-  
+
   // Search
   searchUsers: (query: string) => Promise<void>;
   clearSearch: () => void;
-  
+
   // Friend management
   removeFriend: (friendshipId: string) => Promise<void>;
   blockUser: (userId: string) => Promise<void>;
   unblockUser: (userId: string) => Promise<void>;
-  
+
   // UI actions
   setSelectedFriend: (friend: FriendProfile | null) => void;
   clearError: () => void;
@@ -264,4 +264,4 @@ export interface SearchResultItemProps {
   result: FriendSearchResult;
   onAddFriend: (userId: string) => void;
   onViewProfile: (userId: string) => void;
-} 
+}

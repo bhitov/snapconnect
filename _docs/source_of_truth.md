@@ -29,10 +29,10 @@
 #### Shared Components (src/shared/)
 
 ##### Navigation (src/shared/navigation/)
-- `RootNavigator.tsx` - Root navigation with auth flow detection, loading screen, and modal screens
+- `RootNavigator.tsx` - Root navigation with auth flow detection, loading screen, and modal screens (SnapPreview, RecipientSelection, ViewSnap)
 - `AuthNavigator.tsx` - Authentication screens navigator with Login, Register, ProfileSetup, ForgotPassword
-- `MainNavigator.tsx` - Main tab navigation with Camera, Chats, Stories
-- `types.ts` - Navigation type definitions for all stack param lists
+- `MainNavigator.tsx` - Main tab navigation with Chats, Camera, Friends, Stories tabs and separate stack navigators for Chats and Friends (snap-focused, no traditional chat screens)
+- `types.ts` - Navigation type definitions for all stack param lists including simplified ChatStackParamList and FriendsStackParamList
 
 ##### Components (src/shared/components/)
 
@@ -120,8 +120,25 @@
 ###### Friends Types (src/features/friends/types/)
 - `index.ts` - Complete TypeScript definitions for friend requests, friendships, search results, store interfaces, component props, Firebase documents, and error handling
 
+##### Chat Feature (src/features/chat/) - **IMPLEMENTED IN PHASES 2.6-2.8**
+
+###### Chat Screens (src/features/chat/screens/)
+- `ChatsScreen.tsx` - Main chats list showing conversations with real-time updates and snap/message previews
+- `RecipientSelectionScreen.tsx` - Recipient selection and duration controls for snap sending
+- `SnapViewingScreen.tsx` - Snap viewing with timer, pause/resume functionality, and viewed status updates
+- `ChatScreen.tsx` - Individual chat screen with hybrid text and snap messaging, message list, and text input
+- `index.ts` - Chat screens export
+
+###### Chat Store (src/features/chat/store/)
+- `chatStore.ts` - Zustand store for chat state with conversations, messages (both text and snaps), sending progress, viewing sessions, and recipient selection
+
+###### Chat Services (src/features/chat/services/)
+- `chatService.ts` - Firebase service for chat operations with text messaging, snap sending, conversation management, real-time listeners, and hybrid message handling
+
+###### Chat Types (src/features/chat/types/)
+- `index.ts` - Complete TypeScript definitions for hybrid messaging with text messages, snap messages, conversations, upload progress, viewing sessions, and store interfaces
+
 ##### Other Features (Empty - To Be Implemented)
-- `chat/` - Chat/messaging feature (empty)  
 - `stories/` - Stories feature (empty)
 
 ### Documentation (_docs/)
@@ -291,10 +308,11 @@
 - `isDark` - Boolean from useIsDarkMode hook
 
 ### src/shared/navigation/types.ts
-- `RootStackParamList` - Navigation params for root stack (Auth, Main, SnapPreview, ViewSnap, Profile, AddFriends, CreateGroup)
+- `RootStackParamList` - Navigation params for root stack (Auth, Main, SnapPreview, RecipientSelection, ViewSnap, Profile, CreateGroup)
 - `AuthStackParamList` - Auth navigation params (Login, Register, ProfileSetup, ForgotPassword)
-- `MainTabParamList` - Main tab params (Chats, Camera, Stories)
-- `ChatStackParamList` - Chat navigation params (ChatsList, Chat, FriendRequests)
+- `MainTabParamList` - Main tab params (Chats, Camera, Friends, Stories)
+- `ChatStackParamList` - Chat navigation params (ChatsList only - snap-focused messaging)
+- `FriendsStackParamList` - Friends navigation params (FriendsList, AddFriends, FriendRequests, Profile)
 - `StoriesStackParamList` - Stories navigation params (StoriesList, ViewStory, CreateStory)
 
 ### src/shared/components/base/Button/Button.tsx
@@ -513,20 +531,61 @@
 - ✅ **IMPLEMENTED**: Complete Zustand store with performance selectors and state management
 - ✅ **IMPLEMENTED**: Firebase service with real-time listeners and comprehensive error handling
 - ✅ **IMPLEMENTED**: Full TypeScript type system for friends functionality
-- ✅ **IMPLEMENTED**: Navigation integration with modal AddFriends screen and stack navigation
+- ✅ **IMPLEMENTED**: **DEDICATED FRIENDS TAB**: Separate Friends tab in main navigation with FriendsListScreen as main screen
+- ✅ **IMPLEMENTED**: **FRIENDS STACK NAVIGATION**: AddFriends and FriendRequests accessible through Friends tab navigation
 - ✅ **IMPLEMENTED**: UI components with theme integration, loading states, and responsive design
 - ✅ **FIXED**: Firebase Realtime Database indexing for username search queries
 - ✅ **FIXED**: Firebase undefined value validation errors in friend request creation
 - ✅ **FIXED**: Proper handling of optional photoURL fields to prevent Firebase validation errors
 - ✅ **FIXED**: Friend request acceptance/rejection now properly removes requests from pending list
 - ✅ **FIXED**: Consistent filtering of pending-only friend requests across all functions
+- ✅ **UPDATED**: Removed Add Friends functionality from Chats tab for cleaner separation of concerns
 
-### Phase 2.6+ - Not Started
-- ❌ Snap Sending
-- ❌ Snap Receiving & Viewing
-- ❌ Ephemeral System
-- ❌ Basic Navigation Flow
-- ❌ Error Handling & Loading States 
+### Phase 2.6 - Snap Sending (✅ COMPLETE)
+- ✅ **IMPLEMENTED**: RecipientSelectionScreen with friend selection and duration controls
+- ✅ **IMPLEMENTED**: Complete snap upload to Firebase Storage with progress tracking
+- ✅ **IMPLEMENTED**: Snap metadata creation in Firebase Realtime Database with conversation management
+- ✅ **IMPLEMENTED**: Send confirmation and loading states with comprehensive error handling
+- ✅ **IMPLEMENTED**: Snap sending service with retry logic and multi-recipient support
+- ✅ **IMPLEMENTED**: Integration with SnapPreviewScreen for seamless media sending flow
+- ✅ **IMPLEMENTED**: Real-time conversation updates and unread count management
+- ✅ **IMPLEMENTED**: Complete Zustand store with snap sending state and progress tracking
+- ✅ **FIXED**: Firebase key restriction issue - changed unreadCount from object with user ID keys to clean array format with participant indices, using direct array replacement for updates
+
+### Phase 2.7 - Snap Receiving & Viewing (✅ COMPLETE)
+- ✅ **IMPLEMENTED**: ChatsScreen showing received snaps with real-time conversation updates
+- ✅ **IMPLEMENTED**: Real-time snap listener with Firebase integration and automatic refresh
+- ✅ **IMPLEMENTED**: SnapViewingScreen with timer, pause/resume functionality, and proper snap loading
+- ✅ **IMPLEMENTED**: Viewed status update to Firebase with automatic conversation refresh
+- ✅ **IMPLEMENTED**: Tap-and-hold to pause timer with video controls integration
+- ✅ **IMPLEMENTED**: Snap expiration checking and proper error handling for expired/viewed snaps
+- ✅ **IMPLEMENTED**: Complete viewing session management with Zustand store
+- ✅ **IMPLEMENTED**: Real snap data loading instead of mock data with proper type safety
+- ✅ **FIXED**: Firebase key restrictions resolved by using array indices instead of user ID keys
+
+### Phase 2.8 - Hybrid Text + Snap Messaging (✅ COMPLETE)
+- ✅ **IMPLEMENTED**: Extended type system with `MessageType` union ('text' | 'snap')
+- ✅ **IMPLEMENTED**: `BaseMessage` interface with shared properties for all message types
+- ✅ **IMPLEMENTED**: `TextMessage` and `SnapMessage` interfaces extending BaseMessage
+- ✅ **IMPLEMENTED**: Unified `Message` union type for hybrid messaging
+- ✅ **IMPLEMENTED**: Updated conversation types to support `lastMessage` instead of `lastSnap`
+- ✅ **IMPLEMENTED**: Extended Chat service with `sendTextMessage()` for persistent text messaging
+- ✅ **IMPLEMENTED**: `getMessages()` method combining text messages and snaps chronologically
+- ✅ **IMPLEMENTED**: Updated `markMessageAsViewed()` to handle both text and snap messages
+- ✅ **IMPLEMENTED**: Chat store updated from `currentSnaps` to `currentMessages` for unified message handling
+- ✅ **IMPLEMENTED**: Individual `ChatScreen.tsx` with message list and text input
+- ✅ **IMPLEMENTED**: `MessageItem` component rendering both text messages and snaps differently
+- ✅ **IMPLEMENTED**: Real-time message loading and automatic read receipt marking
+- ✅ **IMPLEMENTED**: Navigation integration for individual chat screens
+- ✅ **FIXED**: TypeScript errors in `SnapViewingScreen.tsx` with proper type checking for Message union
+- ✅ **FIXED**: Updated `getMessage()` method to return proper Message union type
+- ✅ **FIXED**: Fixed function calls from `markSnapAsViewed` to `markMessageAsViewed`
+- ✅ **FIXED**: Firebase database indexes added for textMessages, snaps, and conversations collections
+- ✅ **FIXED**: Snap sending now redirects to chats with "View Chats" and "Take Another" options
+- ✅ **FIXED**: Friends list now includes chat icon alongside snap icon for easy text messaging access
+- ✅ **FIXED**: Friend requests button already includes notification badge for pending requests
+
+### Phase 2.9+ - Not Started
 
 #### src/shared/components/layout/SnapPreviewScreen.tsx
 - `SnapPreviewScreen()` - Complete media preview screen with editing capabilities
@@ -536,8 +595,35 @@
 - `removeTextOverlay()` - Remove the current text overlay
 - `saveToDevice()` - Save media to device photo library with permissions
 - `handleRetake()` - Navigate back to camera for retaking media
-- `handleSend()` - Send snap action (placeholder for Phase 2.6)
+- `handleSend()` - Navigate to recipient selection screen with media data
 - `renderTextOverlay()` - Render the single text overlay with proper positioning
+
+### Chat Feature Functions
+
+#### src/features/chat/screens/ChatScreen.tsx
+- `ChatScreen()` - Individual chat screen with hybrid text and snap messaging
+- `loadMessages()` - Load messages for the conversation with real-time updates
+- `handleSendMessage()` - Send text message with validation and conversation updates
+- `handleSnapPress(snap)` - Handle snap message press to navigate to viewing screen
+- `handleCameraPress()` - Navigate to main tab for camera access
+- `renderMessage(message)` - Render individual message item with type-specific display
+- `scrollToBottom()` - Auto-scroll to bottom when new messages arrive
+
+#### src/features/chat/screens/SnapViewingScreen.tsx
+- `SnapViewingScreen()` - Snap viewing screen with timer and pause functionality
+- `loadSnap()` - Load snap data with type checking for Message union type
+- `handleSnapComplete()` - Handle snap completion with viewed status update
+- `startTimer()` - Start countdown timer with pause/resume support
+- `stopTimer()` - Stop and cleanup timer
+- `handlePressIn()` - Handle press start for pause functionality
+- `handlePressOut()` - Handle press end for resume functionality
+
+#### src/features/chat/screens/RecipientSelectionScreen.tsx
+- `RecipientSelectionScreen()` - Recipient selection with friend list and duration controls
+- `handleRecipientToggle(friendId)` - Toggle friend selection for snap sending
+- `handleSendSnap()` - Send snap to selected recipients with progress tracking
+- `renderFriendItem(friend)` - Render friend item with selection state
+- `renderDurationOption(duration)` - Render duration selection option
 
 ### Friends Feature Functions
 
@@ -552,3 +638,72 @@
 - `searchUsers(query)` - Search users by username with debouncing and friendship status
 - `clearSearch()` - Clear search results and query
 - `removeFriend(friendshipId)`
+
+#### src/features/chat/services/chatService.ts
+- `sendTextMessage(data)` - Send persistent text message with conversation management
+- `createConversation(otherUserId)` - Create or get existing conversation between two users
+- `sendSnap(data, onProgress)` - Send snap with media upload, metadata creation, and progress tracking
+- `getConversations()` - Get all conversations for current user with populated user data
+- `getMessages(conversationId)` - Get all messages (text and snaps) in a conversation chronologically
+- `getTextMessages(conversationId)` - Private method to get text messages for a conversation
+- `getSnapMessages(conversationId)` - Private method to get snap messages for a conversation
+- `getSnaps(conversationId)` - Legacy method - get all snaps in a conversation
+- `getMessage(messageId)` - Get message data by ID (supports both text and snap messages)
+- `getMessageData(messageId)` - Private method for getting message data from both collections
+- `markMessageAsViewed(messageId)` - Mark message as viewed (supports both text and snap messages)
+- `markSnapAsViewed(snapId)` - Legacy method - mark snap as viewed (calls markMessageAsViewed)
+- `onConversationsChange(callback)` - Real-time listener for conversation updates
+- `onMessagesChange(conversationId, callback)` - Real-time listener for message updates (text and snaps)
+- `cleanupExpiredMessages()` - Remove expired messages from storage and database
+- `handleError(error)` - Convert Firebase errors to user-friendly messages
+- `uploadMedia(mediaUri, mediaType, onProgress)` - Upload media to Firebase Storage
+- `findConversation(user1Id, user2Id)` - Find existing conversation between users
+- `updateConversationWithMessage(conversationId, messageId, messageType, timestamp, recipientId)` - Update conversation metadata with message info
+- `getUserData(userId)` - Get user profile data
+
+#### src/features/chat/store/chatStore.ts
+- `useChatStore()` - Zustand store hook for chat state and actions
+- `loadConversations()` - Load conversations from Firebase with user data population
+- `refreshConversations()` - Refresh conversations with loading state management
+- `createConversation(otherUserId)` - Create new conversation between users
+- `loadMessages(conversationId)` - Load messages (text and snaps) for specific conversation
+- `sendTextMessage(data)` - Send text message with conversation updates
+- `sendSnap(data)` - Send snap with progress tracking and conversation updates
+- `markMessageAsViewed(messageId)` - Mark message as viewed (supports both text and snap messages)
+- `startViewingSnap(snap)` - Initialize snap viewing session with timer
+- `pauseViewingSnap()` - Pause viewing session and timer
+- `resumeViewingSnap()` - Resume viewing session with remaining time
+- `stopViewingSnap()` - End viewing session and cleanup
+- `setSelectedRecipients(recipients)` - Set recipient list for snap sending
+- `addRecipient(recipientId)` - Add recipient to selection
+- `removeRecipient(recipientId)` - Remove recipient from selection
+- `clearRecipients()` - Clear all selected recipients
+- `clearError()` - Clear all error states
+- `clearSendError()` - Clear send error state
+- `clearMessagesError()` - Clear messages error state
+- Performance selectors: `useConversations()`, `useConversationsLoading()`, `useCurrentMessages()`, `useSendingMessages()`, `useViewingSession()`, `useSelectedRecipients()`, etc.
+
+### src/features/chat/types/index.ts
+- `MessageType` - Union type for message types ('text' | 'snap')
+- `SnapMediaType` - Type for photo/video media types
+- `MessageStatus` - Type for message status (sent, delivered, viewed, expired)
+- `SnapDuration` - Type for viewing duration (1-10 seconds)
+- `BaseMessage` - Base interface with shared properties for all message types
+- `TextMessage` - Text message interface extending BaseMessage with persistent text content
+- `SnapMessage` - Snap message interface extending BaseMessage with media, text overlay, duration, expiration
+- `Message` - Union type for all message types (TextMessage | SnapMessage)
+- `Snap` - Legacy snap interface for backward compatibility
+- `TextMessageCreationData` - Text message creation data with text and recipient
+- `SnapCreationData` - Snap data before upload (local URI, recipient, media type, text, duration)
+- `MessageCreationData` - Union type for message creation data
+- `SnapUploadProgress` - Upload progress tracking with snapId, progress percentage, status, error
+- `Conversation` - Basic conversation interface with participants, last message info, unread count, timestamps
+- `ConversationWithUser` - Conversation with populated user data and last message preview
+- `TextMessageDocument` - Firebase text message document structure
+- `SnapDocument` - Firebase snap document structure
+- `ConversationDocument` - Firebase conversation document structure with participants array and unreadCount array using indices
+- `SendSnapData` - Form data for snap sending with recipients and duration
+- `SnapViewingSession` - Viewing session state with timing and pause functionality
+- `ChatState`, `ChatActions`, `ChatStore` - Complete store interfaces for hybrid messaging state management
+- `ChatError`, `ChatErrorType` - Error handling types
+- Component prop interfaces: `RecipientSelectionProps`, `ConversationItemProps`, `SnapViewerProps`, `SnapTimerProps`, `ChatScreenProps`, `MessageItemProps`

@@ -4,6 +4,7 @@
  * Allows users to search by username and send friend requests.
  */
 
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
@@ -18,10 +19,10 @@ import {
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 
-import { useTheme } from '@/shared/hooks/useTheme';
 import { Button } from '@/shared/components/base/Button';
+import { useTheme } from '@/shared/hooks/useTheme';
+
 import {
   useFriendsStore,
   useSearchResults,
@@ -40,16 +41,17 @@ interface AddFriendsScreenProps {
  */
 export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
   const theme = useTheme();
-  
+
   // Store state
   const searchResults = useSearchResults();
   const searchLoading = useSearchLoading();
   const searchError = useSearchError();
   const searchQuery = useSearchQuery();
-  
+
   // Store actions
-  const { searchUsers, clearSearch, sendFriendRequest, clearError } = useFriendsStore();
-  
+  const { searchUsers, clearSearch, sendFriendRequest, clearError } =
+    useFriendsStore();
+
   // Local state
   const [searchInput, setSearchInput] = useState('');
   const [sendingRequest, setSendingRequest] = useState<string | null>(null);
@@ -57,40 +59,46 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
   /**
    * Handle search input change with debouncing
    */
-  const handleSearchChange = useCallback((text: string) => {
-    setSearchInput(text);
-    
-    // Debounce search
-    const timeoutId = setTimeout(() => {
-      if (text.trim()) {
-        searchUsers(text.trim());
-      } else {
-        clearSearch();
-      }
-    }, 500);
+  const handleSearchChange = useCallback(
+    (text: string) => {
+      setSearchInput(text);
 
-    return () => clearTimeout(timeoutId);
-  }, [searchUsers, clearSearch]);
+      // Debounce search
+      const timeoutId = setTimeout(() => {
+        if (text.trim()) {
+          searchUsers(text.trim());
+        } else {
+          clearSearch();
+        }
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
+    },
+    [searchUsers, clearSearch]
+  );
 
   /**
    * Handle sending friend request
    */
   const handleSendFriendRequest = async (userId: string, username: string) => {
     console.log('📤 AddFriendsScreen: Sending friend request to:', username);
-    
+
     setSendingRequest(userId);
 
     try {
       await sendFriendRequest({ receiverId: userId });
-      
+
       Alert.alert(
         'Friend Request Sent',
         `Friend request sent to ${username}!`,
         [{ text: 'OK' }]
       );
     } catch (error: any) {
-      console.error('❌ AddFriendsScreen: Failed to send friend request:', error);
-      
+      console.error(
+        '❌ AddFriendsScreen: Failed to send friend request:',
+        error
+      );
+
       Alert.alert(
         'Failed to Send Request',
         error.message || 'Unable to send friend request. Please try again.',
@@ -149,7 +157,9 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
    * Check if button should be disabled
    */
   const isActionButtonDisabled = (status: FriendshipStatus) => {
-    return status === 'friends' || status === 'request_sent' || status === 'blocked';
+    return (
+      status === 'friends' || status === 'request_sent' || status === 'blocked'
+    );
   };
 
   /**
@@ -157,23 +167,31 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
    */
   const renderSearchResult = ({ item }: { item: FriendSearchResult }) => {
     const isLoading = sendingRequest === item.uid;
-    
+
     return (
       <TouchableOpacity
-        style={[styles.resultItem, { backgroundColor: theme.colors.background }]}
+        style={[
+          styles.resultItem,
+          { backgroundColor: theme.colors.background },
+        ]}
         onPress={() => handleViewProfile(item.uid)}
         activeOpacity={0.7}
       >
         <View style={styles.resultContent}>
           {/* Avatar */}
-          <View style={[styles.avatar, { backgroundColor: theme.colors.surface }]}>
+          <View
+            style={[styles.avatar, { backgroundColor: theme.colors.surface }]}
+          >
             {item.photoURL ? (
-              <Image source={{ uri: item.photoURL }} style={styles.avatarImage} />
+              <Image
+                source={{ uri: item.photoURL }}
+                style={styles.avatarImage}
+              />
             ) : (
-              <Ionicons 
-                name="person" 
-                size={24} 
-                color={theme.colors.textSecondary} 
+              <Ionicons
+                name='person'
+                size={24}
+                color={theme.colors.textSecondary}
               />
             )}
           </View>
@@ -183,12 +201,20 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
             <Text style={[styles.displayName, { color: theme.colors.text }]}>
               {item.displayName}
             </Text>
-            <Text style={[styles.username, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[styles.username, { color: theme.colors.textSecondary }]}
+            >
               @{item.username}
             </Text>
             {item.mutualFriends && item.mutualFriends > 0 && (
-              <Text style={[styles.mutualFriends, { color: theme.colors.textSecondary }]}>
-                {item.mutualFriends} mutual friend{item.mutualFriends !== 1 ? 's' : ''}
+              <Text
+                style={[
+                  styles.mutualFriends,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
+                {item.mutualFriends} mutual friend
+                {item.mutualFriends !== 1 ? 's' : ''}
               </Text>
             )}
           </View>
@@ -197,8 +223,10 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
           <View style={styles.actionContainer}>
             <Button
               variant={getActionButtonVariant(item.friendshipStatus)}
-              size="small"
-              disabled={isActionButtonDisabled(item.friendshipStatus) || isLoading}
+              size='small'
+              disabled={
+                isActionButtonDisabled(item.friendshipStatus) || isLoading
+              }
               loading={isLoading}
               onPress={() => {
                 if (item.friendshipStatus === 'none') {
@@ -224,8 +252,10 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
     if (searchLoading) {
       return (
         <View style={styles.emptyContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+          <ActivityIndicator size='large' color={theme.colors.primary} />
+          <Text
+            style={[styles.emptyText, { color: theme.colors.textSecondary }]}
+          >
             Searching users...
           </Text>
         </View>
@@ -235,13 +265,13 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
     if (searchError) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons name="alert-circle" size={48} color={theme.colors.error} />
+          <Ionicons name='alert-circle' size={48} color={theme.colors.error} />
           <Text style={[styles.emptyText, { color: theme.colors.error }]}>
             {searchError}
           </Text>
           <Button
-            variant="outline"
-            size="small"
+            variant='outline'
+            size='small'
             onPress={() => {
               clearError();
               if (searchQuery) {
@@ -258,11 +288,19 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
     if (searchQuery && searchResults.length === 0) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons name="search" size={48} color={theme.colors.textSecondary} />
-          <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+          <Ionicons
+            name='search'
+            size={48}
+            color={theme.colors.textSecondary}
+          />
+          <Text
+            style={[styles.emptyText, { color: theme.colors.textSecondary }]}
+          >
             No users found for "{searchQuery}"
           </Text>
-          <Text style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}
+          >
             Try searching with a different username
           </Text>
         </View>
@@ -271,11 +309,13 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
 
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="people" size={48} color={theme.colors.textSecondary} />
+        <Ionicons name='people' size={48} color={theme.colors.textSecondary} />
         <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
           Search for friends
         </Text>
-        <Text style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}>
+        <Text
+          style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}
+        >
           Enter a username to find and add friends
         </Text>
       </View>
@@ -292,35 +332,42 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
   }, [clearSearch]);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       {/* Header */}
       <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name='arrow-back' size={24} color={theme.colors.text} />
         </TouchableOpacity>
-        
+
         <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
           Add Friends
         </Text>
-        
+
         <View style={styles.headerSpacer} />
       </View>
 
       {/* Search input */}
-      <View style={[styles.searchContainer, { backgroundColor: theme.colors.surface }]}>
-        <Ionicons name="search" size={20} color={theme.colors.textSecondary} />
+      <View
+        style={[
+          styles.searchContainer,
+          { backgroundColor: theme.colors.surface },
+        ]}
+      >
+        <Ionicons name='search' size={20} color={theme.colors.textSecondary} />
         <TextInput
           style={[styles.searchInput, { color: theme.colors.text }]}
-          placeholder="Search by username..."
+          placeholder='Search by username...'
           placeholderTextColor={theme.colors.textSecondary}
           value={searchInput}
           onChangeText={handleSearchChange}
-          autoCapitalize="none"
+          autoCapitalize='none'
           autoCorrect={false}
-          returnKeyType="search"
+          returnKeyType='search'
         />
         {searchInput.length > 0 && (
           <TouchableOpacity
@@ -329,7 +376,11 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
               clearSearch();
             }}
           >
-            <Ionicons name="close-circle" size={20} color={theme.colors.textSecondary} />
+            <Ionicons
+              name='close-circle'
+              size={20}
+              color={theme.colors.textSecondary}
+            />
           </TouchableOpacity>
         )}
       </View>
@@ -338,7 +389,7 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
       <FlatList
         data={searchResults}
         renderItem={renderSearchResult}
-        keyExtractor={(item) => item.uid}
+        keyExtractor={item => item.uid}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={renderEmptyState}
         showsVerticalScrollIndicator={false}
@@ -457,4 +508,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
   },
-}); 
+});

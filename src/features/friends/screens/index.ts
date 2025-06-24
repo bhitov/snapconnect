@@ -6,4 +6,4 @@
 
 export { AddFriendsScreen } from './AddFriendsScreen';
 export { FriendRequestsScreen } from './FriendRequestsScreen';
-export { FriendsListScreen } from './FriendsListScreen'; 
+export { FriendsListScreen } from './FriendsListScreen';

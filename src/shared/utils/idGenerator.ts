@@ -7,9 +7,9 @@
 /**
  * Generate a simple unique ID
  * Format: timestamp + random string (e.g., "1703123456789_abc123def")
- * 
+ *
  * @returns {string} A reasonably unique ID string
- * 
+ *
  * @example
  * ```typescript
  * const id = generateId();
@@ -25,9 +25,9 @@ export function generateId(): string {
 /**
  * Generate a shorter ID for when full uniqueness isn't critical
  * Format: random string only (e.g., "abc123def456")
- * 
+ *
  * @returns {string} A shorter random ID string
- * 
+ *
  * @example
  * ```typescript
  * const shortId = generateShortId();
@@ -35,16 +35,18 @@ export function generateId(): string {
  * ```
  */
 export function generateShortId(): string {
-  return Math.random().toString(36).substring(2, 15) + 
-         Math.random().toString(36).substring(2, 15);
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
 }
 
 /**
  * Generate a UUID-like string (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
  * Not RFC compliant but visually similar to UUIDs
- * 
+ *
  * @returns {string} A UUID-like string
- * 
+ *
  * @example
  * ```typescript
  * const uuidLike = generateUuidLike();
@@ -54,12 +56,8 @@ export function generateShortId(): string {
 export function generateUuidLike(): string {
   const hex = () => Math.floor(Math.random() * 16).toString(16);
   const segment = (length: number) => Array.from({ length }, hex).join('');
-  
-  return [
-    segment(8),
-    segment(4),
-    segment(4),
-    segment(4),
-    segment(12)
-  ].join('-');
-} 
+
+  return [segment(8), segment(4), segment(4), segment(4), segment(12)].join(
+    '-'
+  );
+}

@@ -80,9 +80,9 @@ function connectToEmulators(): void {
   try {
     // Use 10.0.2.2 for Android emulator, localhost for iOS simulator and web
     const host = Platform.OS === 'android' ? '10.0.2.2' : 'localhost';
-    
+
     console.log(`🔧 Connecting to Firebase emulators on ${host}`);
-    
+
     // Connect to emulators - only works on first connection
     connectAuthEmulator(auth, `http://${host}:9099`);
     connectDatabaseEmulator(database, host, 9000);
@@ -90,7 +90,9 @@ function connectToEmulators(): void {
     connectFunctionsEmulator(functions, host, 5001);
 
     console.log('✅ Connected to Firebase emulators successfully');
-    console.log(`🚀 Development mode: Using local Firebase emulators on ${host}`);
+    console.log(
+      `🚀 Development mode: Using local Firebase emulators on ${host}`
+    );
   } catch (error) {
     console.warn(
       '⚠️ Failed to connect to emulators (this is normal if not running locally):',

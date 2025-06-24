@@ -10,6 +10,15 @@
     },
     "friendRequests": {
       ".indexOn": ["senderId", "receiverId", "status", "createdAt"]
+    },
+    "textMessages": {
+      ".indexOn": ["conversationId", "senderId", "recipientId", "createdAt"]
+    },
+    "snaps": {
+      ".indexOn": ["conversationId", "senderId", "recipientId", "createdAt"]
+    },
+    "conversations": {
+      ".indexOn": ["participants", "lastMessageAt"]
     }
   }
-} 
+}

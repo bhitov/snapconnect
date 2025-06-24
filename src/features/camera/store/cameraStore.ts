@@ -4,10 +4,11 @@
  * Handles camera settings, media capture, processing, and permissions.
  */
 
-import { generateId } from '@/shared/utils/idGenerator';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+
+import { generateId } from '@/shared/utils/idGenerator';
 
 import type {
   CameraStore,
@@ -259,7 +260,10 @@ export const useCameraStore = create<CameraStore>()(
             state.isLoading = false;
           });
 
-          console.log('✅ CameraStore: Photo captured successfully, URI:', capturedMedia.uri);
+          console.log(
+            '✅ CameraStore: Photo captured successfully, URI:',
+            capturedMedia.uri
+          );
           return capturedMedia;
         } catch (error) {
           console.error('❌ CameraStore: Photo capture failed:', error);
@@ -292,7 +296,9 @@ export const useCameraStore = create<CameraStore>()(
             throw new Error('Camera reference not available');
           }
 
-          console.log('🎥 CameraStore: Starting video recording with camera ref');
+          console.log(
+            '🎥 CameraStore: Starting video recording with camera ref'
+          );
           await cameraRef.current.recordAsync({
             quality: '720p',
             maxDuration: 180, // 3 minutes in seconds
@@ -326,8 +332,11 @@ export const useCameraStore = create<CameraStore>()(
 
           console.log('✅ CameraStore: Video recording started');
         } catch (error) {
-          console.error('❌ CameraStore: Failed to start video recording:', error);
-          
+          console.error(
+            '❌ CameraStore: Failed to start video recording:',
+            error
+          );
+
           set(state => {
             state.recording.isRecording = false;
             state.controlsVisible = true;
@@ -362,7 +371,9 @@ export const useCameraStore = create<CameraStore>()(
             throw new Error('Camera reference not available');
           }
 
-          console.log('⏹️ CameraStore: Stopping video recording with camera ref');
+          console.log(
+            '⏹️ CameraStore: Stopping video recording with camera ref'
+          );
           const video = await cameraRef.current.stopRecording();
 
           console.log('⏹️ CameraStore: Video recording stopped:', video.uri);
@@ -391,7 +402,10 @@ export const useCameraStore = create<CameraStore>()(
             currentState.isLoading = false;
           });
 
-          console.log('✅ CameraStore: Video recording completed, URI:', capturedMedia.uri);
+          console.log(
+            '✅ CameraStore: Video recording completed, URI:',
+            capturedMedia.uri
+          );
           return capturedMedia;
         } catch (error) {
           console.error('❌ CameraStore: Video recording failed:', error);

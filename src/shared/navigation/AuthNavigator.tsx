@@ -10,7 +10,10 @@ import { ForgotPasswordScreen } from '../../features/auth/screens/ForgotPassword
 import { LoginScreen } from '../../features/auth/screens/LoginScreen';
 import { ProfileSetupScreen } from '../../features/auth/screens/ProfileSetupScreen';
 import { RegisterScreen } from '../../features/auth/screens/RegisterScreen';
-import { useIsAuthenticated, useAuthStore } from '../../features/auth/store/authStore';
+import {
+  useIsAuthenticated,
+  useAuthStore,
+} from '../../features/auth/store/authStore';
 
 import { AuthStackParamList } from './types';
 
@@ -29,7 +32,8 @@ export function AuthNavigator() {
   const { isProfileComplete } = useAuthStore();
 
   // Determine initial route based on auth state
-  const initialRouteName = isAuthenticated && !isProfileComplete() ? 'ProfileSetup' : 'Login';
+  const initialRouteName =
+    isAuthenticated && !isProfileComplete() ? 'ProfileSetup' : 'Login';
 
   console.log(
     '🔐 AuthNavigator: Determining initial route - isAuthenticated:',

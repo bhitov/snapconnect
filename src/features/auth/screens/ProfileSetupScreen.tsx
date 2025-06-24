@@ -235,21 +235,22 @@ export function ProfileSetupScreen({ navigation: _ }: ProfileSetupScreenProps) {
           onPress: async () => {
             try {
               console.log('⏭️ ProfileSetup: Skipping profile setup');
-              
+
               // Set minimal profile data to mark as "complete"
               await completeProfileSetup(user.uid, {
-                displayName: user.username || (user.email?.split('@')[0] ?? 'User'),
+                displayName:
+                  user.username || (user.email?.split('@')[0] ?? 'User'),
                 bio: '',
               });
 
-              console.log('✅ ProfileSetup: Profile marked as complete (skipped)');
+              console.log(
+                '✅ ProfileSetup: Profile marked as complete (skipped)'
+              );
             } catch (error) {
               console.error('❌ ProfileSetup: Skip failed:', error);
-              Alert.alert(
-                'Error',
-                'Failed to skip setup. Please try again.',
-                [{ text: 'OK' }]
-              );
+              Alert.alert('Error', 'Failed to skip setup. Please try again.', [
+                { text: 'OK' },
+              ]);
             }
           },
         },

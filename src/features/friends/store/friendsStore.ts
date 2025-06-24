@@ -7,6 +7,7 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
+import { friendsService } from '../services/friendsService';
 import {
   FriendsStore,
   FriendProfile,
@@ -15,7 +16,6 @@ import {
   SendFriendRequestData,
   FriendRequestResponse,
 } from '../types';
-import { friendsService } from '../services/friendsService';
 
 /**
  * Initial state for friends store
@@ -55,23 +55,26 @@ export const useFriendsStore = create<FriendsStore>()(
      */
     loadFriends: async () => {
       console.log('👥 FriendsStore: Loading friends list');
-      
+
       set({ friendsLoading: true, friendsError: null });
 
       try {
         const friends = await friendsService.getFriends();
-        
-        set({ 
+
+        set({
           friends,
           friendsLoading: false,
           friendsError: null,
         });
 
-        console.log('✅ FriendsStore: Friends loaded successfully:', friends.length);
+        console.log(
+          '✅ FriendsStore: Friends loaded successfully:',
+          friends.length
+        );
       } catch (error: any) {
         console.error('❌ FriendsStore: Failed to load friends:', error);
-        
-        set({ 
+
+        set({
           friendsLoading: false,
           friendsError: error.message || 'Failed to load friends',
         });
@@ -83,13 +86,13 @@ export const useFriendsStore = create<FriendsStore>()(
      */
     refreshFriends: async () => {
       console.log('🔄 FriendsStore: Refreshing friends list');
-      
+
       set({ isRefreshing: true });
 
       try {
         const friends = await friendsService.getFriends();
-        
-        set({ 
+
+        set({
           friends,
           isRefreshing: false,
           friendsError: null,
@@ -98,8 +101,8 @@ export const useFriendsStore = create<FriendsStore>()(
         console.log('✅ FriendsStore: Friends refreshed successfully');
       } catch (error: any) {
         console.error('❌ FriendsStore: Failed to refresh friends:', error);
-        
-        set({ 
+
+        set({
           isRefreshing: false,
           friendsError: error.message || 'Failed to refresh friends',
         });
@@ -111,13 +114,13 @@ export const useFriendsStore = create<FriendsStore>()(
      */
     loadFriendRequests: async () => {
       console.log('📨 FriendsStore: Loading friend requests');
-      
+
       set({ requestsLoading: true, requestsError: null });
 
       try {
         const { sent, received } = await friendsService.getFriendRequests();
-        
-        set({ 
+
+        set({
           sentRequests: sent,
           receivedRequests: received,
           requestsLoading: false,
@@ -126,9 +129,12 @@ export const useFriendsStore = create<FriendsStore>()(
 
         console.log('✅ FriendsStore: Friend requests loaded successfully');
       } catch (error: any) {
-        console.error('❌ FriendsStore: Failed to load friend requests:', error);
-        
-        set({ 
+        console.error(
+          '❌ FriendsStore: Failed to load friend requests:',
+          error
+        );
+
+        set({
           requestsLoading: false,
           requestsError: error.message || 'Failed to load friend requests',
         });
@@ -139,7 +145,10 @@ export const useFriendsStore = create<FriendsStore>()(
      * Send friend request
      */
     sendFriendRequest: async (data: SendFriendRequestData) => {
-      console.log('📤 FriendsStore: Sending friend request to:', data.receiverId);
+      console.log(
+        '📤 FriendsStore: Sending friend request to:',
+        data.receiverId
+      );
 
       try {
         await friendsService.sendFriendRequest(data);
@@ -149,19 +158,19 @@ export const useFriendsStore = create<FriendsStore>()(
 
         // Update search results to reflect new status
         const { searchResults } = get();
-        const updatedResults = searchResults.map(result => 
-          result.uid === data.receiverId 
+        const updatedResults = searchResults.map(result =>
+          result.uid === data.receiverId
             ? { ...result, friendshipStatus: 'request_sent' as const }
             : result
         );
-        
+
         set({ searchResults: updatedResults });
 
         console.log('✅ FriendsStore: Friend request sent successfully');
       } catch (error: any) {
         console.error('❌ FriendsStore: Failed to send friend request:', error);
-        
-        set({ 
+
+        set({
           requestsError: error.message || 'Failed to send friend request',
         });
 
@@ -173,22 +182,27 @@ export const useFriendsStore = create<FriendsStore>()(
      * Respond to friend request (accept/reject)
      */
     respondToFriendRequest: async (response: FriendRequestResponse) => {
-      console.log('📨 FriendsStore: Responding to friend request:', response.action);
+      console.log(
+        '📨 FriendsStore: Responding to friend request:',
+        response.action
+      );
 
       try {
         await friendsService.respondToFriendRequest(response);
 
         // Reload both friend requests and friends list
-        await Promise.all([
-          get().loadFriendRequests(),
-          get().loadFriends(),
-        ]);
+        await Promise.all([get().loadFriendRequests(), get().loadFriends()]);
 
-        console.log('✅ FriendsStore: Friend request response sent successfully');
+        console.log(
+          '✅ FriendsStore: Friend request response sent successfully'
+        );
       } catch (error: any) {
-        console.error('❌ FriendsStore: Failed to respond to friend request:', error);
-        
-        set({ 
+        console.error(
+          '❌ FriendsStore: Failed to respond to friend request:',
+          error
+        );
+
+        set({
           requestsError: error.message || 'Failed to respond to friend request',
         });
 
@@ -210,9 +224,12 @@ export const useFriendsStore = create<FriendsStore>()(
 
         console.log('✅ FriendsStore: Friend request canceled successfully');
       } catch (error: any) {
-        console.error('❌ FriendsStore: Failed to cancel friend request:', error);
-        
-        set({ 
+        console.error(
+          '❌ FriendsStore: Failed to cancel friend request:',
+          error
+        );
+
+        set({
           requestsError: error.message || 'Failed to cancel friend request',
         });
 
@@ -228,7 +245,7 @@ export const useFriendsStore = create<FriendsStore>()(
 
       // Don't search for empty queries
       if (!query.trim()) {
-        set({ 
+        set({
           searchResults: [],
           searchQuery: '',
           searchError: null,
@@ -236,26 +253,30 @@ export const useFriendsStore = create<FriendsStore>()(
         return;
       }
 
-      set({ 
-        searchLoading: true, 
+      set({
+        searchLoading: true,
         searchError: null,
         searchQuery: query,
       });
 
       try {
         const results = await friendsService.searchUsers(query);
-        
-        set({ 
+
+        set({
           searchResults: results,
           searchLoading: false,
           searchError: null,
         });
 
-        console.log('✅ FriendsStore: Search completed with', results.length, 'results');
+        console.log(
+          '✅ FriendsStore: Search completed with',
+          results.length,
+          'results'
+        );
       } catch (error: any) {
         console.error('❌ FriendsStore: Search failed:', error);
-        
-        set({ 
+
+        set({
           searchLoading: false,
           searchError: error.message || 'Search failed',
           searchResults: [],
@@ -268,8 +289,8 @@ export const useFriendsStore = create<FriendsStore>()(
      */
     clearSearch: () => {
       console.log('🧹 FriendsStore: Clearing search results');
-      
-      set({ 
+
+      set({
         searchResults: [],
         searchQuery: '',
         searchError: null,
@@ -291,8 +312,8 @@ export const useFriendsStore = create<FriendsStore>()(
         console.log('✅ FriendsStore: Friend removed successfully');
       } catch (error: any) {
         console.error('❌ FriendsStore: Failed to remove friend:', error);
-        
-        set({ 
+
+        set({
           friendsError: error.message || 'Failed to remove friend',
         });
 
@@ -322,8 +343,11 @@ export const useFriendsStore = create<FriendsStore>()(
      * Set selected friend
      */
     setSelectedFriend: (friend: FriendProfile | null) => {
-      console.log('👤 FriendsStore: Setting selected friend:', friend?.username || 'none');
-      
+      console.log(
+        '👤 FriendsStore: Setting selected friend:',
+        friend?.username || 'none'
+      );
+
       set({ selectedFriend: friend });
     },
 
@@ -332,8 +356,8 @@ export const useFriendsStore = create<FriendsStore>()(
      */
     clearError: () => {
       console.log('🧹 FriendsStore: Clearing errors');
-      
-      set({ 
+
+      set({
         friendsError: null,
         requestsError: null,
         searchError: null,
@@ -354,42 +378,50 @@ export const useFriendsList = () => useFriendsStore(state => state.friends);
 /**
  * Get friends loading state
  */
-export const useFriendsLoading = () => useFriendsStore(state => state.friendsLoading);
+export const useFriendsLoading = () =>
+  useFriendsStore(state => state.friendsLoading);
 
 /**
  * Get friends error
  */
-export const useFriendsError = () => useFriendsStore(state => state.friendsError);
+export const useFriendsError = () =>
+  useFriendsStore(state => state.friendsError);
 
 /**
  * Get sent friend requests
  */
-export const useSentRequests = () => useFriendsStore(state => state.sentRequests);
+export const useSentRequests = () =>
+  useFriendsStore(state => state.sentRequests);
 
 /**
  * Get received friend requests
  */
-export const useReceivedRequests = () => useFriendsStore(state => state.receivedRequests);
+export const useReceivedRequests = () =>
+  useFriendsStore(state => state.receivedRequests);
 
 /**
  * Get friend requests loading state
  */
-export const useRequestsLoading = () => useFriendsStore(state => state.requestsLoading);
+export const useRequestsLoading = () =>
+  useFriendsStore(state => state.requestsLoading);
 
 /**
  * Get friend requests error
  */
-export const useRequestsError = () => useFriendsStore(state => state.requestsError);
+export const useRequestsError = () =>
+  useFriendsStore(state => state.requestsError);
 
 /**
  * Get search results
  */
-export const useSearchResults = () => useFriendsStore(state => state.searchResults);
+export const useSearchResults = () =>
+  useFriendsStore(state => state.searchResults);
 
 /**
  * Get search loading state
  */
-export const useSearchLoading = () => useFriendsStore(state => state.searchLoading);
+export const useSearchLoading = () =>
+  useFriendsStore(state => state.searchLoading);
 
 /**
  * Get search error
@@ -404,29 +436,35 @@ export const useSearchQuery = () => useFriendsStore(state => state.searchQuery);
 /**
  * Get selected friend
  */
-export const useSelectedFriend = () => useFriendsStore(state => state.selectedFriend);
+export const useSelectedFriend = () =>
+  useFriendsStore(state => state.selectedFriend);
 
 /**
  * Get refresh state
  */
-export const useIsRefreshing = () => useFriendsStore(state => state.isRefreshing);
+export const useIsRefreshing = () =>
+  useFriendsStore(state => state.isRefreshing);
 
 /**
  * Get friend count
  */
-export const useFriendCount = () => useFriendsStore(state => state.friends.length);
+export const useFriendCount = () =>
+  useFriendsStore(state => state.friends.length);
 
 /**
  * Get pending requests count
  */
-export const usePendingRequestsCount = () => useFriendsStore(state => state.receivedRequests.length);
+export const usePendingRequestsCount = () =>
+  useFriendsStore(state => state.receivedRequests.length);
 
 /**
  * Check if user has friends
  */
-export const useHasFriends = () => useFriendsStore(state => state.friends.length > 0);
+export const useHasFriends = () =>
+  useFriendsStore(state => state.friends.length > 0);
 
 /**
  * Check if user has pending requests
  */
-export const useHasPendingRequests = () => useFriendsStore(state => state.receivedRequests.length > 0); 
+export const useHasPendingRequests = () =>
+  useFriendsStore(state => state.receivedRequests.length > 0);

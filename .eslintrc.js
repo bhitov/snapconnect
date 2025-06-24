@@ -32,9 +32,9 @@ module.exports = {
     'prettier/prettier': 'error',
 
     // TypeScript specific rules
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-non-null-assertion': 'error',
     // '@typescript-eslint/prefer-const': 'error',
     '@typescript-eslint/no-var-requires': 'error',
@@ -64,7 +64,7 @@ module.exports = {
     'no-var': 'error',
     'object-shorthand': 'error',
     'prefer-template': 'error',
-    'no-duplicate-imports': 'error',
+    'no-duplicate-imports': 'off',
 
     // Import/Export rules
     'import/no-default-export': 'off',

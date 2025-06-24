@@ -4,6 +4,7 @@
  * Handles friend requests, friendships, user search, and related Firebase operations.
  */
 
+import { getAuth } from 'firebase/auth';
 import {
   getDatabase,
   ref,
@@ -21,7 +22,8 @@ import {
   onValue,
   off,
 } from 'firebase/database';
-import { getAuth } from 'firebase/auth';
+
+import { generateId } from '@/shared/utils/idGenerator';
 
 import {
   FriendRequest,
@@ -35,7 +37,6 @@ import {
   FriendshipStatus,
   FriendsError,
 } from '../types';
-import { generateId } from '@/shared/utils/idGenerator';
 
 /**
  * Friends service class
@@ -99,19 +100,19 @@ class FriendsService {
     try {
       const currentUserId = this.getCurrentUserId();
       const usersRef = ref(this.database, 'users');
-      
+
       // Search by username (case-insensitive)
       const searchLower = searchQuery.toLowerCase();
       const usersQuery = query(
         usersRef,
         orderByChild('username'),
         startAt(searchLower),
-        endAt(searchLower + '\uf8ff'),
+        endAt(`${searchLower}\uf8ff`),
         limitToFirst(20)
       );
 
       const snapshot = await get(usersQuery);
-      
+
       if (!snapshot.exists()) {
         console.log('🔍 FriendsService: No users found');
         return [];
@@ -121,7 +122,9 @@ class FriendsService {
       const results: FriendSearchResult[] = [];
 
       // Process each user and determine friendship status
-      for (const [userId, userData] of Object.entries(users as Record<string, any>)) {
+      for (const [userId, userData] of Object.entries(
+        users as Record<string, any>
+      )) {
         // Skip current user
         if (userId === currentUserId) continue;
 
@@ -153,25 +156,37 @@ class FriendsService {
       const currentUserId = this.getCurrentUserId();
 
       // Check if already friends
-      const friendshipExists = await this.checkFriendshipExists(currentUserId, targetUserId);
+      const friendshipExists = await this.checkFriendshipExists(
+        currentUserId,
+        targetUserId
+      );
       if (friendshipExists) {
         return 'friends';
       }
 
       // Check for pending friend requests
-      const sentRequest = await this.checkFriendRequestExists(currentUserId, targetUserId);
+      const sentRequest = await this.checkFriendRequestExists(
+        currentUserId,
+        targetUserId
+      );
       if (sentRequest) {
         return 'request_sent';
       }
 
-      const receivedRequest = await this.checkFriendRequestExists(targetUserId, currentUserId);
+      const receivedRequest = await this.checkFriendRequestExists(
+        targetUserId,
+        currentUserId
+      );
       if (receivedRequest) {
         return 'request_received';
       }
 
       return 'none';
     } catch (error) {
-      console.error('❌ FriendsService: Failed to get friendship status:', error);
+      console.error(
+        '❌ FriendsService: Failed to get friendship status:',
+        error
+      );
       return 'none';
     }
   }
@@ -179,34 +194,53 @@ class FriendsService {
   /**
    * Check if friendship exists between two users
    */
-  private async checkFriendshipExists(user1Id: string, user2Id: string): Promise<boolean> {
+  private async checkFriendshipExists(
+    user1Id: string,
+    user2Id: string
+  ): Promise<boolean> {
     const friendshipsRef = ref(this.database, 'friendships');
-    
+
     // Check both possible friendship combinations
-    const query1 = query(friendshipsRef, orderByChild('user1Id'), equalTo(user1Id));
-    const query2 = query(friendshipsRef, orderByChild('user2Id'), equalTo(user1Id));
-    
-    const [snapshot1, snapshot2] = await Promise.all([get(query1), get(query2)]);
-    
+    const query1 = query(
+      friendshipsRef,
+      orderByChild('user1Id'),
+      equalTo(user1Id)
+    );
+    const query2 = query(
+      friendshipsRef,
+      orderByChild('user2Id'),
+      equalTo(user1Id)
+    );
+
+    const [snapshot1, snapshot2] = await Promise.all([
+      get(query1),
+      get(query2),
+    ]);
+
     // Check if any friendship involves both users
     const checkSnapshot = (snapshot: any, otherUserId: string) => {
       if (!snapshot.exists()) return false;
-      
+
       const friendships = snapshot.val();
       return Object.values(friendships as Record<string, any>).some(
-        (friendship: any) => 
+        (friendship: any) =>
           (friendship.user1Id === user1Id && friendship.user2Id === user2Id) ||
           (friendship.user1Id === user2Id && friendship.user2Id === user1Id)
       );
     };
 
-    return checkSnapshot(snapshot1, user2Id) || checkSnapshot(snapshot2, user2Id);
+    return (
+      checkSnapshot(snapshot1, user2Id) || checkSnapshot(snapshot2, user2Id)
+    );
   }
 
   /**
    * Check if friend request exists
    */
-  private async checkFriendRequestExists(senderId: string, receiverId: string): Promise<boolean> {
+  private async checkFriendRequestExists(
+    senderId: string,
+    receiverId: string
+  ): Promise<boolean> {
     const requestsRef = ref(this.database, 'friendRequests');
     const requestQuery = query(
       requestsRef,
@@ -215,12 +249,12 @@ class FriendsService {
     );
 
     const snapshot = await get(requestQuery);
-    
+
     if (!snapshot.exists()) return false;
 
     const requests = snapshot.val();
     return Object.values(requests as Record<string, any>).some(
-      (request: any) => 
+      (request: any) =>
         request.receiverId === receiverId && request.status === 'pending'
     );
   }
@@ -229,7 +263,10 @@ class FriendsService {
    * Send friend request
    */
   async sendFriendRequest(data: SendFriendRequestData): Promise<void> {
-    console.log('📤 FriendsService: Sending friend request to:', data.receiverId);
+    console.log(
+      '📤 FriendsService: Sending friend request to:',
+      data.receiverId
+    );
 
     try {
       const currentUserId = this.getCurrentUserId();
@@ -243,7 +280,10 @@ class FriendsService {
       }
 
       // Check if request already exists
-      const requestExists = await this.checkFriendRequestExists(currentUserId, data.receiverId);
+      const requestExists = await this.checkFriendRequestExists(
+        currentUserId,
+        data.receiverId
+      );
       if (requestExists) {
         throw {
           type: 'request_already_sent',
@@ -252,7 +292,10 @@ class FriendsService {
       }
 
       // Check if already friends
-      const friendshipExists = await this.checkFriendshipExists(currentUserId, data.receiverId);
+      const friendshipExists = await this.checkFriendshipExists(
+        currentUserId,
+        data.receiverId
+      );
       if (friendshipExists) {
         throw {
           type: 'already_friends',
@@ -317,10 +360,17 @@ class FriendsService {
    * Respond to friend request (accept/reject)
    */
   async respondToFriendRequest(response: FriendRequestResponse): Promise<void> {
-    console.log('📨 FriendsService: Responding to friend request:', response.requestId, response.action);
+    console.log(
+      '📨 FriendsService: Responding to friend request:',
+      response.requestId,
+      response.action
+    );
 
     try {
-      const requestRef = ref(this.database, `friendRequests/${response.requestId}`);
+      const requestRef = ref(
+        this.database,
+        `friendRequests/${response.requestId}`
+      );
       const snapshot = await get(requestRef);
 
       if (!snapshot.exists()) {
@@ -340,9 +390,16 @@ class FriendsService {
       // Remove the friend request (whether accepted or rejected)
       await remove(requestRef);
 
-      console.log('✅ FriendsService: Friend request', response.action, 'successfully');
+      console.log(
+        '✅ FriendsService: Friend request',
+        response.action,
+        'successfully'
+      );
     } catch (error) {
-      console.error('❌ FriendsService: Failed to respond to friend request:', error);
+      console.error(
+        '❌ FriendsService: Failed to respond to friend request:',
+        error
+      );
       throw this.handleError(error);
     }
   }
@@ -350,7 +407,9 @@ class FriendsService {
   /**
    * Create friendship from accepted request
    */
-  private async createFriendship(requestData: FriendRequestDocument): Promise<void> {
+  private async createFriendship(
+    requestData: FriendRequestDocument
+  ): Promise<void> {
     const friendshipId = generateId();
     const friendshipData: FriendshipDocument = {
       user1Id: requestData.senderId,
@@ -376,7 +435,10 @@ class FriendsService {
 
       console.log('✅ FriendsService: Friend request canceled successfully');
     } catch (error) {
-      console.error('❌ FriendsService: Failed to cancel friend request:', error);
+      console.error(
+        '❌ FriendsService: Failed to cancel friend request:',
+        error
+      );
       throw this.handleError(error);
     }
   }
@@ -390,10 +452,10 @@ class FriendsService {
     try {
       const currentUserId = this.getCurrentUserId();
       const friendshipsRef = ref(this.database, 'friendships');
-      
+
       // Get all friendships involving current user
       const snapshot = await get(friendshipsRef);
-      
+
       if (!snapshot.exists()) {
         console.log('👥 FriendsService: No friendships found');
         return [];
@@ -402,7 +464,9 @@ class FriendsService {
       const friendships = snapshot.val();
       const friends: FriendProfile[] = [];
 
-      for (const [friendshipId, friendship] of Object.entries(friendships as Record<string, FriendshipDocument>)) {
+      for (const [friendshipId, friendship] of Object.entries(
+        friendships as Record<string, FriendshipDocument>
+      )) {
         let friendData: any;
         let friendId: string;
 
@@ -438,15 +502,18 @@ class FriendsService {
   /**
    * Get friend requests for current user
    */
-  async getFriendRequests(): Promise<{ sent: FriendRequest[]; received: FriendRequest[] }> {
+  async getFriendRequests(): Promise<{
+    sent: FriendRequest[];
+    received: FriendRequest[];
+  }> {
     console.log('📨 FriendsService: Loading friend requests');
 
     try {
       const currentUserId = this.getCurrentUserId();
       const requestsRef = ref(this.database, 'friendRequests');
-      
+
       const snapshot = await get(requestsRef);
-      
+
       if (!snapshot.exists()) {
         console.log('📨 FriendsService: No friend requests found');
         return { sent: [], received: [] };
@@ -456,7 +523,9 @@ class FriendsService {
       const sent: FriendRequest[] = [];
       const received: FriendRequest[] = [];
 
-      for (const [requestId, request] of Object.entries(requests as Record<string, FriendRequestDocument>)) {
+      for (const [requestId, request] of Object.entries(
+        requests as Record<string, FriendRequestDocument>
+      )) {
         const friendRequest: FriendRequest = {
           id: requestId,
           senderId: request.senderId,
@@ -468,22 +537,41 @@ class FriendsService {
           status: request.status,
           createdAt: request.createdAt,
           updatedAt: request.updatedAt,
-          ...(request.senderData.photoURL && { senderPhotoURL: request.senderData.photoURL }),
-          ...(request.receiverData.photoURL && { receiverPhotoURL: request.receiverData.photoURL }),
+          ...(request.senderData.photoURL && {
+            senderPhotoURL: request.senderData.photoURL,
+          }),
+          ...(request.receiverData.photoURL && {
+            receiverPhotoURL: request.receiverData.photoURL,
+          }),
           ...(request.message && { message: request.message }),
         };
 
-        if (request.senderId === currentUserId && request.status === 'pending') {
+        if (
+          request.senderId === currentUserId &&
+          request.status === 'pending'
+        ) {
           sent.push(friendRequest);
-        } else if (request.receiverId === currentUserId && request.status === 'pending') {
+        } else if (
+          request.receiverId === currentUserId &&
+          request.status === 'pending'
+        ) {
           received.push(friendRequest);
         }
       }
 
-      console.log('✅ FriendsService: Loaded', sent.length, 'sent and', received.length, 'received requests');
+      console.log(
+        '✅ FriendsService: Loaded',
+        sent.length,
+        'sent and',
+        received.length,
+        'received requests'
+      );
       return { sent, received };
     } catch (error) {
-      console.error('❌ FriendsService: Failed to load friend requests:', error);
+      console.error(
+        '❌ FriendsService: Failed to load friend requests:',
+        error
+      );
       throw this.handleError(error);
     }
   }
@@ -508,11 +596,16 @@ class FriendsService {
   /**
    * Set up real-time listener for friend requests
    */
-  onFriendRequestsChange(callback: (requests: { sent: FriendRequest[]; received: FriendRequest[] }) => void): () => void {
+  onFriendRequestsChange(
+    callback: (requests: {
+      sent: FriendRequest[];
+      received: FriendRequest[];
+    }) => void
+  ): () => void {
     const currentUserId = this.getCurrentUserId();
     const requestsRef = ref(this.database, 'friendRequests');
 
-    const unsubscribe = onValue(requestsRef, (snapshot) => {
+    const unsubscribe = onValue(requestsRef, snapshot => {
       if (!snapshot.exists()) {
         callback({ sent: [], received: [] });
         return;
@@ -522,7 +615,9 @@ class FriendsService {
       const sent: FriendRequest[] = [];
       const received: FriendRequest[] = [];
 
-      for (const [requestId, request] of Object.entries(requests as Record<string, FriendRequestDocument>)) {
+      for (const [requestId, request] of Object.entries(
+        requests as Record<string, FriendRequestDocument>
+      )) {
         const friendRequest: FriendRequest = {
           id: requestId,
           senderId: request.senderId,
@@ -534,14 +629,24 @@ class FriendsService {
           status: request.status,
           createdAt: request.createdAt,
           updatedAt: request.updatedAt,
-          ...(request.senderData.photoURL && { senderPhotoURL: request.senderData.photoURL }),
-          ...(request.receiverData.photoURL && { receiverPhotoURL: request.receiverData.photoURL }),
+          ...(request.senderData.photoURL && {
+            senderPhotoURL: request.senderData.photoURL,
+          }),
+          ...(request.receiverData.photoURL && {
+            receiverPhotoURL: request.receiverData.photoURL,
+          }),
           ...(request.message && { message: request.message }),
         };
 
-        if (request.senderId === currentUserId && request.status === 'pending') {
+        if (
+          request.senderId === currentUserId &&
+          request.status === 'pending'
+        ) {
           sent.push(friendRequest);
-        } else if (request.receiverId === currentUserId && request.status === 'pending') {
+        } else if (
+          request.receiverId === currentUserId &&
+          request.status === 'pending'
+        ) {
           received.push(friendRequest);
         }
       }
@@ -559,7 +664,7 @@ class FriendsService {
     const currentUserId = this.getCurrentUserId();
     const friendshipsRef = ref(this.database, 'friendships');
 
-    const unsubscribe = onValue(friendshipsRef, async (snapshot) => {
+    const unsubscribe = onValue(friendshipsRef, async snapshot => {
       if (!snapshot.exists()) {
         callback([]);
         return;
@@ -568,7 +673,9 @@ class FriendsService {
       const friendships = snapshot.val();
       const friends: FriendProfile[] = [];
 
-      for (const [friendshipId, friendship] of Object.entries(friendships as Record<string, FriendshipDocument>)) {
+      for (const [friendshipId, friendship] of Object.entries(
+        friendships as Record<string, FriendshipDocument>
+      )) {
         let friendData: any;
         let friendId: string;
 
@@ -600,4 +707,4 @@ class FriendsService {
 }
 
 // Export singleton instance
-export const friendsService = new FriendsService(); 
+export const friendsService = new FriendsService();
