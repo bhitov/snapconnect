@@ -13,9 +13,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#FFFC00"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.snapconnect.app",
@@ -91,4 +89,4 @@
       }
     }
   }
-} 
+}

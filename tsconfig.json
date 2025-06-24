@@ -13,7 +13,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    
+
     // Strict type checking options
     "strict": true,
     "noImplicitAny": true,
@@ -23,7 +23,7 @@
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-    
+
     // Additional checks
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -31,7 +31,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    
+
     // Path mapping
     "baseUrl": "./",
     "paths": {
@@ -47,16 +47,6 @@
       "@/assets/*": ["assets/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".expo",
-    "web-build"
-  ]
-} 
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  "exclude": ["node_modules", "dist", ".expo", "web-build"]
+}

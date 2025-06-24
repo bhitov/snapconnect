@@ -43,4 +43,4 @@ config.resolver.assetExts.push(
   'woff2'
 );
 
-module.exports = config; 
+module.exports = config;

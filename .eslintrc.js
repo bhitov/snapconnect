@@ -30,7 +30,7 @@ module.exports = {
   rules: {
     // Prettier integration
     'prettier/prettier': 'error',
-    
+
     // TypeScript specific rules
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -38,24 +38,24 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'error',
     // '@typescript-eslint/prefer-const': 'error',
     '@typescript-eslint/no-var-requires': 'error',
-    
+
     // React specific rules
     'react/prop-types': 'off', // TypeScript handles this
     'react/display-name': 'error',
     'react/jsx-uses-react': 'off', // React 17+ JSX transform
     'react/react-in-jsx-scope': 'off', // React 17+ JSX transform
-    
+
     // React Hooks rules
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
-    
+
     // React Native specific rules
     'react-native/no-unused-styles': 'error',
     'react-native/split-platform-components': 'warn',
     'react-native/no-inline-styles': 'warn',
     'react-native/no-color-literals': 'warn',
     'react-native/no-raw-text': 'off', // Allow text in components
-    
+
     // General rules
     'no-console': 'warn',
     'no-debugger': 'error',
@@ -65,7 +65,7 @@ module.exports = {
     'object-shorthand': 'error',
     'prefer-template': 'error',
     'no-duplicate-imports': 'error',
-    
+
     // Import/Export rules
     'import/no-default-export': 'off',
     'import/prefer-default-export': 'off',
@@ -124,4 +124,4 @@ module.exports = {
     '*.config.js',
     '*.config.ts',
   ],
-}; 
+};
