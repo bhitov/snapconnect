@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
 import { useAuthInitialization } from '../../features/auth/hooks/useAuthInitialization';
+import { ProfileSettingsScreen } from '../../features/auth/screens/ProfileSettingsScreen';
 import {
   useIsAuthenticated,
   useAuthStore,
@@ -105,6 +106,14 @@ export function RootNavigator() {
               options={{
                 presentation: 'fullScreenModal',
                 gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen
+              name='ProfileSettings'
+              component={ProfileSettingsScreen}
+              options={{
+                presentation: 'modal',
+                gestureEnabled: true,
               }}
             />
           </>

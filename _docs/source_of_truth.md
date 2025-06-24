@@ -39,6 +39,8 @@
 ###### Base Components (src/shared/components/base/)
 - `Button/Button.tsx` - Primary button with variants, sizes, loading states, animations
 - `Button/index.ts` - Button component export
+- `ProfileAvatar/ProfileAvatar.tsx` - User profile avatar component for navigation headers with click-to-profile-settings functionality and multiple sizes
+- `ProfileAvatar/index.ts` - ProfileAvatar component export
 
 ###### Layout Components (src/shared/components/layout/)
 - `Screen.tsx` - Screen wrapper with safe area and consistent styling
@@ -68,7 +70,9 @@
 - `LoginScreen.tsx` - Email/password login with form validation, error handling, navigation to register/forgot password
 - `RegisterScreen.tsx` - User registration with email, password, username validation and availability checking
 - `ForgotPasswordScreen.tsx` - Password reset screen (placeholder for future implementation)
-- `ProfileSetupScreen.tsx` - Profile completion screen (placeholder for future implementation)
+- `ProfileSetupScreen.tsx` - Profile completion screen for post-registration setup with avatar upload and bio
+- `ProfileSettingsScreen.tsx` - Complete profile management screen with avatar upload, bio editing, logout functionality, unsaved changes protection, and modal presentation (display name/username editing removed)
+- `index.ts` - Auth screens export file
 
 ###### Auth Store (src/features/auth/store/)
 - `authStore.ts` - Zustand store for authentication state with login, register, logout actions, session persistence
@@ -198,6 +202,10 @@
 - `Button()` - Primary button component with variants (primary, secondary, outline, ghost), sizes (small, medium, large), loading states, and animations
 - `handlePress()` - Internal function handling button press with animation
 
+### src/shared/components/base/ProfileAvatar/ProfileAvatar.tsx
+- `ProfileAvatar()` - User profile avatar component for navigation headers with click-to-profile-settings functionality
+- `handlePress()` - Navigate to ProfileSettings screen on avatar tap
+
 ### src/shared/components/layout/Screen.tsx
 - `Screen()` - Screen wrapper component providing consistent layout and safe area handling
 
@@ -222,6 +230,7 @@
 #### src/features/auth/store/authStore.ts
 - `useAuthStore()` - Zustand store hook for authentication state
 - `login(email, password)` - Login user with email and password
+- `updateUserProfile(uid, updates)` - Update user profile with Firebase integration including avatar upload and profile data
 
 ### Stories Feature Functions
 
@@ -360,6 +369,15 @@
 - `showImagePickerOptions()` - Display camera vs library selection alert
 - `onSubmit(data)` - Handle profile setup form submission with avatar upload and profile completion
 
+#### src/features/auth/screens/ProfileSettingsScreen.tsx
+- `ProfileSettingsScreen({ navigation })` - Complete profile management screen with all editing capabilities
+- `pickImage()` - Open image picker for avatar change with permissions handling
+- `takePhoto()` - Capture new avatar photo with camera permissions
+- `showImagePickerOptions()` - Display avatar change options (camera/library/cancel)
+- `onSubmit(data)` - Handle profile update submission with avatar upload and validation
+- `handleLogout()` - Handle user logout with confirmation dialog
+- `handleBack()` - Handle back navigation with unsaved changes protection
+
 ### Camera Feature Functions
 
 #### src/features/camera/store/cameraStore.ts
@@ -414,7 +432,7 @@
 - `isDark` - Boolean from useIsDarkMode hook
 
 ### src/shared/navigation/types.ts
-- `RootStackParamList` - Navigation params for root stack (Auth, Main, SnapPreview, RecipientSelection, ViewSnap, Profile, CreateGroup)
+- `RootStackParamList` - Navigation params for root stack (Auth, Main, SnapPreview, RecipientSelection, ViewSnap, Profile, ProfileSettings, CreateGroup)
 - `AuthStackParamList` - Auth navigation params (Login, Register, ProfileSetup, ForgotPassword)
 - `MainTabParamList` - Main tab params (Chats, Camera, Friends, Stories)
 - `ChatStackParamList` - Chat navigation params (ChatsList only - snap-focused messaging)
@@ -584,6 +602,16 @@
 - ✅ Username availability checking
 - ✅ User profile creation in Firebase Realtime Database
 - ✅ Auth error handling with user-friendly messages
+
+### Phase 2.10 - Profile Settings (✅ COMPLETE)
+- ✅ **ProfileSettingsScreen**: Complete profile management with avatar upload, bio editing, and logout functionality (display name and username editing removed per user request) - now includes web platform support
+- ✅ **ProfileAvatar Component**: Clickable user avatar for navigation headers that opens profile settings
+- ✅ **Header Integration**: Profile avatar added to main screen headers (Chats, Friends, Stories) in top-right corner
+- ✅ **Profile Update Service**: Full profile update functionality with Firebase integration and image upload
+- ✅ **Unsaved Changes Protection**: Alert system to prevent accidental navigation away from unsaved changes
+- ✅ **Form Validation**: Comprehensive validation for display name, username patterns, and bio character limits
+- ✅ **Avatar Management**: Camera and photo library integration with proper permissions and image editing
+- ✅ **Navigation Integration**: Modal presentation with proper back navigation and gesture support
 
 ### Phase 2.2 - User Profile Setup (✅ COMPLETE)
 - ✅ Profile setup screen post-registration with full functionality

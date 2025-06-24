@@ -23,6 +23,7 @@ import {
   useStories,
   useStoriesLoading,
 } from '@/features/stories/store/storiesStore';
+import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
 
 import {
@@ -388,23 +389,26 @@ export function ChatsScreen() {
           Chats
         </Text>
 
-        {totalUnreadCount > 0 && (
-          <View
-            style={[
-              styles.headerBadge,
-              { backgroundColor: theme.colors.primary },
-            ]}
-          >
-            <Text
+        <View style={styles.headerRight}>
+          {totalUnreadCount > 0 && (
+            <View
               style={[
-                styles.headerBadgeText,
-                { color: theme.colors.background },
+                styles.headerBadge,
+                { backgroundColor: theme.colors.primary },
               ]}
             >
-              {totalUnreadCount}
-            </Text>
-          </View>
-        )}
+              <Text
+                style={[
+                  styles.headerBadgeText,
+                  { color: theme.colors.background },
+                ]}
+              >
+                {totalUnreadCount}
+              </Text>
+            </View>
+          )}
+          <ProfileAvatar size='medium' />
+        </View>
       </View>
 
       {/* Stories Bar */}
@@ -464,6 +468,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     flex: 1,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   headerBadge: {
     minWidth: 20,

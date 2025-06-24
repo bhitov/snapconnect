@@ -8,6 +8,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import React from 'react';
 import { View, StyleSheet, SafeAreaView, Alert, Text } from 'react-native';
 
+import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { Screen } from '@/shared/components/layout/Screen';
 import { useTheme } from '@/shared/hooks/useTheme';
 
@@ -199,21 +200,24 @@ export function StoriesScreen({ navigation }: StoriesScreenProps) {
         <View
           style={[styles.header, { borderBottomColor: theme.colors.border }]}
         >
-          <Text
-            style={[styles.headerTitle, { color: theme.colors.textPrimary }]}
-          >
-            Stories
-          </Text>
-          <Text
-            style={[
-              styles.headerSubtitle,
-              { color: theme.colors.textSecondary },
-            ]}
-          >
-            {stories.length > 0
-              ? `${stories.length} active stories`
-              : 'No stories yet'}
-          </Text>
+          <View style={styles.headerContent}>
+            <Text
+              style={[styles.headerTitle, { color: theme.colors.textPrimary }]}
+            >
+              Stories
+            </Text>
+            <Text
+              style={[
+                styles.headerSubtitle,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
+              {stories.length > 0
+                ? `${stories.length} active stories`
+                : 'No stories yet'}
+            </Text>
+          </View>
+          <ProfileAvatar size='medium' />
         </View>
 
         {/* My Story Section */}
@@ -271,9 +275,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
+  },
+  headerContent: {
+    flex: 1,
   },
   headerTitle: {
     fontSize: 24,

@@ -33,6 +33,10 @@ interface AuthState {
   ) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<User>) => void;
+  updateUserProfile: (
+    uid: string,
+    updates: import('../types/authTypes').ProfileUpdate
+  ) => Promise<void>;
   completeProfileSetup: (
     uid: string,
     profileData: import('../types/authTypes').ProfileSetupForm
@@ -149,6 +153,34 @@ export const useAuthStore = create<AuthState>()(
               Object.assign(state.user, updates);
             }
           });
+        },
+
+        updateUserProfile: async (uid, updates) => {
+          set(state => {
+            state.isLoading = true;
+            state.error = null;
+          });
+
+          try {
+            const updatedUser = await authService.updateUserProfile(
+              uid,
+              updates
+            );
+
+            set(state => {
+              state.user = updatedUser;
+              state.isLoading = false;
+            });
+          } catch (error) {
+            set(state => {
+              state.error =
+                error instanceof Error
+                  ? error.message
+                  : 'Profile update failed';
+              state.isLoading = false;
+            });
+            throw error;
+          }
         },
 
         completeProfileSetup: async (uid, profileData) => {

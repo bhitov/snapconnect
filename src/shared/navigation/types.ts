@@ -25,6 +25,7 @@ export type RootStackParamList = {
   Profile: {
     userId?: string;
   };
+  ProfileSettings: undefined;
   CreateGroup: undefined;
 };
 

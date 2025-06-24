@@ -20,6 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useChatStore } from '@/features/chat/store/chatStore';
 import { Button } from '@/shared/components/base/Button';
+import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
 
 import {
@@ -308,6 +309,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
         <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
           Friends ({friends.length})
         </Text>
+        <ProfileAvatar size='medium' />
       </View>
 
       {/* Header actions */}
@@ -355,6 +357,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
@@ -362,7 +367,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
-    textAlign: 'center',
+    flex: 1,
   },
   headerActions: {
     flexDirection: 'row',
