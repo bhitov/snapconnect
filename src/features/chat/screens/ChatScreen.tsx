@@ -239,7 +239,7 @@ export function ChatScreen() {
     loadMessages, 
     sendTextMessage, 
     markMessageAsViewed,
-    markMessageAsDelivered,
+    markAllMessagesAsDelivered,
     clearError,
     clearSendError,
   } = useChatStore();
@@ -250,12 +250,21 @@ export function ChatScreen() {
   const flatListRef = useRef<FlatList>(null);
 
   /**
-   * Load messages when screen focuses
+   * Load messages when screen focuses and mark all as delivered
    */
   useFocusEffect(
     useCallback(() => {
-      loadMessages(conversationId);
-    }, [conversationId])
+      const loadAndMarkDelivered = async () => {
+        await loadMessages(conversationId);
+        // Mark all unread messages as delivered when chat is opened
+        // This will set the unread count to zero for this user
+        await markAllMessagesAsDelivered(conversationId);
+      };
+      
+      loadAndMarkDelivered().catch((error: any) => {
+        console.error('Failed to load messages or mark as delivered:', error);
+      });
+    }, [conversationId, loadMessages, markAllMessagesAsDelivered])
   );
 
   /**
@@ -274,27 +283,6 @@ export function ChatScreen() {
       headerTintColor: theme.colors.primary || '#FFFC00',
     });
   }, [navigation, otherUser.displayName, theme]);
-
-  /**
-   * Mark unread messages as delivered when chat is opened (both text and snaps)
-   */
-  useEffect(() => {
-    if (!currentUser || messages.length === 0) return;
-
-    const unreadMessages = messages.filter(
-      message => 
-        message.recipientId === currentUser.uid && 
-        message.status === 'sent' // Only mark sent messages as delivered
-    );
-
-    unreadMessages.forEach(message => {
-      // Use markMessageAsDelivered for when chat is opened
-      // This applies to both text messages and snaps
-      markMessageAsDelivered(message.id).catch((error: any) => {
-        console.error('Failed to mark message as delivered:', error);
-      });
-    });
-  }, [messages, currentUser]);
 
   /**
    * Scroll to bottom when new messages arrive

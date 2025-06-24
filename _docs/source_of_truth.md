@@ -734,7 +734,7 @@
 - `renderMessage(item)` - Render individual message with proper permissions
 - `handleSendMessage()` - Send text message with validation
 - `handleCameraPress()` - Navigate to camera for snap creation
-- **CRITICAL FIX**: Auto-marks ALL messages as delivered when chat loads (both text and snaps) - snaps only become "viewed" when actually opened in SnapViewingScreen
+- **CRITICAL FIX**: Now efficiently marks ALL unread messages as delivered when chat opens using `markAllMessagesAsDelivered()` - sets unread count to zero instantly
 - **NEW BEHAVIOR**: Two-tier status system - "delivered" when chat is opened, "viewed" when snaps are actually watched
 
 #### src/features/chat/screens/SnapViewingScreen.tsx
@@ -759,6 +759,7 @@
 - `getCurrentUser()` - **NEW**: Public method to get current authenticated user ID for permission checks
 - `decrementUnreadCount(conversationId, userId)` - **NEW**: Decrements unread count when messages are actually viewed
 - `markMessageAsDelivered(messageId)` - **NEW**: Marks messages as delivered when chat is opened (applies to both text and snaps), decrements unread count
+- `markAllMessagesAsDelivered(conversationId)` - **NEW**: Efficiently marks all unread messages in a conversation as delivered and sets unread count to zero when chat thread is opened
 - `markMessageAsViewed(messageId)` - **UPDATED**: Now only applies to snaps when actually opened and watched, automatically triggers cleanup of viewed snaps
 - `cleanupExpiredMessages()` - **UPDATED**: Now properly deletes snaps after they are viewed (ephemeral behavior) while keeping text messages persistent
 - `sendTextMessage(data)` - Send persistent text message to recipient
@@ -770,7 +771,7 @@
 - `getMessages(conversationId)` - Get all messages (text + snaps) for conversation
 - `getTextMessages(conversationId)` - Get text messages for conversation
 - `getSnapMessages(conversationId)` - Get snap messages for conversation
-- `getConversations()` - Get conversations for current user with user data
+- `getConversations()` - **FIXED**: Now properly populates `lastMessage` field with complete data including text content and mediaType for ChatsScreen display
 - `getSnaps(conversationId)` - Legacy method for snap retrieval
 - `getUserData(userId)` - Get user profile data from database
 - `getMessage(messageId)` - Get message data by ID (public method)

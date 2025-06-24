@@ -255,6 +255,25 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
   },
 
+  markAllMessagesAsDelivered: async (conversationId: string) => {
+    console.log('📬 ChatStore: Marking all messages as delivered for conversation:', conversationId);
+
+    try {
+      await chatService.markAllMessagesAsDelivered(conversationId);
+
+      // Refresh messages to show updated status
+      await get().loadMessages(conversationId);
+
+      // Refresh conversations to update unread counts
+      await get().refreshConversations();
+
+      console.log('✅ ChatStore: All messages marked as delivered');
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to mark all messages as delivered:', error);
+      throw error;
+    }
+  },
+
   // Snap viewing (for snap messages only)
   startViewingSnap: (snap: SnapMessage) => {
     console.log('👁️ ChatStore: Starting to view snap:', snap.id);

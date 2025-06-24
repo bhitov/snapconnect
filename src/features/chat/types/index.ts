@@ -218,6 +218,7 @@ export interface ChatActions {
   sendSnap: (data: SnapCreationData) => Promise<void>;
   markMessageAsViewed: (messageId: string) => Promise<void>;
   markMessageAsDelivered: (messageId: string) => Promise<void>;
+  markAllMessagesAsDelivered: (conversationId: string) => Promise<void>;
 
   // Snap viewing (legacy - for snap messages only)
   startViewingSnap: (snap: SnapMessage) => void;

@@ -627,15 +627,17 @@ class ChatService {
         const otherUserData = await this.getUserData(otherUserId);
         if (!otherUserData) continue;
 
-        // Get last snap data if exists
-        let lastSnap;
+        // Get last message data if exists
+        let lastMessage;
         if (conversation.lastMessageId) {
           const messageData = await this.getMessageData(conversation.lastMessageId);
           if (messageData) {
-            lastSnap = {
+            lastMessage = {
               id: conversation.lastMessageId,
               senderId: messageData.senderId,
               type: messageData.type,
+              ...(messageData.type === 'text' && { text: messageData.text }),
+              ...(messageData.type === 'snap' && { mediaType: messageData.mediaType }),
               createdAt: messageData.createdAt,
               status: messageData.status,
             };
@@ -650,7 +652,7 @@ class ChatService {
             displayName: otherUserData.displayName,
             photoURL: otherUserData.photoURL,
           },
-          ...(lastSnap && { lastSnap }),
+          ...(lastMessage && { lastMessage }),
           unreadCount: conversation.unreadCount[currentUserIndex] || 0,
           updatedAt: conversation.updatedAt,
         });
@@ -992,6 +994,105 @@ class ChatService {
       console.log('✅ ChatService: Text messages remain persistent');
     } catch (error) {
       console.error('❌ ChatService: Cleanup failed:', error);
+    }
+  }
+
+  /**
+   * Mark all unread messages in a conversation as delivered (when chat is opened)
+   */
+  async markAllMessagesAsDelivered(conversationId: string): Promise<void> {
+    console.log('📬 ChatService: Marking all unread messages as delivered for conversation:', conversationId);
+
+    try {
+      const currentUserId = this.getCurrentUserId();
+      
+      // Get conversation to verify access and get current unread count
+      const conversationRef = ref(this.database, `conversations/${conversationId}`);
+      const conversationSnapshot = await get(conversationRef);
+
+      if (!conversationSnapshot.exists()) {
+        throw new Error('Conversation not found');
+      }
+
+      const conversation = conversationSnapshot.val() as ConversationDocument;
+      
+      // Verify user is participant
+      if (!conversation.participants.includes(currentUserId)) {
+        throw new Error('Access denied to conversation');
+      }
+
+      // Find current user index
+      const currentUserIndex = conversation.participants.findIndex(id => id === currentUserId);
+      if (currentUserIndex === -1) {
+        throw new Error('User not found in conversation participants');
+      }
+
+      // If no unread messages, nothing to do
+      if (!conversation.unreadCount[currentUserIndex] || conversation.unreadCount[currentUserIndex] === 0) {
+        console.log('✅ ChatService: No unread messages to mark as delivered');
+        return;
+      }
+
+      // Get all text messages for this conversation that are undelivered to current user
+      const textMessagesRef = ref(this.database, 'textMessages');
+      const textQuery = query(
+        textMessagesRef,
+        orderByChild('conversationId'),
+        equalTo(conversationId)
+      );
+      const textSnapshot = await get(textQuery);
+
+      // Get all snaps for this conversation that are undelivered to current user
+      const snapsRef = ref(this.database, 'snaps');
+      const snapQuery = query(
+        snapsRef,
+        orderByChild('conversationId'),
+        equalTo(conversationId)
+      );
+      const snapSnapshot = await get(snapQuery);
+
+      const updates: Record<string, any> = {};
+      const now = Date.now();
+
+      // Mark undelivered text messages as delivered
+      if (textSnapshot.exists()) {
+        textSnapshot.forEach(childSnapshot => {
+          const messageData = childSnapshot.val() as TextMessageDocument;
+          if (messageData.recipientId === currentUserId && messageData.status === 'sent') {
+            updates[`textMessages/${childSnapshot.key}/status`] = 'delivered';
+            updates[`textMessages/${childSnapshot.key}/deliveredAt`] = now;
+          }
+        });
+      }
+
+      // Mark undelivered snaps as delivered
+      if (snapSnapshot.exists()) {
+        snapSnapshot.forEach(childSnapshot => {
+          const snapData = childSnapshot.val() as SnapDocument;
+          if (snapData.recipientId === currentUserId && snapData.status === 'sent') {
+            updates[`snaps/${childSnapshot.key}/status`] = 'delivered';
+            updates[`snaps/${childSnapshot.key}/deliveredAt`] = now;
+          }
+        });
+      }
+
+      // Reset unread count to zero for current user
+      const newUnreadCount = [...conversation.unreadCount];
+      newUnreadCount[currentUserIndex] = 0;
+      updates[`conversations/${conversationId}/unreadCount`] = newUnreadCount;
+      updates[`conversations/${conversationId}/updatedAt`] = now;
+
+      // Apply all updates in one atomic operation
+      if (Object.keys(updates).length > 0) {
+        await update(ref(this.database), updates);
+        console.log('✅ ChatService: Marked all unread messages as delivered and reset unread count to zero');
+      } else {
+        console.log('✅ ChatService: No messages needed to be marked as delivered');
+      }
+
+    } catch (error) {
+      console.error('❌ ChatService: Failed to mark all messages as delivered:', error);
+      throw this.handleError(error);
     }
   }
 }
