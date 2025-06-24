@@ -64,7 +64,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
   const password = watch('password');
 
   /**
-   * Handle form submission and registration
+   * Handle form submission
    */
   const onSubmit = useCallback(
     async (data: RegisterForm) => {
@@ -82,6 +82,10 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
         );
         console.log('✅ RegisterScreen: Registration successful');
         reset(); // Clear form on success
+        
+        // Navigate to profile setup after successful registration
+        console.log('🔄 RegisterScreen: Navigating to ProfileSetup');
+        navigation.navigate('ProfileSetup');
       } catch (registerError) {
         console.error('❌ RegisterScreen: Registration failed:', registerError);
         Alert.alert(
@@ -93,7 +97,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
         );
       }
     },
-    [register, clearError, reset]
+    [register, clearError, reset, navigation]
   );
 
   /**

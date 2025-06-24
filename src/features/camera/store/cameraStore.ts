@@ -4,7 +4,7 @@
  * Handles camera settings, media capture, processing, and permissions.
  */
 
-import { v4 as uuid } from 'uuid';
+import { generateId } from '@/shared/utils/idGenerator';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -215,7 +215,7 @@ export const useCameraStore = create<CameraStore>()(
       },
 
       // Media capture
-      capturePhoto: async () => {
+      capturePhoto: async (cameraRef?: any) => {
         console.log('📸 CameraStore: Capturing photo');
 
         set(state => {
@@ -224,14 +224,26 @@ export const useCameraStore = create<CameraStore>()(
         });
 
         try {
-          // This will be implemented in the camera service
+          if (!cameraRef?.current) {
+            throw new Error('Camera reference not available');
+          }
+
+          console.log('📸 CameraStore: Taking picture with camera ref');
+          const photo = await cameraRef.current.takePictureAsync({
+            quality: 0.8,
+            base64: false,
+            skipProcessing: false,
+          });
+
+          console.log('📸 CameraStore: Photo captured:', photo.uri);
+
           const capturedMedia: CapturedMedia = {
-            id: uuid(),
-            uri: 'file://mock-photo.jpg',
+            id: generateId(),
+            uri: photo.uri,
             type: 'photo',
-            width: 1080,
-            height: 1920,
-            size: 1024000, // 1MB
+            width: photo.width || 1080,
+            height: photo.height || 1920,
+            size: photo.uri.length * 0.75, // Rough estimate
             timestamp: Date.now(),
           };
 
@@ -247,7 +259,7 @@ export const useCameraStore = create<CameraStore>()(
             state.isLoading = false;
           });
 
-          console.log('✅ CameraStore: Photo captured successfully');
+          console.log('✅ CameraStore: Photo captured successfully, URI:', capturedMedia.uri);
           return capturedMedia;
         } catch (error) {
           console.error('❌ CameraStore: Photo capture failed:', error);
@@ -264,7 +276,7 @@ export const useCameraStore = create<CameraStore>()(
         }
       },
 
-      startVideoRecording: async () => {
+      startVideoRecording: async (cameraRef?: any) => {
         console.log('🎥 CameraStore: Starting video recording');
 
         set(state => {
@@ -275,34 +287,69 @@ export const useCameraStore = create<CameraStore>()(
           state.error = null;
         });
 
-        // Start recording timer
-        const recordingInterval = setInterval(() => {
-          const state = get();
-          if (!state.recording.isRecording || !state.recording.startTime) {
-            clearInterval(recordingInterval);
-            return;
+        try {
+          if (!cameraRef?.current) {
+            throw new Error('Camera reference not available');
           }
 
-          const elapsed = Date.now() - state.recording.startTime;
-
-          set(currentState => {
-            currentState.recording.duration = elapsed;
+          console.log('🎥 CameraStore: Starting video recording with camera ref');
+          await cameraRef.current.recordAsync({
+            quality: '720p',
+            maxDuration: 180, // 3 minutes in seconds
           });
 
-          // Auto-stop at max duration
-          if (elapsed >= state.recording.maxDuration) {
-            clearInterval(recordingInterval);
-            get().stopVideoRecording();
-          }
-        }, 100);
+          // Start recording timer
+          const recordingInterval = setInterval(() => {
+            const state = get();
+            if (!state.recording.isRecording || !state.recording.startTime) {
+              clearInterval(recordingInterval);
+              return;
+            }
 
-        console.log('✅ CameraStore: Video recording started');
+            const elapsed = Date.now() - state.recording.startTime;
+
+            set(currentState => {
+              currentState.recording.duration = elapsed;
+            });
+
+            // Auto-stop at max duration
+            if (elapsed >= state.recording.maxDuration) {
+              clearInterval(recordingInterval);
+              get().stopVideoRecording(cameraRef);
+            }
+          }, 100);
+
+          // Store the interval reference for cleanup
+          set(state => {
+            (state.recording as any).intervalRef = recordingInterval;
+          });
+
+          console.log('✅ CameraStore: Video recording started');
+        } catch (error) {
+          console.error('❌ CameraStore: Failed to start video recording:', error);
+          
+          set(state => {
+            state.recording.isRecording = false;
+            state.controlsVisible = true;
+            state.error = {
+              type: 'recording_failed',
+              message: 'Failed to start video recording. Please try again.',
+            };
+          });
+
+          throw error;
+        }
       },
 
-      stopVideoRecording: async () => {
+      stopVideoRecording: async (cameraRef?: any) => {
         console.log('⏹️ CameraStore: Stopping video recording');
 
         const state = get();
+
+        // Clear the recording interval
+        if (state.recording.intervalRef) {
+          clearInterval(state.recording.intervalRef);
+        }
 
         set(currentState => {
           currentState.recording.isRecording = false;
@@ -311,15 +358,23 @@ export const useCameraStore = create<CameraStore>()(
         });
 
         try {
-          // This will be implemented in the camera service
+          if (!cameraRef?.current) {
+            throw new Error('Camera reference not available');
+          }
+
+          console.log('⏹️ CameraStore: Stopping video recording with camera ref');
+          const video = await cameraRef.current.stopRecording();
+
+          console.log('⏹️ CameraStore: Video recording stopped:', video.uri);
+
           const capturedMedia: CapturedMedia = {
-            id: uuid(),
-            uri: 'file://mock-video.mp4',
+            id: generateId(),
+            uri: video.uri,
             type: 'video',
-            width: 1080,
+            width: 1080, // Default values since Expo doesn't provide them
             height: 1920,
             duration: state.recording.duration,
-            size: 5120000, // 5MB
+            size: video.uri.length * 0.75, // Rough estimate
             timestamp: Date.now(),
           };
 
@@ -336,7 +391,7 @@ export const useCameraStore = create<CameraStore>()(
             currentState.isLoading = false;
           });
 
-          console.log('✅ CameraStore: Video recording completed');
+          console.log('✅ CameraStore: Video recording completed, URI:', capturedMedia.uri);
           return capturedMedia;
         } catch (error) {
           console.error('❌ CameraStore: Video recording failed:', error);
@@ -404,7 +459,7 @@ export const useCameraStore = create<CameraStore>()(
 
         const newOverlay: TextOverlay = {
           ...overlay,
-          id: uuid(),
+          id: generateId(),
         };
 
         set(state => {

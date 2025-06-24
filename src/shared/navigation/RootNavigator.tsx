@@ -9,9 +9,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
 import { useAuthInitialization } from '../../features/auth/hooks/useAuthInitialization';
-import { useIsAuthenticated } from '../../features/auth/store/authStore';
+import { useIsAuthenticated, useAuthStore } from '../../features/auth/store/authStore';
 import { SnapPreviewScreen } from '../components/layout/SnapPreviewScreen';
 import { ViewSnapScreen } from '../components/layout/ViewSnapScreen';
+import { AddFriendsScreen } from '../../features/friends/screens/AddFriendsScreen';
 import { useTheme } from '../hooks/useTheme';
 
 import { AuthNavigator } from './AuthNavigator';
@@ -34,12 +35,15 @@ export function RootNavigator() {
   const theme = useTheme();
   const isInitializing = useAuthInitialization();
   const isAuthenticated = useIsAuthenticated();
+  const { isProfileComplete } = useAuthStore();
 
   console.log(
     '🔄 RootNavigator: Rendering - isInitializing:',
     isInitializing,
     'isAuthenticated:',
-    isAuthenticated
+    isAuthenticated,
+    'isProfileComplete:',
+    isProfileComplete()
   );
 
   // Show loading screen while auth is initializing
@@ -59,6 +63,9 @@ export function RootNavigator() {
     );
   }
 
+  // Determine if user should see the main app
+  const shouldShowMainApp = isAuthenticated && isProfileComplete();
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -66,8 +73,8 @@ export function RootNavigator() {
           headerShown: false,
         }}
       >
-        {isAuthenticated ? (
-          // Main app screens
+        {shouldShowMainApp ? (
+          // Main app screens - only show when authenticated AND profile is complete
           <>
             <Stack.Screen name='Main' component={MainNavigator} />
 
@@ -88,9 +95,17 @@ export function RootNavigator() {
                 gestureEnabled: false,
               }}
             />
+            <Stack.Screen
+              name='AddFriends'
+              component={AddFriendsScreen}
+              options={{
+                presentation: 'modal',
+                gestureEnabled: true,
+              }}
+            />
           </>
         ) : (
-          // Authentication screens
+          // Authentication screens - show for unauthenticated users OR incomplete profiles
           <Stack.Screen name='Auth' component={AuthNavigator} />
         )}
       </Stack.Navigator>

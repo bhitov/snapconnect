@@ -1,0 +1,15 @@
+{
+  "rules": {
+    ".read": "true",
+    ".write": "true",
+    "users": {
+      ".indexOn": ["username", "email"]
+    },
+    "friendships": {
+      ".indexOn": ["user1Id", "user2Id", "createdAt"]
+    },
+    "friendRequests": {
+      ".indexOn": ["senderId", "receiverId", "status", "createdAt"]
+    }
+  }
+} 

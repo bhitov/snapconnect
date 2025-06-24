@@ -12,9 +12,10 @@
 - `.eslintrc.js` - ESLint configuration with React Native and TypeScript rules
 - `.prettierrc.js` - Prettier code formatting configuration
 - `.gitignore` - Git ignore patterns for node_modules, .expo, build files
-- `firebase.json` - Firebase project configuration for emulators and services
+- `firebase.json` - Firebase project configuration for emulators, services, and database rules
 - `firestore.rules` - Firestore security rules (test mode - allows all reads/writes)
 - `storage.rules` - Firebase Storage security rules (test mode - allows all reads/writes)
+- `database.rules.json` - Firebase Realtime Database rules with indexing for username, email, friendship, and friend request queries
 - `.firebaserc` - Firebase project aliases configuration
 - `README.md` - Project documentation and setup instructions
 - `NEW-PROJECT-SETUP.md` - Detailed setup guide for new developers
@@ -41,7 +42,7 @@
 
 ###### Layout Components (src/shared/components/layout/)
 - `Screen.tsx` - Screen wrapper with safe area and consistent styling
-- `SnapPreviewScreen.tsx` - Placeholder screen for snap preview modal
+- `SnapPreviewScreen.tsx` - Complete media preview and editing screen with filters, text overlays, and actions
 - `ViewSnapScreen.tsx` - Placeholder screen for viewing received snaps
 
 ##### Hooks (src/shared/hooks/)
@@ -49,6 +50,9 @@
 
 ##### Services (src/shared/services/)
 - `firebase/config.ts` - Firebase initialization and emulator configuration
+
+##### Utilities (src/shared/utils/)
+- `idGenerator.ts` - Simple ID generation utilities for creating unique IDs without external dependencies
 
 ##### Theme System (src/shared/theme/)
 - `index.ts` - Main theme export combining all theme parts
@@ -91,7 +95,7 @@
 - `index.ts` - Camera components export
 
 ###### Camera Store (src/features/camera/store/)
-- `cameraStore.ts` - Zustand store for camera state with permissions, settings, capture actions, filter system, text overlays, and performance selectors
+- `cameraStore.ts` - Zustand store for camera state with permissions, settings, capture actions, filter system, text overlays, performance selectors, and custom ID generation
 
 ###### Camera Types (src/features/camera/types/)
 - `index.ts` - Complete TypeScript definitions for camera modes, settings, media capture, filters, text overlays, recording state, errors, and store interfaces
@@ -99,9 +103,25 @@
 ###### Camera Feature Export
 - `index.ts` - Public API export for screens, components, store, and types
 
+##### Friends Feature (src/features/friends/) - **IMPLEMENTED IN PHASE 2.5**
+
+###### Friends Screens (src/features/friends/screens/)
+- `AddFriendsScreen.tsx` - User search and friend request sending screen with debounced search, friendship status display, and real-time request sending
+- `FriendRequestsScreen.tsx` - Friend request management with tabbed interface for sent/received requests, accept/reject functionality, and real-time updates
+- `FriendsListScreen.tsx` - Friends list display with friend count, online status, chat navigation, and friend request badge notifications
+- `index.ts` - Friends screens export
+
+###### Friends Store (src/features/friends/store/)
+- `friendsStore.ts` - Zustand store for friends state management with friends list, friend requests, search functionality, real-time updates, performance selectors, and comprehensive error handling
+
+###### Friends Services (src/features/friends/services/)
+- `friendsService.ts` - Firebase service for friends operations with user search, friend request management, friendship creation, real-time listeners, and comprehensive error handling
+
+###### Friends Types (src/features/friends/types/)
+- `index.ts` - Complete TypeScript definitions for friend requests, friendships, search results, store interfaces, component props, Firebase documents, and error handling
+
 ##### Other Features (Empty - To Be Implemented)
 - `chat/` - Chat/messaging feature (empty)  
-- `friends/` - Friends management feature (empty)
 - `stories/` - Stories feature (empty)
 
 ### Documentation (_docs/)
@@ -148,6 +168,13 @@
 
 ### src/shared/theme/index.ts
 - Exports `lightTheme`, `darkTheme`, `defaultTheme` objects
+
+### Shared Utilities
+
+#### src/shared/utils/idGenerator.ts
+- `generateId()` - Generate timestamp-based unique ID (format: "1703123456789_abc123def")
+- `generateShortId()` - Generate shorter random ID for non-critical uniqueness
+- `generateUuidLike()` - Generate UUID-like string with standard format (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
 
 ### Authentication Feature Functions
 
@@ -219,9 +246,9 @@
 - `updateSettings(settings)` - Update camera settings with partial updates
 - `toggleCamera()` - Switch between front and back camera
 - `setFlashMode(mode)` - Set flash mode (auto, on, off, torch)
-- `capturePhoto()` - Capture photo and create media object with mock implementation
-- `startVideoRecording()` - Start video recording with timer and auto-stop at 3 minutes
-- `stopVideoRecording()` - Stop video recording and create media object
+- `capturePhoto(cameraRef)` - **REAL CAPTURE**: Capture photo using Expo Camera takePictureAsync API
+- `startVideoRecording(cameraRef)` - **REAL RECORDING**: Start video recording using Expo Camera recordAsync API
+- `stopVideoRecording(cameraRef)` - **REAL RECORDING**: Stop video recording using Expo Camera stopRecording API
 - `applyFilter(filter)` - Apply image filter to processed media
 - `addTextOverlay(overlay)` - Add text overlay to media
 - `updateTextOverlay(id, updates)` - Update specific text overlay properties
@@ -435,31 +462,93 @@
 - ✅ Auth error handling with user-friendly messages
 
 ### Phase 2.2 - User Profile Setup (✅ COMPLETE)
-- ✅ Profile setup screen post-registration
+- ✅ Profile setup screen post-registration with full functionality
 - ✅ Avatar upload to Firebase Storage with camera/library selection
 - ✅ Display name and bio input with validation
 - ✅ Form validation with character limits
 - ✅ Image picker integration with permissions
 - ✅ Profile completion tracking
 - ✅ Skip profile setup option
+- ✅ **NOW CONNECTED**: Registration flow properly navigates to ProfileSetup screen
+- ✅ **NOW CONNECTED**: RootNavigator checks profile completion status
+- ✅ **NOW CONNECTED**: AuthNavigator shows ProfileSetup for incomplete profiles
 
 ### Phase 2.3 - Camera Implementation (✅ COMPLETE)
 - ✅ Camera screen with Expo Camera integration
-- ✅ Photo capture with shutter animations
+- ✅ **REAL PHOTO CAPTURE**: Actual photo capture using Expo Camera API with takePictureAsync
+- ✅ **REAL VIDEO RECORDING**: Actual video recording using Expo Camera API with recordAsync/stopRecording
 - ✅ Video recording with 3-minute limit and timer
 - ✅ Camera flip (front/back) functionality with animations
-- ✅ Flash mode controls (auto/on/off/torch)
-- ✅ Permission handling for camera, microphone, and media library
-- ✅ Real-time recording indicator with duration display
-- ✅ Controls visibility toggle on screen tap
-- ✅ Navigation to preview screen after capture
-- ✅ Comprehensive error handling and loading states
-- ✅ TypeScript type safety throughout
-- ✅ Performance-optimized Zustand store with selectors
-- ✅ Snapchat-style UI with animations
+- ✅ Flash mode controls (auto, on, off, torch)
+- ✅ Permissions handling for camera and microphone
+- ✅ Comprehensive Zustand store with camera state management
+- ✅ Camera controls component with responsive animations
+- ✅ Capture button with recording animations and duration display
+- ✅ Error handling and loading states
+- ✅ Real-time recording timer with auto-stop at 3 minutes
+- ✅ Camera settings persistence and performance optimization
+- ✅ **FIXED**: Removed mock data, now captures actual photos/videos with proper URIs
 
-### Next Phase - MVP Continuation
-- Phase 2.4: Media Preview & Editing implementation
-- Basic messaging features
-- Friend system development
-- Stories feature implementation 
+### Phase 2.4 - Media Preview & Editing (✅ COMPLETE)
+- ✅ **IMPLEMENTED**: SnapPreviewScreen with full media preview functionality
+- ✅ **IMPLEMENTED**: Photo and video preview with proper aspect ratio handling
+- ✅ **IMPLEMENTED**: Black & white filter using Image Manipulator (placeholder implementation)
+- ✅ **IMPLEMENTED**: Single text overlay capability with add/edit/remove functionality
+- ✅ **IMPLEMENTED**: Text overlay positioning and customization (font size, color)
+- ✅ **IMPLEMENTED**: Text overlay edit and removal options (Edit Text / Remove buttons)
+- ✅ **IMPLEMENTED**: Discard/retake functionality (back navigation to camera)
+- ✅ **IMPLEMENTED**: Save to device option with media library permissions
+- ✅ **IMPLEMENTED**: Send snap action button (placeholder for Phase 2.6)
+- ✅ **IMPLEMENTED**: Processing states and loading indicators
+- ✅ **IMPLEMENTED**: Error handling for filter application and media saving
+- ✅ **IMPLEMENTED**: Responsive UI with proper theme integration
+- ✅ **IMPLEMENTED**: Video playback controls for video preview
+
+### Phase 2.5 - Friend System (Basic) (✅ COMPLETE)
+- ✅ **IMPLEMENTED**: Friend search by username with real-time Firebase queries and debounced search input
+- ✅ **IMPLEMENTED**: Friend request sending with comprehensive validation and error handling
+- ✅ **IMPLEMENTED**: Friend requests inbox with tabbed interface for sent/received requests
+- ✅ **IMPLEMENTED**: Accept/reject friend request logic with automatic friendship creation
+- ✅ **IMPLEMENTED**: Friends list with Firebase integration, real-time updates, and navigation
+- ✅ **IMPLEMENTED**: Complete Zustand store with performance selectors and state management
+- ✅ **IMPLEMENTED**: Firebase service with real-time listeners and comprehensive error handling
+- ✅ **IMPLEMENTED**: Full TypeScript type system for friends functionality
+- ✅ **IMPLEMENTED**: Navigation integration with modal AddFriends screen and stack navigation
+- ✅ **IMPLEMENTED**: UI components with theme integration, loading states, and responsive design
+- ✅ **FIXED**: Firebase Realtime Database indexing for username search queries
+- ✅ **FIXED**: Firebase undefined value validation errors in friend request creation
+- ✅ **FIXED**: Proper handling of optional photoURL fields to prevent Firebase validation errors
+- ✅ **FIXED**: Friend request acceptance/rejection now properly removes requests from pending list
+- ✅ **FIXED**: Consistent filtering of pending-only friend requests across all functions
+
+### Phase 2.6+ - Not Started
+- ❌ Snap Sending
+- ❌ Snap Receiving & Viewing
+- ❌ Ephemeral System
+- ❌ Basic Navigation Flow
+- ❌ Error Handling & Loading States 
+
+#### src/shared/components/layout/SnapPreviewScreen.tsx
+- `SnapPreviewScreen()` - Complete media preview screen with editing capabilities
+- `applyBlackWhiteFilter()` - Apply black & white filter to photos using Image Manipulator
+- `removeFilter()` - Remove applied filter and show original image
+- `addTextOverlay()` - Add or update single text overlay to media with positioning and styling
+- `removeTextOverlay()` - Remove the current text overlay
+- `saveToDevice()` - Save media to device photo library with permissions
+- `handleRetake()` - Navigate back to camera for retaking media
+- `handleSend()` - Send snap action (placeholder for Phase 2.6)
+- `renderTextOverlay()` - Render the single text overlay with proper positioning
+
+### Friends Feature Functions
+
+#### src/features/friends/store/friendsStore.ts
+- `useFriendsStore()` - Zustand store hook for friends state and actions
+- `loadFriends()` - Load friends list from Firebase with error handling
+- `refreshFriends()` - Refresh friends list with loading state
+- `loadFriendRequests()` - Load sent and received friend requests from Firebase
+- `sendFriendRequest(data)` - Send friend request with validation and status updates
+- `respondToFriendRequest(response)` - Accept or reject friend request with friendship creation
+- `cancelFriendRequest(requestId)` - Cancel sent friend request
+- `searchUsers(query)` - Search users by username with debouncing and friendship status
+- `clearSearch()` - Clear search results and query
+- `removeFriend(friendshipId)`

@@ -70,6 +70,7 @@ export interface RecordingState {
   duration: number; // current recording duration in milliseconds
   startTime?: number;
   maxDuration: number; // maximum allowed duration in milliseconds
+  intervalRef?: NodeJS.Timeout; // reference to the recording timer interval
 }
 
 /**
@@ -203,9 +204,9 @@ export interface CameraActions {
   setFlashMode: (mode: FlashMode) => void;
 
   // Media capture
-  capturePhoto: () => Promise<CapturedMedia>;
-  startVideoRecording: () => Promise<void>;
-  stopVideoRecording: () => Promise<CapturedMedia>;
+  capturePhoto: (cameraRef?: any) => Promise<CapturedMedia>;
+  startVideoRecording: (cameraRef?: any) => Promise<void>;
+  stopVideoRecording: (cameraRef?: any) => Promise<CapturedMedia>;
 
   // Media processing
   applyFilter: (filter: FilterType) => Promise<void>;

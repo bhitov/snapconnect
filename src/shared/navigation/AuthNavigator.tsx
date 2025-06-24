@@ -10,6 +10,7 @@ import { ForgotPasswordScreen } from '../../features/auth/screens/ForgotPassword
 import { LoginScreen } from '../../features/auth/screens/LoginScreen';
 import { ProfileSetupScreen } from '../../features/auth/screens/ProfileSetupScreen';
 import { RegisterScreen } from '../../features/auth/screens/RegisterScreen';
+import { useIsAuthenticated, useAuthStore } from '../../features/auth/store/authStore';
 
 import { AuthStackParamList } from './types';
 
@@ -24,9 +25,24 @@ const Stack = createNativeStackNavigator<AuthStackParamList>();
  * @returns {JSX.Element} Authentication navigator component
  */
 export function AuthNavigator() {
+  const isAuthenticated = useIsAuthenticated();
+  const { isProfileComplete } = useAuthStore();
+
+  // Determine initial route based on auth state
+  const initialRouteName = isAuthenticated && !isProfileComplete() ? 'ProfileSetup' : 'Login';
+
+  console.log(
+    '🔐 AuthNavigator: Determining initial route - isAuthenticated:',
+    isAuthenticated,
+    'isProfileComplete:',
+    isProfileComplete(),
+    'initialRouteName:',
+    initialRouteName
+  );
+
   return (
     <Stack.Navigator
-      initialRouteName='Login'
+      initialRouteName={initialRouteName}
       screenOptions={{
         headerShown: false,
         gestureEnabled: true,
@@ -52,7 +68,7 @@ export function AuthNavigator() {
         component={ProfileSetupScreen}
         options={{
           title: 'Complete Profile',
-          gestureEnabled: false, // Prevent going back
+          gestureEnabled: false, // Prevent going back when profile is incomplete
         }}
       />
       <Stack.Screen

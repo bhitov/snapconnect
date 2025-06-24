@@ -140,12 +140,12 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
 
     try {
       if (mode === 'photo') {
-        await capturePhoto();
+        await capturePhoto(cameraRef);
       } else if (mode === 'video') {
         if (recording.isRecording) {
-          await stopVideoRecording();
+          await stopVideoRecording(cameraRef);
         } else {
-          await startVideoRecording();
+          await startVideoRecording(cameraRef);
         }
       }
     } catch (captureError) {
@@ -162,6 +162,7 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
     capturePhoto,
     startVideoRecording,
     stopVideoRecording,
+    cameraRef,
   ]);
 
   /**

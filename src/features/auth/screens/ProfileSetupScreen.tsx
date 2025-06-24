@@ -219,13 +219,43 @@ export function ProfileSetupScreen({ navigation: _ }: ProfileSetupScreenProps) {
   /**
    * Skip profile setup
    */
-  const handleSkipSetup = useCallback(() => {
+  const handleSkipSetup = useCallback(async () => {
+    if (!user?.uid) {
+      Alert.alert('Error', 'User not found. Please try logging in again.');
+      return;
+    }
+
     Alert.alert(
       'Skip Profile Setup?',
       'You can complete your profile later in settings. Continue to the app?',
-      [{ text: 'Go Back', style: 'cancel' }, { text: 'Skip' }]
+      [
+        { text: 'Go Back', style: 'cancel' },
+        {
+          text: 'Skip',
+          onPress: async () => {
+            try {
+              console.log('⏭️ ProfileSetup: Skipping profile setup');
+              
+              // Set minimal profile data to mark as "complete"
+              await completeProfileSetup(user.uid, {
+                displayName: user.username || (user.email?.split('@')[0] ?? 'User'),
+                bio: '',
+              });
+
+              console.log('✅ ProfileSetup: Profile marked as complete (skipped)');
+            } catch (error) {
+              console.error('❌ ProfileSetup: Skip failed:', error);
+              Alert.alert(
+                'Error',
+                'Failed to skip setup. Please try again.',
+                [{ text: 'OK' }]
+              );
+            }
+          },
+        },
+      ]
     );
-  }, []);
+  }, [user?.uid, user?.username, user?.email, completeProfileSetup]);
 
   const styles = StyleSheet.create({
     container: {
