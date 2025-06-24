@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 
 import { useTheme } from '@/shared/hooks/useTheme';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
 import { useStoriesStore } from '../store/storiesStore';
 
@@ -121,7 +122,7 @@ export function MyStoryCard({
       >
         {thumbnailUri ? (
           <Image
-            source={{ uri: thumbnailUri }}
+            source={{ uri: resolveMediaUrl(thumbnailUri) }}
             style={styles.thumbnail}
             resizeMode='cover'
           />

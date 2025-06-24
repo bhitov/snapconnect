@@ -27,6 +27,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '../../../shared/components/base/Button/Button';
 import { useTheme } from '../../../shared/hooks/useTheme';
+import { resolveMediaUrl } from '../../../shared/utils/resolveMediaUrl';
 import { useAuthStore, useAuthUser } from '../store/authStore';
 
 import type { RootStackParamList } from '../../../shared/navigation/types';
@@ -562,7 +563,7 @@ export function ProfileSettingsScreen({
             {currentPhotoURL ? (
               <>
                 <Image
-                  source={{ uri: currentPhotoURL }}
+                  source={{ uri: resolveMediaUrl(currentPhotoURL) }}
                   style={styles.avatar}
                 />
                 {uploadingImage && (

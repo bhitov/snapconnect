@@ -24,6 +24,7 @@ import Animated, {
 // Removed linear gradient dependency
 
 import { useTheme } from '@/shared/hooks/useTheme';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
 import type { StoryRingProps } from '../types';
 
@@ -239,7 +240,7 @@ export function StoryRing({
       >
         {thumbnailUri ? (
           <Image
-            source={{ uri: thumbnailUri }}
+            source={{ uri: resolveMediaUrl(thumbnailUri) }}
             style={[
               styles.avatar,
               {
@@ -253,7 +254,7 @@ export function StoryRing({
           />
         ) : story?.user?.photoURL ? (
           <Image
-            source={{ uri: story.user.photoURL }}
+            source={{ uri: resolveMediaUrl(story.user.photoURL) }}
             style={[
               styles.avatar,
               {

@@ -20,6 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/shared/components/base/Button';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
 import {
   useFriendsStore,
@@ -263,12 +264,12 @@ export function FriendRequestsScreen({
               { backgroundColor: theme.colors.background },
             ]}
           >
-            {item.senderPhotoURL ? (
-              <Image
-                source={{ uri: item.senderPhotoURL }}
-                style={styles.avatarImage}
-              />
-            ) : (
+                      {item.senderPhotoURL ? (
+            <Image
+              source={{ uri: resolveMediaUrl(item.senderPhotoURL) }}
+              style={styles.avatarImage}
+            />
+          ) : (
               <Ionicons
                 name='person'
                 size={24}
@@ -346,12 +347,12 @@ export function FriendRequestsScreen({
               { backgroundColor: theme.colors.background },
             ]}
           >
-            {item.receiverPhotoURL ? (
-              <Image
-                source={{ uri: item.receiverPhotoURL }}
-                style={styles.avatarImage}
-              />
-            ) : (
+                      {item.receiverPhotoURL ? (
+            <Image
+              source={{ uri: resolveMediaUrl(item.receiverPhotoURL) }}
+              style={styles.avatarImage}
+            />
+          ) : (
               <Ionicons
                 name='person'
                 size={24}

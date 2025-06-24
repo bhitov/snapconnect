@@ -28,6 +28,7 @@ import Animated, {
 
 import { storiesService } from '@/features/stories/services/storiesService';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
 import { StoryProgressBar } from '../components/StoryProgressBar';
 import { useStoriesStore } from '../store/storiesStore';
@@ -443,7 +444,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
         </View>
       ) : currentPost.mediaType === 'video' ? (
         <Video
-          source={{ uri: currentPost.mediaUrl }}
+          source={{ uri: resolveMediaUrl(currentPost.mediaUrl) }}
           style={styles.backgroundImage}
           resizeMode={ResizeMode.COVER}
           shouldPlay={isPlaying}
@@ -466,7 +467,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
         />
       ) : (
         <Image
-          source={{ uri: currentPost.mediaUrl }}
+          source={{ uri: resolveMediaUrl(currentPost.mediaUrl) }}
           style={styles.backgroundImage}
           resizeMode='cover'
           onLoadStart={() => {
@@ -506,7 +507,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
           <View style={styles.userInfo}>
             <Image
               source={{
-                uri: story.user.photoURL || 'https://via.placeholder.com/40',
+                uri: resolveMediaUrl(story.user.photoURL || 'https://via.placeholder.com/40'),
               }}
               style={styles.avatar}
             />

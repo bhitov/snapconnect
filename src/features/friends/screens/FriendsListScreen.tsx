@@ -22,6 +22,7 @@ import { useChatStore } from '@/features/chat/store/chatStore';
 import { Button } from '@/shared/components/base/Button';
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
 import {
   useFriendsStore,
@@ -161,7 +162,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
           >
             {item.photoURL ? (
               <Image
-                source={{ uri: item.photoURL }}
+                source={{ uri: resolveMediaUrl(item.photoURL) }}
                 style={styles.avatarImage}
               />
             ) : (

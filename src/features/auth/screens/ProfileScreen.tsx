@@ -18,6 +18,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from '../../../shared/hooks/useTheme';
+import { resolveMediaUrl } from '../../../shared/utils/resolveMediaUrl';
 import { useAuthStore, useAuthUser } from '../store/authStore';
 
 import type { RootStackParamList } from '../../../shared/navigation/types';
@@ -219,7 +220,7 @@ export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
           {/* Avatar */}
           <View style={styles.avatarContainer}>
             {user.photoURL ? (
-              <Image source={{ uri: user.photoURL }} style={styles.avatar} />
+              <Image source={{ uri: resolveMediaUrl(user.photoURL) }} style={styles.avatar} />
             ) : (
               <Text style={styles.avatarPlaceholder}>
                 {user.displayName?.charAt(0).toUpperCase() ||

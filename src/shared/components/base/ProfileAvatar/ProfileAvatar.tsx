@@ -10,6 +10,7 @@ import { TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
 
 import { useAuthUser } from '../../../../features/auth/store/authStore';
 import { useTheme } from '../../../hooks/useTheme';
+import { resolveMediaUrl } from '../../../utils/resolveMediaUrl';
 
 import type { RootStackParamList } from '../../../navigation/types';
 import type { StackNavigationProp } from '@react-navigation/stack';
@@ -105,7 +106,7 @@ export const ProfileAvatar = memo<ProfileAvatarProps>(
       >
         <TouchableOpacity style={styles.avatarButton} onPress={handlePress}>
           {user.photoURL ? (
-            <Image source={{ uri: user.photoURL }} style={styles.avatar} />
+            <Image source={{ uri: resolveMediaUrl(user.photoURL) }} style={styles.avatar} />
           ) : (
             <Text style={styles.avatarPlaceholder}>
               {user.displayName?.charAt(0).toUpperCase() ||

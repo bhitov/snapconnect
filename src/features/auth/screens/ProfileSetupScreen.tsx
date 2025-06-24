@@ -24,6 +24,7 @@ import {
 import { Button } from '../../../shared/components/base/Button/Button';
 import { Screen } from '../../../shared/components/layout/Screen';
 import { useTheme } from '../../../shared/hooks/useTheme';
+import { resolveMediaUrl } from '../../../shared/utils/resolveMediaUrl';
 import { useAuthStore, useAuthUser } from '../store/authStore';
 
 import type { AuthStackParamList } from '../../../shared/navigation/types';
@@ -386,7 +387,7 @@ export function ProfileSetupScreen({ navigation: _ }: ProfileSetupScreenProps) {
             {selectedImage || user?.photoURL ? (
               <>
                 <Image
-                  source={{ uri: selectedImage || user?.photoURL }}
+                  source={{ uri: resolveMediaUrl(selectedImage || user?.photoURL || '') }}
                   style={styles.avatar}
                 />
                 {uploadingImage && (

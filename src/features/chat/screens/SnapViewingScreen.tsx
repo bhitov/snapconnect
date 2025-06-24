@@ -21,6 +21,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/shared/hooks/useTheme';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
 import { chatService } from '../services/chatService';
 import { useChatStore, useViewingSession } from '../store/chatStore';
@@ -389,14 +390,14 @@ export function SnapViewingScreen() {
         <View style={styles.snapContainer}>
           {snap.mediaType === 'photo' ? (
             <Image
-              source={{ uri: snap.mediaUrl }}
+              source={{ uri: resolveMediaUrl(snap.mediaUrl) }}
               style={styles.media}
               resizeMode='contain'
             />
           ) : (
             <Video
               ref={videoRef}
-              source={{ uri: snap.mediaUrl }}
+              source={{ uri: resolveMediaUrl(snap.mediaUrl) }}
               style={styles.media}
               shouldPlay={!isPaused}
               isLooping={false}

@@ -55,6 +55,7 @@
 
 ##### Utilities (src/shared/utils/)
 - `idGenerator.ts` - Simple ID generation utilities for creating unique IDs without external dependencies
+- `resolveMediaUrl.ts` - Media URL resolution utility for handling Firebase Storage emulator URLs in development environment
 
 ##### Theme System (src/shared/theme/)
 - `index.ts` - Main theme export combining all theme parts
@@ -229,6 +230,9 @@
 - `generateId()` - Generate timestamp-based unique ID (format: "1703123456789_abc123def")
 - `generateShortId()` - Generate shorter random ID for non-critical uniqueness
 - `generateUuidLike()` - Generate UUID-like string with standard format (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+
+#### src/shared/utils/resolveMediaUrl.ts
+- `resolveMediaUrl(mediaUrl: string)` - Resolves media URLs for different environments and platforms, transforms Firebase Storage emulator URLs in DEV mode (Android: 10.0.2.2:9199, other platforms: localhost:9199), returns unchanged URL in production
 
 ### Authentication Feature Functions
 

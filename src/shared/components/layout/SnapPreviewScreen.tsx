@@ -25,6 +25,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 
 import { useTheme } from '../../hooks/useTheme';
+import { resolveMediaUrl } from '../../utils/resolveMediaUrl';
 import { RootStackParamList } from '../../navigation/types';
 import { generateId } from '../../utils/idGenerator';
 
@@ -255,13 +256,13 @@ export function SnapPreviewScreen() {
       <View style={styles.mediaContainer}>
         {type === 'photo' ? (
           <Image
-            source={{ uri: displayUri }}
+            source={{ uri: resolveMediaUrl(displayUri) }}
             style={styles.media}
             resizeMode='cover'
           />
         ) : (
           <Video
-            source={{ uri: displayUri }}
+            source={{ uri: resolveMediaUrl(displayUri) }}
             style={styles.media}
             shouldPlay={false}
             isLooping={false}
