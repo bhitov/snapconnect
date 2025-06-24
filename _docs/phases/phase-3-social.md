@@ -32,7 +32,7 @@ Transform SnapConnect from a basic messaging app into a full social platform by 
 2. Implement story upload with privacy settings
 3. Build stories viewer with auto-advance
 4. Add story progress indicators and animations
-5. Create story management (delete, view count)
+5. Create story management (delete)
 
 ### 3.2 Stories Discovery
 **Goal**: Make it easy to discover and view friends' stories

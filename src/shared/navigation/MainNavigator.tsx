@@ -6,7 +6,7 @@
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text, View } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 
 import { CameraScreen } from '../../features/camera/screens/CameraScreen';
 import { ChatsScreen, ChatScreen } from '../../features/chat/screens';
@@ -15,9 +15,11 @@ import {
   FriendRequestsScreen,
   FriendsListScreen 
 } from '../../features/friends/screens';
+import { StoriesScreen } from '../../features/stories/screens/StoriesScreen';
+import { ViewStoryScreen } from '../../features/stories/screens/ViewStoryScreen';
 import { useTheme } from '../hooks/useTheme';
 
-import { MainTabParamList, ChatStackParamList, FriendsStackParamList } from './types';
+import { MainTabParamList, ChatStackParamList, FriendsStackParamList, StoriesStackParamList } from './types';
 
 // Chat Stack Navigator
 const ChatStack = createNativeStackNavigator<ChatStackParamList>();
@@ -48,9 +50,34 @@ function ChatStackNavigator() {
       <ChatStack.Screen 
         name='ChatScreen' 
         component={ChatScreen}
-        options={{
+        options={({ route, navigation }) => ({
           headerShown: true,
-        }}
+          title: route.params?.otherUser?.displayName || route.params?.otherUser?.username || 'Chat',
+          headerBackTitleVisible: false,
+          headerLeft: () => {
+            const theme = useTheme();
+            return (
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                style={{
+                  paddingLeft: 16,
+                  paddingRight: 20,
+                  paddingVertical: 12,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={{ 
+                  fontSize: 16, 
+                  color: theme.colors.primary || '#007AFF',
+                  fontWeight: '500',
+                }}>
+                  ← Chats
+                </Text>
+              </TouchableOpacity>
+            );
+          },
+        })}
       />
     </ChatStack.Navigator>
   );
@@ -71,6 +98,23 @@ function FriendsStackNavigator() {
       <FriendsStack.Screen name='FriendRequests' component={FriendRequestsScreen} />
       <FriendsStack.Screen name='Profile' component={PlaceholderProfileScreen} />
     </FriendsStack.Navigator>
+  );
+}
+
+// Stories Stack Navigator
+const StoriesStack = createNativeStackNavigator<StoriesStackParamList>();
+
+function StoriesStackNavigator() {
+  return (
+    <StoriesStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <StoriesStack.Screen name='StoriesList' component={StoriesScreen} />
+      <StoriesStack.Screen name='ViewStory' component={ViewStoryScreen} />
+      <StoriesStack.Screen name='CreateStory' component={PlaceholderCreateStoryScreen} />
+    </StoriesStack.Navigator>
   );
 }
 
@@ -98,7 +142,8 @@ function PlaceholderProfileScreen() {
   );
 }
 
-function StoriesScreen() {
+// Placeholder view story screen - will be implemented next
+function PlaceholderViewStoryScreen() {
   const theme = useTheme();
   return (
     <View
@@ -110,12 +155,36 @@ function StoriesScreen() {
       }}
     >
       <Text style={{ ...theme.typography.h2, color: theme.colors.textPrimary }}>
-        Stories
+        Story Viewer
       </Text>
       <Text
         style={{ ...theme.typography.body, color: theme.colors.textSecondary }}
       >
-        Coming in Phase 2
+        Loading story viewer...
+      </Text>
+    </View>
+  );
+}
+
+// Placeholder create story screen - will be implemented next
+function PlaceholderCreateStoryScreen() {
+  const theme = useTheme();
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme.colors.background,
+      }}
+    >
+      <Text style={{ ...theme.typography.h2, color: theme.colors.textPrimary }}>
+        Create Story
+      </Text>
+      <Text
+        style={{ ...theme.typography.body, color: theme.colors.textSecondary }}
+      >
+        Story creation flow...
       </Text>
     </View>
   );
@@ -167,7 +236,7 @@ export function MainNavigator() {
       />
       <Tab.Screen
         name='Stories'
-        component={StoriesScreen}
+        component={StoriesStackNavigator}
         options={{
           tabBarLabel: 'Stories',
         }}

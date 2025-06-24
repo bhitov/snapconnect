@@ -138,8 +138,27 @@
 ###### Chat Types (src/features/chat/types/)
 - `index.ts` - Complete TypeScript definitions for hybrid messaging with text messages, snap messages, conversations, upload progress, viewing sessions, and store interfaces
 
-##### Other Features (Empty - To Be Implemented)
-- `stories/` - Stories feature (empty)
+##### Stories Feature (src/features/stories/) - **IMPLEMENTED IN PHASE 3.1**
+
+###### Stories Screens (src/features/stories/screens/)
+- `StoriesScreen.tsx` - Main stories screen showing friends' stories in horizontal list with add story functionality and navigation to viewer
+- `ViewStoryScreen.tsx` - Full-screen story viewer with tap controls, progress tracking, auto-advance, and pause/resume functionality
+- `index.ts` - Stories screens export
+
+###### Stories Components (src/features/stories/components/)
+- `StoriesList.tsx` - Horizontal FlatList of stories with performance optimizations, pull-to-refresh, and add story button
+- `StoryRing.tsx` - Animated colorful border component for unviewed stories with three sizes, rotating animations, and multi-layer border design
+- `StoryProgressBar.tsx` - Progress bar component showing progress through multiple story posts with animated segments
+- `index.ts` - Stories components export
+
+###### Stories Store (src/features/stories/store/)
+- `storiesStore.ts` - Zustand store for stories state with story data, viewing sessions, upload progress, UI state, and performance selectors
+
+###### Stories Services (src/features/stories/services/)
+- `storiesService.ts` - Firebase service for stories operations with story creation, loading, deletion, view tracking, and real-time updates
+
+###### Stories Types (src/features/stories/types/)
+- `index.ts` - Complete TypeScript definitions for stories, posts, viewing sessions, upload progress, privacy levels, and component interfaces
 
 ### Documentation (_docs/)
 - `project-overview.md` - Product requirements and feature specifications
@@ -198,6 +217,67 @@
 #### src/features/auth/store/authStore.ts
 - `useAuthStore()` - Zustand store hook for authentication state
 - `login(email, password)` - Login user with email and password
+
+### Stories Feature Functions
+
+#### src/features/stories/store/storiesStore.ts
+- `useStoriesStore()` - Zustand store hook for stories state management
+- `loadStories()` - Load all friends' stories from Firebase with active post filtering
+- `refreshStories()` - Refresh stories data without loading state
+- `loadMyStory()` - Load current user's story data
+- `createStory(data, onProgress?)` - Create new story post with upload progress tracking
+- `deleteStoryPost(storyId, postId)` - Delete specific story post
+- `deleteStory(storyId)` - Delete entire story
+- `startViewing(story)` - Start viewing session for story with auto-advance
+- `nextPost()` - Navigate to next post in viewing session
+- `previousPost()` - Navigate to previous post in viewing session
+- `pauseViewing()` - Pause auto-advance during viewing
+- `resumeViewing()` - Resume auto-advance during viewing
+- `stopViewing()` - End viewing session and cleanup
+- `markPostAsViewed(storyId, postId)` - Mark story post as viewed by current user
+
+#### src/features/stories/services/storiesService.ts
+- `createStory(data, onProgress?)` - Upload story post to Firebase with media upload and progress tracking
+- `getStories()` - Fetch all friends' stories with active post filtering and user data population
+- `getMyStory()` - Fetch current user's story with active posts
+- `deleteStoryPost(storyId, postId)` - Remove story post from Firebase
+- `deleteStory(storyId)` - Remove entire story from Firebase
+- `markPostAsViewed(storyId, postId)` - Update view tracking in Firebase
+
+#### src/features/stories/screens/StoriesScreen.tsx
+- `StoriesScreen()` - Main stories screen component with story list and navigation
+- `handleRefresh()` - Refresh stories data with loading state
+- `handleAddStory()` - Navigate to camera for story creation
+- `handleStoryPress(story)` - Navigate to story viewer with story data
+- `handleErrorDismiss()` - Clear error state
+
+#### src/features/stories/screens/ViewStoryScreen.tsx
+- `ViewStoryScreen()` - Full-screen story viewer with tap controls
+- `loadStory()` - Load story data for viewing (mock data implementation)
+- `startProgress()` - Begin progress animation for current post
+- `goToNextPost()` - Navigate to next post or close viewer
+- `goToPreviousPost()` - Navigate to previous post
+- `handleLeftTap()` - Handle tap on left side for previous post
+- `handleRightTap()` - Handle tap on right side for next post
+- `handlePauseResume()` - Toggle pause/resume for auto-advance
+- `handleClose()` - Close story viewer
+- `handlePostChange(index)` - Jump to specific post from progress bar
+- `markAsViewed()` - Mark current post as viewed
+- `getTimeAgo(timestamp)` - Format timestamp to relative time string
+
+#### src/features/stories/components/StoriesList.tsx
+- `StoriesList()` - Horizontal scrollable list of story rings
+- `renderStoryItem()` - Render individual story ring item
+- `handleAddStoryPress()` - Handle add story button press
+- `handleStoryPress(story)` - Handle story ring press
+
+#### src/features/stories/components/StoryRing.tsx
+- `StoryRing()` - Animated story ring with colorful multi-layer border
+- `handlePress()` - Handle story ring press with feedback
+
+#### src/features/stories/components/StoryProgressBar.tsx
+- `StoryProgressBar()` - Progress bars for multiple story posts
+- `handleSegmentPress(index)` - Handle tap on progress segment to jump to post
 - `register(email, password, username)` - Register new user
 - `logout()` - Logout current user
 - `updateProfile(updates)` - Update user profile
@@ -619,11 +699,13 @@
 - `handlePressOut()` - Handle press end for resume functionality
 
 #### src/features/chat/screens/RecipientSelectionScreen.tsx
-- `RecipientSelectionScreen()` - Recipient selection with friend list and duration controls
+- `RecipientSelectionScreen()` - Recipient selection with friend list, duration controls, and story posting options
 - `handleRecipientToggle(friendId)` - Toggle friend selection for snap sending
 - `handleSendSnap()` - Send snap to selected recipients with progress tracking
+- `handlePostStory(privacy)` - Post snap as story with specified privacy level (friends/public)
 - `renderFriendItem(friend)` - Render friend item with selection state
 - `renderDurationOption(duration)` - Render duration selection option
+- `renderStoryOption(option)` - Render story privacy option with icon and description
 
 ### Friends Feature Functions
 
@@ -707,3 +789,11 @@
 - `ChatState`, `ChatActions`, `ChatStore` - Complete store interfaces for hybrid messaging state management
 - `ChatError`, `ChatErrorType` - Error handling types
 - Component prop interfaces: `RecipientSelectionProps`, `ConversationItemProps`, `SnapViewerProps`, `SnapTimerProps`, `ChatScreenProps`, `MessageItemProps`
+
+### RecipientSelectionScreen Variables
+
+#### src/features/chat/screens/RecipientSelectionScreen.tsx
+- `DURATION_OPTIONS` - Array of SnapDuration values [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] for snap viewing duration
+- `STORY_OPTIONS` - Array of story privacy options with privacy levels, titles, descriptions, and icons:
+  - Friends Only: privacy 'friends', icon '👥', "Share with all your friends"
+  - Public: privacy 'all', icon '🌎', "Share with everyone"

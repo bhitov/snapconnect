@@ -9,7 +9,7 @@ import type { NavigationProp, RouteProp } from '@react-navigation/native';
 
 export type RootStackParamList = {
   Auth: undefined;
-  Main: undefined;
+  Main: undefined | { screen?: keyof MainTabParamList };
   SnapPreview: {
     uri: string;
     type: 'photo' | 'video';

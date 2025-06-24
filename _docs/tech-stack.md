@@ -1609,7 +1609,7 @@ const StoryProgressRing = ({ progress }: { progress: SharedValue<number> }) => {
 
 **Implementation**:
 ```typescript
-import LinearGradient from 'react-native-linear-gradient';
+// Linear gradient dependency removed - using multi-layer View borders instead
 
 // Snapchat-style gradient overlays
 const GradientOverlay = () => (

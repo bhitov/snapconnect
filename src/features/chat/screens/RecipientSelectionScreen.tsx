@@ -21,6 +21,7 @@ import {
   useFriendsStore,
   useFriendsList,
 } from '@/features/friends/store/friendsStore';
+import { useStoriesStore } from '@/features/stories/store/storiesStore';
 import { useTheme } from '@/shared/hooks/useTheme';
 
 import {
@@ -31,6 +32,7 @@ import {
 } from '../store/chatStore';
 
 import type { SnapCreationData, SnapDuration } from '../types';
+import type { StoryCreationData, StoryPrivacy } from '@/features/stories/types';
 import type { RootStackParamList } from '@/shared/navigation/types';
 import type { RouteProp } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
@@ -54,6 +56,24 @@ interface RouteParams {
  * Duration options for snap viewing
  */
 const DURATION_OPTIONS: SnapDuration[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+/**
+ * Story privacy options
+ */
+const STORY_OPTIONS = [
+  {
+    privacy: 'friends' as StoryPrivacy,
+    title: 'My Story (Friends)',
+    description: 'Share with all your friends',
+    icon: '👥',
+  },
+  {
+    privacy: 'all' as StoryPrivacy,
+    title: 'My Story (Public)',
+    description: 'Share with everyone',
+    icon: '🌎',
+  },
+];
 
 /**
  * Recipient selection screen component
@@ -82,6 +102,7 @@ export function RecipientSelectionScreen() {
     sendSnap,
     clearSendError,
   } = useChatStore();
+  const { createStory } = useStoriesStore();
 
   // Local state
   const [selectedDuration, setSelectedDuration] = useState<SnapDuration>(3);
@@ -118,6 +139,41 @@ export function RecipientSelectionScreen() {
   };
 
   /**
+   * Handle story posting
+   */
+  const handlePostStory = async (privacy: StoryPrivacy) => {
+    console.log('📸 RecipientSelectionScreen: Starting story posting with privacy:', privacy);
+    setIsLoading(true);
+
+    try {
+      const storyData: StoryCreationData = {
+        mediaUri,
+        mediaType,
+        privacy,
+        ...(textOverlay && { text: textOverlay }),
+      };
+
+      console.log('📸 RecipientSelectionScreen: Story data prepared:', storyData);
+      
+      await createStory(storyData);
+
+      console.log('✅ RecipientSelectionScreen: Story posted successfully, navigating back to camera');
+      
+      // Pop 2 screens: RecipientSelection modal + SnapPreview modal, back to camera
+      navigation.pop(2);
+      
+    } catch (error) {
+      console.error('❌ RecipientSelectionScreen: Failed to post story:', error);
+      Alert.alert('Post Failed', 'Failed to post story. Please try again.');
+      
+      // Don't navigate if there was an error
+      return;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
    * Handle send snap to selected recipients
    */
   const handleSendSnap = async () => {
@@ -129,6 +185,7 @@ export function RecipientSelectionScreen() {
       return;
     }
 
+    console.log('📤 RecipientSelectionScreen: Starting snap sending to', selectedRecipients.length, 'recipients');
     setIsLoading(true);
 
     try {
@@ -142,33 +199,21 @@ export function RecipientSelectionScreen() {
           duration: selectedDuration,
         };
 
+        console.log('📤 RecipientSelectionScreen: Sending snap to recipient:', recipientId, 'with data:', snapData);
         await sendSnap(snapData);
       }
 
-      // Show success message and navigate to chats
-      Alert.alert(
-        'Snap Sent!',
-        `Your snap was sent to ${selectedRecipients.length} friend${selectedRecipients.length > 1 ? 's' : ''}.`,
-        [
-          {
-            text: 'View Chats',
-            onPress: () => {
-              // Navigate to main screen (will default to chats tab)
-              navigation.navigate('Main');
-            },
-          },
-          {
-            text: 'Take Another',
-            onPress: () => {
-              // Navigate back to main screen (user can switch to camera tab)
-              navigation.navigate('Main');
-            },
-          },
-        ]
-      );
+      console.log('✅ RecipientSelectionScreen: Snap sent successfully, navigating back to camera');
+      
+      // Pop 2 screens: RecipientSelection modal + SnapPreview modal, back to camera
+      navigation.pop(2);
+      
     } catch (error) {
       console.error('❌ RecipientSelectionScreen: Failed to send snap:', error);
       Alert.alert('Send Failed', 'Failed to send snap. Please try again.');
+      
+      // Don't navigate if there was an error
+      return;
     } finally {
       setIsLoading(false);
     }
@@ -241,6 +286,40 @@ export function RecipientSelectionScreen() {
             </Text>
           )}
         </View>
+      </TouchableOpacity>
+    );
+  };
+
+  /**
+   * Render story option
+   */
+  const renderStoryOption = ({ item: option }: { item: typeof STORY_OPTIONS[0] }) => {
+    return (
+      <TouchableOpacity
+        style={[
+          styles.storyOption,
+          { backgroundColor: theme.colors.background, borderColor: theme.colors.border },
+        ]}
+        onPress={() => handlePostStory(option.privacy)}
+        activeOpacity={0.7}
+        disabled={isLoading}
+      >
+        <View style={styles.storyIcon}>
+          <Text style={styles.storyIconText}>{option.icon}</Text>
+        </View>
+        
+        <View style={styles.storyInfo}>
+          <Text style={[styles.storyTitle, { color: theme.colors.text }]}>
+            {option.title}
+          </Text>
+          <Text style={[styles.storyDescription, { color: theme.colors.textSecondary }]}>
+            {option.description}
+          </Text>
+        </View>
+
+        {isLoading && (
+          <ActivityIndicator size='small' color={theme.colors.primary} />
+        )}
       </TouchableOpacity>
     );
   };
@@ -334,8 +413,23 @@ export function RecipientSelectionScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Story Options */}
+      <View style={[styles.durationSection, { borderBottomColor: theme.colors.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+          Add to Story
+        </Text>
+
+        <FlatList
+          data={STORY_OPTIONS}
+          renderItem={renderStoryOption}
+          keyExtractor={item => item.privacy}
+          scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+
       {/* Duration Selection */}
-      <View style={styles.durationSection}>
+      <View style={[styles.durationSection, { borderBottomColor: theme.colors.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
           Viewing Duration
         </Text>
@@ -517,5 +611,37 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 14,
     textAlign: 'center',
+  },
+  storyOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    marginVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  storyIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#f0f0f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  storyIconText: {
+    fontSize: 20,
+  },
+  storyInfo: {
+    flex: 1,
+  },
+  storyTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  storyDescription: {
+    fontSize: 14,
   },
 });

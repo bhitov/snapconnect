@@ -19,6 +19,19 @@
     },
     "conversations": {
       ".indexOn": ["participants", "lastMessageAt"]
+    },
+    "stories": {
+      ".indexOn": ["userId", "updatedAt"],
+      "$storyId": {
+        "posts": {
+          ".indexOn": ["timestamp", "expiresAt", "status", "privacy"],
+          "$postId": {
+            "views": {
+              ".indexOn": ["timestamp", "completed"]
+            }
+          }
+        }
+      }
     }
   }
 }
