@@ -232,7 +232,7 @@ export const useCameraStore = create<CameraStore>()(
           }
 
           console.log('📸 CameraStore: Taking picture with camera ref');
-          const photo = await cameraRef.current.takePictureAsync()
+          const photo = await cameraRef.current.takePictureAsync();
 
           console.log('📸 CameraStore: Photo captured:', photo.uri);
 
@@ -297,7 +297,7 @@ export const useCameraStore = create<CameraStore>()(
           console.log(
             '🎥 CameraStore: Starting video recording with camera ref'
           );
-          
+
           // Start the recording and store the promise
           const recordingPromise = cameraRef.current.recordAsync({
             maxDuration: 180, // 3 minutes in seconds
@@ -374,16 +374,16 @@ export const useCameraStore = create<CameraStore>()(
           console.log(
             '⏹️ CameraStore: Stopping video recording with camera ref'
           );
-          
+
           // Stop the recording
           cameraRef.current.stopRecording();
-          
+
           // Get the stored recording promise and await it for the video data
           const recordingPromise = (state.recording as any).recordingPromise;
           if (!recordingPromise) {
             throw new Error('No recording promise found');
           }
-          
+
           const video = await recordingPromise;
 
           console.log('⏹️ CameraStore: Video recording stopped:', video?.uri);

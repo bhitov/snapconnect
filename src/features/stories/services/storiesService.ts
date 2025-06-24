@@ -4,21 +4,36 @@
  */
 
 import { getAuth } from 'firebase/auth';
-import { getDatabase, ref, set, get, update, remove, onValue, off } from 'firebase/database';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  update,
+  remove,
+  onValue,
+  off,
+} from 'firebase/database';
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from 'firebase/storage';
 import { generateId } from '@/shared/utils/idGenerator';
 import { friendsService } from '@/features/friends/services/friendsService';
 import type { FriendProfile } from '@/features/friends/types';
-import type { 
-  Story, 
-  StoryWithUser, 
-  StoryCreationData, 
-  StoryUploadProgress, 
-  StoryError, 
-  StoryDocument, 
+import type {
+  Story,
+  StoryWithUser,
+  StoryCreationData,
+  StoryUploadProgress,
+  StoryError,
+  StoryDocument,
   StoryPostDocument,
   ViewData,
-  StoryViewer 
+  StoryViewer,
 } from '../types';
 
 class StoriesService {
@@ -44,13 +59,18 @@ class StoriesService {
   /**
    * Get user data from Firebase
    */
-  private async getUserData(userId: string): Promise<{ uid: string; username: string; displayName: string; photoURL?: string }> {
+  private async getUserData(userId: string): Promise<{
+    uid: string;
+    username: string;
+    displayName: string;
+    photoURL?: string;
+  }> {
     console.log('👤 StoriesService: Fetching user data for:', userId);
-    
+
     try {
       const userRef = ref(this.database, `users/${userId}`);
       const snapshot = await get(userRef);
-      
+
       if (!snapshot.exists()) {
         console.warn('⚠️ StoriesService: User not found, using fallback data');
         return {
@@ -60,15 +80,20 @@ class StoriesService {
           photoURL: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
         };
       }
-      
+
       const userData = snapshot.val();
       console.log('✅ StoriesService: User data loaded:', userData.username);
-      
+
       return {
         uid: userId,
         username: userData.username || `user_${userId.slice(-6)}`,
-        displayName: userData.displayName || userData.username || `User ${userId.slice(-6)}`,
-        photoURL: userData.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
+        displayName:
+          userData.displayName ||
+          userData.username ||
+          `User ${userId.slice(-6)}`,
+        photoURL:
+          userData.photoURL ||
+          `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
       };
     } catch (error) {
       console.error('❌ StoriesService: Failed to fetch user data:', error);
@@ -86,51 +111,59 @@ class StoriesService {
    * Upload media to Firebase Storage
    */
   private async uploadMediaToStorage(
-    mediaUri: string, 
-    mediaType: 'photo' | 'video', 
+    mediaUri: string,
+    mediaType: 'photo' | 'video',
     postId: string,
     onProgress?: (progress: StoryUploadProgress) => void
   ): Promise<string> {
     console.log('📤 StoriesService: Starting media upload to Firebase Storage');
-    
+
     try {
       const currentUserId = this.getCurrentUserId();
-      
+
       // Create storage reference
       const fileExtension = mediaType === 'photo' ? 'jpg' : 'mp4';
       const fileName = `${postId}.${fileExtension}`;
       const storagePath = `stories/${currentUserId}/${fileName}`;
       const storageReference = storageRef(this.storage, storagePath);
-      
+
       console.log('📤 StoriesService: Uploading to path:', storagePath);
 
       // Convert URI to blob for upload
       const response = await fetch(mediaUri);
       const blob = await response.blob();
-      
+
       console.log('📤 StoriesService: File size:', blob.size, 'bytes');
 
       // Upload with progress tracking
       const uploadTask = uploadBytes(storageReference, blob);
-      
+
       // Wait for upload completion
       const snapshot = await uploadTask;
-      console.log('📤 StoriesService: Upload completed, metadata:', snapshot.metadata);
+      console.log(
+        '📤 StoriesService: Upload completed, metadata:',
+        snapshot.metadata
+      );
 
       // Get download URL
       const downloadURL = await getDownloadURL(storageReference);
       console.log('✅ StoriesService: Download URL obtained:', downloadURL);
-      
+
       return downloadURL;
     } catch (error: any) {
       console.error('❌ StoriesService: Media upload failed:', error);
-      throw new Error(`Failed to upload media: ${error?.message || 'Unknown error'}`);
+      throw new Error(
+        `Failed to upload media: ${error?.message || 'Unknown error'}`
+      );
     }
   }
 
-  async createStory(data: StoryCreationData, onProgress?: (progress: StoryUploadProgress) => void): Promise<void> {
+  async createStory(
+    data: StoryCreationData,
+    onProgress?: (progress: StoryUploadProgress) => void
+  ): Promise<void> {
     console.log('📖 StoriesService: Creating story with media:', data.mediaUri);
-    
+
     const currentUserId = this.getCurrentUserId();
     const storyId = currentUserId;
     const postId = generateId();
@@ -144,10 +177,15 @@ class StoriesService {
 
       // Upload media to Firebase Storage
       console.log('📤 StoriesService: Uploading media to Firebase Storage');
-      const mediaUrl = await this.uploadMediaToStorage(data.mediaUri, data.mediaType, postId, onProgress);
-      
+      const mediaUrl = await this.uploadMediaToStorage(
+        data.mediaUri,
+        data.mediaType,
+        postId,
+        onProgress
+      );
+
       console.log('✅ StoriesService: Media uploaded successfully:', mediaUrl);
-      
+
       onProgress?.({
         storyId,
         progress: 90,
@@ -185,13 +223,13 @@ class StoriesService {
       }
 
       await set(storyRef, storyData);
-      
+
       onProgress?.({
         storyId,
         progress: 100,
         status: 'complete',
       });
-      
+
       console.log('✅ StoriesService: Story created successfully');
     } catch (error) {
       console.error('❌ StoriesService: Failed to create story:', error);
@@ -201,14 +239,16 @@ class StoriesService {
 
   async getFriendStories(): Promise<StoryWithUser[]> {
     console.log('📖 StoriesService: Loading friend stories');
-    
+
     try {
       const currentUserId = this.getCurrentUserId();
       const friends = await friendsService.getFriends();
       const friendIds = friends.map((friend: FriendProfile) => friend.uid);
 
       if (friendIds.length === 0) {
-        console.log('📖 StoriesService: No friends found, so no stories to load.');
+        console.log(
+          '📖 StoriesService: No friends found, so no stories to load.'
+        );
         return [];
       }
 
@@ -234,17 +274,21 @@ class StoriesService {
             id: postId,
             ...postDoc,
           }))
-          .filter(post => 
-            post.status === 'active' && 
-            post.expiresAt > Date.now() &&
-            (post.privacy === 'all' || post.privacy === 'friends')
+          .filter(
+            post =>
+              post.status === 'active' &&
+              post.expiresAt > Date.now() &&
+              (post.privacy === 'all' || post.privacy === 'friends')
           )
           .sort((a, b) => a.timestamp - b.timestamp);
 
         if (activePosts.length === 0) continue;
 
-        const hasUnviewedPosts = activePosts.some(post => 
-          !post.views || !post.views[currentUserId] || !post.views[currentUserId].completed
+        const hasUnviewedPosts = activePosts.some(
+          post =>
+            !post.views ||
+            !post.views[currentUserId] ||
+            !post.views[currentUserId].completed
         );
 
         const userData = await this.getUserData(storyDoc.userId);
@@ -260,15 +304,17 @@ class StoriesService {
 
         stories.push(userStory);
       }
-      
+
       // Advanced sorting: unviewed first, then most recent
       stories.sort((a, b) => {
         if (a.hasUnviewedPosts && !b.hasUnviewedPosts) return -1;
         if (!a.hasUnviewedPosts && b.hasUnviewedPosts) return 1;
         return b.latestPostTimestamp - a.latestPostTimestamp;
       });
-      
-      console.log('✅ StoriesService: Friend stories loaded and sorted successfully');
+
+      console.log(
+        '✅ StoriesService: Friend stories loaded and sorted successfully'
+      );
       return stories;
     } catch (error) {
       console.error('❌ StoriesService: Failed to load friend stories:', error);
@@ -278,7 +324,7 @@ class StoriesService {
 
   async getMyStory(): Promise<Story | null> {
     console.log('📖 StoriesService: Loading my story');
-    
+
     try {
       const currentUserId = this.getCurrentUserId();
       const myStoryRef = ref(this.database, `stories/${currentUserId}`);
@@ -290,7 +336,7 @@ class StoriesService {
       }
 
       const storyDoc = snapshot.val() as StoryDocument;
-      
+
       // Convert Firebase data to Story format
       const activePosts = Object.entries(storyDoc.posts || {})
         .map(([postId, postDoc]) => ({
@@ -312,7 +358,11 @@ class StoriesService {
         updatedAt: storyDoc.updatedAt,
       };
 
-      console.log('✅ StoriesService: Loaded my story with', activePosts.length, 'posts');
+      console.log(
+        '✅ StoriesService: Loaded my story with',
+        activePosts.length,
+        'posts'
+      );
       return myStory;
     } catch (error) {
       console.error('❌ StoriesService: Failed to load my story:', error);
@@ -322,16 +372,18 @@ class StoriesService {
 
   async deleteStoryPost(storyId: string, postId: string): Promise<void> {
     console.log('🗑️ StoriesService: Deleting story post');
-    
+
     try {
       const currentUserId = this.getCurrentUserId();
       if (storyId !== currentUserId) {
-        throw new Error('Permission denied: Can only delete your own story posts');
+        throw new Error(
+          'Permission denied: Can only delete your own story posts'
+        );
       }
 
       const postRef = ref(this.database, `stories/${storyId}/posts/${postId}`);
       await remove(postRef);
-      
+
       console.log('✅ StoriesService: Story post deleted successfully');
     } catch (error) {
       console.error('❌ StoriesService: Failed to delete story post:', error);
@@ -341,7 +393,7 @@ class StoriesService {
 
   async deleteStory(storyId: string): Promise<void> {
     console.log('🗑️ StoriesService: Deleting story');
-    
+
     try {
       const currentUserId = this.getCurrentUserId();
       if (storyId !== currentUserId) {
@@ -350,7 +402,7 @@ class StoriesService {
 
       const storyRef = ref(this.database, `stories/${storyId}`);
       await remove(storyRef);
-      
+
       console.log('✅ StoriesService: Story deleted successfully');
     } catch (error) {
       console.error('❌ StoriesService: Failed to delete story:', error);
@@ -360,7 +412,7 @@ class StoriesService {
 
   async markPostAsViewed(storyId: string, postId: string): Promise<void> {
     console.log('👁️ StoriesService: Marking post as viewed');
-    
+
     try {
       const currentUserId = this.getCurrentUserId();
       const viewData: ViewData = {
@@ -368,9 +420,12 @@ class StoriesService {
         completed: true,
       };
 
-      const viewRef = ref(this.database, `stories/${storyId}/posts/${postId}/views/${currentUserId}`);
+      const viewRef = ref(
+        this.database,
+        `stories/${storyId}/posts/${postId}/views/${currentUserId}`
+      );
       await set(viewRef, viewData);
-      
+
       console.log('✅ StoriesService: Post marked as viewed');
     } catch (error) {
       console.error('❌ StoriesService: Failed to mark post as viewed:', error);
@@ -378,13 +433,18 @@ class StoriesService {
     }
   }
 
-  async getStoryViewers(storyId: string, postId?: string): Promise<StoryViewer[]> {
+  async getStoryViewers(
+    storyId: string,
+    postId?: string
+  ): Promise<StoryViewer[]> {
     console.log('👥 StoriesService: Getting story viewers');
-    
+
     try {
       const currentUserId = this.getCurrentUserId();
       if (storyId !== currentUserId) {
-        throw new Error('Permission denied: Can only view your own story viewers');
+        throw new Error(
+          'Permission denied: Can only view your own story viewers'
+        );
       }
 
       const storyRef = ref(this.database, `stories/${storyId}`);
@@ -415,9 +475,13 @@ class StoriesService {
         }
       } else {
         // Get viewers across all posts
-        for (const [currentPostId, post] of Object.entries(storyDoc.posts || {})) {
+        for (const [currentPostId, post] of Object.entries(
+          storyDoc.posts || {}
+        )) {
           if (post.status === 'active' && post.expiresAt > Date.now()) {
-            for (const [viewerId, viewData] of Object.entries(post.views || {})) {
+            for (const [viewerId, viewData] of Object.entries(
+              post.views || {}
+            )) {
               if (viewData.completed) {
                 const existing = viewers.get(viewerId);
                 if (existing) {
@@ -441,26 +505,30 @@ class StoriesService {
         }
 
         // Check if each viewer has viewed all posts
-        const activePosts = Object.keys(storyDoc.posts || {}).filter(
-          pid => {
-            const post = storyDoc.posts[pid];
-            return post && post.status === 'active' && post.expiresAt > Date.now();
-          }
-        );
+        const activePosts = Object.keys(storyDoc.posts || {}).filter(pid => {
+          const post = storyDoc.posts[pid];
+          return (
+            post && post.status === 'active' && post.expiresAt > Date.now()
+          );
+        });
 
         for (const viewer of viewers.values()) {
-          viewer.hasViewedAll = activePosts.every(
-            pid => {
-              const post = storyDoc.posts[pid];
-              return post && post.views && post.views[viewer.userId]?.completed;
-            }
-          );
+          viewer.hasViewedAll = activePosts.every(pid => {
+            const post = storyDoc.posts[pid];
+            return post && post.views && post.views[viewer.userId]?.completed;
+          });
         }
       }
 
-      const sortedViewers = Array.from(viewers.values()).sort((a, b) => b.viewedAt - a.viewedAt);
-      
-      console.log('✅ StoriesService: Loaded', sortedViewers.length, 'story viewers');
+      const sortedViewers = Array.from(viewers.values()).sort(
+        (a, b) => b.viewedAt - a.viewedAt
+      );
+
+      console.log(
+        '✅ StoriesService: Loaded',
+        sortedViewers.length,
+        'story viewers'
+      );
       return sortedViewers;
     } catch (error) {
       console.error('❌ StoriesService: Failed to get story viewers:', error);
@@ -469,4 +537,4 @@ class StoriesService {
   }
 }
 
-export const storiesService = new StoriesService(); 
+export const storiesService = new StoriesService();

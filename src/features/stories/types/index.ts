@@ -149,7 +149,7 @@ export interface StoryViewingSession {
 /**
  * Story error types
  */
-export type StoryErrorType = 
+export type StoryErrorType =
   | 'upload_failed'
   | 'permission_denied'
   | 'network_error'
@@ -176,16 +176,16 @@ export interface StoriesState {
   stories: StoryWithUser[];
   currentStory: Story | null;
   myStory: Story | null;
-  
+
   // Viewing session
   viewingSession: StoryViewingSession | null;
-  
+
   // UI state
   isLoading: boolean;
   isUploading: boolean;
   uploadProgress: StoryUploadProgress | null;
   error: StoryError | null;
-  
+
   // Filters
   showOnlyUnviewed: boolean;
 }
@@ -198,11 +198,14 @@ export interface StoriesActions {
   loadStories: () => Promise<void>;
   refreshStories: () => Promise<void>;
   loadMyStory: () => Promise<void>;
-  createStory: (data: StoryCreationData, onProgress?: (progress: StoryUploadProgress) => void) => Promise<void>;
+  createStory: (
+    data: StoryCreationData,
+    onProgress?: (progress: StoryUploadProgress) => void
+  ) => Promise<void>;
   deleteStoryPost: (storyId: string, postId: string) => Promise<void>;
   deleteStory: (storyId: string) => Promise<void>;
   getStoryViewers: (storyId: string, postId?: string) => Promise<StoryViewer[]>;
-  
+
   // Viewing
   startViewing: (story: Story) => void;
   nextPost: () => void;
@@ -211,7 +214,7 @@ export interface StoriesActions {
   resumeViewing: () => void;
   stopViewing: () => void;
   markPostAsViewed: (storyId: string, postId: string) => Promise<void>;
-  
+
   // UI actions
   setShowOnlyUnviewed: (show: boolean) => void;
   clearError: () => void;
@@ -298,4 +301,4 @@ export interface PrivacyOption {
   label: string;
   description: string;
   icon: string;
-} 
+}

@@ -396,30 +396,45 @@ class ChatService {
   /**
    * Decrement unread count for a user in a conversation
    */
-  private async decrementUnreadCount(conversationId: string, userId: string): Promise<void> {
+  private async decrementUnreadCount(
+    conversationId: string,
+    userId: string
+  ): Promise<void> {
     console.log('📉 ChatService: Decrementing unread count for user:', userId);
 
     try {
-      const conversationRef = ref(this.database, `conversations/${conversationId}`);
+      const conversationRef = ref(
+        this.database,
+        `conversations/${conversationId}`
+      );
       const snapshot = await get(conversationRef);
 
       if (!snapshot.exists()) {
-        console.warn('⚠️ ChatService: Conversation not found for unread count update');
+        console.warn(
+          '⚠️ ChatService: Conversation not found for unread count update'
+        );
         return;
       }
 
       const conversation = snapshot.val() as ConversationDocument;
-      
+
       // Find user index in participants array
-      const userIndex = conversation.participants.findIndex(id => id === userId);
+      const userIndex = conversation.participants.findIndex(
+        id => id === userId
+      );
       if (userIndex === -1) {
-        console.warn('⚠️ ChatService: User not found in conversation participants');
+        console.warn(
+          '⚠️ ChatService: User not found in conversation participants'
+        );
         return;
       }
 
       // Create new unread count array with decremented value
       const newUnreadCount = [...conversation.unreadCount];
-      newUnreadCount[userIndex] = Math.max(0, (newUnreadCount[userIndex] || 0) - 1);
+      newUnreadCount[userIndex] = Math.max(
+        0,
+        (newUnreadCount[userIndex] || 0) - 1
+      );
 
       // Update conversation
       await update(conversationRef, {
@@ -457,7 +472,9 @@ class ChatService {
     const currentUserId = this.getCurrentUserId();
 
     // Find recipient index in participants array
-    const recipientIndex = conversation.participants.findIndex(id => id === recipientId);
+    const recipientIndex = conversation.participants.findIndex(
+      id => id === recipientId
+    );
     if (recipientIndex === -1) {
       throw new Error('Recipient not found in conversation participants');
     }
@@ -480,7 +497,10 @@ class ChatService {
    * Get all messages for a conversation (both text and snaps)
    */
   async getMessages(conversationId: string): Promise<Message[]> {
-    console.log('📥 ChatService: Loading messages for conversation:', conversationId);
+    console.log(
+      '📥 ChatService: Loading messages for conversation:',
+      conversationId
+    );
 
     try {
       const [textMessages, snapMessages] = await Promise.all([
@@ -503,7 +523,9 @@ class ChatService {
   /**
    * Get text messages for a conversation
    */
-  private async getTextMessages(conversationId: string): Promise<TextMessage[]> {
+  private async getTextMessages(
+    conversationId: string
+  ): Promise<TextMessage[]> {
     try {
       const textMessagesRef = ref(this.database, 'textMessages');
       const textQuery = query(
@@ -529,7 +551,9 @@ class ChatService {
           text: messageData.text,
           createdAt: messageData.createdAt,
           status: messageData.status,
-          ...(messageData.deliveredAt && { deliveredAt: messageData.deliveredAt }),
+          ...(messageData.deliveredAt && {
+            deliveredAt: messageData.deliveredAt,
+          }),
           ...(messageData.viewedAt && { viewedAt: messageData.viewedAt }),
         };
         messages.push(message);
@@ -545,7 +569,9 @@ class ChatService {
   /**
    * Get snap messages for a conversation
    */
-  private async getSnapMessages(conversationId: string): Promise<SnapMessage[]> {
+  private async getSnapMessages(
+    conversationId: string
+  ): Promise<SnapMessage[]> {
     try {
       const snapsRef = ref(this.database, 'snaps');
       const snapQuery = query(
@@ -620,7 +646,9 @@ class ChatService {
         if (!otherUserId) continue;
 
         // Get current user index for unread count access
-        const currentUserIndex = conversation.participants.findIndex(id => id === currentUserId);
+        const currentUserIndex = conversation.participants.findIndex(
+          id => id === currentUserId
+        );
         if (currentUserIndex === -1) continue;
 
         // Get other user data
@@ -630,14 +658,18 @@ class ChatService {
         // Get last message data if exists
         let lastMessage;
         if (conversation.lastMessageId) {
-          const messageData = await this.getMessageData(conversation.lastMessageId);
+          const messageData = await this.getMessageData(
+            conversation.lastMessageId
+          );
           if (messageData) {
             lastMessage = {
               id: conversation.lastMessageId,
               senderId: messageData.senderId,
               type: messageData.type,
               ...(messageData.type === 'text' && { text: messageData.text }),
-              ...(messageData.type === 'snap' && { mediaType: messageData.mediaType }),
+              ...(messageData.type === 'snap' && {
+                mediaType: messageData.mediaType,
+              }),
               createdAt: messageData.createdAt,
               status: messageData.status,
             };
@@ -762,7 +794,7 @@ class ChatService {
     // Try text messages first
     const textMessageRef = ref(this.database, `textMessages/${messageId}`);
     const textSnapshot = await get(textMessageRef);
-    
+
     if (textSnapshot.exists()) {
       return { ...textSnapshot.val(), type: 'text' };
     }
@@ -770,7 +802,7 @@ class ChatService {
     // Try snaps
     const snapRef = ref(this.database, `snaps/${messageId}`);
     const snapSnapshot = await get(snapRef);
-    
+
     if (snapSnapshot.exists()) {
       return { ...snapSnapshot.val(), type: 'snap' };
     }
@@ -786,14 +818,14 @@ class ChatService {
 
     try {
       const currentUserId = this.getCurrentUserId();
-      
+
       // Try to find the message in text messages first
       const textMessageRef = ref(this.database, `textMessages/${messageId}`);
       const textSnapshot = await get(textMessageRef);
-      
+
       if (textSnapshot.exists()) {
         const messageData = textSnapshot.val() as TextMessageDocument;
-        
+
         // Verify user is the recipient
         if (messageData.recipientId !== currentUserId) {
           throw new Error('Access denied');
@@ -807,7 +839,10 @@ class ChatService {
           });
 
           // Update conversation unread count
-          await this.decrementUnreadCount(messageData.conversationId, currentUserId);
+          await this.decrementUnreadCount(
+            messageData.conversationId,
+            currentUserId
+          );
         }
 
         console.log('✅ ChatService: Text message marked as delivered');
@@ -817,7 +852,7 @@ class ChatService {
       // Try snaps
       const snapRef = ref(this.database, `snaps/${messageId}`);
       const snapSnapshot = await get(snapRef);
-      
+
       if (snapSnapshot.exists()) {
         const snapData = snapSnapshot.val() as SnapDocument;
 
@@ -834,7 +869,10 @@ class ChatService {
           });
 
           // Update conversation unread count
-          await this.decrementUnreadCount(snapData.conversationId, currentUserId);
+          await this.decrementUnreadCount(
+            snapData.conversationId,
+            currentUserId
+          );
         }
 
         console.log('✅ ChatService: Snap marked as delivered');
@@ -843,7 +881,10 @@ class ChatService {
 
       throw new Error('Message not found');
     } catch (error) {
-      console.error('❌ ChatService: Failed to mark message as delivered:', error);
+      console.error(
+        '❌ ChatService: Failed to mark message as delivered:',
+        error
+      );
       throw this.handleError(error);
     }
   }
@@ -856,11 +897,11 @@ class ChatService {
 
     try {
       const currentUserId = this.getCurrentUserId();
-      
+
       // Only snaps can be "viewed" (opened and watched)
       const snapRef = ref(this.database, `snaps/${messageId}`);
       const snapSnapshot = await get(snapRef);
-      
+
       if (snapSnapshot.exists()) {
         const snapData = snapSnapshot.val() as SnapDocument;
 
@@ -875,7 +916,9 @@ class ChatService {
           viewedAt: Date.now(),
         });
 
-        console.log('✅ ChatService: Snap marked as viewed (now unviewable but remains in chat history)');
+        console.log(
+          '✅ ChatService: Snap marked as viewed (now unviewable but remains in chat history)'
+        );
 
         return;
       }
@@ -943,7 +986,10 @@ class ChatService {
         const messages = await this.getMessages(conversationId);
         callback(messages);
       } catch (error) {
-        console.error('❌ ChatService: Real-time messages update failed:', error);
+        console.error(
+          '❌ ChatService: Real-time messages update failed:',
+          error
+        );
         callback([]);
       }
     });
@@ -1001,13 +1047,19 @@ class ChatService {
    * Mark all unread messages in a conversation as delivered (when chat is opened)
    */
   async markAllMessagesAsDelivered(conversationId: string): Promise<void> {
-    console.log('📬 ChatService: Marking all unread messages as delivered for conversation:', conversationId);
+    console.log(
+      '📬 ChatService: Marking all unread messages as delivered for conversation:',
+      conversationId
+    );
 
     try {
       const currentUserId = this.getCurrentUserId();
-      
+
       // Get conversation to verify access and get current unread count
-      const conversationRef = ref(this.database, `conversations/${conversationId}`);
+      const conversationRef = ref(
+        this.database,
+        `conversations/${conversationId}`
+      );
       const conversationSnapshot = await get(conversationRef);
 
       if (!conversationSnapshot.exists()) {
@@ -1015,20 +1067,25 @@ class ChatService {
       }
 
       const conversation = conversationSnapshot.val() as ConversationDocument;
-      
+
       // Verify user is participant
       if (!conversation.participants.includes(currentUserId)) {
         throw new Error('Access denied to conversation');
       }
 
       // Find current user index
-      const currentUserIndex = conversation.participants.findIndex(id => id === currentUserId);
+      const currentUserIndex = conversation.participants.findIndex(
+        id => id === currentUserId
+      );
       if (currentUserIndex === -1) {
         throw new Error('User not found in conversation participants');
       }
 
       // If no unread messages, nothing to do
-      if (!conversation.unreadCount[currentUserIndex] || conversation.unreadCount[currentUserIndex] === 0) {
+      if (
+        !conversation.unreadCount[currentUserIndex] ||
+        conversation.unreadCount[currentUserIndex] === 0
+      ) {
         console.log('✅ ChatService: No unread messages to mark as delivered');
         return;
       }
@@ -1058,7 +1115,10 @@ class ChatService {
       if (textSnapshot.exists()) {
         textSnapshot.forEach(childSnapshot => {
           const messageData = childSnapshot.val() as TextMessageDocument;
-          if (messageData.recipientId === currentUserId && messageData.status === 'sent') {
+          if (
+            messageData.recipientId === currentUserId &&
+            messageData.status === 'sent'
+          ) {
             updates[`textMessages/${childSnapshot.key}/status`] = 'delivered';
             updates[`textMessages/${childSnapshot.key}/deliveredAt`] = now;
           }
@@ -1069,7 +1129,10 @@ class ChatService {
       if (snapSnapshot.exists()) {
         snapSnapshot.forEach(childSnapshot => {
           const snapData = childSnapshot.val() as SnapDocument;
-          if (snapData.recipientId === currentUserId && snapData.status === 'sent') {
+          if (
+            snapData.recipientId === currentUserId &&
+            snapData.status === 'sent'
+          ) {
             updates[`snaps/${childSnapshot.key}/status`] = 'delivered';
             updates[`snaps/${childSnapshot.key}/deliveredAt`] = now;
           }
@@ -1085,13 +1148,19 @@ class ChatService {
       // Apply all updates in one atomic operation
       if (Object.keys(updates).length > 0) {
         await update(ref(this.database), updates);
-        console.log('✅ ChatService: Marked all unread messages as delivered and reset unread count to zero');
+        console.log(
+          '✅ ChatService: Marked all unread messages as delivered and reset unread count to zero'
+        );
       } else {
-        console.log('✅ ChatService: No messages needed to be marked as delivered');
+        console.log(
+          '✅ ChatService: No messages needed to be marked as delivered'
+        );
       }
-
     } catch (error) {
-      console.error('❌ ChatService: Failed to mark all messages as delivered:', error);
+      console.error(
+        '❌ ChatService: Failed to mark all messages as delivered:',
+        error
+      );
       throw this.handleError(error);
     }
   }

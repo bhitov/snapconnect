@@ -19,10 +19,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/shared/hooks/useTheme';
 import { StoriesList } from '@/features/stories/components/StoriesList';
-import { 
-  useStoriesStore, 
-  useStories, 
-  useStoriesLoading 
+import {
+  useStoriesStore,
+  useStories,
+  useStoriesLoading,
 } from '@/features/stories/store/storiesStore';
 
 import {
@@ -35,7 +35,10 @@ import {
 } from '../store/chatStore';
 
 import type { ConversationWithUser } from '../types';
-import type { ChatStackParamList, MainTabParamList } from '@/shared/navigation/types';
+import type {
+  ChatStackParamList,
+  MainTabParamList,
+} from '@/shared/navigation/types';
 import type { StackNavigationProp } from '@react-navigation/stack';
 import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -82,7 +85,11 @@ function formatTimestamp(timestamp: number): string {
 /**
  * Get status text for snap display
  */
-function getSnapStatusText(status: string, messageType: string, isFromCurrentUser: boolean): string {
+function getSnapStatusText(
+  status: string,
+  messageType: string,
+  isFromCurrentUser: boolean
+): string {
   if (isFromCurrentUser) {
     // For sender: show "Sent" → "Viewed"
     switch (status) {
@@ -159,14 +166,17 @@ export function ChatsScreen() {
   /**
    * Handle story press - navigate to story viewer
    */
-  const handleStoryPress = useCallback((story: any) => {
-    console.log('📖 ChatsScreen: Story pressed:', story.id);
-    // Navigate to Stories tab using parent navigation
-    const parentNav = navigation.getParent();
-    if (parentNav) {
-      parentNav.navigate('Stories');
-    }
-  }, [navigation]);
+  const handleStoryPress = useCallback(
+    (story: any) => {
+      console.log('📖 ChatsScreen: Story pressed:', story.id);
+      // Navigate to Stories tab using parent navigation
+      const parentNav = navigation.getParent();
+      if (parentNav) {
+        parentNav.navigate('Stories');
+      }
+    },
+    [navigation]
+  );
 
   /**
    * Handle add story press - navigate to camera
@@ -257,10 +267,9 @@ export function ChatsScreen() {
                       { color: theme.colors.textSecondary },
                     ]}
                   >
-                    {lastMessage.type === 'text' 
+                    {lastMessage.type === 'text'
                       ? `💬 ${lastMessage.text?.substring(0, 30)}${lastMessage.text && lastMessage.text.length > 30 ? '...' : ''}`
-                      : `${lastMessage.mediaType === 'photo' ? '📷' : '🎥'} Snap`
-                    }
+                      : `${lastMessage.mediaType === 'photo' ? '📷' : '🎥'} Snap`}
                   </Text>
                   <Text
                     style={[

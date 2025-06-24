@@ -31,8 +31,15 @@ export function StoryProgressBar({
   onPostChange,
 }: StoryProgressBarProps & { progress?: number }) {
   const theme = useTheme();
-  
-  console.log('📊 StoryProgressBar: Rendering with', posts.length, 'posts, current:', currentIndex, 'progress:', progress);
+
+  console.log(
+    '📊 StoryProgressBar: Rendering with',
+    posts.length,
+    'posts, current:',
+    currentIndex,
+    'progress:',
+    progress
+  );
 
   /**
    * Animated progress value for current post
@@ -71,10 +78,13 @@ export function StoryProgressBar({
   /**
    * Handle tap on progress bar segment
    */
-  const handleSegmentPress = React.useCallback((index: number) => {
-    console.log('👆 StoryProgressBar: Segment pressed:', index);
-    onPostChange?.(index);
-  }, [onPostChange]);
+  const handleSegmentPress = React.useCallback(
+    (index: number) => {
+      console.log('👆 StoryProgressBar: Segment pressed:', index);
+      onPostChange?.(index);
+    },
+    [onPostChange]
+  );
 
   return (
     <View style={[styles.container, { backgroundColor: 'transparent' }]}>
@@ -84,7 +94,8 @@ export function StoryProgressBar({
           style={[
             styles.segment,
             {
-              backgroundColor: theme.colors.backgroundSecondary || 'rgba(255, 255, 255, 0.3)',
+              backgroundColor:
+                theme.colors.backgroundSecondary || 'rgba(255, 255, 255, 0.3)',
             },
           ]}
           onTouchEnd={() => handleSegmentPress(index)}
@@ -94,11 +105,13 @@ export function StoryProgressBar({
             style={[
               styles.backgroundBar,
               {
-                backgroundColor: theme.colors.backgroundSecondary || 'rgba(255, 255, 255, 0.3)',
+                backgroundColor:
+                  theme.colors.backgroundSecondary ||
+                  'rgba(255, 255, 255, 0.3)',
               },
             ]}
           />
-          
+
           {/* Progress bar */}
           {index < currentIndex && (
             // Completed posts - show full progress
@@ -112,7 +125,7 @@ export function StoryProgressBar({
               ]}
             />
           )}
-          
+
           {index === currentIndex && (
             // Current post - show animated progress
             <Animated.View
@@ -125,7 +138,7 @@ export function StoryProgressBar({
               ]}
             />
           )}
-          
+
           {/* Future posts show no progress (just background) */}
         </View>
       ))}
@@ -168,4 +181,4 @@ const styles = StyleSheet.create({
   completedBar: {
     width: '100%',
   } as ViewStyle,
-}); 
+});

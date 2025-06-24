@@ -22,10 +22,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/shared/hooks/useTheme';
 
-import {
-  useChatStore,
-  useViewingSession,
-} from '../store/chatStore';
+import { useChatStore, useViewingSession } from '../store/chatStore';
 import { chatService } from '../services/chatService';
 import type { Snap, SnapMessage } from '../types';
 import type { RootStackParamList } from '@/shared/navigation/types';
@@ -85,7 +82,7 @@ export function SnapViewingScreen() {
     try {
       // Load snap from service - use the getMessage method from chatService
       const messageData = await chatService.getMessage(snapId);
-      
+
       if (!messageData) {
         setError('Snap not found or has expired');
         setLoading(false);
@@ -109,12 +106,16 @@ export function SnapViewingScreen() {
         recipientId: snapMessage.recipientId,
         mediaUrl: snapMessage.mediaUrl,
         mediaType: snapMessage.mediaType,
-        ...(snapMessage.textOverlay && { textOverlay: snapMessage.textOverlay }),
+        ...(snapMessage.textOverlay && {
+          textOverlay: snapMessage.textOverlay,
+        }),
         duration: snapMessage.duration,
         createdAt: snapMessage.createdAt,
         expiresAt: snapMessage.expiresAt,
         status: snapMessage.status,
-        ...(snapMessage.deliveredAt && { deliveredAt: snapMessage.deliveredAt }),
+        ...(snapMessage.deliveredAt && {
+          deliveredAt: snapMessage.deliveredAt,
+        }),
         ...(snapMessage.viewedAt && { viewedAt: snapMessage.viewedAt }),
       };
 
@@ -134,7 +135,7 @@ export function SnapViewingScreen() {
 
       // Get current user ID to check permissions
       const currentUserId = chatService.getCurrentUser();
-      
+
       // Prevent sender from viewing their own snaps
       if (snap.senderId === currentUserId) {
         setError('You cannot view your own snaps');

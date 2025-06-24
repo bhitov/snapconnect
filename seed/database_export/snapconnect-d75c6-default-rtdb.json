@@ -1,1 +1,50 @@
-{"friendships":{"1750765069027_0hcntnm2y0x":{"createdAt":1750765069027,"user1Data":{"displayName":"bbb","username":"bbb"},"user1Id":"027wK7f6DRsRimj0iJbF4KjcRxnv","user2Data":{"displayName":"aaa","username":"aaa"},"user2Id":"z7BzMXLg3utHumNqchQBKdlzylIY"}},"stories":{"z7BzMXLg3utHumNqchQBKdlzylIY":{"posts":{"1750785557363_jxusz6n9kos":{"expiresAt":1750871957449,"mediaType":"photo","mediaUrl":"http://localhost:9199/v0/b/snapconnect-d75c6.firebasestorage.app/o/stories%2Fz7BzMXLg3utHumNqchQBKdlzylIY%2F1750785557363_jxusz6n9kos.jpg?alt=media&token=62c96ef6-f7ab-4801-840c-400bbab83b00","privacy":"friends","status":"active","timestamp":1750785557449,"userId":"z7BzMXLg3utHumNqchQBKdlzylIY"}},"updatedAt":1750785557449,"userId":"z7BzMXLg3utHumNqchQBKdlzylIY"}},"usernames":{"aaa":"z7BzMXLg3utHumNqchQBKdlzylIY","bbb":"027wK7f6DRsRimj0iJbF4KjcRxnv"},"users":{"027wK7f6DRsRimj0iJbF4KjcRxnv":{"createdAt":1750765042366,"displayName":"bbb","email":"b@gmail.com","lastActive":1750765042366,"uid":"027wK7f6DRsRimj0iJbF4KjcRxnv","username":"bbb"},"z7BzMXLg3utHumNqchQBKdlzylIY":{"createdAt":1750765018671,"displayName":"aaa","email":"a@gmail.com","lastActive":1750785552570,"uid":"z7BzMXLg3utHumNqchQBKdlzylIY","username":"aaa"}}}
+{
+  "friendships": {
+    "1750765069027_0hcntnm2y0x": {
+      "createdAt": 1750765069027,
+      "user1Data": { "displayName": "bbb", "username": "bbb" },
+      "user1Id": "027wK7f6DRsRimj0iJbF4KjcRxnv",
+      "user2Data": { "displayName": "aaa", "username": "aaa" },
+      "user2Id": "z7BzMXLg3utHumNqchQBKdlzylIY"
+    }
+  },
+  "stories": {
+    "z7BzMXLg3utHumNqchQBKdlzylIY": {
+      "posts": {
+        "1750785557363_jxusz6n9kos": {
+          "expiresAt": 1750871957449,
+          "mediaType": "photo",
+          "mediaUrl": "http://localhost:9199/v0/b/snapconnect-d75c6.firebasestorage.app/o/stories%2Fz7BzMXLg3utHumNqchQBKdlzylIY%2F1750785557363_jxusz6n9kos.jpg?alt=media&token=62c96ef6-f7ab-4801-840c-400bbab83b00",
+          "privacy": "friends",
+          "status": "active",
+          "timestamp": 1750785557449,
+          "userId": "z7BzMXLg3utHumNqchQBKdlzylIY"
+        }
+      },
+      "updatedAt": 1750785557449,
+      "userId": "z7BzMXLg3utHumNqchQBKdlzylIY"
+    }
+  },
+  "usernames": {
+    "aaa": "z7BzMXLg3utHumNqchQBKdlzylIY",
+    "bbb": "027wK7f6DRsRimj0iJbF4KjcRxnv"
+  },
+  "users": {
+    "027wK7f6DRsRimj0iJbF4KjcRxnv": {
+      "createdAt": 1750765042366,
+      "displayName": "bbb",
+      "email": "b@gmail.com",
+      "lastActive": 1750765042366,
+      "uid": "027wK7f6DRsRimj0iJbF4KjcRxnv",
+      "username": "bbb"
+    },
+    "z7BzMXLg3utHumNqchQBKdlzylIY": {
+      "createdAt": 1750765018671,
+      "displayName": "aaa",
+      "email": "a@gmail.com",
+      "lastActive": 1750785552570,
+      "uid": "z7BzMXLg3utHumNqchQBKdlzylIY",
+      "username": "aaa"
+    }
+  }
+}

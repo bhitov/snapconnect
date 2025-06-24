@@ -87,13 +87,16 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
    * Handle opening text chat with a friend
    */
   const handleOpenChat = async (friend: FriendProfile) => {
-    console.log('💬 FriendsListScreen: Opening chat with friend:', friend.username);
-    
+    console.log(
+      '💬 FriendsListScreen: Opening chat with friend:',
+      friend.username
+    );
+
     try {
       // Create or get conversation
       const { createConversation } = useChatStore.getState();
       const conversationId = await createConversation(friend.uid);
-      
+
       // Navigate to chat screen
       navigation.navigate('Chats', {
         screen: 'ChatScreen',

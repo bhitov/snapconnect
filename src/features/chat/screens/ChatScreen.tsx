@@ -18,7 +18,11 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
+import {
+  useRoute,
+  useNavigation,
+  useFocusEffect,
+} from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
 
 import { useTheme } from '@/shared/hooks/useTheme';
@@ -32,15 +36,15 @@ import {
   useSendError,
 } from '../store/chatStore';
 
-import type { 
-  ChatStackParamList, 
-  RootStackParamList 
+import type {
+  ChatStackParamList,
+  RootStackParamList,
 } from '@/shared/navigation/types';
-import type { 
-  Message, 
-  TextMessage, 
+import type {
+  Message,
+  TextMessage,
   SnapMessage,
-  ChatScreenProps 
+  ChatScreenProps,
 } from '../types';
 
 type ChatScreenRouteProp = {
@@ -66,7 +70,7 @@ function formatMessageTime(timestamp: number): string {
   if (diffMins < 60) return `${diffMins}m`;
   if (diffHours < 24) return `${diffHours}h`;
   if (diffDays < 7) return `${diffDays}d`;
-  
+
   return date.toLocaleDateString();
 }
 
@@ -115,10 +119,10 @@ function getSnapStatusText(status: string, isFromCurrentUser: boolean): string {
 /**
  * Individual message item component
  */
-function MessageItem({ 
-  message, 
-  isFromCurrentUser, 
-  onSnapPress 
+function MessageItem({
+  message,
+  isFromCurrentUser,
+  onSnapPress,
 }: {
   message: Message;
   isFromCurrentUser: boolean;
@@ -136,10 +140,16 @@ function MessageItem({
     if (message.type === 'text') {
       const textMessage = message as TextMessage;
       return (
-        <Text style={[
-          styles.messageText,
-          { color: isFromCurrentUser ? theme.colors.background : theme.colors.text }
-        ]}>
+        <Text
+          style={[
+            styles.messageText,
+            {
+              color: isFromCurrentUser
+                ? theme.colors.background
+                : theme.colors.text,
+            },
+          ]}
+        >
           {textMessage.text}
         </Text>
       );
@@ -151,23 +161,41 @@ function MessageItem({
           onPress={handleSnapPress}
           activeOpacity={0.7}
         >
-          <Text style={[
-            styles.snapIcon,
-            { color: isFromCurrentUser ? theme.colors.background : theme.colors.text }
-          ]}>
+          <Text
+            style={[
+              styles.snapIcon,
+              {
+                color: isFromCurrentUser
+                  ? theme.colors.background
+                  : theme.colors.text,
+              },
+            ]}
+          >
             {snapMessage.mediaType === 'photo' ? '📷' : '🎥'}
           </Text>
-          <Text style={[
-            styles.snapText,
-            { color: isFromCurrentUser ? theme.colors.background : theme.colors.text }
-          ]}>
+          <Text
+            style={[
+              styles.snapText,
+              {
+                color: isFromCurrentUser
+                  ? theme.colors.background
+                  : theme.colors.text,
+              },
+            ]}
+          >
             {getSnapStatusText(snapMessage.status, isFromCurrentUser)}
           </Text>
           {snapMessage.textOverlay && (
-            <Text style={[
-              styles.snapOverlay,
-              { color: isFromCurrentUser ? theme.colors.background : theme.colors.textSecondary }
-            ]}>
+            <Text
+              style={[
+                styles.snapOverlay,
+                {
+                  color: isFromCurrentUser
+                    ? theme.colors.background
+                    : theme.colors.textSecondary,
+                },
+              ]}
+            >
               "{snapMessage.textOverlay}"
             </Text>
           )}
@@ -177,35 +205,43 @@ function MessageItem({
   };
 
   return (
-    <View style={[
-      styles.messageContainer,
-      isFromCurrentUser ? styles.sentMessage : styles.receivedMessage
-    ]}>
-      <View style={[
-        styles.messageBubble,
-        {
-          backgroundColor: isFromCurrentUser 
-            ? theme.colors.primary 
-            : theme.colors.surface,
-        }
-      ]}>
+    <View
+      style={[
+        styles.messageContainer,
+        isFromCurrentUser ? styles.sentMessage : styles.receivedMessage,
+      ]}
+    >
+      <View
+        style={[
+          styles.messageBubble,
+          {
+            backgroundColor: isFromCurrentUser
+              ? theme.colors.primary
+              : theme.colors.surface,
+          },
+        ]}
+      >
         {renderMessageContent()}
         <View style={styles.messageFooter}>
-          <Text style={[
-            styles.messageTime,
-            { 
-              color: isFromCurrentUser 
-                ? `${theme.colors.background}80` 
-                : theme.colors.textSecondary 
-            }
-          ]}>
+          <Text
+            style={[
+              styles.messageTime,
+              {
+                color: isFromCurrentUser
+                  ? `${theme.colors.background}80`
+                  : theme.colors.textSecondary,
+              },
+            ]}
+          >
             {formatMessageTime(message.createdAt)}
           </Text>
           {isFromCurrentUser && (
-            <Text style={[
-              styles.messageStatus,
-              { color: `${theme.colors.background}80` }
-            ]}>
+            <Text
+              style={[
+                styles.messageStatus,
+                { color: `${theme.colors.background}80` },
+              ]}
+            >
               {getMessageStatusIcon(message.status)}
             </Text>
           )}
@@ -235,9 +271,9 @@ export function ChatScreen() {
   const sendError = useSendError();
 
   // Chat actions
-  const { 
-    loadMessages, 
-    sendTextMessage, 
+  const {
+    loadMessages,
+    sendTextMessage,
     markMessageAsViewed,
     markAllMessagesAsDelivered,
     clearError,
@@ -260,7 +296,7 @@ export function ChatScreen() {
         // This will set the unread count to zero for this user
         await markAllMessagesAsDelivered(conversationId);
       };
-      
+
       loadAndMarkDelivered().catch((error: any) => {
         console.error('Failed to load messages or mark as delivered:', error);
       });
@@ -319,28 +355,42 @@ export function ChatScreen() {
     } finally {
       setIsSending(false);
     }
-  }, [messageText, currentUser, otherUser.uid, conversationId, isSending, sendTextMessage, loadMessages]);
+  }, [
+    messageText,
+    currentUser,
+    otherUser.uid,
+    conversationId,
+    isSending,
+    sendTextMessage,
+    loadMessages,
+  ]);
 
   /**
    * Handle snap press
    */
-  const handleSnapPress = useCallback((snap: SnapMessage) => {
-    if (!currentUser) return;
+  const handleSnapPress = useCallback(
+    (snap: SnapMessage) => {
+      if (!currentUser) return;
 
-    // Prevent sender from viewing their own snaps
-    if (snap.senderId === currentUser.uid) {
-      Alert.alert('Cannot View', 'You cannot view your own snaps.');
-      return;
-    }
+      // Prevent sender from viewing their own snaps
+      if (snap.senderId === currentUser.uid) {
+        Alert.alert('Cannot View', 'You cannot view your own snaps.');
+        return;
+      }
 
-    // Prevent viewing already viewed snaps
-    if (snap.status === 'viewed') {
-      Alert.alert('Snap Viewed', 'This snap has already been viewed and is no longer available.');
-      return;
-    }
+      // Prevent viewing already viewed snaps
+      if (snap.status === 'viewed') {
+        Alert.alert(
+          'Snap Viewed',
+          'This snap has already been viewed and is no longer available.'
+        );
+        return;
+      }
 
-    navigation.navigate('ViewSnap', { snapId: snap.id });
-  }, [navigation, currentUser]);
+      navigation.navigate('ViewSnap', { snapId: snap.id });
+    },
+    [navigation, currentUser]
+  );
 
   /**
    * Handle camera button press
@@ -363,23 +413,28 @@ export function ChatScreen() {
   /**
    * Render message item
    */
-  const renderMessage = useCallback(({ item }: { item: Message }) => {
-    if (!currentUser) return null;
+  const renderMessage = useCallback(
+    ({ item }: { item: Message }) => {
+      if (!currentUser) return null;
 
-    const isFromCurrentUser = item.senderId === currentUser.uid;
+      const isFromCurrentUser = item.senderId === currentUser.uid;
 
-    return (
-      <MessageItem
-        message={item}
-        isFromCurrentUser={isFromCurrentUser}
-        onSnapPress={handleSnapPress}
-      />
-    );
-  }, [currentUser, handleSnapPress]);
+      return (
+        <MessageItem
+          message={item}
+          isFromCurrentUser={isFromCurrentUser}
+          onSnapPress={handleSnapPress}
+        />
+      );
+    },
+    [currentUser, handleSnapPress]
+  );
 
   if (isLoading && messages.length === 0) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <View style={styles.centered}>
           <Text style={[styles.loadingText, { color: theme.colors.text }]}>
             Loading messages...
@@ -391,16 +446,26 @@ export function ChatScreen() {
 
   if (messagesError) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <View style={styles.centered}>
           <Text style={[styles.errorText, { color: theme.colors.error }]}>
             {messagesError}
           </Text>
           <TouchableOpacity
-            style={[styles.retryButton, { backgroundColor: theme.colors.primary }]}
+            style={[
+              styles.retryButton,
+              { backgroundColor: theme.colors.primary },
+            ]}
             onPress={() => loadMessages(conversationId)}
           >
-            <Text style={[styles.retryButtonText, { color: theme.colors.background }]}>
+            <Text
+              style={[
+                styles.retryButtonText,
+                { color: theme.colors.background },
+              ]}
+            >
               Retry
             </Text>
           </TouchableOpacity>
@@ -410,8 +475,10 @@ export function ChatScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <KeyboardAvoidingView 
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
@@ -426,21 +493,40 @@ export function ChatScreen() {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
-                No messages yet. Send a message or snap to start the conversation!
+              <Text
+                style={[
+                  styles.emptyText,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
+                No messages yet. Send a message or snap to start the
+                conversation!
               </Text>
             </View>
           }
         />
 
         {/* Input Area */}
-        <View style={[styles.inputContainer, { backgroundColor: theme.colors.surface }]}>
+        <View
+          style={[
+            styles.inputContainer,
+            { backgroundColor: theme.colors.surface },
+          ]}
+        >
           <TouchableOpacity
-            style={[styles.cameraButton, { backgroundColor: theme.colors.primary }]}
+            style={[
+              styles.cameraButton,
+              { backgroundColor: theme.colors.primary },
+            ]}
             onPress={handleCameraPress}
             activeOpacity={0.7}
           >
-            <Text style={[styles.cameraButtonText, { color: theme.colors.background }]}>
+            <Text
+              style={[
+                styles.cameraButtonText,
+                { color: theme.colors.background },
+              ]}
+            >
               📷
             </Text>
           </TouchableOpacity>
@@ -448,15 +534,15 @@ export function ChatScreen() {
           <TextInput
             style={[
               styles.textInput,
-              { 
+              {
                 backgroundColor: theme.colors.background,
                 color: theme.colors.text,
                 borderColor: theme.colors.border,
-              }
+              },
             ]}
             value={messageText}
             onChangeText={setMessageText}
-            placeholder="Type a message..."
+            placeholder='Type a message...'
             placeholderTextColor={theme.colors.textSecondary}
             multiline
             maxLength={500}
@@ -466,17 +552,23 @@ export function ChatScreen() {
           <TouchableOpacity
             style={[
               styles.sendButton,
-              { 
-                backgroundColor: messageText.trim() && !isSending 
-                  ? theme.colors.primary 
-                  : theme.colors.textSecondary,
-              }
+              {
+                backgroundColor:
+                  messageText.trim() && !isSending
+                    ? theme.colors.primary
+                    : theme.colors.textSecondary,
+              },
             ]}
             onPress={handleSendMessage}
             disabled={!messageText.trim() || isSending}
             activeOpacity={0.7}
           >
-            <Text style={[styles.sendButtonText, { color: theme.colors.background }]}>
+            <Text
+              style={[
+                styles.sendButtonText,
+                { color: theme.colors.background },
+              ]}
+            >
               {isSending ? '...' : '→'}
             </Text>
           </TouchableOpacity>
@@ -484,12 +576,24 @@ export function ChatScreen() {
 
         {/* Send Error */}
         {sendError && (
-          <View style={[styles.errorContainer, { backgroundColor: theme.colors.error }]}>
-            <Text style={[styles.errorText, { color: theme.colors.background }]}>
+          <View
+            style={[
+              styles.errorContainer,
+              { backgroundColor: theme.colors.error },
+            ]}
+          >
+            <Text
+              style={[styles.errorText, { color: theme.colors.background }]}
+            >
               {sendError}
             </Text>
             <TouchableOpacity onPress={clearSendError}>
-              <Text style={[styles.dismissError, { color: theme.colors.background }]}>
+              <Text
+                style={[
+                  styles.dismissError,
+                  { color: theme.colors.background },
+                ]}
+              >
                 ✕
               </Text>
             </TouchableOpacity>
@@ -647,4 +751,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     paddingHorizontal: 8,
   },
-}); 
+});

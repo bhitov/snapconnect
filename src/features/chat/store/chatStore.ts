@@ -71,12 +71,17 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         conversationsError: null,
       });
 
-      console.log('✅ ChatStore: Loaded', conversations.length, 'conversations');
+      console.log(
+        '✅ ChatStore: Loaded',
+        conversations.length,
+        'conversations'
+      );
     } catch (error) {
       console.error('❌ ChatStore: Failed to load conversations:', error);
       set({
         conversationsLoading: false,
-        conversationsError: (error as any).message || 'Failed to load conversations',
+        conversationsError:
+          (error as any).message || 'Failed to load conversations',
       });
     }
   },
@@ -94,12 +99,17 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         isRefreshing: false,
       });
 
-      console.log('✅ ChatStore: Refreshed', conversations.length, 'conversations');
+      console.log(
+        '✅ ChatStore: Refreshed',
+        conversations.length,
+        'conversations'
+      );
     } catch (error) {
       console.error('❌ ChatStore: Failed to refresh conversations:', error);
       set({
         isRefreshing: false,
-        conversationsError: (error as any).message || 'Failed to refresh conversations',
+        conversationsError:
+          (error as any).message || 'Failed to refresh conversations',
       });
     }
   },
@@ -123,7 +133,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   // Messages (unified text and snaps)
   loadMessages: async (conversationId: string) => {
-    console.log('📥 ChatStore: Loading messages for conversation:', conversationId);
+    console.log(
+      '📥 ChatStore: Loading messages for conversation:',
+      conversationId
+    );
 
     set({ messagesLoading: true, messagesError: null });
 
@@ -170,7 +183,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     const { sendingMessages } = get();
 
     try {
-      await chatService.sendSnap(data, (progress) => {
+      await chatService.sendSnap(data, progress => {
         // Update sending progress
         const updatedSending = sendingMessages.map(item =>
           item.snapId === progress.snapId ? progress : item
@@ -239,7 +252,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       const { currentMessages } = get();
       const updatedMessages = currentMessages.map(message =>
         message.id === messageId
-          ? { ...message, status: 'delivered' as const, deliveredAt: Date.now() }
+          ? {
+              ...message,
+              status: 'delivered' as const,
+              deliveredAt: Date.now(),
+            }
           : message
       );
 
@@ -250,13 +267,19 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       console.log('✅ ChatStore: Message marked as delivered');
     } catch (error) {
-      console.error('❌ ChatStore: Failed to mark message as delivered:', error);
+      console.error(
+        '❌ ChatStore: Failed to mark message as delivered:',
+        error
+      );
       throw error;
     }
   },
 
   markAllMessagesAsDelivered: async (conversationId: string) => {
-    console.log('📬 ChatStore: Marking all messages as delivered for conversation:', conversationId);
+    console.log(
+      '📬 ChatStore: Marking all messages as delivered for conversation:',
+      conversationId
+    );
 
     try {
       await chatService.markAllMessagesAsDelivered(conversationId);
@@ -269,7 +292,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       console.log('✅ ChatStore: All messages marked as delivered');
     } catch (error) {
-      console.error('❌ ChatStore: Failed to mark all messages as delivered:', error);
+      console.error(
+        '❌ ChatStore: Failed to mark all messages as delivered:',
+        error
+      );
       throw error;
     }
   },
@@ -373,21 +399,31 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 }));
 
 // Performance selectors
-export const useConversations = () => useChatStore(state => state.conversations);
-export const useConversationsLoading = () => useChatStore(state => state.conversationsLoading);
-export const useConversationsError = () => useChatStore(state => state.conversationsError);
+export const useConversations = () =>
+  useChatStore(state => state.conversations);
+export const useConversationsLoading = () =>
+  useChatStore(state => state.conversationsLoading);
+export const useConversationsError = () =>
+  useChatStore(state => state.conversationsError);
 
-export const useCurrentConversation = () => useChatStore(state => state.currentConversation);
-export const useCurrentMessages = () => useChatStore(state => state.currentMessages);
-export const useMessagesLoading = () => useChatStore(state => state.messagesLoading);
-export const useMessagesError = () => useChatStore(state => state.messagesError);
+export const useCurrentConversation = () =>
+  useChatStore(state => state.currentConversation);
+export const useCurrentMessages = () =>
+  useChatStore(state => state.currentMessages);
+export const useMessagesLoading = () =>
+  useChatStore(state => state.messagesLoading);
+export const useMessagesError = () =>
+  useChatStore(state => state.messagesError);
 
-export const useSendingMessages = () => useChatStore(state => state.sendingMessages);
+export const useSendingMessages = () =>
+  useChatStore(state => state.sendingMessages);
 export const useSendError = () => useChatStore(state => state.sendError);
 
-export const useViewingSession = () => useChatStore(state => state.viewingSession);
+export const useViewingSession = () =>
+  useChatStore(state => state.viewingSession);
 
-export const useSelectedRecipients = () => useChatStore(state => state.selectedRecipients);
+export const useSelectedRecipients = () =>
+  useChatStore(state => state.selectedRecipients);
 export const useIsRefreshing = () => useChatStore(state => state.isRefreshing);
 
 // Computed selectors
@@ -397,6 +433,4 @@ export const useUnreadCount = () =>
   );
 
 export const useHasUnreadMessages = () =>
-  useChatStore(state =>
-    state.conversations.some(conv => conv.unreadCount > 0)
-  );
+  useChatStore(state => state.conversations.some(conv => conv.unreadCount > 0));

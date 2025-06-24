@@ -54,11 +54,7 @@ export function StoryRing({
         -1,
         false
       );
-      pulse.value = withRepeat(
-        withTiming(1.1, { duration: 1500 }),
-        -1,
-        true
-      );
+      pulse.value = withRepeat(withTiming(1.1, { duration: 1500 }), -1, true);
     } else {
       rotation.value = 0;
       pulse.value = 1;
@@ -68,10 +64,7 @@ export function StoryRing({
   // Animated styles
   const animatedRingStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { rotate: `${rotation.value}deg` },
-        { scale: pulse.value },
-      ],
+      transform: [{ rotate: `${rotation.value}deg` }, { scale: pulse.value }],
     };
   });
 
@@ -131,19 +124,19 @@ export function StoryRing({
             },
           ]}
         >
-          <Ionicons 
-            name="add" 
-            size={config.addIcon} 
-            color={theme.colors.primary} 
+          <Ionicons
+            name='add'
+            size={config.addIcon}
+            color={theme.colors.primary}
           />
         </View>
-        <Text 
+        <Text
           style={[
-            styles.username, 
-            { 
+            styles.username,
+            {
               color: theme.colors.textSecondary,
               fontSize: size === 'small' ? 11 : size === 'medium' ? 12 : 14,
-            }
+            },
           ]}
           numberOfLines={1}
         >
@@ -154,7 +147,9 @@ export function StoryRing({
   }
 
   // Get the latest story post for thumbnail
-  const latestPost = story?.posts?.length ? story.posts[story.posts.length - 1] : null;
+  const latestPost = story?.posts?.length
+    ? story.posts[story.posts.length - 1]
+    : null;
   const thumbnailUri = latestPost?.mediaUrl;
 
   // Render story ring
@@ -235,8 +230,8 @@ export function StoryRing({
             width: config.avatar,
             height: config.avatar,
             borderRadius: config.avatar / 2,
-            borderColor: hasUnviewedStories 
-              ? theme.colors.background 
+            borderColor: hasUnviewedStories
+              ? theme.colors.background
               : theme.colors.border,
             borderWidth: hasUnviewedStories ? 3 : 2,
           },
@@ -250,10 +245,11 @@ export function StoryRing({
               {
                 width: config.avatar - (hasUnviewedStories ? 6 : 4),
                 height: config.avatar - (hasUnviewedStories ? 6 : 4),
-                borderRadius: (config.avatar - (hasUnviewedStories ? 6 : 4)) / 2,
+                borderRadius:
+                  (config.avatar - (hasUnviewedStories ? 6 : 4)) / 2,
               },
             ]}
-            resizeMode="cover"
+            resizeMode='cover'
           />
         ) : story?.user?.photoURL ? (
           <Image
@@ -263,10 +259,11 @@ export function StoryRing({
               {
                 width: config.avatar - (hasUnviewedStories ? 6 : 4),
                 height: config.avatar - (hasUnviewedStories ? 6 : 4),
-                borderRadius: (config.avatar - (hasUnviewedStories ? 6 : 4)) / 2,
+                borderRadius:
+                  (config.avatar - (hasUnviewedStories ? 6 : 4)) / 2,
               },
             ]}
-            resizeMode="cover"
+            resizeMode='cover'
           />
         ) : (
           <View
@@ -275,28 +272,29 @@ export function StoryRing({
               {
                 width: config.avatar - (hasUnviewedStories ? 6 : 4),
                 height: config.avatar - (hasUnviewedStories ? 6 : 4),
-                borderRadius: (config.avatar - (hasUnviewedStories ? 6 : 4)) / 2,
+                borderRadius:
+                  (config.avatar - (hasUnviewedStories ? 6 : 4)) / 2,
                 backgroundColor: theme.colors.surface,
               },
             ]}
           >
-            <Ionicons 
-              name="person" 
-              size={config.addIcon} 
-              color={theme.colors.textSecondary} 
+            <Ionicons
+              name='person'
+              size={config.addIcon}
+              color={theme.colors.textSecondary}
             />
           </View>
         )}
       </View>
 
       {/* Username */}
-      <Text 
+      <Text
         style={[
-          styles.username, 
-          { 
+          styles.username,
+          {
             color: theme.colors.textPrimary,
             fontSize: size === 'small' ? 11 : size === 'medium' ? 12 : 14,
-          }
+          },
         ]}
         numberOfLines={1}
       >
@@ -381,4 +379,4 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'white',
   },
-}); 
+});

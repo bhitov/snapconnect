@@ -11,23 +11,28 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { CameraScreen } from '../../features/camera/screens/CameraScreen';
 import { ChatsScreen, ChatScreen } from '../../features/chat/screens';
-import { 
+import {
   AddFriendsScreen,
   FriendRequestsScreen,
-  FriendsListScreen 
+  FriendsListScreen,
 } from '../../features/friends/screens';
 import { StoriesScreen } from '../../features/stories/screens/StoriesScreen';
 import { ViewStoryScreen } from '../../features/stories/screens/ViewStoryScreen';
 import { useTheme } from '../hooks/useTheme';
 
-import { MainTabParamList, ChatStackParamList, FriendsStackParamList, StoriesStackParamList } from './types';
+import {
+  MainTabParamList,
+  ChatStackParamList,
+  FriendsStackParamList,
+  StoriesStackParamList,
+} from './types';
 
 // Chat Stack Navigator
 const ChatStack = createNativeStackNavigator<ChatStackParamList>();
 
 function ChatStackNavigator() {
   const theme = useTheme();
-  
+
   return (
     <ChatStack.Navigator
       screenOptions={{
@@ -41,19 +46,22 @@ function ChatStackNavigator() {
         },
       }}
     >
-      <ChatStack.Screen 
-        name='ChatsList' 
+      <ChatStack.Screen
+        name='ChatsList'
         component={ChatsScreen}
         options={{
           title: 'Chats',
         }}
       />
-      <ChatStack.Screen 
-        name='ChatScreen' 
+      <ChatStack.Screen
+        name='ChatScreen'
         component={ChatScreen}
         options={({ route, navigation }) => ({
           headerShown: true,
-          title: route.params?.otherUser?.displayName || route.params?.otherUser?.username || 'Chat',
+          title:
+            route.params?.otherUser?.displayName ||
+            route.params?.otherUser?.username ||
+            'Chat',
           headerBackTitleVisible: false,
           headerLeft: () => {
             const theme = useTheme();
@@ -68,11 +76,13 @@ function ChatStackNavigator() {
                   alignItems: 'center',
                 }}
               >
-                <Text style={{ 
-                  fontSize: 16, 
-                  color: theme.colors.primary || '#007AFF',
-                  fontWeight: '500',
-                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: theme.colors.primary || '#007AFF',
+                    fontWeight: '500',
+                  }}
+                >
                   ← Chats
                 </Text>
               </TouchableOpacity>
@@ -96,8 +106,14 @@ function FriendsStackNavigator() {
     >
       <FriendsStack.Screen name='FriendsList' component={FriendsListScreen} />
       <FriendsStack.Screen name='AddFriends' component={AddFriendsScreen} />
-      <FriendsStack.Screen name='FriendRequests' component={FriendRequestsScreen} />
-      <FriendsStack.Screen name='Profile' component={PlaceholderProfileScreen} />
+      <FriendsStack.Screen
+        name='FriendRequests'
+        component={FriendRequestsScreen}
+      />
+      <FriendsStack.Screen
+        name='Profile'
+        component={PlaceholderProfileScreen}
+      />
     </FriendsStack.Navigator>
   );
 }
@@ -114,7 +130,10 @@ function StoriesStackNavigator() {
     >
       <StoriesStack.Screen name='StoriesList' component={StoriesScreen} />
       <StoriesStack.Screen name='ViewStory' component={ViewStoryScreen} />
-      <StoriesStack.Screen name='CreateStory' component={PlaceholderCreateStoryScreen} />
+      <StoriesStack.Screen
+        name='CreateStory'
+        component={PlaceholderCreateStoryScreen}
+      />
     </StoriesStack.Navigator>
   );
 }
@@ -220,7 +239,7 @@ export function MainNavigator() {
         options={{
           tabBarLabel: 'Chats',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubble" size={size} color={color} />
+            <Ionicons name='chatbubble' size={size} color={color} />
           ),
         }}
       />
@@ -230,7 +249,7 @@ export function MainNavigator() {
         options={{
           tabBarLabel: 'Camera',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="camera" size={size} color={color} />
+            <Ionicons name='camera' size={size} color={color} />
           ),
         }}
       />
@@ -240,7 +259,7 @@ export function MainNavigator() {
         options={{
           tabBarLabel: 'Friends',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people" size={size} color={color} />
+            <Ionicons name='people' size={size} color={color} />
           ),
         }}
       />
@@ -250,7 +269,7 @@ export function MainNavigator() {
         options={{
           tabBarLabel: 'Stories',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="book" size={size} color={color} />
+            <Ionicons name='book' size={size} color={color} />
           ),
         }}
       />

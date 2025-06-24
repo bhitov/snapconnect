@@ -5,13 +5,7 @@
  */
 
 import React from 'react';
-import {
-  View,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import { View, FlatList, RefreshControl, StyleSheet, Text } from 'react-native';
 
 import { useTheme } from '@/shared/hooks/useTheme';
 import { StoryRing } from './StoryRing';
@@ -38,12 +32,18 @@ export function StoriesList({
   /**
    * Render individual story item
    */
-  const renderStoryItem = ({ item, index }: { item: StoryWithUser; index: number }) => {
+  const renderStoryItem = ({
+    item,
+    index,
+  }: {
+    item: StoryWithUser;
+    index: number;
+  }) => {
     return (
       <View style={styles.storyItem}>
         <StoryRing
           story={item}
-          size="medium"
+          size='medium'
           hasUnviewedStories={item.hasUnviewedPosts}
           onPress={() => onStoryPress(item)}
         />
@@ -60,7 +60,7 @@ export function StoriesList({
     return (
       <View style={styles.storyItem}>
         <StoryRing
-          size="medium"
+          size='medium'
           showAddButton={true}
           onPress={onAddStoryPress}
         />
@@ -77,7 +77,9 @@ export function StoriesList({
         <Text style={[styles.emptyTitle, { color: theme.colors.textPrimary }]}>
           No Stories Yet
         </Text>
-        <Text style={[styles.emptySubtitle, { color: theme.colors.textSecondary }]}>
+        <Text
+          style={[styles.emptySubtitle, { color: theme.colors.textSecondary }]}
+        >
           Stories from your friends will appear here
         </Text>
       </View>
@@ -103,40 +105,51 @@ export function StoriesList({
   // Prepare data with add button at the beginning
   const listData = React.useMemo(() => {
     const data: (StoryWithUser | 'add-button')[] = [];
-    
+
     if (onAddStoryPress) {
       data.push('add-button');
     }
-    
+
     data.push(...stories);
-    
+
     return data;
   }, [stories, onAddStoryPress]);
 
   /**
    * Render list item (either add button or story)
    */
-  const renderListItem = ({ item, index }: { item: StoryWithUser | 'add-button'; index: number }) => {
+  const renderListItem = ({
+    item,
+    index,
+  }: {
+    item: StoryWithUser | 'add-button';
+    index: number;
+  }) => {
     if (item === 'add-button') {
       return renderAddStoryButton();
     }
-    
+
     return renderStoryItem({ item: item as StoryWithUser, index });
   };
 
   /**
    * Key extractor for combined list
    */
-  const listKeyExtractor = (item: StoryWithUser | 'add-button', index: number) => {
+  const listKeyExtractor = (
+    item: StoryWithUser | 'add-button',
+    index: number
+  ) => {
     if (item === 'add-button') {
       return 'add-story-button';
     }
-    
+
     return keyExtractor(item as StoryWithUser, index);
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <FlatList
         data={listData}
         renderItem={renderListItem}
@@ -197,4 +210,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
   },
-}); 
+});

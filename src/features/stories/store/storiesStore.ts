@@ -30,16 +30,16 @@ const initialState = {
   stories: [] as StoryWithUser[],
   currentStory: null as Story | null,
   myStory: null as Story | null,
-  
+
   // Viewing session
   viewingSession: null as StoryViewingSession | null,
-  
+
   // UI state
   isLoading: false,
   isUploading: false,
   uploadProgress: null as StoryUploadProgress | null,
   error: null as StoryError | null,
-  
+
   // Filters
   showOnlyUnviewed: false,
 };
@@ -121,7 +121,10 @@ export const useStoriesStore = create<StoriesStore>()(
         }
       },
 
-      createStory: async (data: StoryCreationData, onProgress?: (progress: StoryUploadProgress) => void) => {
+      createStory: async (
+        data: StoryCreationData,
+        onProgress?: (progress: StoryUploadProgress) => void
+      ) => {
         console.log('📸 StoriesStore: Creating story');
 
         set(state => {
@@ -135,12 +138,15 @@ export const useStoriesStore = create<StoriesStore>()(
         });
 
         try {
-          await storiesService.createStory(data, (progress: StoryUploadProgress) => {
-            set(state => {
-              state.uploadProgress = progress;
-            });
-            onProgress?.(progress);
-          });
+          await storiesService.createStory(
+            data,
+            (progress: StoryUploadProgress) => {
+              set(state => {
+                state.uploadProgress = progress;
+              });
+              onProgress?.(progress);
+            }
+          );
 
           // Reload stories after successful creation
           await get().loadStories();
@@ -209,7 +215,11 @@ export const useStoriesStore = create<StoriesStore>()(
         try {
           const viewers = await storiesService.getStoryViewers(storyId, postId);
 
-          console.log('✅ StoriesStore: Loaded', viewers.length, 'story viewers');
+          console.log(
+            '✅ StoriesStore: Loaded',
+            viewers.length,
+            'story viewers'
+          );
           return viewers;
         } catch (error) {
           console.error('❌ StoriesStore: Failed to get story viewers:', error);
@@ -265,7 +275,10 @@ export const useStoriesStore = create<StoriesStore>()(
           // Mark previous post as viewed
           const currentPost = posts[currentPostIndex];
           if (currentPost) {
-            get().markPostAsViewed(state.viewingSession.storyId, currentPost.id);
+            get().markPostAsViewed(
+              state.viewingSession.storyId,
+              currentPost.id
+            );
           }
         } else {
           // End of story - mark last post as viewed and stop
@@ -281,7 +294,10 @@ export const useStoriesStore = create<StoriesStore>()(
         console.log('⏮️ StoriesStore: Previous post');
 
         set(state => {
-          if (state.viewingSession && state.viewingSession.currentPostIndex > 0) {
+          if (
+            state.viewingSession &&
+            state.viewingSession.currentPostIndex > 0
+          ) {
             state.viewingSession.currentPostIndex -= 1;
             state.viewingSession.startTime = Date.now();
             state.viewingSession.remainingTime = 5000;
@@ -330,7 +346,10 @@ export const useStoriesStore = create<StoriesStore>()(
 
           console.log('✅ StoriesStore: Post marked as viewed');
         } catch (error) {
-          console.error('❌ StoriesStore: Failed to mark post as viewed:', error);
+          console.error(
+            '❌ StoriesStore: Failed to mark post as viewed:',
+            error
+          );
         }
       },
 
@@ -364,10 +383,16 @@ export const useStoriesStore = create<StoriesStore>()(
  */
 export const useStories = () => useStoriesStore(state => state.stories);
 export const useMyStory = () => useStoriesStore(state => state.myStory);
-export const useCurrentStory = () => useStoriesStore(state => state.currentStory);
-export const useViewingSession = () => useStoriesStore(state => state.viewingSession);
-export const useStoriesLoading = () => useStoriesStore(state => state.isLoading);
-export const useStoriesUploading = () => useStoriesStore(state => state.isUploading);
-export const useUploadProgress = () => useStoriesStore(state => state.uploadProgress);
+export const useCurrentStory = () =>
+  useStoriesStore(state => state.currentStory);
+export const useViewingSession = () =>
+  useStoriesStore(state => state.viewingSession);
+export const useStoriesLoading = () =>
+  useStoriesStore(state => state.isLoading);
+export const useStoriesUploading = () =>
+  useStoriesStore(state => state.isUploading);
+export const useUploadProgress = () =>
+  useStoriesStore(state => state.uploadProgress);
 export const useStoriesError = () => useStoriesStore(state => state.error);
-export const useShowOnlyUnviewed = () => useStoriesStore(state => state.showOnlyUnviewed); 
+export const useShowOnlyUnviewed = () =>
+  useStoriesStore(state => state.showOnlyUnviewed);

@@ -41,7 +41,8 @@ export function MyStoryCard({
   const { getStoryViewers } = useStoriesStore();
 
   // Get latest post for thumbnail
-  const latestPost = story.posts.length > 0 ? story.posts[story.posts.length - 1] : null;
+  const latestPost =
+    story.posts.length > 0 ? story.posts[story.posts.length - 1] : null;
   const thumbnailUri = latestPost?.mediaUrl;
 
   // Calculate total unique viewers across all posts
@@ -63,14 +64,14 @@ export function MyStoryCard({
    */
   const handleViewersPress = React.useCallback(async () => {
     console.log('👥 MyStoryCard: Loading viewers for story:', story.id);
-    
+
     try {
       const viewers = await getStoryViewers(story.id);
-      
+
       if (viewers.length === 0) {
         Alert.alert(
           'No Views Yet',
-          'Your story hasn\'t been viewed by anyone yet.',
+          "Your story hasn't been viewed by anyone yet.",
           [{ text: 'OK', style: 'default' }]
         );
         return;
@@ -79,11 +80,9 @@ export function MyStoryCard({
       onViewersPress?.(viewers);
     } catch (error) {
       console.error('❌ MyStoryCard: Failed to load viewers:', error);
-      Alert.alert(
-        'Error',
-        'Failed to load story viewers. Please try again.',
-        [{ text: 'OK', style: 'default' }]
-      );
+      Alert.alert('Error', 'Failed to load story viewers. Please try again.', [
+        { text: 'OK', style: 'default' },
+      ]);
     }
   }, [story.id, getStoryViewers, onViewersPress]);
 
@@ -104,12 +103,15 @@ export function MyStoryCard({
 
     if (diff < 60 * 1000) return 'now';
     if (diff < 60 * 60 * 1000) return `${Math.floor(diff / (60 * 1000))}m`;
-    if (diff < 24 * 60 * 60 * 1000) return `${Math.floor(diff / (60 * 60 * 1000))}h`;
+    if (diff < 24 * 60 * 60 * 1000)
+      return `${Math.floor(diff / (60 * 60 * 1000))}h`;
     return `${Math.floor(diff / (24 * 60 * 60 * 1000))}d`;
   }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       {/* Story Thumbnail */}
       <TouchableOpacity
         style={styles.thumbnailContainer}
@@ -120,16 +122,27 @@ export function MyStoryCard({
           <Image
             source={{ uri: thumbnailUri }}
             style={styles.thumbnail}
-            resizeMode="cover"
+            resizeMode='cover'
           />
         ) : (
-          <View style={[styles.thumbnailPlaceholder, { backgroundColor: theme.colors.surface }]}>
-            <Ionicons name="camera" size={24} color={theme.colors.textSecondary} />
+          <View
+            style={[
+              styles.thumbnailPlaceholder,
+              { backgroundColor: theme.colors.surface },
+            ]}
+          >
+            <Ionicons
+              name='camera'
+              size={24}
+              color={theme.colors.textSecondary}
+            />
           </View>
         )}
-        
+
         {/* Story Ring */}
-        <View style={[styles.storyRing, { borderColor: theme.colors.primary }]} />
+        <View
+          style={[styles.storyRing, { borderColor: theme.colors.primary }]}
+        />
       </TouchableOpacity>
 
       {/* Story Info */}
@@ -137,9 +150,10 @@ export function MyStoryCard({
         <Text style={[styles.title, { color: theme.colors.textPrimary }]}>
           My Story
         </Text>
-        
+
         <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-          {story.posts.length} post{story.posts.length !== 1 ? 's' : ''} • {getTimeAgo(story.updatedAt)}
+          {story.posts.length} post{story.posts.length !== 1 ? 's' : ''} •{' '}
+          {getTimeAgo(story.updatedAt)}
         </Text>
       </View>
 
@@ -150,21 +164,23 @@ export function MyStoryCard({
         activeOpacity={0.7}
       >
         <View style={styles.viewersInfo}>
-          <Ionicons 
-            name="eye" 
-            size={16} 
-            color={theme.colors.textSecondary} 
+          <Ionicons
+            name='eye'
+            size={16}
+            color={theme.colors.textSecondary}
             style={styles.viewersIcon}
           />
-          <Text style={[styles.viewersCount, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[styles.viewersCount, { color: theme.colors.textSecondary }]}
+          >
             {uniqueViewers}
           </Text>
         </View>
-        
-        <Ionicons 
-          name="chevron-forward" 
-          size={16} 
-          color={theme.colors.textSecondary} 
+
+        <Ionicons
+          name='chevron-forward'
+          size={16}
+          color={theme.colors.textSecondary}
         />
       </TouchableOpacity>
     </View>
@@ -237,4 +253,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-}); 
+});

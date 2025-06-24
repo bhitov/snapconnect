@@ -31,7 +31,12 @@ import { StoryProgressBar } from '../components/StoryProgressBar';
 import { useStoriesStore } from '../store/storiesStore';
 import { storiesService } from '@/features/stories/services/storiesService';
 
-import type { ViewStoryScreenProps, Story, StoryWithUser, StoryPost } from '../types';
+import type {
+  ViewStoryScreenProps,
+  Story,
+  StoryWithUser,
+  StoryPost,
+} from '../types';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -45,7 +50,12 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
   const theme = useTheme();
   const { userId, storyId } = route.params;
 
-  console.log('👁️ ViewStoryScreen: Viewing story', storyId, 'from user', userId);
+  console.log(
+    '👁️ ViewStoryScreen: Viewing story',
+    storyId,
+    'from user',
+    userId
+  );
 
   // Local state
   const [story, setStory] = React.useState<StoryWithUser | null>(null);
@@ -67,7 +77,12 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
    * Load story data from Firebase
    */
   const loadStory = React.useCallback(async () => {
-    console.log('📖 ViewStoryScreen: Loading real story data for story:', storyId, 'user:', userId);
+    console.log(
+      '📖 ViewStoryScreen: Loading real story data for story:',
+      storyId,
+      'user:',
+      userId
+    );
     setIsLoading(true);
     setError(null);
 
@@ -88,7 +103,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
         // Loading current user's own story
         console.log('📖 ViewStoryScreen: Loading my story');
         const myStory = await storiesService.getMyStory();
-        
+
         if (!myStory) {
           console.warn('⚠️ ViewStoryScreen: My story not found');
           setError('Story not found');
@@ -106,17 +121,25 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
           },
           hasUnviewedPosts: false, // User's own story is always "viewed"
           totalPosts: myStory.posts.length,
-          latestPostTimestamp: Math.max(...myStory.posts.map((p: StoryPost) => p.timestamp)),
+          latestPostTimestamp: Math.max(
+            ...myStory.posts.map((p: StoryPost) => p.timestamp)
+          ),
         };
 
         setStory(storyWithUser);
-        console.log('✅ ViewStoryScreen: My story loaded with', myStory.posts.length, 'posts');
+        console.log(
+          '✅ ViewStoryScreen: My story loaded with',
+          myStory.posts.length,
+          'posts'
+        );
       } else {
         // Loading friend's story
         console.log('📖 ViewStoryScreen: Loading friend story');
         const allStories = await storiesService.getFriendStories();
-        const targetStory = allStories.find((s: StoryWithUser) => s.id === storyId);
-        
+        const targetStory = allStories.find(
+          (s: StoryWithUser) => s.id === storyId
+        );
+
         if (!targetStory) {
           console.warn('⚠️ ViewStoryScreen: Friend story not found');
           setError('Story not found or expired');
@@ -125,7 +148,11 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
         }
 
         setStory(targetStory);
-        console.log('✅ ViewStoryScreen: Friend story loaded with', targetStory.posts.length, 'posts');
+        console.log(
+          '✅ ViewStoryScreen: Friend story loaded with',
+          targetStory.posts.length,
+          'posts'
+        );
       }
 
       setIsLoading(false);
@@ -142,34 +169,41 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
   const startProgress = React.useCallback(() => {
     if (!story || !isPlaying) return;
 
-    console.log('▶️ ViewStoryScreen: Starting progress for post', currentPostIndex);
+    console.log(
+      '▶️ ViewStoryScreen: Starting progress for post',
+      currentPostIndex
+    );
 
     progress.value = 0;
-    
+
     // Animate progress over 5 seconds
-    progress.value = withTiming(1, {
-      duration: 5000,
-    }, (finished) => {
-      if (finished) {
-        runOnJS(goToNextPost)();
+    progress.value = withTiming(
+      1,
+      {
+        duration: 5000,
+      },
+      finished => {
+        if (finished) {
+          runOnJS(goToNextPost)();
+        }
       }
-    });
+    );
 
     // Update progress value for progress bar
     const updateProgress = () => {
       if (!isPlaying) return;
-      
+
       const currentTime = Date.now();
       const elapsedTime = currentTime - progressStartTime.current;
       const progressPercent = Math.min(elapsedTime / 5000, 1);
-      
+
       setProgressValue(progressPercent);
-      
+
       if (progressPercent < 1 && isPlaying) {
         requestAnimationFrame(updateProgress);
       }
     };
-    
+
     progressStartTime.current = Date.now();
     requestAnimationFrame(updateProgress);
   }, [story, isPlaying, currentPostIndex, progress]);
@@ -264,8 +298,13 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
     if (!currentPost) return;
 
     try {
-      console.log('👁️ ViewStoryScreen: Marking post as viewed:', currentPost.id);
-      await useStoriesStore.getState().markPostAsViewed(story.id, currentPost.id);
+      console.log(
+        '👁️ ViewStoryScreen: Marking post as viewed:',
+        currentPost.id
+      );
+      await useStoriesStore
+        .getState()
+        .markPostAsViewed(story.id, currentPost.id);
       console.log('👁️ ViewStoryScreen: Marked post as viewed');
     } catch (viewError) {
       console.error('❌ ViewStoryScreen: Failed to mark as viewed:', viewError);
@@ -315,14 +354,10 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
    */
   React.useEffect(() => {
     if (error) {
-      Alert.alert(
-        'Story Error',
-        error,
-        [
-          { text: 'Retry', onPress: loadStory },
-          { text: 'Close', onPress: handleClose, style: 'cancel' },
-        ]
-      );
+      Alert.alert('Story Error', error, [
+        { text: 'Retry', onPress: loadStory },
+        { text: 'Close', onPress: handleClose, style: 'cancel' },
+      ]);
     }
   }, [error, loadStory, handleClose]);
 
@@ -335,7 +370,13 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, styles.loadingContainer, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[
+          styles.container,
+          styles.loadingContainer,
+          { backgroundColor: theme.colors.background },
+        ]}
+      >
         <Text style={[styles.loadingText, { color: theme.colors.textPrimary }]}>
           Loading story...
         </Text>
@@ -345,7 +386,13 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
 
   if (!story) {
     return (
-      <View style={[styles.container, styles.errorContainer, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[
+          styles.container,
+          styles.errorContainer,
+          { backgroundColor: theme.colors.background },
+        ]}
+      >
         <Text style={[styles.errorText, { color: theme.colors.textPrimary }]}>
           Story not found
         </Text>
@@ -354,19 +401,30 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
   }
 
   const currentPost = story.posts[currentPostIndex];
-  
-  console.log('🎬 ViewStoryScreen: Rendering post', currentPostIndex + 1, 'of', story.posts.length);
+
+  console.log(
+    '🎬 ViewStoryScreen: Rendering post',
+    currentPostIndex + 1,
+    'of',
+    story.posts.length
+  );
   console.log('🎬 ViewStoryScreen: Current post data:', {
     id: currentPost?.id,
     mediaUrl: currentPost?.mediaUrl,
     mediaType: currentPost?.mediaType,
     text: currentPost?.text,
   });
-  
+
   if (!currentPost) {
     console.error('❌ ViewStoryScreen: Current post is null/undefined');
     return (
-      <View style={[styles.container, styles.errorContainer, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[
+          styles.container,
+          styles.errorContainer,
+          { backgroundColor: theme.colors.background },
+        ]}
+      >
         <Text style={[styles.errorText, { color: theme.colors.textPrimary }]}>
           Post not found
         </Text>
@@ -391,11 +449,16 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
           isLooping={false}
           isMuted={false}
           onLoadStart={() => {
-            console.log('🎥 ViewStoryScreen: Video loading started for:', currentPost.mediaUrl);
+            console.log(
+              '🎥 ViewStoryScreen: Video loading started for:',
+              currentPost.mediaUrl
+            );
             setMediaLoadError(false);
           }}
-          onLoad={() => console.log('✅ ViewStoryScreen: Video loaded successfully')}
-          onError={(error) => {
+          onLoad={() =>
+            console.log('✅ ViewStoryScreen: Video loaded successfully')
+          }
+          onError={error => {
             console.error('❌ ViewStoryScreen: Video failed to load:', error);
             setMediaLoadError(true);
           }}
@@ -404,14 +467,22 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
         <Image
           source={{ uri: currentPost.mediaUrl }}
           style={styles.backgroundImage}
-          resizeMode="cover"
+          resizeMode='cover'
           onLoadStart={() => {
-            console.log('🖼️ ViewStoryScreen: Image loading started for:', currentPost.mediaUrl);
+            console.log(
+              '🖼️ ViewStoryScreen: Image loading started for:',
+              currentPost.mediaUrl
+            );
             setMediaLoadError(false);
           }}
-          onLoad={() => console.log('✅ ViewStoryScreen: Image loaded successfully')}
-          onError={(error) => {
-            console.error('❌ ViewStoryScreen: Image failed to load:', error.nativeEvent.error);
+          onLoad={() =>
+            console.log('✅ ViewStoryScreen: Image loaded successfully')
+          }
+          onError={error => {
+            console.error(
+              '❌ ViewStoryScreen: Image failed to load:',
+              error.nativeEvent.error
+            );
             setMediaLoadError(true);
           }}
         />
@@ -433,14 +504,23 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
         <View style={styles.header}>
           <View style={styles.userInfo}>
             <Image
-              source={{ uri: story.user.photoURL || 'https://via.placeholder.com/40' }}
+              source={{
+                uri: story.user.photoURL || 'https://via.placeholder.com/40',
+              }}
               style={styles.avatar}
             />
             <View style={styles.userText}>
-              <Text style={[styles.username, { color: theme.colors.textPrimary }]}>
+              <Text
+                style={[styles.username, { color: theme.colors.textPrimary }]}
+              >
                 {story.user.displayName}
               </Text>
-              <Text style={[styles.timestamp, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.timestamp,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 {getTimeAgo(currentPost.timestamp)}
               </Text>
             </View>
@@ -451,7 +531,11 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
             onPress={handleClose}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Text style={[styles.closeText, { color: theme.colors.textPrimary }]}>✕</Text>
+            <Text
+              style={[styles.closeText, { color: theme.colors.textPrimary }]}
+            >
+              ✕
+            </Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -459,29 +543,22 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
       {/* Tap areas for navigation */}
       <View style={styles.tapContainer}>
         {/* Left tap area - previous */}
-        <Pressable
-          style={styles.leftTapArea}
-          onPress={handleLeftTap}
-        />
+        <Pressable style={styles.leftTapArea} onPress={handleLeftTap} />
 
         {/* Center tap area - pause/resume */}
-        <Pressable
-          style={styles.centerTapArea}
-          onPress={handlePauseResume}
-        />
+        <Pressable style={styles.centerTapArea} onPress={handlePauseResume} />
 
         {/* Right tap area - next */}
-        <Pressable
-          style={styles.rightTapArea}
-          onPress={handleRightTap}
-        />
+        <Pressable style={styles.rightTapArea} onPress={handleRightTap} />
       </View>
 
       {/* Bottom section with text overlay */}
       {currentPost.text && (
         <SafeAreaView style={styles.bottomSection}>
           <View style={styles.textContainer}>
-            <Text style={[styles.storyText, { color: theme.colors.textPrimary }]}>
+            <Text
+              style={[styles.storyText, { color: theme.colors.textPrimary }]}
+            >
               {currentPost.text}
             </Text>
           </View>
