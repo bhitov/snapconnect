@@ -21,6 +21,7 @@ import {
   FirebaseStorage,
   connectStorageEmulator,
 } from 'firebase/storage';
+import { Platform } from 'react-native';
 
 // Firebase configuration from environment variables
 const firebaseConfig = {
@@ -60,6 +61,7 @@ function initializeFirebase(): void {
 
     console.log('🔥 Firebase initialized successfully');
     console.log('📊 Project ID:', firebaseConfig.projectId);
+    console.log('🌐 Platform:', Platform.OS);
 
     // Connect to emulators in development
     if (__DEV__) {
@@ -76,14 +78,19 @@ function initializeFirebase(): void {
  */
 function connectToEmulators(): void {
   try {
+    // Use 10.0.2.2 for Android emulator, localhost for iOS simulator and web
+    const host = Platform.OS === 'android' ? '10.0.2.2' : 'localhost';
+    
+    console.log(`🔧 Connecting to Firebase emulators on ${host}`);
+    
     // Connect to emulators - only works on first connection
-    connectAuthEmulator(auth, 'http://localhost:9099');
-    connectDatabaseEmulator(database, 'localhost', 9000);
-    connectStorageEmulator(storage, 'localhost', 9199);
-    connectFunctionsEmulator(functions, 'localhost', 5001);
+    connectAuthEmulator(auth, `http://${host}:9099`);
+    connectDatabaseEmulator(database, host, 9000);
+    connectStorageEmulator(storage, host, 9199);
+    connectFunctionsEmulator(functions, host, 5001);
 
-    console.log('🔧 Connected to Firebase emulators');
-    console.log('🚀 Development mode: Using local Firebase emulators');
+    console.log('✅ Connected to Firebase emulators successfully');
+    console.log(`🚀 Development mode: Using local Firebase emulators on ${host}`);
   } catch (error) {
     console.warn(
       '⚠️ Failed to connect to emulators (this is normal if not running locally):',
