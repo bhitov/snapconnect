@@ -21,6 +21,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Platform,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -62,6 +63,8 @@ export function ProfileSettingsScreen({
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showUnsavedChangesConfirm, setShowUnsavedChangesConfirm] = useState(false);
 
   const {
     control,
@@ -242,11 +245,18 @@ export function ProfileSettingsScreen({
         await updateUserProfile(user.uid, updates);
 
         console.log('✅ ProfileSettings: Profile updated successfully');
-        Alert.alert(
-          'Profile Updated',
-          'Your profile has been updated successfully.',
-          [{ text: 'OK' }]
-        );
+        
+        // Use platform-appropriate success notification
+        if (Platform.OS === 'web') {
+          console.log('🎉 ProfileSettings: Profile updated successfully (web)');
+          // On web, we could add a toast notification here in the future
+        } else {
+          Alert.alert(
+            'Profile Updated',
+            'Your profile has been updated successfully.',
+            [{ text: 'OK' }]
+          );
+        }
 
         // Reset form dirty state
         reset(data);
@@ -278,27 +288,32 @@ export function ProfileSettingsScreen({
    * Handle logout
    */
   const handleLogout = useCallback(() => {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Logout',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            console.log('🚪 ProfileSettings: Logging out');
-            await logout();
-            console.log('✅ ProfileSettings: Logout successful');
-          } catch (logoutError) {
-            console.error('❌ ProfileSettings: Logout failed:', logoutError);
-            Alert.alert(
-              'Logout Failed',
-              'Failed to logout. Please try again.',
-              [{ text: 'OK' }]
-            );
-          }
-        },
-      },
-    ]);
+    console.log('🚪 ProfileSettings: Showing logout confirmation');
+    setShowLogoutConfirm(true);
+  }, []);
+
+  /**
+   * Confirm logout
+   */
+  const confirmLogout = useCallback(async () => {
+    try {
+      console.log('🚪 ProfileSettings: Logging out');
+      setShowLogoutConfirm(false);
+      await logout();
+      console.log('✅ ProfileSettings: Logout successful');
+    } catch (logoutError) {
+      console.error('❌ ProfileSettings: Logout failed:', logoutError);
+      // Use platform-specific alert for error messages as they're less critical
+      if (Platform.OS === 'web') {
+        window.alert('Failed to logout. Please try again.');
+      } else {
+        Alert.alert(
+          'Logout Failed',
+          'Failed to logout. Please try again.',
+          [{ text: 'OK' }]
+        );
+      }
+    }
   }, [logout]);
 
   /**
@@ -306,22 +321,21 @@ export function ProfileSettingsScreen({
    */
   const handleBack = useCallback(() => {
     if (isDirty || selectedImage) {
-      Alert.alert(
-        'Unsaved Changes',
-        'You have unsaved changes. Are you sure you want to go back?',
-        [
-          { text: 'Stay', style: 'cancel' },
-          {
-            text: 'Discard Changes',
-            style: 'destructive',
-            onPress: () => navigation.goBack(),
-          },
-        ]
-      );
+      console.log('⚠️ ProfileSettings: Showing unsaved changes confirmation');
+      setShowUnsavedChangesConfirm(true);
     } else {
       navigation.goBack();
     }
   }, [isDirty, selectedImage, navigation]);
+
+  /**
+   * Confirm discard changes
+   */
+  const confirmDiscardChanges = useCallback(() => {
+    console.log('🗑️ ProfileSettings: Discarding changes and going back');
+    setShowUnsavedChangesConfirm(false);
+    navigation.goBack();
+  }, [navigation]);
 
   const currentPhotoURL = selectedImage || user?.photoURL;
 
@@ -445,6 +459,71 @@ export function ProfileSettingsScreen({
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 60,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: theme.spacing[4],
+    },
+    modalContent: {
+      backgroundColor: theme.colors.background,
+      borderRadius: theme.borderRadius.lg,
+      padding: theme.spacing[6],
+      width: '100%',
+      maxWidth: 400,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 8,
+      elevation: 8,
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontWeight: '600',
+      color: theme.colors.text,
+      marginBottom: theme.spacing[3],
+      textAlign: 'center',
+    },
+    modalMessage: {
+      fontSize: 16,
+      color: theme.colors.textSecondary,
+      marginBottom: theme.spacing[6],
+      textAlign: 'center',
+      lineHeight: 24,
+    },
+    modalButtons: {
+      flexDirection: 'row',
+      gap: theme.spacing[3],
+    },
+    modalButton: {
+      flex: 1,
+      paddingVertical: theme.spacing[3],
+      paddingHorizontal: theme.spacing[4],
+      borderRadius: theme.borderRadius.md,
+      alignItems: 'center',
+    },
+    modalButtonPrimary: {
+      backgroundColor: theme.colors.primary,
+    },
+    modalButtonSecondary: {
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    modalButtonDanger: {
+      backgroundColor: theme.colors.error,
+    },
+    modalButtonText: {
+      fontSize: 16,
+      fontWeight: '500',
+    },
+    modalButtonTextPrimary: {
+      color: theme.colors.background,
+    },
+    modalButtonTextSecondary: {
+      color: theme.colors.text,
     },
   });
 
@@ -587,6 +666,76 @@ export function ProfileSettingsScreen({
           </Button>
         </View>
       </ScrollView>
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        visible={showLogoutConfirm}
+        transparent
+        animationType='fade'
+        onRequestClose={() => setShowLogoutConfirm(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Logout</Text>
+            <Text style={styles.modalMessage}>
+              Are you sure you want to logout?
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalButtonSecondary]}
+                onPress={() => setShowLogoutConfirm(false)}
+              >
+                <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalButtonDanger]}
+                onPress={confirmLogout}
+              >
+                <Text style={[styles.modalButtonText, styles.modalButtonTextPrimary]}>
+                  Logout
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Unsaved Changes Confirmation Modal */}
+      <Modal
+        visible={showUnsavedChangesConfirm}
+        transparent
+        animationType='fade'
+        onRequestClose={() => setShowUnsavedChangesConfirm(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Unsaved Changes</Text>
+            <Text style={styles.modalMessage}>
+              You have unsaved changes. Are you sure you want to go back?
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalButtonSecondary]}
+                onPress={() => setShowUnsavedChangesConfirm(false)}
+              >
+                <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
+                  Stay
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalButtonDanger]}
+                onPress={confirmDiscardChanges}
+              >
+                <Text style={[styles.modalButtonText, styles.modalButtonTextPrimary]}>
+                  Discard Changes
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

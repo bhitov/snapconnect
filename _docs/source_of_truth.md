@@ -604,7 +604,7 @@
 - ✅ Auth error handling with user-friendly messages
 
 ### Phase 2.10 - Profile Settings (✅ COMPLETE)
-- ✅ **ProfileSettingsScreen**: Complete profile management with avatar upload, bio editing, and logout functionality (display name and username editing removed per user request) - now includes web platform support
+- ✅ **ProfileSettingsScreen**: Complete profile management with avatar upload, bio editing, and logout functionality (display name and username editing removed per user request) - now includes web platform support with custom confirmation modals
 - ✅ **ProfileAvatar Component**: Clickable user avatar for navigation headers that opens profile settings
 - ✅ **Header Integration**: Profile avatar added to main screen headers (Chats, Friends, Stories) in top-right corner
 - ✅ **Profile Update Service**: Full profile update functionality with Firebase integration and image upload
