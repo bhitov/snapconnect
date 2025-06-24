@@ -2,7 +2,7 @@ module.exports = {
   extends: [
     'expo',
     '@react-native-community',
-    '@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
@@ -36,7 +36,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/no-non-null-assertion': 'error',
-    '@typescript-eslint/prefer-const': 'error',
+    // '@typescript-eslint/prefer-const': 'error',
     '@typescript-eslint/no-var-requires': 'error',
     
     // React specific rules
@@ -116,6 +116,7 @@ module.exports = {
     },
   },
   ignorePatterns: [
+    '.eslintrc.js',
     'node_modules/',
     '.expo/',
     'dist/',
