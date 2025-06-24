@@ -18,9 +18,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useChatStore } from '@/features/chat/store/chatStore';
 import { Button } from '@/shared/components/base/Button';
 import { useTheme } from '@/shared/hooks/useTheme';
-import { useChatStore } from '@/features/chat/store/chatStore';
 
 import {
   useFriendsStore,

@@ -4,6 +4,7 @@
  * Shows user avatar with animated ring for unviewed content.
  */
 
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import {
   View,
@@ -21,7 +22,6 @@ import Animated, {
   interpolateColor,
 } from 'react-native-reanimated';
 // Removed linear gradient dependency
-import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from '@/shared/hooks/useTheme';
 

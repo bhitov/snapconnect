@@ -15,6 +15,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { useTheme } from '@/shared/hooks/useTheme';
+
 import type { StoryProgressBarProps } from '../types';
 
 /**

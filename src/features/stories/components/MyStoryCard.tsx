@@ -4,6 +4,7 @@
  * Displays story thumbnail, view count, and allows viewing who has seen the story.
  */
 
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import {
   View,
@@ -13,9 +14,9 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from '@/shared/hooks/useTheme';
+
 import { useStoriesStore } from '../store/storiesStore';
 
 import type { Story, StoryViewer } from '../types';

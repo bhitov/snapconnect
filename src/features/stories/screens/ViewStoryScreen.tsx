@@ -4,6 +4,9 @@
  * Handles story navigation, auto-advance, and viewing state management.
  */
 
+import { useFocusEffect } from '@react-navigation/native';
+import { Video, ResizeMode } from 'expo-av';
+import { getAuth } from 'firebase/auth';
 import React from 'react';
 import {
   View,
@@ -16,20 +19,18 @@ import {
   Alert,
   Pressable,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   runOnJS,
 } from 'react-native-reanimated';
-import { Video, ResizeMode } from 'expo-av';
-import { getAuth } from 'firebase/auth';
 
+import { storiesService } from '@/features/stories/services/storiesService';
 import { useTheme } from '@/shared/hooks/useTheme';
+
 import { StoryProgressBar } from '../components/StoryProgressBar';
 import { useStoriesStore } from '../store/storiesStore';
-import { storiesService } from '@/features/stories/services/storiesService';
 
 import type {
   ViewStoryScreenProps,

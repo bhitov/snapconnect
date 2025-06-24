@@ -8,8 +8,8 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { generateId } from '@/shared/utils/idGenerator';
 import { storiesService } from '@/features/stories/services/storiesService';
+import { generateId } from '@/shared/utils/idGenerator';
 
 import type {
   StoriesStore,
@@ -131,7 +131,7 @@ export const useStoriesStore = create<StoriesStore>()(
           state.isUploading = true;
           state.error = null;
           state.uploadProgress = {
-            storyId: 'temp-' + generateId(),
+            storyId: `temp-${generateId()}`,
             progress: 0,
             status: 'uploading',
           };

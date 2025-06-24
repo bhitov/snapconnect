@@ -21,9 +21,10 @@ import {
   getDownloadURL,
   deleteObject,
 } from 'firebase/storage';
-import { generateId } from '@/shared/utils/idGenerator';
+
 import { friendsService } from '@/features/friends/services/friendsService';
-import type { FriendProfile } from '@/features/friends/types';
+import { generateId } from '@/shared/utils/idGenerator';
+
 import type {
   Story,
   StoryWithUser,
@@ -35,6 +36,7 @@ import type {
   ViewData,
   StoryViewer,
 } from '../types';
+import type { FriendProfile } from '@/features/friends/types';
 
 class StoriesService {
   private database = getDatabase();

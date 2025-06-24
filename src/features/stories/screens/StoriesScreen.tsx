@@ -4,14 +4,15 @@
  * Includes add story functionality and navigation to story viewer.
  */
 
+import { useFocusEffect } from '@react-navigation/native';
 import React from 'react';
 import { View, StyleSheet, SafeAreaView, Alert, Text } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 
-import { useTheme } from '@/shared/hooks/useTheme';
 import { Screen } from '@/shared/components/layout/Screen';
-import { StoriesList } from '../components/StoriesList';
+import { useTheme } from '@/shared/hooks/useTheme';
+
 import { MyStoryCard } from '../components/MyStoryCard';
+import { StoriesList } from '../components/StoriesList';
 import {
   useStoriesStore,
   useStories,

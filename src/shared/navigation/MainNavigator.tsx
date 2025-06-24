@@ -4,10 +4,10 @@
  * Handles the primary app screens: Chats, Camera, Friends, Stories.
  */
 
+import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text, View, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 import { CameraScreen } from '../../features/camera/screens/CameraScreen';
 import { ChatsScreen, ChatScreen } from '../../features/chat/screens';

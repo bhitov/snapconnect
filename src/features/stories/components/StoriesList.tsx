@@ -8,6 +8,7 @@ import React from 'react';
 import { View, FlatList, RefreshControl, StyleSheet, Text } from 'react-native';
 
 import { useTheme } from '@/shared/hooks/useTheme';
+
 import { StoryRing } from './StoryRing';
 
 import type { StoriesListProps, StoryWithUser } from '../types';

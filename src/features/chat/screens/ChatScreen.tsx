@@ -5,6 +5,11 @@
  * Includes text input for sending messages and snap integration.
  */
 
+import {
+  useRoute,
+  useNavigation,
+  useFocusEffect,
+} from '@react-navigation/native';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   View,
@@ -18,15 +23,9 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  useRoute,
-  useNavigation,
-  useFocusEffect,
-} from '@react-navigation/native';
-import type { StackNavigationProp } from '@react-navigation/stack';
 
-import { useTheme } from '@/shared/hooks/useTheme';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { useTheme } from '@/shared/hooks/useTheme';
 
 import {
   useChatStore,
@@ -37,15 +36,16 @@ import {
 } from '../store/chatStore';
 
 import type {
-  ChatStackParamList,
-  RootStackParamList,
-} from '@/shared/navigation/types';
-import type {
   Message,
   TextMessage,
   SnapMessage,
   ChatScreenProps,
 } from '../types';
+import type {
+  ChatStackParamList,
+  RootStackParamList,
+} from '@/shared/navigation/types';
+import type { StackNavigationProp } from '@react-navigation/stack';
 
 type ChatScreenRouteProp = {
   key: string;

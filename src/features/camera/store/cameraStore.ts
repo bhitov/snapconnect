@@ -7,8 +7,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import type { CameraView } from 'expo-camera';
-import type React from 'react';
 
 import { generateId } from '@/shared/utils/idGenerator';
 
@@ -22,6 +20,8 @@ import type {
   MediaFilter,
   RecordingState,
 } from '../types';
+import type { CameraView } from 'expo-camera';
+import type React from 'react';
 
 /**
  * Default camera settings

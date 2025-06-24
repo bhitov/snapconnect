@@ -22,8 +22,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/shared/hooks/useTheme';
 
-import { useChatStore, useViewingSession } from '../store/chatStore';
 import { chatService } from '../services/chatService';
+import { useChatStore, useViewingSession } from '../store/chatStore';
+
 import type { Snap, SnapMessage } from '../types';
 import type { RootStackParamList } from '@/shared/navigation/types';
 import type { RouteProp } from '@react-navigation/native';

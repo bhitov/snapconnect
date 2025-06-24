@@ -17,13 +17,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useTheme } from '@/shared/hooks/useTheme';
 import { StoriesList } from '@/features/stories/components/StoriesList';
 import {
   useStoriesStore,
   useStories,
   useStoriesLoading,
 } from '@/features/stories/store/storiesStore';
+import { useTheme } from '@/shared/hooks/useTheme';
 
 import {
   useChatStore,
@@ -39,9 +39,9 @@ import type {
   ChatStackParamList,
   MainTabParamList,
 } from '@/shared/navigation/types';
-import type { StackNavigationProp } from '@react-navigation/stack';
-import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { CompositeNavigationProp } from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
 
 type ChatsScreenNavigationProp = CompositeNavigationProp<
   StackNavigationProp<ChatStackParamList>,
