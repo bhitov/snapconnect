@@ -24,13 +24,14 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { Video, ResizeMode } from 'expo-av';
+import { getAuth } from 'firebase/auth';
 
 import { useTheme } from '@/shared/hooks/useTheme';
 import { StoryProgressBar } from '../components/StoryProgressBar';
 import { useStoriesStore } from '../store/storiesStore';
-import { storiesService } from '../services/storiesService';
+import { storiesService } from '@/features/stories/services/storiesService';
 
-import type { ViewStoryScreenProps } from '../types';
+import type { ViewStoryScreenProps, Story, StoryWithUser, StoryPost } from '../types';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -47,7 +48,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
   console.log('👁️ ViewStoryScreen: Viewing story', storyId, 'from user', userId);
 
   // Local state
-  const [story, setStory] = React.useState<any>(null);
+  const [story, setStory] = React.useState<StoryWithUser | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [currentPostIndex, setCurrentPostIndex] = React.useState(0);
@@ -71,8 +72,19 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
     setError(null);
 
     try {
+      // Get current authenticated user ID
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+      const currentUserId = currentUser?.uid;
+
+      if (!currentUserId) {
+        setError('User not authenticated');
+        setIsLoading(false);
+        return;
+      }
+
       // Load story from Firebase using stories service
-      if (storyId === userId) {
+      if (storyId === currentUserId) {
         // Loading current user's own story
         console.log('📖 ViewStoryScreen: Loading my story');
         const myStory = await storiesService.getMyStory();
@@ -85,17 +97,16 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
         }
 
         // Add user data for my story
-        const storyWithUser = {
+        const storyWithUser: StoryWithUser = {
           ...myStory,
           user: {
-            uid: userId,
+            uid: currentUserId,
             username: 'You',
             displayName: 'Your Story',
-            photoURL: undefined,
           },
           hasUnviewedPosts: false, // User's own story is always "viewed"
           totalPosts: myStory.posts.length,
-          latestPostTimestamp: Math.max(...myStory.posts.map(p => p.timestamp)),
+          latestPostTimestamp: Math.max(...myStory.posts.map((p: StoryPost) => p.timestamp)),
         };
 
         setStory(storyWithUser);
@@ -103,8 +114,8 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
       } else {
         // Loading friend's story
         console.log('📖 ViewStoryScreen: Loading friend story');
-        const allStories = await storiesService.getStories();
-        const targetStory = allStories.find(s => s.id === storyId);
+        const allStories = await storiesService.getFriendStories();
+        const targetStory = allStories.find((s: StoryWithUser) => s.id === storyId);
         
         if (!targetStory) {
           console.warn('⚠️ ViewStoryScreen: Friend story not found');
@@ -123,7 +134,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
       setError(loadError.message || 'Failed to load story');
       setIsLoading(false);
     }
-  }, [storyId, userId]);
+  }, [storyId]);
 
   /**
    * Start progress animation for current post
@@ -250,13 +261,16 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
     if (!story || currentPostIndex >= story.posts.length) return;
 
     const currentPost = story.posts[currentPostIndex];
+    if (!currentPost) return;
+
     try {
-      await storiesService.markPostAsViewed(storyId, currentPost.id);
+      console.log('👁️ ViewStoryScreen: Marking post as viewed:', currentPost.id);
+      await useStoriesStore.getState().markPostAsViewed(story.id, currentPost.id);
       console.log('👁️ ViewStoryScreen: Marked post as viewed');
     } catch (viewError) {
       console.error('❌ ViewStoryScreen: Failed to mark as viewed:', viewError);
     }
-  }, [story, currentPostIndex, storyId]);
+  }, [story, currentPostIndex]);
 
   /**
    * Load story on screen focus

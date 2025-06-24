@@ -9,7 +9,7 @@ import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { generateId } from '@/shared/utils/idGenerator';
-import { storiesService } from '../services/storiesService';
+import { storiesService } from '@/features/stories/services/storiesService';
 
 import type {
   StoriesStore,
@@ -63,7 +63,7 @@ export const useStoriesStore = create<StoriesStore>()(
         });
 
         try {
-          const stories = await storiesService.getStories();
+          const stories = await storiesService.getFriendStories();
 
           set(state => {
             state.stories = stories;
@@ -85,7 +85,7 @@ export const useStoriesStore = create<StoriesStore>()(
         console.log('🔄 StoriesStore: Refreshing stories');
 
         try {
-          const stories = await storiesService.getStories();
+          const stories = await storiesService.getFriendStories();
 
           set(state => {
             state.stories = stories;
@@ -135,7 +135,7 @@ export const useStoriesStore = create<StoriesStore>()(
         });
 
         try {
-          await storiesService.createStory(data, progress => {
+          await storiesService.createStory(data, (progress: StoryUploadProgress) => {
             set(state => {
               state.uploadProgress = progress;
             });

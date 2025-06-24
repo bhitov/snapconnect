@@ -7,6 +7,8 @@ import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, set, get, update, remove, onValue, off } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { generateId } from '@/shared/utils/idGenerator';
+import { friendsService } from '@/features/friends/services/friendsService';
+import type { FriendProfile } from '@/features/friends/types';
 import type { 
   Story, 
   StoryWithUser, 
@@ -197,43 +199,54 @@ class StoriesService {
     }
   }
 
-  async getStories(): Promise<StoryWithUser[]> {
-    console.log('📖 StoriesService: Loading stories');
+  async getFriendStories(): Promise<StoryWithUser[]> {
+    console.log('📖 StoriesService: Loading friend stories');
     
     try {
       const currentUserId = this.getCurrentUserId();
+      const friends = await friendsService.getFriends();
+      const friendIds = friends.map((friend: FriendProfile) => friend.uid);
+
+      if (friendIds.length === 0) {
+        console.log('📖 StoriesService: No friends found, so no stories to load.');
+        return [];
+      }
+
       const storiesRef = ref(this.database, 'stories');
       const snapshot = await get(storiesRef);
 
       if (!snapshot.exists()) {
-        console.log('📖 StoriesService: No stories found');
+        console.log('📖 StoriesService: No stories found in database');
         return [];
       }
 
       const storiesData = snapshot.val() as Record<string, StoryDocument>;
       const stories: StoryWithUser[] = [];
 
-      // Convert Firebase data to StoryWithUser format
+      // Convert Firebase data to StoryWithUser format for friends
       for (const [storyId, storyDoc] of Object.entries(storiesData)) {
-        // Skip expired stories and own story for this list
-        if (storyId === currentUserId) continue;
+        if (!friendIds.includes(storyId) || storyId === currentUserId) {
+          continue;
+        }
 
         const activePosts = Object.entries(storyDoc.posts || {})
           .map(([postId, postDoc]) => ({
             id: postId,
             ...postDoc,
           }))
-          .filter(post => post.status === 'active' && post.expiresAt > Date.now())
+          .filter(post => 
+            post.status === 'active' && 
+            post.expiresAt > Date.now() &&
+            (post.privacy === 'all' || post.privacy === 'friends')
+          )
           .sort((a, b) => a.timestamp - b.timestamp);
 
         if (activePosts.length === 0) continue;
 
-        // Check for unviewed posts
         const hasUnviewedPosts = activePosts.some(post => 
-          !post.views[currentUserId] || !post.views[currentUserId].completed
+          !post.views || !post.views[currentUserId] || !post.views[currentUserId].completed
         );
 
-        // Fetch real user data from Firebase
         const userData = await this.getUserData(storyDoc.userId);
         const userStory: StoryWithUser = {
           id: storyId,
@@ -247,26 +260,18 @@ class StoriesService {
 
         stories.push(userStory);
       }
-
-      // Advanced story ordering algorithm (recent first, with unviewed prioritization)
+      
+      // Advanced sorting: unviewed first, then most recent
       stories.sort((a, b) => {
-        // First priority: Unviewed stories come first
         if (a.hasUnviewedPosts && !b.hasUnviewedPosts) return -1;
         if (!a.hasUnviewedPosts && b.hasUnviewedPosts) return 1;
-        
-        // Second priority: More recent stories first
-        if (a.latestPostTimestamp !== b.latestPostTimestamp) {
-          return b.latestPostTimestamp - a.latestPostTimestamp;
-        }
-        
-        // Third priority: Stories with more posts first (more active users)
-        return b.totalPosts - a.totalPosts;
+        return b.latestPostTimestamp - a.latestPostTimestamp;
       });
-
-      console.log('✅ StoriesService: Loaded', stories.length, 'stories, ordered by recent/unviewed');
+      
+      console.log('✅ StoriesService: Friend stories loaded and sorted successfully');
       return stories;
     } catch (error) {
-      console.error('❌ StoriesService: Failed to load stories:', error);
+      console.error('❌ StoriesService: Failed to load friend stories:', error);
       throw this.handleError(error);
     }
   }

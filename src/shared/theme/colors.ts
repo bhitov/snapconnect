@@ -6,14 +6,14 @@
 
 export const colors = {
   // Brand Colors (Snapchat-inspired)
-  primary: '#FFFC00', // Snapchat yellow
-  primaryDark: '#E6E300',
-  primaryLight: '#FFFF33',
+  secondary: '#FFFC00', // Snapchat yellow
+  secondaryDark: '#E6E300',
+  secondaryLight: '#FFFF33',
 
   // Secondary Colors
-  secondary: '#7209B7', // Deep purple
-  secondaryDark: '#5A0790',
-  secondaryLight: '#8F2BCF',
+  primary: '#7209B7', // Deep purple
+  primaryDark: '#5A0790',
+  primaryLight: '#8F2BCF',
 
   // Neutral Colors
   black: '#000000',

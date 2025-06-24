@@ -241,12 +241,12 @@
 - `createStory(data, onProgress?)` - **UPDATED**: Now uploads story media to Firebase Storage with real URLs instead of mock URLs
 - `uploadMediaToStorage(mediaUri, mediaType, postId, onProgress?)` - **NEW**: Private method to upload media files to Firebase Storage with progress tracking
 - `getUserData(userId)` - **NEW**: Private method to fetch real user data from Firebase instead of using mock data
-- `getStories()` - **UPDATED**: Now fetches real user data for story authors instead of using mock usernames and avatars
-- `getMyStory()` - Fetch current user's story with active posts
-- `deleteStoryPost(storyId, postId)` - Remove story post from Firebase
-- `deleteStory(storyId)` - Remove entire story from Firebase
-- `markPostAsViewed(storyId, postId)` - Update view tracking in Firebase
-- `getStoryViewers(storyId, postId?)` - Get list of users who viewed story/post with completion status and timestamps
+- `getFriendStories()` - Fetches stories from the current user's friends, including public and friends-only stories.
+- `getMyStory()` - Fetch current user's story with active posts.
+- `deleteStoryPost(storyId, postId)` - Remove story post from Firebase.
+- `deleteStory(storyId)` - Remove entire story from Firebase.
+- `markPostAsViewed(storyId, postId)` - Update view tracking in Firebase.
+- `getStoryViewers(storyId, postId?)` - Get list of users who viewed story/post with completion status and timestamps.
 
 #### src/features/stories/screens/StoriesScreen.tsx
 - `StoriesScreen()` - Main stories screen component with story list, My Story section, and navigation
@@ -255,25 +255,25 @@
 - `handleStoryPress(story)` - Navigate to story viewer with story data
 - `handleMyStoryPress()` - **NEW**: Navigate to user's own story viewer
 - `handleViewersPress(viewers)` - **NEW**: Display story viewers list with names
-- `handleErrorDismiss()` - Clear error state
-- **Enhanced**: Shows user's own story with viewer count and My Story section
+- `handleErrorDismiss()` - Clear error state.
+- **Enhanced**: Shows user's own story with viewer count and My Story section.
 
 #### src/features/stories/screens/ViewStoryScreen.tsx
 - `ViewStoryScreen()` - **FIXED**: Now loads real story data from Firebase instead of using mock placeholder data
-- `loadStory()` - **UPDATED**: Loads actual stories from Firebase using storiesService.getMyStory() and storiesService.getStories()
-- `startProgress()` - Begin progress animation for current post
-- `goToNextPost()` - Navigate to next post or close viewer with media error reset
-- `goToPreviousPost()` - Navigate to previous post with media error reset
-- `handleLeftTap()` - Handle tap on left side for previous post
-- `handleRightTap()` - Handle tap on right side for next post
-- `handlePauseResume()` - Toggle pause/resume for auto-advance
-- `handleClose()` - Close story viewer
-- `handlePostChange(index)` - Jump to specific post from progress bar with media error reset
-- `markAsViewed()` - Mark current post as viewed
-- `getTimeAgo(timestamp)` - Format timestamp to relative time string
-- **NEW**: Added support for both photo and video playback using expo-av Video component
-- **NEW**: Added comprehensive error handling for media loading failures with fallback UI
-- **NEW**: Added detailed logging for debugging media loading issues
+- `loadStory()` - **UPDATED**: Loads actual stories from Firebase using storiesService.getMyStory() and storiesService.getFriendStories()
+- `startProgress()` - Begin progress animation for current post.
+- `goToNextPost()` - Navigate to next post or close viewer with media error reset.
+- `goToPreviousPost()` - Navigate to previous post with media error reset.
+- `handleLeftTap()` - Handle tap on left side for previous post.
+- `handleRightTap()` - Handle tap on right side for next post.
+- `handlePauseResume()` - Toggle pause/resume for auto-advance.
+- `handleClose()` - Close story viewer.
+- `handlePostChange(index)` - Jump to specific post from progress bar with media error reset.
+- `markAsViewed()` - Mark current post as viewed.
+- `getTimeAgo(timestamp)` - Format timestamp to relative time string.
+- **NEW**: Added support for both photo and video playback using expo-av Video component.
+- **NEW**: Added comprehensive error handling for media loading failures with fallback UI.
+- **NEW**: Added detailed logging for debugging media loading issues.
 
 #### src/features/stories/components/StoriesList.tsx
 - `StoriesList()` - Horizontal scrollable list of story rings with performance optimizations
