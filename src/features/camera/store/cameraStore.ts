@@ -297,7 +297,9 @@ export const useCameraStore = create<CameraStore>()(
           console.log(
             '🎥 CameraStore: Starting video recording with camera ref'
           );
-          await cameraRef.current.recordAsync({
+          
+          // Start the recording and store the promise
+          const recordingPromise = cameraRef.current.recordAsync({
             maxDuration: 180, // 3 minutes in seconds
           });
 
@@ -322,9 +324,10 @@ export const useCameraStore = create<CameraStore>()(
             }
           }, 100);
 
-          // Store the interval reference for cleanup
+          // Store the interval reference and recording promise for cleanup
           set(state => {
             (state.recording as any).intervalRef = recordingInterval;
+            (state.recording as any).recordingPromise = recordingPromise;
           });
 
           console.log('✅ CameraStore: Video recording started');
@@ -371,18 +374,28 @@ export const useCameraStore = create<CameraStore>()(
           console.log(
             '⏹️ CameraStore: Stopping video recording with camera ref'
           );
-          const video = await cameraRef.current.stopRecording();
+          
+          // Stop the recording
+          cameraRef.current.stopRecording();
+          
+          // Get the stored recording promise and await it for the video data
+          const recordingPromise = (state.recording as any).recordingPromise;
+          if (!recordingPromise) {
+            throw new Error('No recording promise found');
+          }
+          
+          const video = await recordingPromise;
 
-          console.log('⏹️ CameraStore: Video recording stopped:', video.uri);
+          console.log('⏹️ CameraStore: Video recording stopped:', video?.uri);
 
           const capturedMedia: CapturedMedia = {
             id: generateId(),
-            uri: video.uri,
+            uri: video?.uri || '',
             type: 'video',
             width: 1080, // Default values since Expo doesn't provide them
             height: 1920,
             duration: state.recording.duration,
-            size: video.uri.length * 0.75, // Rough estimate
+            size: video?.uri ? video.uri.length * 0.75 : 0, // Rough estimate
             timestamp: Date.now(),
           };
 
