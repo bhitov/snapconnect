@@ -38,7 +38,7 @@ Establish the technical foundation with a running React Native (Expo) applicatio
 **Goal**: Install and configure all required dependencies
 
 **Steps**:
-1. ✅ Install navigation dependencies (React Navigation v6 + dependencies)
+1. ✅ Install navigation dependencies (React navigation and dependencies)
 2. ✅ Install UI libraries (React Native Elements, React Native SVG)
 3. ✅ Install state management (Zustand + middleware)
 4. ✅ Install development tools (ESLint, Prettier, Reactotron)

@@ -1,0 +1,94 @@
+{
+  "expo": {
+    "name": "SnapConnect",
+    "slug": "snapconnect",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "snapconnect",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFC00"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.snapconnect.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "SnapConnect needs camera access to take photos and videos for snaps.",
+        "NSMicrophoneUsageDescription": "SnapConnect needs microphone access to record audio for video snaps.",
+        "NSPhotoLibraryUsageDescription": "SnapConnect needs photo library access to save and share photos.",
+        "NSPhotoLibraryAddUsageDescription": "SnapConnect needs permission to save photos to your photo library.",
+        "UIBackgroundModes": ["background-fetch", "background-processing"]
+      },
+      "requireFullScreen": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFC00"
+      },
+      "package": "com.snapconnect.app",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "VIBRATE",
+        "SYSTEM_ALERT_WINDOW"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow SnapConnect to access your camera to take photos and videos for snaps."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "SnapConnect needs access to your photos to send existing images as snaps."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "SnapConnect needs access to save photos to your device.",
+          "savePhotosPermission": "SnapConnect needs permission to save photos to your photo library."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#FFFC00",
+          "sounds": ["./assets/notification-sound.wav"]
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
+    }
+  }
+} 
