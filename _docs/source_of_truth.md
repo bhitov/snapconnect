@@ -130,7 +130,7 @@
 - `ChatsScreen.tsx` - Main chats list showing conversations with real-time updates and snap/message previews
 - `RecipientSelectionScreen.tsx` - Recipient selection and duration controls for snap sending
 - `SnapViewingScreen.tsx` - Snap viewing with timer, pause/resume functionality, and viewed status updates
-- `ChatScreen.tsx` - Individual chat screen with hybrid text and snap messaging, message list, and text input
+- `ChatScreen.tsx` - Individual chat screen with hybrid text and snap messaging, message list, text input, and camera button that navigates to Camera tab using parent navigation
 - `index.ts` - Chat screens export
 
 ###### Chat Store (src/features/chat/store/)
