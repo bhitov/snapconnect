@@ -786,7 +786,7 @@
 #### **Core Ephemeral Rules:**
 1. **Sender Restrictions**: Senders cannot view their own snaps after sending
 2. **One-Time Viewing**: Recipients can only view snaps once
-3. **Auto-Deletion**: Snaps are automatically deleted after being viewed
+3. **Persistent Chat History**: Snaps remain in chat history permanently after being viewed but become unviewable
 4. **Two-Tier Status System**: Separate "delivered" vs "viewed" status tracking
 
 #### **Two-Tier Status System:**
@@ -796,12 +796,13 @@
   - Triggered automatically when chat screen loads
 - **"Viewed" Status**: Set only when snaps are actually opened and watched
   - Only applies to snaps (text messages remain "delivered")
-  - Makes snap unviewable forever (ephemeral behavior)
-  - Triggers automatic cleanup after 1 second
+  - Makes snap unviewable forever but keeps it in chat history
+  - No automatic cleanup - viewed snaps persist in chat thread
 
 #### **Permission System:**
 - `SnapViewingScreen` enforces recipient-only access with user ID verification
 - `ChatScreen` prevents snap viewing attempts by senders with error alerts
+- `ChatScreen` prevents viewing of already-viewed snaps with appropriate error message
 - Permission checks use `chatService.getCurrentUser()` for authentication
 
 #### **Status Message System:**
@@ -810,8 +811,8 @@
 - **Conversation List**: Shows appropriate status based on user perspective
 - **Chat Screen**: Message bubbles show context-appropriate status text
 
-#### **Automatic Cleanup:**
-- Viewed snaps are automatically deleted from Firebase after 1 second delay
-- `cleanupExpiredMessages()` removes both expired and viewed snaps
+#### **Persistent Chat History:**
+- Viewed snaps remain in chat history permanently with "Viewed"/"Seen" status
+- Only truly expired snaps (24+ hours old and unviewed) are cleaned up
 - Text messages remain persistent and are never cleaned up
-- Real-time cleanup triggered after `markMessageAsViewed()` for snaps only
+- Chat threads maintain complete conversation history including viewed snaps

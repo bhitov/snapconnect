@@ -736,8 +736,6 @@ class ChatService {
     }
   }
 
-
-
   /**
    * Get user data by ID
    */
@@ -869,20 +867,13 @@ class ChatService {
           throw new Error('Access denied');
         }
 
-        // Update snap status to viewed (making it unviewable)
+        // Update snap status to viewed (making it unviewable but keeping in chat history)
         await update(snapRef, {
           status: 'viewed',
           viewedAt: Date.now(),
         });
 
-        console.log('✅ ChatService: Snap marked as viewed (now unviewable)');
-
-        // Automatically cleanup viewed snap after a short delay (ephemeral behavior)
-        setTimeout(() => {
-          this.cleanupExpiredMessages().catch(error => {
-            console.error('❌ ChatService: Auto-cleanup failed:', error);
-          });
-        }, 1000); // 1 second delay to ensure the viewing session completes
+        console.log('✅ ChatService: Snap marked as viewed (now unviewable but remains in chat history)');
 
         return;
       }
@@ -965,7 +956,7 @@ class ChatService {
     console.log('🧹 ChatService: Cleaning up expired messages');
 
     try {
-      // Clean up snaps (they expire after 24 hours OR when viewed)
+      // Clean up snaps (they expire after 24 hours, but viewed snaps stay in chat history)
       const snapsRef = ref(this.database, 'snaps');
       const snapsSnapshot = await get(snapsRef);
 
@@ -977,13 +968,14 @@ class ChatService {
         for (const [snapId, snapData] of Object.entries(
           snaps as Record<string, any>
         )) {
-          // Delete snaps that are expired OR viewed (ephemeral behavior)
-          if (snapData.expiresAt < now || snapData.status === 'viewed') {
+          // Only delete snaps that are truly expired (24 hours old)
+          // Viewed snaps remain in chat history permanently but become unviewable
+          if (snapData.expiresAt < now && snapData.status !== 'viewed') {
             expiredSnaps.push(snapId);
           }
         }
 
-        // Delete expired/viewed snaps
+        // Delete only truly expired snaps (not viewed ones)
         for (const snapId of expiredSnaps) {
           const snapRef = ref(this.database, `snaps/${snapId}`);
           await set(snapRef, null);
@@ -992,7 +984,7 @@ class ChatService {
         console.log(
           '✅ ChatService: Cleaned up',
           expiredSnaps.length,
-          'expired/viewed snaps'
+          'expired snaps (viewed snaps remain in chat history)'
         );
       }
 
