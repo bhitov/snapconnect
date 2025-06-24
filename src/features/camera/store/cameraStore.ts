@@ -7,6 +7,8 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import type { CameraView } from 'expo-camera';
+import type React from 'react';
 
 import { generateId } from '@/shared/utils/idGenerator';
 
@@ -216,7 +218,7 @@ export const useCameraStore = create<CameraStore>()(
       },
 
       // Media capture
-      capturePhoto: async (cameraRef?: any) => {
+      capturePhoto: async (cameraRef?: React.RefObject<CameraView>) => {
         console.log('📸 CameraStore: Capturing photo');
 
         set(state => {
@@ -230,11 +232,7 @@ export const useCameraStore = create<CameraStore>()(
           }
 
           console.log('📸 CameraStore: Taking picture with camera ref');
-          const photo = await cameraRef.current.takePictureAsync({
-            quality: 0.8,
-            base64: false,
-            skipProcessing: false,
-          });
+          const photo = await cameraRef.current.takePictureAsync()
 
           console.log('📸 CameraStore: Photo captured:', photo.uri);
 
@@ -280,7 +278,7 @@ export const useCameraStore = create<CameraStore>()(
         }
       },
 
-      startVideoRecording: async (cameraRef?: any) => {
+      startVideoRecording: async (cameraRef?: React.RefObject<CameraView>) => {
         console.log('🎥 CameraStore: Starting video recording');
 
         set(state => {
@@ -300,7 +298,6 @@ export const useCameraStore = create<CameraStore>()(
             '🎥 CameraStore: Starting video recording with camera ref'
           );
           await cameraRef.current.recordAsync({
-            quality: '720p',
             maxDuration: 180, // 3 minutes in seconds
           });
 
@@ -350,7 +347,7 @@ export const useCameraStore = create<CameraStore>()(
         }
       },
 
-      stopVideoRecording: async (cameraRef?: any) => {
+      stopVideoRecording: async (cameraRef?: React.RefObject<CameraView>) => {
         console.log('⏹️ CameraStore: Stopping video recording');
 
         const state = get();

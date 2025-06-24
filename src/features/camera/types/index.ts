@@ -204,9 +204,9 @@ export interface CameraActions {
   setFlashMode: (mode: FlashMode) => void;
 
   // Media capture
-  capturePhoto: (cameraRef?: any) => Promise<CapturedMedia>;
-  startVideoRecording: (cameraRef?: any) => Promise<void>;
-  stopVideoRecording: (cameraRef?: any) => Promise<CapturedMedia>;
+  capturePhoto: (cameraRef?: React.RefObject<CameraView>) => Promise<CapturedMedia>;
+  startVideoRecording: (cameraRef?: React.RefObject<CameraView>) => Promise<void>;
+  stopVideoRecording: (cameraRef?: React.RefObject<CameraView>) => Promise<CapturedMedia>;
 
   // Media processing
   applyFilter: (filter: FilterType) => Promise<void>;
