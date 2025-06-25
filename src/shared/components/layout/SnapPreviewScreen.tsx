@@ -59,69 +59,13 @@ export function SnapPreviewScreen() {
   const { uri, type } = route.params;
 
   // State
-  const [isFiltered, setIsFiltered] = useState(false);
-  const [filteredUri, setFilteredUri] = useState<string | null>(null);
   const [textOverlay, setTextOverlay] = useState<TextOverlay | null>(null);
   const [isAddingText, setIsAddingText] = useState(false);
   const [newTextInput, setNewTextInput] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
 
   console.log('📷 SnapPreviewScreen: Rendering with URI:', uri, 'Type:', type);
 
-  /**
-   * Apply black and white filter to the image
-   */
-  const applyBlackWhiteFilter = useCallback(async () => {
-    if (type !== 'photo') {
-      Alert.alert(
-        'Filter Not Available',
-        'Filters are only available for photos.'
-      );
-      return;
-    }
 
-    console.log('🎨 SnapPreviewScreen: Applying black & white filter');
-    setIsProcessing(true);
-
-    try {
-      // Note: expo-image-manipulator doesn't have built-in grayscale filter
-      // This is a simplified implementation that creates a processed version
-      // In a real app, you'd use a more sophisticated image processing library
-      const result = await ImageManipulator.manipulateAsync(uri, [], {
-        format: ImageManipulator.SaveFormat.JPEG,
-        compress: 0.8,
-        base64: false,
-      });
-
-      // For now, we'll use the same image but mark it as filtered
-      // In a production app, you'd integrate with a proper image filter library
-      setFilteredUri(result.uri);
-      setIsFiltered(true);
-      console.log('✅ SnapPreviewScreen: Filter applied successfully');
-
-      // Note: This is a placeholder implementation
-      // Real B&W filtering would require additional libraries like react-native-image-filter-kit
-      Alert.alert(
-        'Filter Applied',
-        'Note: This is a placeholder B&W filter. Real implementation would use advanced image processing.',
-        [{ text: 'OK' }]
-      );
-    } catch (error) {
-      console.error('❌ SnapPreviewScreen: Filter application failed:', error);
-      Alert.alert('Filter Error', 'Failed to apply filter. Please try again.');
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [uri, type]);
-
-  /**
-   * Remove filter and show original image
-   */
-  const removeFilter = useCallback(() => {
-    console.log('🎨 SnapPreviewScreen: Removing filter');
-    setIsFiltered(false);
-    setFilteredUri(null);
-  }, []);
 
   /**
    * Add text overlay
@@ -175,8 +119,7 @@ export function SnapPreviewScreen() {
         return;
       }
 
-      const mediaUri = isFiltered && filteredUri ? filteredUri : uri;
-      await MediaLibrary.saveToLibraryAsync(mediaUri);
+      await MediaLibrary.saveToLibraryAsync(uri);
 
       Alert.alert('Saved!', 'Media has been saved to your photo library.', [
         { text: 'OK' },
@@ -187,7 +130,7 @@ export function SnapPreviewScreen() {
       console.error('❌ SnapPreviewScreen: Save failed:', error);
       Alert.alert('Save Failed', 'Failed to save media. Please try again.');
     }
-  }, [uri, isFiltered, filteredUri]);
+  }, [uri]);
 
   /**
    * Discard and retake
@@ -246,8 +189,6 @@ export function SnapPreviewScreen() {
     );
   }, [textOverlay]);
 
-  const displayUri = isFiltered && filteredUri ? filteredUri : uri;
-
   return (
     <GestureHandlerRootView style={styles.container}>
       <StatusBar barStyle='light-content' backgroundColor='#000000' />
@@ -256,13 +197,13 @@ export function SnapPreviewScreen() {
       <View style={styles.mediaContainer}>
         {type === 'photo' ? (
           <Image
-            source={{ uri: resolveMediaUrl(displayUri) }}
+            source={{ uri: resolveMediaUrl(uri) }}
             style={styles.media}
             resizeMode='cover'
           />
         ) : (
           <Video
-            source={{ uri: resolveMediaUrl(displayUri) }}
+            source={{ uri: resolveMediaUrl(uri) }}
             style={styles.media}
             shouldPlay={false}
             isLooping={false}
@@ -273,44 +214,11 @@ export function SnapPreviewScreen() {
 
         {/* Text Overlay */}
         {renderTextOverlay()}
-
-        {/* Processing Overlay */}
-        {isProcessing && (
-          <View style={styles.processingOverlay}>
-            <Text
-              style={[styles.processingText, { color: theme.colors.white }]}
-            >
-              Applying filter...
-            </Text>
-          </View>
-        )}
       </View>
 
       {/* Controls */}
       <View style={styles.controlsContainer}>
-        {/* Filter Controls */}
-        {type === 'photo' && (
-          <View style={styles.filterControls}>
-            <TouchableOpacity
-              style={[
-                styles.filterButton,
-                {
-                  backgroundColor: isFiltered
-                    ? theme.colors.primary
-                    : theme.colors.gray4,
-                },
-              ]}
-              onPress={isFiltered ? removeFilter : applyBlackWhiteFilter}
-              disabled={isProcessing}
-            >
-              <Text
-                style={[styles.filterButtonText, { color: theme.colors.black }]}
-              >
-                {isFiltered ? 'Original' : 'B&W'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
+
 
         {/* Text Controls */}
         <View style={styles.textControls}>
@@ -435,14 +343,14 @@ export function SnapPreviewScreen() {
           <TouchableOpacity
             style={[
               styles.actionButton,
-              { backgroundColor: theme.colors.gray4 },
+              { backgroundColor: theme.colors.white },
             ]}
             onPress={handleRetake}
           >
             <Text
               style={[styles.actionButtonText, { color: theme.colors.black }]}
             >
-              Retake
+              Go back
             </Text>
           </TouchableOpacity>
 
@@ -513,22 +421,6 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
 
-  processingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  processingText: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-
   controlsContainer: {
     position: 'absolute',
     bottom: 0,
@@ -536,24 +428,6 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 20,
     paddingBottom: 40,
-  },
-
-  filterControls: {
-    marginBottom: 15,
-    alignItems: 'center',
-  },
-
-  filterButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    minWidth: 80,
-  },
-
-  filterButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
   },
 
   textControls: {

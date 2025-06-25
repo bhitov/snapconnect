@@ -31,7 +31,7 @@
 ##### Navigation (src/shared/navigation/)
 - `RootNavigator.tsx` - Root navigation with auth flow detection, loading screen, and modal screens (SnapPreview, RecipientSelection, ViewSnap)
 - `AuthNavigator.tsx` - Authentication screens navigator with Login, Register, ProfileSetup, ForgotPassword
-- `MainNavigator.tsx` - Main tab navigation with Chats, Camera, Friends, Stories tabs and separate stack navigators for Chats and Friends (snap-focused, no traditional chat screens), includes notification badge on Friends tab for pending friend requests, ChatsScreen has headerShown: false to prevent duplicate headers
+- `MainNavigator.tsx` - Main tab navigation with Chats, Camera, Friends, Stories tabs and separate stack navigators for Chats and Friends (snap-focused, no traditional chat screens), includes notification badge on Friends tab for pending friend requests, ChatsScreen has headerShown: false to prevent duplicate headers, defaults to Friends tab on login
 - `types.ts` - Navigation type definitions for all stack param lists including simplified ChatStackParamList and FriendsStackParamList
 
 ##### Components (src/shared/components/)
@@ -72,7 +72,7 @@
 - `RegisterScreen.tsx` - User registration with email, password, username validation and availability checking
 - `ForgotPasswordScreen.tsx` - Password reset screen (placeholder for future implementation)
 - `ProfileSetupScreen.tsx` - Profile completion screen for post-registration setup with avatar upload and bio
-- `ProfileSettingsScreen.tsx` - Complete profile management screen with avatar upload, bio editing, logout functionality, unsaved changes protection, and modal presentation (display name/username editing removed)
+- `ProfileSettingsScreen.tsx` - Complete profile management screen with avatar upload, bio editing, logout functionality, unsaved changes protection, and modal presentation with Android-specific positioning fixes (display name/username editing removed)
 - `ProfileScreen.tsx` - Simple profile viewing screen displaying user avatar, name, and bio in read-only format
 - `index.ts` - Auth screens export file
 
@@ -129,7 +129,7 @@
 ##### Chat Feature (src/features/chat/) - **IMPLEMENTED IN PHASES 2.6-2.8**
 
 ###### Chat Screens (src/features/chat/screens/)
-- `ChatsScreen.tsx` - Main chats list showing conversations with real-time updates and snap/message previews, includes silent polling every 500ms for live updates (no loading animations)
+- `ChatsScreen.tsx` - Main chats list showing conversations with real-time updates and snap/message previews, includes silent polling every 500ms for live updates (no loading animations), stories bar removed since there's a dedicated Stories tab
 - `RecipientSelectionScreen.tsx` - Recipient selection and duration controls for snap sending
 - `SnapViewingScreen.tsx` - Snap viewing with timer, pause/resume functionality, and viewed status updates
 - `ChatScreen.tsx` - Individual chat screen with hybrid text and snap messaging, message list, text input, camera button that navigates to Camera tab using parent navigation, and silent polling every 500ms for live message updates (no loading animations)
@@ -157,7 +157,7 @@
 
 ###### Stories Components (src/features/stories/components/)
 - `StoriesList.tsx` - Horizontal FlatList of stories with performance optimizations, pull-to-refresh, and add story button
-- `StoryRing.tsx` - Animated colorful border component for unviewed stories with three sizes, rotating animations, and multi-layer border design
+- `StoryRing.tsx` - Simple border component for unviewed stories with three sizes and static colored border
 - `StoryProgressBar.tsx` - Progress bar component showing progress through multiple story posts with animated segments
 - `index.ts` - Stories components export
 
@@ -197,7 +197,7 @@
 ### src/shared/navigation/MainNavigator.tsx
 - `FriendsTabIcon()` - Custom tab icon component for Friends tab with notification badge showing pending friend request count
 - `ChatHeaderBackButton()` - Custom header back button component for chat screens
-- `MainNavigator()` - Main tab navigator with four tabs: Chats, Camera, Friends, Stories
+- `MainNavigator()` - Main tab navigator with four tabs: Chats, Camera, Friends, Stories, defaults to Friends tab
 
 ### src/shared/hooks/useTheme.ts
 - `useTheme()` - Hook for accessing current theme, auto-switches between light/dark based on system preference
@@ -307,10 +307,10 @@
 - `renderAddStoryButton()` - Render add story button as first item
 
 #### src/features/stories/components/StoryRing.tsx
-- `StoryRing()` - Animated story ring with colorful multi-layer border and story thumbnails
+- `StoryRing()` - Simple story ring with colored border and story thumbnails
 - `handlePress()` - Handle story ring press with feedback
 - **Enhanced**: Shows actual story thumbnail instead of user avatar when available
-- **Enhanced**: Multi-layer animated border for unviewed stories with rotating and pulsing effects
+- **Simplified**: Static colored border for unviewed stories without animations
 
 #### src/features/stories/components/StoryProgressBar.tsx
 - `StoryProgressBar()` - Progress bars for multiple story posts with animated segments
@@ -737,14 +737,13 @@
 - ✅ **FIXED**: Friends list now includes chat icon alongside snap icon for easy text messaging access
 - ✅ **FIXED**: Friend requests button already includes notification badge for pending requests
 
-### Phase 3.2 - Stories Discovery (✅ COMPLETE)
+### Phase 3.2 - Stories Discovery (✅ COMPLETE, CHATS BAR REMOVED)
 - ✅ **IMPLEMENTED**: **Advanced Story Ordering Algorithm** - Stories now prioritize unviewed content first, then recent activity, then most active users
 - ✅ **IMPLEMENTED**: **Story Preview Thumbnails** - StoryRing component now shows actual story media thumbnails instead of user avatars
-- ✅ **IMPLEMENTED**: **Stories Discovery Bar** - Added horizontal stories bar to ChatsScreen for easy story discovery from main interface
+- ✅ **REMOVED**: **Stories Discovery Bar** - Removed horizontal stories bar from ChatsScreen since there's a dedicated Stories tab
 - ✅ **IMPLEMENTED**: **My Story Section** - New MyStoryCard component showing user's own story with viewer count and management
 - ✅ **IMPLEMENTED**: **Story Viewers Functionality** - Complete system to view who has seen your story with timestamps and completion status
-- ✅ **IMPLEMENTED**: **Enhanced Visual Indicators** - Improved unviewed story indicators with multi-layer animated borders
-- ✅ **IMPLEMENTED**: **Cross-Tab Navigation** - Stories discovered in Chats can navigate to Stories tab and Camera for creation
+- ✅ **IMPLEMENTED**: **Enhanced Visual Indicators** - Simplified unviewed story indicators with static colored borders (animations removed)
 - ✅ **IMPLEMENTED**: **Performance Optimizations** - Efficient story loading, caching, and real-time updates
 - ✅ **IMPLEMENTED**: **Error Handling** - Comprehensive error handling for story viewers, loading failures, and network issues
 - ✅ **IMPLEMENTED**: **TypeScript Support** - Complete type system with StoryViewer interface and proper type checking
@@ -753,12 +752,10 @@
 
 #### src/shared/components/layout/SnapPreviewScreen.tsx
 - `SnapPreviewScreen()` - Complete media preview screen with editing capabilities
-- `applyBlackWhiteFilter()` - Apply black & white filter to photos using Image Manipulator
-- `removeFilter()` - Remove applied filter and show original image
 - `addTextOverlay()` - Add or update single text overlay to media with positioning and styling
 - `removeTextOverlay()` - Remove the current text overlay
 - `saveToDevice()` - Save media to device photo library with permissions
-- `handleRetake()` - Navigate back to camera for retaking media
+- `handleRetake()` - Navigate back to camera (button displays "Go back")
 - `handleSend()` - Navigate to recipient selection screen with media data
 - `renderTextOverlay()` - Render the single text overlay with proper positioning
 
@@ -766,12 +763,10 @@
 
 #### src/features/chat/screens/ChatsScreen.tsx
 - `getSnapStatusText(status, messageType, isFromCurrentUser)` - **NEW**: Proper status text function replacing getSnapStatusIcon
-- `ChatsScreen()` - Main chats list with stories discovery integration
-- `loadConversations()` - Load conversations and stories
-- `handleRefresh()` - Refresh conversations and stories
+- `ChatsScreen()` - Main chats list showing conversations with real-time updates
+- `loadConversations()` - Load conversations data
+- `handleRefresh()` - Refresh conversations list
 - `handleConversationPress(conversation)` - Navigate to individual chat
-- `handleStoryPress(story)` - Navigate to Stories tab from discovery bar
-- `handleAddStoryPress()` - Navigate to Camera for story creation
 - `renderConversationItem(conversation)` - **UPDATED**: Now shows proper status text ("Sent"/"Viewed" for sender, "Snap"/"Seen" for recipient)
 - `formatTimestamp(timestamp)` - Format conversation timestamps
 - **NEW BEHAVIOR**: Conversations display proper ephemeral snap status messages

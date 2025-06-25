@@ -266,7 +266,7 @@ export function MainNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName='Camera'
+      initialRouteName='Friends'
       screenOptions={{
         headerShown: false,
         tabBarStyle: {

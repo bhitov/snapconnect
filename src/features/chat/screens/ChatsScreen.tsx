@@ -17,12 +17,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { StoriesList } from '@/features/stories/components/StoriesList';
-import {
-  useStoriesStore,
-  useStories,
-  useStoriesLoading,
-} from '@/features/stories/store/storiesStore';
+
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
 
@@ -131,14 +126,9 @@ export function ChatsScreen() {
   const isRefreshing = useIsRefreshing();
   const totalUnreadCount = useUnreadCount();
 
-  // Stories hooks
-  const stories = useStories();
-  const storiesLoading = useStoriesLoading();
-
   // Store actions
   const { loadConversations, refreshConversations, silentRefreshConversations, clearError } =
     useChatStore();
-  const { loadStories, refreshStories } = useStoriesStore();
 
   /**
    * Polling function for conversations - only refreshes when data changes (no loading animations)
@@ -162,11 +152,10 @@ export function ChatsScreen() {
   });
 
   /**
-   * Load conversations and stories on component mount and focus
+   * Load conversations on component mount and focus
    */
   useEffect(() => {
     loadConversations();
-    loadStories();
   }, []);
 
   /**
@@ -183,35 +172,9 @@ export function ChatsScreen() {
    */
   const handleRefresh = useCallback(() => {
     refreshConversations();
-    refreshStories();
   }, []);
 
-  /**
-   * Handle story press - navigate to story viewer
-   */
-  const handleStoryPress = useCallback(
-    (story: any) => {
-      console.log('📖 ChatsScreen: Story pressed:', story.id);
-      // Navigate to Stories tab using parent navigation
-      const parentNav = navigation.getParent();
-      if (parentNav) {
-        parentNav.navigate('Stories');
-      }
-    },
-    [navigation]
-  );
 
-  /**
-   * Handle add story press - navigate to camera
-   */
-  const handleAddStoryPress = useCallback(() => {
-    console.log('📸 ChatsScreen: Add story pressed');
-    // Navigate to Camera tab using parent navigation
-    const parentNav = navigation.getParent();
-    if (parentNav) {
-      parentNav.navigate('Camera');
-    }
-  }, [navigation]);
 
   /**
    * Handle conversation press - navigate to individual chat screen
@@ -433,18 +396,7 @@ export function ChatsScreen() {
         </View>
       </View>
 
-      {/* Stories Bar */}
-      {stories.length > 0 && (
-        <View style={styles.storiesContainer}>
-          <StoriesList
-            stories={stories}
-            onStoryPress={handleStoryPress}
-            onAddStoryPress={handleAddStoryPress}
-            refreshing={storiesLoading}
-            onRefresh={refreshStories}
-          />
-        </View>
-      )}
+
 
       {/* Content */}
       {error ? (
@@ -509,10 +461,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
   },
-  storiesContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
+
   conversationsList: {
     flexGrow: 1,
   },

@@ -461,6 +461,9 @@ export function ProfileSettingsScreen({
       alignItems: 'center',
       borderRadius: 60,
     },
+    modalContainer: {
+      flex: 1,
+    },
     modalOverlay: {
       flex: 1,
       backgroundColor: 'rgba(0,0,0,0.5)',
@@ -674,33 +677,36 @@ export function ProfileSettingsScreen({
         transparent
         animationType='fade'
         onRequestClose={() => setShowLogoutConfirm(false)}
+        statusBarTranslucent={Platform.OS === 'android'}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Logout</Text>
-            <Text style={styles.modalMessage}>
-              Are you sure you want to logout?
-            </Text>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.modalButtonSecondary]}
-                onPress={() => setShowLogoutConfirm(false)}
-              >
-                <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.modalButtonDanger]}
-                onPress={confirmLogout}
-              >
-                <Text style={[styles.modalButtonText, styles.modalButtonTextPrimary]}>
-                  Logout
-                </Text>
-              </TouchableOpacity>
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Logout</Text>
+              <Text style={styles.modalMessage}>
+                Are you sure you want to logout?
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.modalButtonSecondary]}
+                  onPress={() => setShowLogoutConfirm(false)}
+                >
+                  <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.modalButtonDanger]}
+                  onPress={confirmLogout}
+                >
+                  <Text style={[styles.modalButtonText, styles.modalButtonTextPrimary]}>
+                    Logout
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
 
       {/* Unsaved Changes Confirmation Modal */}
@@ -709,33 +715,36 @@ export function ProfileSettingsScreen({
         transparent
         animationType='fade'
         onRequestClose={() => setShowUnsavedChangesConfirm(false)}
+        statusBarTranslucent={Platform.OS === 'android'}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Unsaved Changes</Text>
-            <Text style={styles.modalMessage}>
-              You have unsaved changes. Are you sure you want to go back?
-            </Text>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.modalButtonSecondary]}
-                onPress={() => setShowUnsavedChangesConfirm(false)}
-              >
-                <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
-                  Stay
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.modalButtonDanger]}
-                onPress={confirmDiscardChanges}
-              >
-                <Text style={[styles.modalButtonText, styles.modalButtonTextPrimary]}>
-                  Discard Changes
-                </Text>
-              </TouchableOpacity>
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Unsaved Changes</Text>
+              <Text style={styles.modalMessage}>
+                You have unsaved changes. Are you sure you want to go back?
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.modalButtonSecondary]}
+                  onPress={() => setShowUnsavedChangesConfirm(false)}
+                >
+                  <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
+                    Stay
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.modalButtonDanger]}
+                  onPress={confirmDiscardChanges}
+                >
+                  <Text style={[styles.modalButtonText, styles.modalButtonTextPrimary]}>
+                    Discard Changes
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
     </SafeAreaView>
   );
