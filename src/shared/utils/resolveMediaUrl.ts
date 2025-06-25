@@ -8,13 +8,13 @@ import { Platform } from 'react-native';
 
 /**
  * Resolves media URLs for different environments and platforms
- * 
+ *
  * In DEV environment:
  * - Android: replaces base URL with 10.0.2.2:9199 (Android emulator networking)
  * - Other platforms: replaces base URL with localhost:9199
- * 
+ *
  * In production: returns URL unchanged
- * 
+ *
  * @param mediaUrl - The media URL to resolve
  * @returns Resolved media URL appropriate for current environment and platform
  */
@@ -30,26 +30,31 @@ export function resolveMediaUrl(mediaUrl: string): string {
     return mediaUrl;
   }
 
-  console.log('🔧 resolveMediaUrl: DEV mode, transforming URL for platform:', Platform.OS);
+  console.log(
+    '🔧 resolveMediaUrl: DEV mode, transforming URL for platform:',
+    Platform.OS
+  );
   console.log('📥 resolveMediaUrl: Original URL:', mediaUrl);
 
   // In development, transform Firebase Storage emulator URLs
   try {
     const url = new URL(mediaUrl);
-    
+
     // Check if this is a Firebase Storage URL (either emulator or production)
-    const isFirebaseStorage = url.hostname.includes('firebasestorage.googleapis.com') || 
-                             url.hostname.includes('localhost') ||
-                             url.hostname.includes('127.0.0.1') ||
-                             url.hostname.includes('10.0.2.2');
+    const isFirebaseStorage =
+      url.hostname.includes('firebasestorage.googleapis.com') ||
+      url.hostname.includes('localhost') ||
+      url.hostname.includes('127.0.0.1') ||
+      url.hostname.includes('10.0.2.2');
 
     if (isFirebaseStorage) {
       // Determine the appropriate host for the current platform
-      const emulatorHost = Platform.OS === 'android' ? '10.0.2.2:9199' : 'localhost:9199';
-      
+      const emulatorHost =
+        Platform.OS === 'android' ? '10.0.2.2:9199' : 'localhost:9199';
+
       // Create new URL with emulator host
       const resolvedUrl = `http://${emulatorHost}${url.pathname}${url.search}`;
-      
+
       console.log('📤 resolveMediaUrl: Resolved URL:', resolvedUrl);
       return resolvedUrl;
     }
@@ -57,10 +62,12 @@ export function resolveMediaUrl(mediaUrl: string): string {
     // If not a Firebase Storage URL, return as-is
     console.log('📤 resolveMediaUrl: Non-Firebase URL, returning unchanged');
     return mediaUrl;
-
   } catch (error) {
     // If URL parsing fails, return original URL
-    console.warn('⚠️ resolveMediaUrl: Failed to parse URL, returning original:', error);
+    console.warn(
+      '⚠️ resolveMediaUrl: Failed to parse URL, returning original:',
+      error
+    );
     return mediaUrl;
   }
-} 
+}

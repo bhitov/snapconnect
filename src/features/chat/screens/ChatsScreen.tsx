@@ -17,7 +17,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
 
@@ -127,8 +126,12 @@ export function ChatsScreen() {
   const totalUnreadCount = useUnreadCount();
 
   // Store actions
-  const { loadConversations, refreshConversations, silentRefreshConversations, clearError } =
-    useChatStore();
+  const {
+    loadConversations,
+    refreshConversations,
+    silentRefreshConversations,
+    clearError,
+  } = useChatStore();
 
   /**
    * Polling function for conversations - only refreshes when data changes (no loading animations)
@@ -173,8 +176,6 @@ export function ChatsScreen() {
   const handleRefresh = useCallback(() => {
     refreshConversations();
   }, []);
-
-
 
   /**
    * Handle conversation press - navigate to individual chat screen
@@ -395,8 +396,6 @@ export function ChatsScreen() {
           <ProfileAvatar size='medium' />
         </View>
       </View>
-
-
 
       {/* Content */}
       {error ? (

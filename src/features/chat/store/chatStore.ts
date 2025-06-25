@@ -115,7 +115,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   silentRefreshConversations: async () => {
-    console.log('🔄 ChatStore: Silent refresh conversations (no loading state)');
+    console.log(
+      '🔄 ChatStore: Silent refresh conversations (no loading state)'
+    );
 
     try {
       const conversations = await chatService.getConversations();
@@ -192,7 +194,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         messagesError: null,
       });
 
-      console.log('✅ ChatStore: Silent load completed', messages.length, 'messages');
+      console.log(
+        '✅ ChatStore: Silent load completed',
+        messages.length,
+        'messages'
+      );
     } catch (error) {
       console.error('❌ ChatStore: Silent load failed:', error);
       // Don't set error state for silent refresh to avoid UI disruption

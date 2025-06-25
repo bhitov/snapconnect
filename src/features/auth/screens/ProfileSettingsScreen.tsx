@@ -65,7 +65,8 @@ export function ProfileSettingsScreen({
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [showUnsavedChangesConfirm, setShowUnsavedChangesConfirm] = useState(false);
+  const [showUnsavedChangesConfirm, setShowUnsavedChangesConfirm] =
+    useState(false);
 
   const {
     control,
@@ -129,7 +130,9 @@ export function ProfileSettingsScreen({
         });
         setSelectedImage(selectedAsset.uri);
       } else {
-        console.log('📸 ProfileSettings: Image picker canceled or no image selected');
+        console.log(
+          '📸 ProfileSettings: Image picker canceled or no image selected'
+        );
       }
     } catch (pickError) {
       console.error('❌ ProfileSettings: Image picker error:', pickError);
@@ -186,10 +189,12 @@ export function ProfileSettingsScreen({
    */
   const showImagePickerOptions = useCallback(() => {
     console.log('🎯 ProfileSettings: Avatar button pressed - showing options');
-    
+
     // On web, directly open image picker since camera is not typically available
     if (Platform.OS === 'web') {
-      console.log('🌐 ProfileSettings: Web platform detected, opening image picker directly');
+      console.log(
+        '🌐 ProfileSettings: Web platform detected, opening image picker directly'
+      );
       pickImage();
       return;
     }
@@ -246,7 +251,7 @@ export function ProfileSettingsScreen({
         await updateUserProfile(user.uid, updates);
 
         console.log('✅ ProfileSettings: Profile updated successfully');
-        
+
         // Use platform-appropriate success notification
         if (Platform.OS === 'web') {
           console.log('🎉 ProfileSettings: Profile updated successfully (web)');
@@ -308,11 +313,9 @@ export function ProfileSettingsScreen({
       if (Platform.OS === 'web') {
         window.alert('Failed to logout. Please try again.');
       } else {
-        Alert.alert(
-          'Logout Failed',
-          'Failed to logout. Please try again.',
-          [{ text: 'OK' }]
-        );
+        Alert.alert('Logout Failed', 'Failed to logout. Please try again.', [
+          { text: 'OK' },
+        ]);
       }
     }
   }, [logout]);
@@ -558,7 +561,10 @@ export function ProfileSettingsScreen({
           <TouchableOpacity
             style={styles.avatarButton}
             onPress={() => {
-              console.log('🎯 ProfileSettings: Avatar button touched, disabled:', uploadingImage || isLoading);
+              console.log(
+                '🎯 ProfileSettings: Avatar button touched, disabled:',
+                uploadingImage || isLoading
+              );
               showImagePickerOptions();
             }}
             disabled={uploadingImage || isLoading}
@@ -580,15 +586,18 @@ export function ProfileSettingsScreen({
               </>
             ) : (
               <Text style={styles.avatarPlaceholder}>
-                {user?.displayName ? user.displayName.charAt(0).toUpperCase() : '👤'}
+                {user?.displayName
+                  ? user.displayName.charAt(0).toUpperCase()
+                  : '👤'}
               </Text>
             )}
           </TouchableOpacity>
           <Text style={styles.avatarText}>
-            {currentPhotoURL 
-              ? (Platform.OS === 'web' ? 'Click to change' : 'Tap to change')
-              : 'Add Profile Picture'
-            }
+            {currentPhotoURL
+              ? Platform.OS === 'web'
+                ? 'Click to change'
+                : 'Tap to change'
+              : 'Add Profile Picture'}
           </Text>
         </View>
 
@@ -691,7 +700,12 @@ export function ProfileSettingsScreen({
                   style={[styles.modalButton, styles.modalButtonSecondary]}
                   onPress={() => setShowLogoutConfirm(false)}
                 >
-                  <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
+                  <Text
+                    style={[
+                      styles.modalButtonText,
+                      styles.modalButtonTextSecondary,
+                    ]}
+                  >
                     Cancel
                   </Text>
                 </TouchableOpacity>
@@ -699,7 +713,12 @@ export function ProfileSettingsScreen({
                   style={[styles.modalButton, styles.modalButtonDanger]}
                   onPress={confirmLogout}
                 >
-                  <Text style={[styles.modalButtonText, styles.modalButtonTextPrimary]}>
+                  <Text
+                    style={[
+                      styles.modalButtonText,
+                      styles.modalButtonTextPrimary,
+                    ]}
+                  >
                     Logout
                   </Text>
                 </TouchableOpacity>
@@ -729,7 +748,12 @@ export function ProfileSettingsScreen({
                   style={[styles.modalButton, styles.modalButtonSecondary]}
                   onPress={() => setShowUnsavedChangesConfirm(false)}
                 >
-                  <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
+                  <Text
+                    style={[
+                      styles.modalButtonText,
+                      styles.modalButtonTextSecondary,
+                    ]}
+                  >
                     Stay
                   </Text>
                 </TouchableOpacity>
@@ -737,7 +761,12 @@ export function ProfileSettingsScreen({
                   style={[styles.modalButton, styles.modalButtonDanger]}
                   onPress={confirmDiscardChanges}
                 >
-                  <Text style={[styles.modalButtonText, styles.modalButtonTextPrimary]}>
+                  <Text
+                    style={[
+                      styles.modalButtonText,
+                      styles.modalButtonTextPrimary,
+                    ]}
+                  >
                     Discard Changes
                   </Text>
                 </TouchableOpacity>

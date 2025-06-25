@@ -3,4 +3,4 @@
  * @description Chat hooks exports
  */
 
-export { usePolling } from './usePolling'; 
+export { usePolling } from './usePolling';

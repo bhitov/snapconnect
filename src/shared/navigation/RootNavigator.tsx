@@ -9,7 +9,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
 import { useAuthInitialization } from '../../features/auth/hooks/useAuthInitialization';
-import { ProfileSettingsScreen, ProfileScreen } from '../../features/auth/screens';
+import {
+  ProfileSettingsScreen,
+  ProfileScreen,
+} from '../../features/auth/screens';
 import {
   useIsAuthenticated,
   useAuthStore,

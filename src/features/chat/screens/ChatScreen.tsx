@@ -419,7 +419,9 @@ export function ChatScreen() {
    * Handle camera button press
    */
   const handleCameraPress = useCallback(() => {
-    console.log('📸 ChatScreen: Camera button pressed, navigating to Camera tab');
+    console.log(
+      '📸 ChatScreen: Camera button pressed, navigating to Camera tab'
+    );
     // Navigate to Camera tab using parent navigation
     const parentNav = navigation.getParent();
     if (parentNav) {

@@ -23,10 +23,7 @@ import { useAuthStore, useAuthUser } from '../store/authStore';
 
 import type { RootStackParamList } from '../../../shared/navigation/types';
 
-type ProfileScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Profile'
->;
+type ProfileScreenProps = NativeStackScreenProps<RootStackParamList, 'Profile'>;
 
 /**
  * Profile viewing screen component
@@ -40,7 +37,7 @@ export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
 
   // Get user ID from route params, default to current user
   const userId = route.params?.userId || currentUser?.uid;
-  
+
   // For now, only support viewing own profile (can be extended later for other users)
   const user = currentUser;
   const isOwnProfile = true;
@@ -59,8 +56,6 @@ export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
     console.log('← ProfileScreen: Going back');
     navigation.goBack();
   }, [navigation]);
-
-
 
   const styles = StyleSheet.create({
     container: {
@@ -178,18 +173,30 @@ export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
 
   if (!user) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
+        <View
+          style={[styles.header, { borderBottomColor: theme.colors.border }]}
+        >
           <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-            <Ionicons name='chevron-back' size={24} color={theme.colors.primary} />
-            <Text style={[styles.backButtonText, { color: theme.colors.primary }]}>
+            <Ionicons
+              name='chevron-back'
+              size={24}
+              color={theme.colors.primary}
+            />
+            <Text
+              style={[styles.backButtonText, { color: theme.colors.primary }]}
+            >
               Back
             </Text>
           </TouchableOpacity>
         </View>
-        
+
         <View style={styles.centered}>
-          <Text style={[styles.errorText, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[styles.errorText, { color: theme.colors.textSecondary }]}
+          >
             User not found
           </Text>
         </View>
@@ -198,17 +205,23 @@ export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       {/* Header */}
       <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Ionicons name='chevron-back' size={24} color={theme.colors.primary} />
-          <Text style={[styles.backButtonText, { color: theme.colors.primary }]}>
+          <Ionicons
+            name='chevron-back'
+            size={24}
+            color={theme.colors.primary}
+          />
+          <Text
+            style={[styles.backButtonText, { color: theme.colors.primary }]}
+          >
             Back
           </Text>
         </TouchableOpacity>
-        
-
       </View>
 
       <ScrollView
@@ -220,12 +233,15 @@ export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
           {/* Avatar */}
           <View style={styles.avatarContainer}>
             {user.photoURL ? (
-              <Image source={{ uri: resolveMediaUrl(user.photoURL) }} style={styles.avatar} />
+              <Image
+                source={{ uri: resolveMediaUrl(user.photoURL) }}
+                style={styles.avatar}
+              />
             ) : (
               <Text style={styles.avatarPlaceholder}>
                 {user.displayName?.charAt(0).toUpperCase() ||
-                 user.username?.charAt(0).toUpperCase() ||
-                 '👤'}
+                  user.username?.charAt(0).toUpperCase() ||
+                  '👤'}
               </Text>
             )}
           </View>
@@ -234,11 +250,13 @@ export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
           <Text style={styles.displayName}>
             {user.displayName || user.username || 'No Name'}
           </Text>
-          
+
           {/* Username (if different from display name) */}
-          {user.username && user.displayName && user.username !== user.displayName && (
-            <Text style={styles.username}>@{user.username}</Text>
-          )}
+          {user.username &&
+            user.displayName &&
+            user.username !== user.displayName && (
+              <Text style={styles.username}>@{user.username}</Text>
+            )}
         </View>
 
         {/* Bio Section */}
@@ -248,14 +266,13 @@ export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
             <Text style={styles.bioText}>{(user as any).bio}</Text>
           ) : (
             <Text style={styles.noBioText}>
-              {isOwnProfile 
+              {isOwnProfile
                 ? 'Add a bio to tell others about yourself'
-                : 'No bio available'
-              }
+                : 'No bio available'}
             </Text>
           )}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-} 
+}

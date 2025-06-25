@@ -37,8 +37,6 @@ export function StoryRing({
 }: StoryRingProps) {
   const theme = useTheme();
 
-
-
   // Size configurations
   const sizeConfig = {
     small: {
@@ -136,8 +134,6 @@ export function StoryRing({
       onPress={handlePress}
       activeOpacity={0.8}
     >
-
-
       {/* Avatar container */}
       <View
         style={[

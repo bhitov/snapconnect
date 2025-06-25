@@ -65,8 +65,6 @@ export function SnapPreviewScreen() {
 
   console.log('📷 SnapPreviewScreen: Rendering with URI:', uri, 'Type:', type);
 
-
-
   /**
    * Add text overlay
    */
@@ -218,8 +216,6 @@ export function SnapPreviewScreen() {
 
       {/* Controls */}
       <View style={styles.controlsContainer}>
-
-
         {/* Text Controls */}
         <View style={styles.textControls}>
           {!isAddingText ? (

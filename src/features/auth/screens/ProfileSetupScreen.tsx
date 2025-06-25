@@ -387,7 +387,9 @@ export function ProfileSetupScreen({ navigation: _ }: ProfileSetupScreenProps) {
             {selectedImage || user?.photoURL ? (
               <>
                 <Image
-                  source={{ uri: resolveMediaUrl(selectedImage || user?.photoURL || '') }}
+                  source={{
+                    uri: resolveMediaUrl(selectedImage || user?.photoURL || ''),
+                  }}
                   style={styles.avatar}
                 />
                 {uploadingImage && (

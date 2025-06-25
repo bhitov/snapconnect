@@ -507,7 +507,9 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
           <View style={styles.userInfo}>
             <Image
               source={{
-                uri: resolveMediaUrl(story.user.photoURL || 'https://via.placeholder.com/40'),
+                uri: resolveMediaUrl(
+                  story.user.photoURL || 'https://via.placeholder.com/40'
+                ),
               }}
               style={styles.avatar}
             />

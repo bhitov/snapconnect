@@ -21,7 +21,7 @@ interface PollingOptions {
 
 /**
  * Hook for polling data at regular intervals
- * 
+ *
  * @param pollingFunction - Function to call for polling
  * @param options - Polling configuration options
  */
@@ -137,4 +137,4 @@ export function usePolling(
     stopPolling,
     isPolling: isPollingRef.current,
   };
-} 
+}

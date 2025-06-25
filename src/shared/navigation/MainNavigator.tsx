@@ -115,10 +115,7 @@ function FriendsStackNavigator() {
         name='FriendRequests'
         component={FriendRequestsScreen}
       />
-      <FriendsStack.Screen
-        name='Profile'
-        component={ProfileScreen}
-      />
+      <FriendsStack.Screen name='Profile' component={ProfileScreen} />
     </FriendsStack.Navigator>
   );
 }

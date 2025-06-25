@@ -264,12 +264,12 @@ export function FriendRequestsScreen({
               { backgroundColor: theme.colors.background },
             ]}
           >
-                      {item.senderPhotoURL ? (
-            <Image
-              source={{ uri: resolveMediaUrl(item.senderPhotoURL) }}
-              style={styles.avatarImage}
-            />
-          ) : (
+            {item.senderPhotoURL ? (
+              <Image
+                source={{ uri: resolveMediaUrl(item.senderPhotoURL) }}
+                style={styles.avatarImage}
+              />
+            ) : (
               <Ionicons
                 name='person'
                 size={24}
@@ -347,12 +347,12 @@ export function FriendRequestsScreen({
               { backgroundColor: theme.colors.background },
             ]}
           >
-                      {item.receiverPhotoURL ? (
-            <Image
-              source={{ uri: resolveMediaUrl(item.receiverPhotoURL) }}
-              style={styles.avatarImage}
-            />
-          ) : (
+            {item.receiverPhotoURL ? (
+              <Image
+                source={{ uri: resolveMediaUrl(item.receiverPhotoURL) }}
+                style={styles.avatarImage}
+              />
+            ) : (
               <Ionicons
                 name='person'
                 size={24}
