@@ -23,6 +23,7 @@ interface CameraCaptureProps {
 
 export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
   const [facing, setFacing] = useState<CameraType>('back');
+  const [mode, setMode] = useState<'picture' | 'video'>('picture');
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [microphonePermission, requestMicrophonePermission] = useMicrophonePermissions();
   const [isRecording, setIsRecording] = useState(false);
@@ -117,19 +118,27 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   };
 
+  /**
+   * Toggle camera mode between photo and video
+   */
+  const toggleMode = () => {
+    setMode(current => (current === 'picture' ? 'video' : 'picture'));
+  };
+
   return (
     <View style={styles.container}>
       <CameraView 
         ref={cameraRef}
         style={styles.camera} 
         facing={facing}
+        mode={mode}
       />
       
       {/* Overlay positioned absolutely on top of camera */}
       <View style={styles.overlay}>
         {/* Status indicator */}
         <View style={styles.status}>
-          <Text style={styles.statusText}>Camera Test</Text>
+          <Text style={styles.statusText}>Camera Test - {mode.toUpperCase()}</Text>
           {isRecording && (
             <View style={styles.recordingContainer}>
               <View style={styles.recordingDot} />
@@ -138,34 +147,67 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
           )}
         </View>
 
+        {/* Mode Toggle */}
+        <View style={styles.modeToggle}>
+          <TouchableOpacity 
+            style={[
+              styles.modeButton,
+              mode === 'picture' && styles.activeModeButton
+            ]} 
+            onPress={() => setMode('picture')}
+            disabled={isRecording}
+          >
+            <Text style={[
+              styles.modeButtonText,
+              mode === 'picture' && styles.activeModeButtonText
+            ]}>PHOTO</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[
+              styles.modeButton,
+              mode === 'video' && styles.activeModeButton
+            ]} 
+            onPress={() => setMode('video')}
+            disabled={isRecording}
+          >
+            <Text style={[
+              styles.modeButtonText,
+              mode === 'video' && styles.activeModeButtonText
+            ]}>VIDEO</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Controls */}
         <View style={styles.controls}>
           <TouchableOpacity 
             style={styles.flipButton} 
             onPress={toggleCameraFacing}
+            disabled={isRecording}
           >
             <Text style={styles.buttonText}>Flip</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={styles.captureButton} 
-            onPress={takePhoto}
-            disabled={isRecording}
-          >
-            <Text style={styles.buttonText}>Photo</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={[
-              styles.videoButton, 
-              isRecording && styles.recording
-            ]} 
-            onPress={toggleVideoRecording}
-          >
-            <Text style={styles.buttonText}>
-              {isRecording ? 'Stop' : 'Video'}
-            </Text>
-          </TouchableOpacity>
+          {mode === 'picture' ? (
+            <TouchableOpacity 
+              style={styles.captureButton} 
+              onPress={takePhoto}
+            >
+              <Text style={styles.buttonText}>Take Photo</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity 
+              style={[
+                styles.videoButton, 
+                isRecording && styles.recording
+              ]} 
+              onPress={toggleVideoRecording}
+            >
+              <Text style={styles.buttonText}>
+                {isRecording ? 'Stop' : 'Record'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>
@@ -273,5 +315,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  modeToggle: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 25,
+    padding: 4,
+    marginTop: 20,
+  },
+  modeButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    minWidth: 80,
+  },
+  activeModeButton: {
+    backgroundColor: '#007AFF',
+  },
+  modeButtonText: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  activeModeButtonText: {
+    color: '#fff',
   },
 }); 
