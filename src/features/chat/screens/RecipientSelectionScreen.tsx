@@ -22,6 +22,7 @@ import {
   useFriendsList,
 } from '@/features/friends/store/friendsStore';
 import { useStoriesStore } from '@/features/stories/store/storiesStore';
+import { useCameraStore } from '@/features/camera/store/cameraStore';
 import { useTheme } from '@/shared/hooks/useTheme';
 
 import {
@@ -103,6 +104,7 @@ export function RecipientSelectionScreen() {
     clearSendError,
   } = useChatStore();
   const { createStory } = useStoriesStore();
+  const { hideCameraViewTemporarily } = useCameraStore();
 
   // Local state
   const [selectedDuration, setSelectedDuration] = useState<SnapDuration>(3);
@@ -172,6 +174,9 @@ export function RecipientSelectionScreen() {
         '✅ RecipientSelectionScreen: Story posted successfully, navigating back to camera'
       );
 
+      // Hide camera view temporarily when going back
+      hideCameraViewTemporarily();
+
       // Pop 2 screens: RecipientSelection modal + SnapPreview modal, back to camera
       navigation.pop(2);
     } catch (error) {
@@ -231,6 +236,9 @@ export function RecipientSelectionScreen() {
         '✅ RecipientSelectionScreen: Snap sent successfully, navigating back to camera'
       );
 
+      // Hide camera view temporarily when going back
+      hideCameraViewTemporarily();
+
       // Pop 2 screens: RecipientSelection modal + SnapPreview modal, back to camera
       navigation.pop(2);
     } catch (error) {
@@ -248,6 +256,9 @@ export function RecipientSelectionScreen() {
    * Handle back navigation
    */
   const handleBack = () => {
+    // Hide camera view temporarily when going back
+    hideCameraViewTemporarily();
+    
     navigation.goBack();
   };
 
