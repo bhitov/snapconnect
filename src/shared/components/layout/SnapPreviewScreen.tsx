@@ -28,6 +28,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { RootStackParamList } from '../../navigation/types';
 import { generateId } from '../../utils/idGenerator';
 import { resolveMediaUrl } from '../../utils/resolveMediaUrl';
+import { useCameraStore } from '../../../features/camera/store/cameraStore';
 
 // Constants
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -57,6 +58,9 @@ export function SnapPreviewScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'SnapPreview'>>();
 
   const { uri, type } = route.params;
+
+  // Get camera store actions
+  const { hideCameraViewTemporarily } = useCameraStore();
 
   // State
   const [textOverlay, setTextOverlay] = useState<TextOverlay | null>(null);
@@ -135,8 +139,12 @@ export function SnapPreviewScreen() {
    */
   const handleRetake = useCallback(() => {
     console.log('🔄 SnapPreviewScreen: Retaking media');
+    
+    // Hide camera view temporarily when going back (5 seconds for testing)
+    hideCameraViewTemporarily();
+    
     navigation.goBack();
-  }, [navigation]);
+  }, [navigation, hideCameraViewTemporarily]);
 
   /**
    * Send snap - navigate to recipient selection

@@ -121,6 +121,10 @@ const initialState = {
 
   // UI state
   controlsVisible: true,
+  
+  // Camera view visibility (for temporary hiding after preview)
+  cameraViewVisible: true,
+  cameraViewDelayTimeout: null,
 };
 
 /**
@@ -646,6 +650,54 @@ export const useCameraStore = create<CameraStore>()(
           state.controlsVisible = visible;
         });
       },
+
+      // Camera view visibility management
+      hideCameraViewTemporarily: (delayMs = 200) => {
+        console.log('📷 CameraStore: Hiding camera view temporarily for', delayMs, 'ms');
+
+        set(state => {
+          // Clear any existing timeout
+          if (state.cameraViewDelayTimeout) {
+            clearTimeout(state.cameraViewDelayTimeout);
+          }
+          
+          state.cameraViewVisible = false;
+          
+          // Store timeout ID for clearing later
+          const timeoutId = setTimeout(() => {
+            console.log('📷 CameraStore: Showing camera view after delay');
+            set(currentState => {
+              currentState.cameraViewVisible = true;
+              currentState.cameraViewDelayTimeout = null;
+            });
+          }, delayMs);
+          
+          state.cameraViewDelayTimeout = timeoutId as any;
+        });
+      },
+
+      showCameraView: () => {
+        console.log('📷 CameraStore: Showing camera view immediately');
+
+        set(state => {
+          if (state.cameraViewDelayTimeout) {
+            clearTimeout(state.cameraViewDelayTimeout);
+            state.cameraViewDelayTimeout = null;
+          }
+          state.cameraViewVisible = true;
+        });
+      },
+
+      clearCameraViewDelay: () => {
+        console.log('📷 CameraStore: Clearing camera view delay');
+
+        set(state => {
+          if (state.cameraViewDelayTimeout) {
+            clearTimeout(state.cameraViewDelayTimeout);
+            state.cameraViewDelayTimeout = null;
+          }
+        });
+      },
     })),
     {
       name: 'CameraStore',
@@ -675,3 +727,5 @@ export const useCameraLoading = () => useCameraStore(state => state.isLoading);
 export const useCameraReady = () => useCameraStore(state => state.isReady);
 export const useControlsVisible = () =>
   useCameraStore(state => state.controlsVisible);
+export const useCameraViewVisible = () =>
+  useCameraStore(state => state.cameraViewVisible);

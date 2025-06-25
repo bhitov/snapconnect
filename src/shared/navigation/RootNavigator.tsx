@@ -92,7 +92,7 @@ export function RootNavigator() {
               component={SnapPreviewScreen}
               options={{
                 presentation: 'modal',
-                gestureEnabled: true,
+                gestureEnabled: false,
               }}
             />
             <Stack.Screen

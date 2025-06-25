@@ -23,7 +23,7 @@ import {
 import { useTheme } from '@/shared/hooks/useTheme';
 
 import { CameraView, CameraControls, CaptureButton } from '../components';
-import { useCameraStore } from '../store/cameraStore';
+import { useCameraStore, useCameraViewVisible } from '../store/cameraStore';
 
 import type {
   MainTabParamList,
@@ -66,7 +66,11 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
     stopVideoRecording,
     clearError,
     setControlsVisible,
+    hideCameraViewTemporarily,
+    clearCameraViewDelay,
   } = useCameraStore();
+
+  const cameraViewVisible = useCameraViewVisible();
 
   console.log(
     '📷 CameraScreen: Rendering with mode:',
@@ -112,9 +116,13 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
 
       return () => {
         console.log('📷 CameraScreen: Screen unfocused');
+        // Clear any ongoing camera view delay when leaving the screen
+        clearCameraViewDelay();
       };
-    }, [requestPermissions])
+    }, [requestPermissions, clearCameraViewDelay])
   );
+
+
 
   /**
    * Navigate to preview when media is captured
@@ -220,11 +228,19 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
       <StatusBar barStyle='light-content' backgroundColor='#000000' />
 
       {/* Camera View */}
-      <CameraView
-        ref={cameraRef}
-        onTap={handleScreenTap}
-        style={styles.camera}
-      />
+      {cameraViewVisible ? (
+        <CameraView
+          ref={cameraRef}
+          onTap={handleScreenTap}
+          style={styles.camera}
+        />
+      ) : (
+        <View style={[styles.camera, styles.hiddenCameraView]}>
+          <Text style={[styles.hiddenCameraText, { color: theme.colors.white }]}>
+            Camera loading...
+          </Text>
+        </View>
+      )}
 
       {/* Camera Controls Overlay */}
       {controlsVisible && (
@@ -349,5 +365,15 @@ const styles = StyleSheet.create({
   recordingText: {
     fontSize: 14,
     fontWeight: '600',
+  },
+
+  hiddenCameraView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  hiddenCameraText: {
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
