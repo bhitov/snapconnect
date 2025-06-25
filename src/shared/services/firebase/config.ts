@@ -22,6 +22,7 @@ import {
   connectStorageEmulator,
 } from 'firebase/storage';
 import { Platform } from 'react-native';
+import { isDev } from '../../utils/isDev';
 
 // Firebase configuration from environment variables
 const firebaseConfig = {
@@ -64,7 +65,7 @@ function initializeFirebase(): void {
     console.log('🌐 Platform:', Platform.OS);
 
     // Connect to emulators in development
-    if (__DEV__) {
+    if (isDev()) {
       connectToEmulators();
     }
   } catch (error) {
@@ -111,7 +112,7 @@ export function getFirebaseConfig() {
     authDomain: firebaseConfig.authDomain,
     databaseURL: firebaseConfig.databaseURL,
     storageBucket: firebaseConfig.storageBucket,
-    isDev: __DEV__,
+    isDev: isDev(),
   };
 }
 

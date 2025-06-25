@@ -5,6 +5,8 @@
   "scripts": {
     "start": "expo start",
     "start:tunnel": "expo start --tunnel",
+    "camera-test": "EXPO_PUBLIC_CAMERA_TEST=true EXPO_PUBLIC_PROD_TEST=true expo start --tunnel --clear",
+    "start:firebase": "EXPO_PUBLIC_PROD_TEST=true expo start --tunnel --clear",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",

@@ -7,6 +7,7 @@
 import { Platform } from 'react-native';
 
 import { auth, database, storage, functions } from './config';
+import { isDev } from '../../utils/isDev';
 
 /**
  * Test Firebase services connectivity
@@ -14,7 +15,7 @@ import { auth, database, storage, functions } from './config';
 export async function testFirebaseConnectivity(): Promise<void> {
   console.log('🔍 Testing Firebase connectivity...');
   console.log('🌐 Platform:', Platform.OS);
-  console.log('🔧 Development mode:', __DEV__);
+  console.log('🔧 Development mode:', isDev());
 
   try {
     // Test Auth service

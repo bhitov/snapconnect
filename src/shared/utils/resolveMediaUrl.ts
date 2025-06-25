@@ -5,6 +5,7 @@
  */
 
 import { Platform } from 'react-native';
+import { isDev } from './isDev';
 
 /**
  * Resolves media URLs for different environments and platforms
@@ -25,7 +26,7 @@ export function resolveMediaUrl(mediaUrl: string): string {
   }
 
   // In production, return URL as-is
-  if (!__DEV__) {
+  if (!isDev()) {
     console.log('🌐 resolveMediaUrl: Production mode, returning original URL');
     return mediaUrl;
   }
