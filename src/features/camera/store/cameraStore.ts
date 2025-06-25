@@ -221,10 +221,11 @@ export const useCameraStore = create<CameraStore>()(
       capturePhoto: async (cameraRef?: React.RefObject<CameraView | null>) => {
         console.log('📸 CameraStore: Capturing photo');
 
-        set(state => {
-          state.isLoading = true;
-          state.error = null;
-        });
+        // SETTING STATE HERE TRIGGERS A RERENDER WHICH BREAKS THE CAMERA
+        // set(state => {
+        //   state.isLoading = true;
+        //   state.error = null;
+        // });
 
         try {
           if (!cameraRef?.current) {

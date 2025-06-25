@@ -54,6 +54,11 @@ export const colors = {
   textSecondary: '#757575',
   textTertiary: '#9E9E9E',
   textInverse: '#FFFFFF',
+  text: '#212121', // Alias for textPrimary
+
+  // Surface Colors
+  surface: '#FFFFFF',
+  surfaceSecondary: '#F8F9FA',
 
   // Border Colors
   border: '#E0E0E0',
@@ -76,6 +81,11 @@ export const darkColors = {
   textSecondary: '#BDBDBD',
   textTertiary: '#757575',
   textInverse: '#212121',
+  text: '#FFFFFF', // Alias for textPrimary in dark mode
+
+  // Surface Colors for dark mode
+  surface: '#121212',
+  surfaceSecondary: '#1E1E1E',
 
   border: '#424242',
 
