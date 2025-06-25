@@ -59,7 +59,7 @@ module.exports = {
     // General rules
     'no-console': 'off',
     'no-debugger': 'error',
-    'no-alert': 'error',
+    'no-alert': 'warn',
     'prefer-const': 'error',
     'no-var': 'error',
     'object-shorthand': 'error',

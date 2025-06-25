@@ -25,9 +25,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 
 import { useTheme } from '../../hooks/useTheme';
-import { resolveMediaUrl } from '../../utils/resolveMediaUrl';
 import { RootStackParamList } from '../../navigation/types';
 import { generateId } from '../../utils/idGenerator';
+import { resolveMediaUrl } from '../../utils/resolveMediaUrl';
 
 // Constants
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');

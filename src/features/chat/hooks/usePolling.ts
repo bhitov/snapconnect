@@ -4,8 +4,8 @@
  * Only triggers rerenders when data actually changes to optimize performance.
  */
 
-import { useCallback, useEffect, useRef } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useEffect, useRef } from 'react';
 
 /**
  * Options for the polling hook

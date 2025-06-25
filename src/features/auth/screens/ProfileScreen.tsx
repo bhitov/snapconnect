@@ -4,6 +4,7 @@
  * Shows avatar, name, and bio in a clean read-only interface.
  */
 
+import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback } from 'react';
 import {
@@ -15,7 +16,6 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { resolveMediaUrl } from '../../../shared/utils/resolveMediaUrl';
