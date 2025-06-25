@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Cursor Rules
+
+## Core Development Philosophy
+
+### Simplicity First - Anti-Complexity Enforcement
+
+**absolute rule: always choose the simplest solution. never add layers to fix previous layers.**
+
+#### core mindset:
+- simple > complex always
+- direct > indirect always
+- fix the root cause, not the symptom
+- delete code rather than add workarounds
+
+### dry principle enforcement
+
+**critical rule: follow the dry (don't repeat yourself) principle absolutely. never duplicate code, styles, or logic across multiple files.**

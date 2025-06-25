@@ -5,18 +5,19 @@
  */
 
 import { CameraView as ExpoCamera, CameraType, FlashMode } from 'expo-camera';
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
-  type ViewStyle,
+  type ViewStyle
 } from 'react-native';
 
 // Store
 import { useCameraStore } from '../store/cameraStore';
 
 import type { CameraType as AppCameraType } from '../types';
+import { useIsFocused } from '@react-navigation/native';
 
 interface CameraViewProps {
   onTap?: () => void;
@@ -58,6 +59,8 @@ const mapFlashMode = (flashMode: string): FlashMode => {
 export const CameraView = forwardRef<ExpoCamera, CameraViewProps>(
   ({ onTap, style }, ref) => {
     const { settings, permissions } = useCameraStore();
+    const isFocused = useIsFocused();
+    const [ratio, setRatio] = useState<string | undefined>();
 
     console.log('📷 CameraView: Rendering with camera type:', settings.type);
 
@@ -69,7 +72,7 @@ export const CameraView = forwardRef<ExpoCamera, CameraViewProps>(
     };
 
     // Don't render if no camera permission
-    if (!permissions.camera) {
+    if (!isFocused || !permissions.camera) {
       return <View style={[styles.container, style]} />;
     }
 
