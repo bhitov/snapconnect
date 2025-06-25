@@ -2,6 +2,17 @@
 
 A modern, ephemeral messaging app built with React Native, TypeScript, and Firebase. SnapConnect brings the excitement of disappearing messages, stories, and real-time communication to mobile devices.
 
+
+## HOW TO RUN THIS (the part of this file written by a human)
+npm install
+cp env.demo.local .env.local
+in one console tab, npm run emulator
+in another, npm run start:tunnel
+when the app builds, hit 'a' to launch your android emulator. You may need to install the android developer studio for this to work.
+
+(END OF HUMAN WRITTEN PART)
+
+
 ## 🚀 Quick Start
 
 ### Prerequisites
