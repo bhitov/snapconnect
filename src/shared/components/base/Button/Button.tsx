@@ -22,10 +22,6 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
 
 import { useTheme } from '../../../hooks/useTheme';
 
@@ -48,11 +44,6 @@ export interface ButtonProps {
   fullWidth?: boolean;
 }
 
-const ANIMATION_CONFIG = {
-  damping: 15,
-  stiffness: 150,
-};
-
 /**
  * Primary button component for user actions
  *
@@ -73,18 +64,13 @@ export const Button = memo<ButtonProps>(
     const theme = useTheme();
 
     /**
-     * Handle button press with animation
+     * Handle button press
      */
     const handlePress = useCallback(() => {
       if (!loading && !disabled) {
         onPress?.();
       }
     }, [loading, disabled, onPress]);
-
-    // Animation for press feedback
-    const animatedStyle = useAnimatedStyle(() => ({
-      transform: [{ scale: withSpring(disabled ? 0.95 : 1, ANIMATION_CONFIG) }],
-    }));
 
     const styles = StyleSheet.create({
       container: {
@@ -160,47 +146,45 @@ export const Button = memo<ButtonProps>(
     });
 
     return (
-      <Animated.View style={animatedStyle}>
-        <TouchableOpacity
-          style={[
-            styles.container,
-            styles[variant],
-            disabled && styles.disabled,
-          ]}
-          onPress={handlePress}
-          disabled={disabled || loading}
-          activeOpacity={0.8}
-          testID={testID}
-          accessible
-          accessibilityRole='button'
-          accessibilityState={{ disabled: disabled || loading }}
-          {...rest}
-        >
-          {loading ? (
-            <ActivityIndicator
-              color={
-                variant === 'primary'
-                  ? theme.colors.black
-                  : variant === 'secondary'
-                    ? theme.colors.white
-                    : theme.colors.primary
-              }
-              size='small'
-            />
-          ) : (
-            <Text
-              style={[
-                styles.text,
-                styles[`${variant}Text`],
-                size === 'small' && styles.smallText,
-                size === 'large' && styles.largeText,
-              ]}
-            >
-              {children}
-            </Text>
-          )}
-        </TouchableOpacity>
-      </Animated.View>
+      <TouchableOpacity
+        style={[
+          styles.container,
+          styles[variant],
+          disabled && styles.disabled,
+        ]}
+        onPress={handlePress}
+        disabled={disabled || loading}
+        activeOpacity={0.8}
+        testID={testID}
+        accessible
+        accessibilityRole='button'
+        accessibilityState={{ disabled: disabled || loading }}
+        {...rest}
+      >
+        {loading ? (
+          <ActivityIndicator
+            color={
+              variant === 'primary'
+                ? theme.colors.black
+                : variant === 'secondary'
+                  ? theme.colors.white
+                  : theme.colors.primary
+            }
+            size='small'
+          />
+        ) : (
+          <Text
+            style={[
+              styles.text,
+              styles[`${variant}Text`],
+              size === 'small' && styles.smallText,
+              size === 'large' && styles.largeText,
+            ]}
+          >
+            {children}
+          </Text>
+        )}
+      </TouchableOpacity>
     );
   }
 );

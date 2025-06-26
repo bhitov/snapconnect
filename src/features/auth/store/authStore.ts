@@ -261,7 +261,7 @@ export const useAuthStore = create<AuthState>()(
         // Computed
         isProfileComplete: () => {
           const user = get().user;
-          return !!(user?.username && user?.displayName);
+          return !!(user?.profileSetupCompleted);
         },
       })),
       {

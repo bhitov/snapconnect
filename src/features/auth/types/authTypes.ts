@@ -15,6 +15,7 @@ export interface User {
   photoURL?: string;
   createdAt: number;
   lastActive: number;
+  profileSetupCompleted?: boolean;
 }
 
 /**
@@ -86,6 +87,7 @@ export interface UserProfileData {
   bio?: string;
   createdAt: number;
   lastActive: number;
+  profileSetupCompleted?: boolean;
 }
 
 /**

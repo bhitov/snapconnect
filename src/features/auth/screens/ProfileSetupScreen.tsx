@@ -515,18 +515,11 @@ export function ProfileSetupScreen({ navigation: _ }: ProfileSetupScreenProps) {
             loading={isLoading || uploadingImage}
             disabled={isLoading || uploadingImage}
             fullWidth
+            testID='complete-setup-button'
           >
             Complete Setup
           </Button>
 
-          <Button
-            variant='ghost'
-            onPress={handleSkipSetup}
-            disabled={isLoading || uploadingImage}
-            fullWidth
-          >
-            Skip for Now
-          </Button>
         </View>
       </ScrollView>
     </Screen>

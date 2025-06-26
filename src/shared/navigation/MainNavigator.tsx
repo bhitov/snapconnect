@@ -283,6 +283,7 @@ export function MainNavigator() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name='chatbubble' size={size} color={color} />
           ),
+          tabBarButtonTestID: 'chats-tab-button',
         }}
       />
       <Tab.Screen
@@ -293,6 +294,7 @@ export function MainNavigator() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name='camera' size={size} color={color} />
           ),
+          tabBarButtonTestID: 'camera-tab-button',
         }}
       />
       <Tab.Screen
@@ -303,6 +305,7 @@ export function MainNavigator() {
           tabBarIcon: ({ color, size }) => (
             <FriendsTabIcon color={color} size={size} />
           ),
+          tabBarButtonTestID: 'friends-tab-button',
         }}
       />
       <Tab.Screen
@@ -313,6 +316,7 @@ export function MainNavigator() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name='book' size={size} color={color} />
           ),
+          tabBarButtonTestID: 'stories-tab-button',
         }}
       />
     </Tab.Navigator>

@@ -237,6 +237,7 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
                   console.log('Accept friend request for:', item.username);
                 }
               }}
+              testID={`${item.friendshipStatus === 'none' ? 'add-friend' : item.friendshipStatus === 'request_received' ? 'accept-request' : 'friend-action'}-button-${item.username}`}
             >
               {getActionButtonText(item.friendshipStatus)}
             </Button>

@@ -153,6 +153,7 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
                     autoCorrect={false}
                     autoComplete='email'
                     keyboardType='email-address'
+                    testID='email-input-login'
                   />
                 )}
               />
@@ -186,6 +187,7 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
                       autoCapitalize='none'
                       autoCorrect={false}
                       autoComplete='password'
+                      testID='password-input-login'
                     />
                     <Button
                       variant='ghost'

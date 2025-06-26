@@ -218,6 +218,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
                 { backgroundColor: theme.colors.surface },
               ]}
               onPress={() => handleOpenChat(item)}
+              testID={`chat-button-${item.username}`}
             >
               <Ionicons name='chatbubble' size={18} color={theme.colors.text} />
             </TouchableOpacity>
@@ -282,6 +283,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
             { backgroundColor: theme.colors.surface },
           ]}
           onPress={() => navigation.navigate('FriendRequests')}
+          testID="requests-button"
         >
           <Ionicons name='mail' size={20} color={theme.colors.text} />
           <Text style={[styles.requestsText, { color: theme.colors.text }]}>

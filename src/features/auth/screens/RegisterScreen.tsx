@@ -180,6 +180,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
                     autoCapitalize='none'
                     autoCorrect={false}
                     autoComplete='username'
+                    testID='username-input-register'
                   />
                 )}
               />
@@ -212,6 +213,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
                     autoCorrect={false}
                     autoComplete='email'
                     keyboardType='email-address'
+                    testID='email-input-register'
                   />
                 )}
               />
@@ -245,6 +247,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
                       autoCapitalize='none'
                       autoCorrect={false}
                       autoComplete='password-new'
+                      testID='password-input-register'
                     />
                     <Button
                       variant='ghost'
@@ -284,6 +287,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
                       autoCapitalize='none'
                       autoCorrect={false}
                       autoComplete='password-new'
+                      testID='confirm-password-input-register'
                     />
                     <Button
                       variant='ghost'

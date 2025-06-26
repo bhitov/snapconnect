@@ -578,6 +578,7 @@ export function ChatScreen() {
             multiline
             maxLength={500}
             editable={!isSending}
+            testID="message-input"
           />
 
           <TouchableOpacity
@@ -593,6 +594,7 @@ export function ChatScreen() {
             onPress={handleSendMessage}
             disabled={!messageText.trim() || isSending}
             activeOpacity={0.7}
+            testID="send-button"
           >
             <Text
               style={[

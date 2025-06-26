@@ -7,6 +7,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { useEffect } from 'react';
 
 import { useAuthInitialization } from '../../features/auth/hooks/useAuthInitialization';
 import {
@@ -25,6 +26,7 @@ import { useTheme } from '../hooks/useTheme';
 
 import { AuthNavigator } from './AuthNavigator';
 import { MainNavigator } from './MainNavigator';
+import { navigationRef } from './navigationRef';
 import { RootStackParamList } from './types';
 
 // Placeholder screens for modal navigation
@@ -74,8 +76,15 @@ export function RootNavigator() {
   // Determine if user should see the main app
   const shouldShowMainApp = isAuthenticated && isProfileComplete();
 
+  // Expose navigation ref to window for E2E testing
+  useEffect(() => {
+    if (navigationRef.current) {
+      (window as any).__navigationRef = navigationRef.current;
+    }
+  }, []);
+
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,

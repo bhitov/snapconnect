@@ -310,6 +310,7 @@ export function FriendRequestsScreen({
               disabled={isLoading}
               loading={isLoading}
               onPress={() => handleAcceptRequest(item)}
+              testID={`accept-button-${item.senderUsername}`}
             >
               Accept
             </Button>
@@ -318,6 +319,7 @@ export function FriendRequestsScreen({
               size='small'
               disabled={isLoading}
               onPress={() => handleRejectRequest(item)}
+              testID={`reject-button-${item.senderUsername}`}
             >
               Reject
             </Button>

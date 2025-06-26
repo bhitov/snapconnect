@@ -11,6 +11,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   updateProfile,
+  User as FirebaseUser,
 } from 'firebase/auth';
 import { ref, set, get, update } from 'firebase/database';
 import {
@@ -65,8 +66,9 @@ class AuthService {
 
       // If no user profile exists, create one automatically
       if (!userProfile) {
-        console.log('⚠️ AuthService: User profile not found, creating automatically');
-        userProfile = await this.createDefaultUserProfile(firebaseUser, email);
+        throw new Error('User profile not found');
+//         console.log('⚠️ AuthService: User profile not found, creating automatically');
+//         userProfile = await this.createDefaultUserProfile(firebaseUser, email);
       }
 
       // Update last active timestamp
@@ -131,6 +133,7 @@ class AuthService {
         displayName: username, // Default display name to username
         createdAt: Date.now(),
         lastActive: Date.now(),
+        profileSetupCompleted: false, // User needs to complete profile setup
         ...(firebaseUser.photoURL && { photoURL: firebaseUser.photoURL }),
       };
 
@@ -203,13 +206,14 @@ class AuthService {
     // If no user profile exists, create one automatically
     if (!userProfile) {
       console.log('⚠️ AuthService: User profile not found in getCurrentUser, creating automatically');
+      throw new Error('User profile not found');
       
-      try {
-        userProfile = await this.createDefaultUserProfile(firebaseUser);
-      } catch (error) {
-        console.error('❌ AuthService: Failed to create user profile automatically:', error);
-        return null;
-      }
+//       try {
+//         userProfile = await this.createDefaultUserProfile(firebaseUser);
+//       } catch (error) {
+//         console.error('❌ AuthService: Failed to create user profile automatically:', error);
+//         return null;
+//       }
     }
     
     return userProfile;
@@ -236,8 +240,9 @@ class AuthService {
           
           // If no user profile exists, create one automatically
           if (!userProfile) {
-            console.log('⚠️ AuthService: User profile not found in auth state change, creating automatically');
-            userProfile = await this.createDefaultUserProfile(firebaseUser);
+            throw new Error('User profile not found');
+//             console.log('⚠️ AuthService: User profile not found in auth state change, creating automatically');
+//             userProfile = await this.createDefaultUserProfile(firebaseUser);
           }
           
           callback(userProfile);
@@ -268,6 +273,7 @@ class AuthService {
       const updates: Partial<UserProfileData> = {
         displayName: profileData.displayName,
         lastActive: Date.now(),
+        profileSetupCompleted: true,
       };
 
       if (profileData.bio) {
@@ -508,38 +514,39 @@ class AuthService {
    * @param {string} fallbackEmail - Fallback email if Firebase user email is null
    * @returns {Promise<User>} Created user profile
    */
-  private async createDefaultUserProfile(firebaseUser: any, fallbackEmail?: string): Promise<User> {
-    console.log('🔧 AuthService: Creating default user profile for UID:', firebaseUser.uid);
-
-    // Generate a default username from email or displayName
-    const defaultUsername = await this.generateAvailableUsername(
-      firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'user'
-    );
-
-    // Create user profile data
-    const userProfileData: UserProfileData = {
-      uid: firebaseUser.uid,
-      email: (firebaseUser.email || fallbackEmail || '').toLowerCase(),
-      username: defaultUsername,
-      displayName: firebaseUser.displayName || defaultUsername,
-      createdAt: Date.now(),
-      lastActive: Date.now(),
-      ...(firebaseUser.photoURL && { photoURL: firebaseUser.photoURL }),
-    };
-
-    // Save profile to database
-    await this.createUserProfile(userProfileData);
-
-    // Update Firebase Auth profile if needed
-    if (!firebaseUser.displayName) {
-      await updateProfile(firebaseUser, {
-        displayName: defaultUsername,
-      });
-    }
-
-    console.log('✅ AuthService: Default user profile created successfully');
-    return userProfileData;
-  }
+//   private async createDefaultUserProfile(firebaseUser: FirebaseUser, fallbackEmail?: string): Promise<User> {
+//     console.log('🔧 AuthService: Creating default user profile for UID:', firebaseUser.uid);
+// 
+//     // // Generate a default username from email or displayName
+//     // const defaultUsername = await this.generateAvailableUsername(
+//     //   firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'user'
+//     // );
+// 
+//     // Create user profile data
+//     const userProfileData: UserProfileData = {
+//       uid: firebaseUser.uid,
+//       email: (firebaseUser.email || fallbackEmail || '').toLowerCase(),
+//       username: firebaseUser.displayName,
+//       displayName: firebaseUser.displayName || firebaseUser.username,
+//       createdAt: Date.now(),
+//       lastActive: Date.now(),
+//       profileSetupCompleted: false, // User needs to complete profile setup
+//       ...(firebaseUser.photoURL && { photoURL: firebaseUser.photoURL }),
+//     };
+// 
+//     // Save profile to database
+//     await this.createUserProfile(userProfileData);
+// 
+//     // Update Firebase Auth profile if needed
+//     if (!firebaseUser.displayName) {
+//       await updateProfile(firebaseUser, {
+//         displayName: defaultUsername,
+//       });
+//     }
+// 
+//     console.log('✅ AuthService: Default user profile created successfully');
+//     return userProfileData;
+//   }
 
   /**
    * Create user profile in database
