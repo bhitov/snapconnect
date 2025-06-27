@@ -48,8 +48,8 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
     reset,
   } = useForm<LoginForm>({
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'alex_chen@example.com',
+      password: 'pass123word',
     },
   });
 

@@ -69,6 +69,7 @@ export const startCoachChat = onCall<StartCoachChatData>(async (request) => {
       parentCid,
       createdAt   : now
     },
+    [`conversations/${parentCid}/coachChatId`]: coachCid,
     [`coachIndex/${uid}/${parentCid}`]: coachCid
   });
 
@@ -77,7 +78,7 @@ export const startCoachChat = onCall<StartCoachChatData>(async (request) => {
   await db.ref(`textMessages/${helloId}`).set({
     conversationId: coachCid,
     senderId      : "coach",
-    text          : "Hi! I'm your relationship coach. Ask me anything or choose an option from the menu.",
+    text          : "Hi! I'm your relationship coach. Ask me anything or choose an option from the menu. TEST",
     createdAt     : now
   });
 

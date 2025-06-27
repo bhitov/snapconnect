@@ -769,6 +769,10 @@ class ChatService {
             ...(lastMessage && { lastMessage }),
             unreadCount: conversation.unreadCount[currentUserIndex] || 0,
             updatedAt: conversation.updatedAt,
+            // Coach-specific fields
+            ...(conversation.isCoach && { isCoach: conversation.isCoach }),
+            ...(conversation.parentCid && { parentCid: conversation.parentCid }),
+            ...(conversation.coachChatId && { coachChatId: conversation.coachChatId }),
           });
         } else {
           // Handle one-to-one conversations (existing logic)
@@ -815,6 +819,10 @@ class ChatService {
             ...(lastMessage && { lastMessage }),
             unreadCount: conversation.unreadCount[currentUserIndex] || 0,
             updatedAt: conversation.updatedAt,
+            // Coach-specific fields
+            ...(conversation.isCoach && { isCoach: conversation.isCoach }),
+            ...(conversation.parentCid && { parentCid: conversation.parentCid }),
+            ...(conversation.coachChatId && { coachChatId: conversation.coachChatId }),
           });
         }
       }
@@ -1212,6 +1220,7 @@ class ChatService {
 
       // If no unread messages, nothing to do
       if (
+        !conversation.unreadCount ||
         !conversation.unreadCount[currentUserIndex] ||
         conversation.unreadCount[currentUserIndex] === 0
       ) {
@@ -1269,7 +1278,11 @@ class ChatService {
       }
 
       // Reset unread count to zero for current user
-      const newUnreadCount = [...conversation.unreadCount];
+      const newUnreadCount = conversation.unreadCount ? [...conversation.unreadCount] : [];
+      // Ensure array is long enough for all participants
+      while (newUnreadCount.length <= currentUserIndex) {
+        newUnreadCount.push(0);
+      }
       newUnreadCount[currentUserIndex] = 0;
       updates[`conversations/${conversationId}/unreadCount`] = newUnreadCount;
       updates[`conversations/${conversationId}/updatedAt`] = now;

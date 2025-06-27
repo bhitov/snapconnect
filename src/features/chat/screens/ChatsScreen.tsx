@@ -245,21 +245,6 @@ export function ChatsScreen() {
                 {avatarText}
               </Text>
             </View>
-            {hasCoachChat && (
-              <TouchableOpacity
-                style={styles.coachBadge}
-                onPress={() => {
-                  // Navigate to coach chat
-                  navigation.navigate('ChatScreen', {
-                    conversationId: conversation.coachChatId!,
-                    isCoach: true,
-                    parentCid: conversation.id,
-                  });
-                }}
-              >
-                <Text style={styles.coachBadgeText}>🎓</Text>
-              </TouchableOpacity>
-            )}
           </View>
 
           {/* Conversation Info */}
@@ -343,6 +328,23 @@ export function ChatsScreen() {
               )}
             </View>
           </View>
+
+          {/* Coach Badge */}
+          {hasCoachChat && (
+            <TouchableOpacity
+              style={styles.coachBadge}
+              onPress={() => {
+                // Navigate to coach chat
+                navigation.navigate('ChatScreen', {
+                  conversationId: conversation.coachChatId!,
+                  isCoach: true,
+                  parentCid: conversation.id,
+                });
+              }}
+            >
+              <Text style={styles.coachBadgeText}>🎓</Text>
+            </TouchableOpacity>
+          )}
         </TouchableOpacity>
       );
     },
@@ -533,20 +535,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   coachBadge: {
-    position: 'absolute',
-    bottom: -2,
-    right: -2,
     backgroundColor: '#E8F4F8',
-    borderRadius: 12,
-    width: 24,
-    height: 24,
+    borderRadius: 20,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D1E7DD',
+    marginLeft: 8,
   },
   coachBadgeText: {
-    fontSize: 14,
+    fontSize: 18,
   },
   conversationInfo: {
     flex: 1,
