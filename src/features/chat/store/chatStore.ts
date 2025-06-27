@@ -8,7 +8,7 @@
 import { create } from 'zustand';
 
 import { chatService } from '../services/chatService';
-
+import { startCoachChat, sendCoachMessage, analyzeChat } from '../services/coachService';
 import type {
   ChatStore,
   ChatState,
@@ -449,6 +449,68 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   clearMessagesError: () => {
     set({ messagesError: null });
+  },
+
+  // Coach
+  startCoachChat: async (parentCid: string) => {
+    console.log('🎓 ChatStore: Starting coach chat for:', parentCid);
+
+    try {
+      const coachCid = await startCoachChat(parentCid);
+      
+      // Update the parent conversation with the coach chat ID
+      const { conversations } = get();
+      const updatedConversations = conversations.map(conv =>
+        conv.id === parentCid
+          ? { ...conv, coachChatId: coachCid }
+          : conv
+      );
+      set({ conversations: updatedConversations });
+      
+      // Reload conversations to get the new coach chat
+      await get().loadConversations();
+      
+      console.log('✅ ChatStore: Created coach chat:', coachCid);
+      return coachCid;
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to start coach chat:', error);
+      throw error;
+    }
+  },
+
+  sendCoachMessage: async (coachCid: string, parentCid: string, text: string) => {
+    console.log('🎓 ChatStore: Sending coach message:', { coachCid, text });
+
+    try {
+      await sendCoachMessage(coachCid, parentCid, text);
+      
+      // Reload messages to show the coach response
+      await get().silentLoadMessages(coachCid);
+      
+      console.log('✅ ChatStore: Coach message sent successfully');
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to send coach message:', error);
+      set({
+        sendError: (error as any).message || 'Failed to send coach message',
+      });
+      throw error;
+    }
+  },
+
+  analyzeChat: async (coachCid: string, parentCid: string, messageCount: number = 30) => {
+    console.log('🎓 ChatStore: Analyzing chat:', { coachCid, parentCid, messageCount });
+
+    try {
+      await analyzeChat(coachCid, parentCid, messageCount);
+      
+      // Reload messages to show the analysis
+      await get().silentLoadMessages(coachCid);
+      
+      console.log('✅ ChatStore: Chat analysis completed');
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to analyze chat:', error);
+      throw error;
+    }
   },
 
   // Groups

@@ -209,14 +209,19 @@ export function ChatsScreen() {
       const hasUnread = conversation.unreadCount > 0;
       const lastMessage = conversation.lastMessage;
       const isGroup = conversation.isGroup;
+      const hasCoachChat = !conversation.isCoach && conversation.coachChatId;
 
       // Determine display name and avatar text
       const displayName = isGroup 
         ? (conversation.title || 'Unnamed Group')
+        : conversation.isCoach
+        ? 'Coach Chat'
         : conversation.otherUser?.displayName || 'Unknown User';
       
       const avatarText = isGroup
         ? '👥'
+        : conversation.isCoach
+        ? '🎓'
         : (conversation.otherUser?.displayName?.charAt(0)?.toUpperCase() || '?');
 
       return (
@@ -230,14 +235,31 @@ export function ChatsScreen() {
           activeOpacity={0.7}
         >
           {/* User/Group Avatar */}
-          <View
-            style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
-          >
-            <Text
-              style={[styles.avatarText, { color: theme.colors.background }]}
+          <View style={styles.avatarContainer}>
+            <View
+              style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
             >
-              {avatarText}
-            </Text>
+              <Text
+                style={[styles.avatarText, { color: theme.colors.background }]}
+              >
+                {avatarText}
+              </Text>
+            </View>
+            {hasCoachChat && (
+              <TouchableOpacity
+                style={styles.coachBadge}
+                onPress={() => {
+                  // Navigate to coach chat
+                  navigation.navigate('ChatScreen', {
+                    conversationId: conversation.coachChatId!,
+                    isCoach: true,
+                    parentCid: conversation.id,
+                  });
+                }}
+              >
+                <Text style={styles.coachBadgeText}>🎓</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           {/* Conversation Info */}
@@ -324,7 +346,7 @@ export function ChatsScreen() {
         </TouchableOpacity>
       );
     },
-    [theme, handleConversationPress]
+    [theme, handleConversationPress, navigation]
   );
 
   /**
@@ -495,17 +517,36 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
+  avatarContainer: {
+    position: 'relative',
+    marginRight: 12,
+  },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
   },
   avatarText: {
     fontSize: 18,
     fontWeight: '600',
+  },
+  coachBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    backgroundColor: '#E8F4F8',
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  coachBadgeText: {
+    fontSize: 14,
   },
   conversationInfo: {
     flex: 1,

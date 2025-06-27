@@ -154,6 +154,10 @@ export interface Conversation {
   groupId?: string;
   title?: string;
   avatarUrl?: string;
+  // Coach-specific fields
+  isCoach?: boolean;
+  parentCid?: string;
+  coachChatId?: string;
 }
 
 /**
@@ -184,6 +188,10 @@ export interface ConversationWithUser {
   title?: string;
   avatarUrl?: string;
   participants?: string[];
+  // Coach-specific fields
+  isCoach?: boolean;
+  parentCid?: string;
+  coachChatId?: string;
 }
 
 /**
@@ -288,6 +296,11 @@ export interface ChatActions {
   clearError: () => void;
   clearSendError: () => void;
   clearMessagesError: () => void;
+
+  // Coach
+  startCoachChat: (parentCid: string) => Promise<string>;
+  sendCoachMessage: (coachCid: string, parentCid: string, text: string) => Promise<void>;
+  analyzeChat: (coachCid: string, parentCid: string, messageCount?: number) => Promise<void>;
 }
 
 /**
@@ -343,6 +356,10 @@ export interface ConversationDocument {
   groupId?: string;
   title?: string;
   avatarUrl?: string;
+  // Coach-specific fields
+  isCoach?: boolean;
+  parentCid?: string;
+  coachChatId?: string;
 }
 
 /**
@@ -404,6 +421,10 @@ export interface ChatScreenProps {
   isGroup?: boolean;
   groupTitle?: string;
   groupId?: string;
+  // Coach-specific props
+  isCoach?: boolean;
+  parentCid?: string;
+  coachChatId?: string;
 }
 
 export interface MessageItemProps {

@@ -47,6 +47,7 @@ import type {
   RootStackParamList,
 } from '@/shared/navigation/types';
 import type { StackNavigationProp } from '@react-navigation/stack';
+import type { CompositeNavigationProp } from '@react-navigation/native';
 
 type ChatScreenRouteProp = {
   key: string;
@@ -54,7 +55,10 @@ type ChatScreenRouteProp = {
   params: ChatScreenProps;
 };
 
-type ChatScreenNavigationProp = StackNavigationProp<RootStackParamList>;
+type ChatScreenNavigationProp = CompositeNavigationProp<
+  StackNavigationProp<ChatStackParamList>,
+  StackNavigationProp<RootStackParamList>
+>;
 
 /**
  * Format timestamp for messages
@@ -124,12 +128,15 @@ function MessageItem({
   message,
   isFromCurrentUser,
   onSnapPress,
+  isCoachChat,
 }: {
   message: Message;
   isFromCurrentUser: boolean;
   onSnapPress?: (snap: SnapMessage) => void;
+  isCoachChat?: boolean;
 }) {
   const theme = useTheme();
+  const isCoachMessage = isCoachChat && message.senderId === 'coach';
 
   const handleSnapPress = useCallback(() => {
     if (message.type === 'snap' && onSnapPress) {
@@ -212,11 +219,16 @@ function MessageItem({
         isFromCurrentUser ? styles.sentMessage : styles.receivedMessage,
       ]}
     >
+      {isCoachMessage && (
+        <Text style={styles.coachAvatar}>🎓</Text>
+      )}
       <View
         style={[
           styles.messageBubble,
           {
-            backgroundColor: isFromCurrentUser
+            backgroundColor: isCoachMessage
+              ? '#E8F4F8'
+              : isFromCurrentUser
               ? theme.colors.primary
               : theme.colors.surface,
           },
@@ -260,7 +272,7 @@ export function ChatScreen() {
   const navigation = useNavigation<ChatScreenNavigationProp>();
   const theme = useTheme();
 
-  const { conversationId, otherUser, isGroup, groupTitle } = route.params;
+  const { conversationId, otherUser, isGroup, groupTitle, isCoach, parentCid, coachChatId } = route.params;
 
   // Auth state
   const currentUser = useAuthStore(state => state.user);
@@ -280,6 +292,9 @@ export function ChatScreen() {
     markAllMessagesAsDelivered,
     clearError,
     clearSendError,
+    startCoachChat,
+    sendCoachMessage,
+    analyzeChat,
   } = useChatStore();
 
   // Local state
@@ -327,10 +342,47 @@ export function ChatScreen() {
   );
 
   /**
+   * Handle coach button press
+   */
+  const handleCoachPress = useCallback(async () => {
+    try {
+      let coachCid = coachChatId;
+      
+      // If no coach chat exists, create one
+      if (!coachCid) {
+        coachCid = await startCoachChat(conversationId);
+      }
+      
+      // Navigate to coach chat
+      navigation.navigate('ChatScreen', {
+        conversationId: coachCid,
+        isCoach: true,
+        parentCid: conversationId,
+      });
+    } catch (error) {
+      Alert.alert('Error', 'Failed to start coach chat');
+    }
+  }, [conversationId, coachChatId, startCoachChat, navigation]);
+
+  /**
+   * Handle analyze chat
+   */
+  const handleAnalyzeChat = useCallback(async () => {
+    try {
+      await analyzeChat(conversationId, parentCid || '', 30);
+      Alert.alert('Success', 'Chat analysis has been posted to the conversation');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to analyze chat');
+    }
+  }, [conversationId, parentCid, analyzeChat]);
+
+  /**
    * Set navigation title and back button
    */
   useEffect(() => {
-    const title = isGroup 
+    const title = isCoach
+      ? 'Coach Chat'
+      : isGroup 
       ? (groupTitle || 'Group Chat')
       : (otherUser?.displayName || 'Chat');
       
@@ -344,8 +396,47 @@ export function ChatScreen() {
       },
       headerBackTitle: 'Chats',
       headerTintColor: theme.colors.primary || '#FFFC00',
+      // Add Coach button for non-coach conversations, menu for coach chats
+      headerRight: () => {
+        if (isCoach) {
+          // Show menu for coach chats
+          return (
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert(
+                  'Coach Options',
+                  'What would you like to do?',
+                  [
+                    {
+                      text: 'Analyze Chat',
+                      onPress: handleAnalyzeChat,
+                    },
+                    {
+                      text: 'Cancel',
+                      style: 'cancel',
+                    },
+                  ],
+                );
+              }}
+              style={{ marginRight: 16 }}
+            >
+              <Text style={{ fontSize: 24 }}>⋯</Text>
+            </TouchableOpacity>
+          );
+        } else {
+          // Show coach button for regular chats
+          return (
+            <TouchableOpacity
+              onPress={handleCoachPress}
+              style={{ marginRight: 16 }}
+            >
+              <Text style={{ fontSize: 24 }}>🎓</Text>
+            </TouchableOpacity>
+          );
+        }
+      },
     });
-  }, [navigation, otherUser?.displayName, isGroup, groupTitle, theme]);
+  }, [navigation, otherUser?.displayName, isGroup, groupTitle, theme, isCoach, handleCoachPress, handleAnalyzeChat]);
 
   /**
    * Scroll to bottom when new messages arrive
@@ -369,7 +460,10 @@ export function ChatScreen() {
     setIsSending(true);
 
     try {
-      if (isGroup) {
+      if (isCoach) {
+        // Send message to coach
+        await sendCoachMessage(conversationId, parentCid || '', text);
+      } else if (isGroup) {
         // Send message to group
         await sendTextMessage({
           text,
@@ -397,8 +491,11 @@ export function ChatScreen() {
     otherUser,
     conversationId,
     isGroup,
+    isCoach,
+    parentCid,
     isSending,
     sendTextMessage,
+    sendCoachMessage,
     loadMessages,
   ]);
 
@@ -469,10 +566,11 @@ export function ChatScreen() {
           message={item}
           isFromCurrentUser={isFromCurrentUser}
           onSnapPress={handleSnapPress}
+          isCoachChat={isCoach || false}
         />
       );
     },
-    [currentUser, handleSnapPress]
+    [currentUser, handleSnapPress, isCoach]
   );
 
   if (isLoading && messages.length === 0) {
@@ -748,6 +846,10 @@ const styles = StyleSheet.create({
   },
   messageStatus: {
     fontSize: 12,
+  },
+  coachAvatar: {
+    fontSize: 24,
+    marginBottom: 4,
   },
   inputContainer: {
     flexDirection: 'row',

@@ -64,6 +64,10 @@ export type ChatStackParamList = {
     isGroup?: boolean;
     groupTitle?: string;
     groupId?: string;
+    // Coach-specific params
+    isCoach?: boolean;
+    parentCid?: string;
+    coachChatId?: string;
   };
 };
 
