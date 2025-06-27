@@ -588,10 +588,10 @@ class ChatService {
    * Get all messages for a conversation (both text and snaps)
    */
   async getMessages(conversationId: string): Promise<Message[]> {
-    console.log(
-      '📥 ChatService: Loading messages for conversation:',
-      conversationId
-    );
+    // console.log(
+    //   '📥 ChatService: Loading messages for conversation:',
+    //   conversationId
+    // );
 
     try {
       const [textMessages, snapMessages] = await Promise.all([
@@ -603,7 +603,7 @@ class ChatService {
       const allMessages: Message[] = [...textMessages, ...snapMessages];
       allMessages.sort((a, b) => a.createdAt - b.createdAt);
 
-      console.log('✅ ChatService: Loaded', allMessages.length, 'messages');
+      // console.log('✅ ChatService: Loaded', allMessages.length, 'messages');
       return allMessages;
     } catch (error) {
       console.error('❌ ChatService: Failed to load messages:', error);
@@ -709,7 +709,7 @@ class ChatService {
    * Get conversations for current user
    */
   async getConversations(): Promise<ConversationWithUser[]> {
-    console.log('💬 ChatService: Loading conversations');
+    // console.log('💬 ChatService: Loading conversations');
 
     try {
       const currentUserId = this.getCurrentUserId();
@@ -822,7 +822,7 @@ class ChatService {
       // Sort by most recent activity
       result.sort((a, b) => b.updatedAt - a.updatedAt);
 
-      console.log('✅ ChatService: Loaded', result.length, 'conversations');
+      // console.log('✅ ChatService: Loaded', result.length, 'conversations');
       return result;
     } catch (error) {
       console.error('❌ ChatService: Failed to load conversations:', error);

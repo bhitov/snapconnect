@@ -137,7 +137,7 @@ export function ChatsScreen() {
    * Polling function for conversations - only refreshes when data changes (no loading animations)
    */
   const pollConversations = useCallback(async () => {
-    console.log('🔄 ChatsScreen: Silent polling conversations for updates');
+    // console.log('🔄 ChatsScreen: Silent polling conversations for updates');
     try {
       await silentRefreshConversations();
     } catch (error) {

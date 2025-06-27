@@ -26,6 +26,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { DropdownMenu } from '@/shared/components/base/DropdownMenu';
 
 import { usePolling } from '../hooks';
 import {
@@ -306,7 +307,7 @@ export function ChatScreen() {
    * Polling function for messages - only refreshes when data changes (no loading animations)
    */
   const pollMessages = useCallback(async () => {
-    console.log('🔄 ChatScreen: Silent polling messages for updates');
+    // console.log('🔄 ChatScreen: Silent polling messages for updates');
     try {
       await silentLoadMessages(conversationId);
     } catch (error) {
@@ -360,7 +361,7 @@ export function ChatScreen() {
         parentCid: conversationId,
       });
     } catch (error) {
-      Alert.alert('Error', 'Failed to start coach chat');
+      console.error('❌ Failed to start coach chat:', error);
     }
   }, [conversationId, coachChatId, startCoachChat, navigation]);
 
@@ -370,9 +371,9 @@ export function ChatScreen() {
   const handleAnalyzeChat = useCallback(async () => {
     try {
       await analyzeChat(conversationId, parentCid || '', 30);
-      Alert.alert('Success', 'Chat analysis has been posted to the conversation');
+      console.log('✅ Chat analysis completed and posted to conversation');
     } catch (error) {
-      Alert.alert('Error', 'Failed to analyze chat');
+      console.error('❌ Failed to analyze chat:', error);
     }
   }, [conversationId, parentCid, analyzeChat]);
 
@@ -399,29 +400,36 @@ export function ChatScreen() {
       // Add Coach button for non-coach conversations, menu for coach chats
       headerRight: () => {
         if (isCoach) {
-          // Show menu for coach chats
+          // Show dropdown menu for coach chats
           return (
-            <TouchableOpacity
-              onPress={() => {
-                Alert.alert(
-                  'Coach Options',
-                  'What would you like to do?',
-                  [
-                    {
-                      text: 'Analyze Chat',
-                      onPress: handleAnalyzeChat,
-                    },
-                    {
-                      text: 'Cancel',
-                      style: 'cancel',
-                    },
-                  ],
-                );
-              }}
-              style={{ marginRight: 16 }}
-            >
-              <Text style={{ fontSize: 24 }}>⋯</Text>
-            </TouchableOpacity>
+            <View style={{ marginRight: 16 }}>
+              <DropdownMenu
+                title="Prompts"
+                items={[
+                  {
+                    id: 'analyze',
+                    title: 'Analyze Chat',
+                    onPress: handleAnalyzeChat,
+                  },
+                ]}
+                triggerComponent={
+                  <View style={{
+                    backgroundColor: theme.colors.primary,
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 6,
+                  }}>
+                    <Text style={{ 
+                      color: theme.colors.background,
+                      fontSize: 14,
+                      fontWeight: '600',
+                    }}>
+                      Prompts
+                    </Text>
+                  </View>
+                }
+              />
+            </View>
           );
         } else {
           // Show coach button for regular chats
