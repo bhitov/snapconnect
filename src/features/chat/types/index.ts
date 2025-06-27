@@ -301,6 +301,9 @@ export interface ChatActions {
   startCoachChat: (parentCid: string) => Promise<string>;
   sendCoachMessage: (coachCid: string, parentCid: string, text: string) => Promise<void>;
   analyzeChat: (coachCid: string, parentCid: string, messageCount?: number) => Promise<void>;
+  analyzeRatio: (coachCid: string, parentCid: string) => Promise<void>;
+  analyzeHorsemen: (coachCid: string, parentCid: string) => Promise<void>;
+  generateLoveMap: (coachCid: string, parentCid: string) => Promise<void>;
 }
 
 /**

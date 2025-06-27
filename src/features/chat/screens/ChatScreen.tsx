@@ -26,7 +26,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { useTheme } from '@/shared/hooks/useTheme';
-import { DropdownMenu } from '@/shared/components/base/DropdownMenu';
+import { CoachModal } from '../components/CoachModal';
+import { LoveMapMessage } from '../components/LoveMapMessage';
 
 import { usePolling } from '../hooks';
 import {
@@ -130,11 +131,13 @@ function MessageItem({
   isFromCurrentUser,
   onSnapPress,
   isCoachChat,
+  onSendLoveMapQuestion,
 }: {
   message: Message;
   isFromCurrentUser: boolean;
   onSnapPress?: (snap: SnapMessage) => void;
   isCoachChat?: boolean;
+  onSendLoveMapQuestion?: (question: string) => void;
 }) {
   const theme = useTheme();
   const isCoachMessage = isCoachChat && message.senderId === 'coach';
@@ -148,6 +151,17 @@ function MessageItem({
   const renderMessageContent = () => {
     if (message.type === 'text') {
       const textMessage = message as TextMessage;
+      
+      // Use special LoveMapMessage component for coach messages
+      if (isCoachMessage && onSendLoveMapQuestion) {
+        return (
+          <LoveMapMessage
+            text={textMessage.text}
+            onSendQuestion={onSendLoveMapQuestion}
+          />
+        );
+      }
+      
       return (
         <Text
           style={[
@@ -296,11 +310,15 @@ export function ChatScreen() {
     startCoachChat,
     sendCoachMessage,
     analyzeChat,
+    analyzeRatio,
+    analyzeHorsemen,
+    generateLoveMap,
   } = useChatStore();
 
   // Local state
   const [messageText, setMessageText] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [showCoachModal, setShowCoachModal] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
   /**
@@ -366,7 +384,31 @@ export function ChatScreen() {
   }, [conversationId, coachChatId, startCoachChat, navigation]);
 
   /**
-   * Handle analyze chat
+   * Handle coach analysis option selection
+   */
+  const handleCoachAnalysis = useCallback(async (option: 'ratio' | 'horsemen' | 'lovemap') => {
+    try {
+      switch (option) {
+        case 'ratio':
+          await analyzeRatio(conversationId, parentCid || '');
+          console.log('✅ Ratio analysis completed');
+          break;
+        case 'horsemen':
+          await analyzeHorsemen(conversationId, parentCid || '');
+          console.log('✅ Horsemen analysis completed');
+          break;
+        case 'lovemap':
+          await generateLoveMap(conversationId, parentCid || '');
+          console.log('✅ Love map generated');
+          break;
+      }
+    } catch (error) {
+      console.error('❌ Failed to perform coach analysis:', error);
+    }
+  }, [conversationId, parentCid, analyzeRatio, analyzeHorsemen, generateLoveMap]);
+
+  /**
+   * Handle analyze chat (legacy function for old analyze option)
    */
   const handleAnalyzeChat = useCallback(async () => {
     try {
@@ -433,36 +475,27 @@ export function ChatScreen() {
       // Add Coach button for non-coach conversations, menu for coach chats
       headerRight: () => {
         if (isCoach) {
-          // Show dropdown menu for coach chats
+          // Show prompts button for coach chats
           return (
-            <View style={{ marginRight: 16 }}>
-              <DropdownMenu
-                title="Prompts"
-                items={[
-                  {
-                    id: 'analyze',
-                    title: 'Analyze Chat',
-                    onPress: handleAnalyzeChat,
-                  },
-                ]}
-                triggerComponent={
-                  <View style={{
-                    backgroundColor: theme.colors.primary,
-                    paddingHorizontal: 12,
-                    paddingVertical: 6,
-                    borderRadius: 6,
-                  }}>
-                    <Text style={{ 
-                      color: theme.colors.background,
-                      fontSize: 14,
-                      fontWeight: '600',
-                    }}>
-                      Prompts
-                    </Text>
-                  </View>
-                }
-              />
-            </View>
+            <TouchableOpacity
+              onPress={() => setShowCoachModal(true)}
+              style={{ marginRight: 16 }}
+            >
+              <View style={{
+                backgroundColor: theme.colors.primary,
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 6,
+              }}>
+                <Text style={{ 
+                  color: theme.colors.background,
+                  fontSize: 14,
+                  fontWeight: '600',
+                }}>
+                  Prompts
+                </Text>
+              </View>
+            </TouchableOpacity>
           );
         } else {
           // Show coach button for regular chats
@@ -568,6 +601,27 @@ export function ChatScreen() {
   );
 
   /**
+   * Handle sending love map question to parent conversation
+   */
+  const handleSendLoveMapQuestion = useCallback(async (question: string) => {
+    if (!parentCid || !currentUser) return;
+
+    try {
+      // Send the question to the parent conversation
+      await sendTextMessage({
+        text: question,
+        conversationId: parentCid,
+      });
+
+      // Reload parent conversation messages if we're viewing it
+      console.log('✅ Love map question sent to parent conversation');
+    } catch (error) {
+      console.error('❌ Failed to send love map question:', error);
+      Alert.alert('Error', 'Failed to send question. Please try again.');
+    }
+  }, [parentCid, currentUser, sendTextMessage]);
+
+  /**
    * Handle camera button press
    */
   const handleCameraPress = useCallback(() => {
@@ -608,10 +662,11 @@ export function ChatScreen() {
           isFromCurrentUser={isFromCurrentUser}
           onSnapPress={handleSnapPress}
           isCoachChat={isCoach || false}
+          onSendLoveMapQuestion={isCoach ? handleSendLoveMapQuestion : undefined}
         />
       );
     },
-    [currentUser, handleSnapPress, isCoach]
+    [currentUser, handleSnapPress, isCoach, handleSendLoveMapQuestion]
   );
 
   if (isLoading && messages.length === 0) {
@@ -759,6 +814,13 @@ export function ChatScreen() {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* Coach Modal */}
+        <CoachModal
+          visible={showCoachModal}
+          onClose={() => setShowCoachModal(false)}
+          onOptionSelect={handleCoachAnalysis}
+        />
 
         {/* Send Error */}
         {sendError && (

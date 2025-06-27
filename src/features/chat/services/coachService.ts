@@ -75,3 +75,69 @@ export async function analyzeChat(
     throw new Error('Failed to analyze chat');
   }
 }
+
+/**
+ * Request positive/negative ratio analysis
+ * @param coachCid - The coach chat conversation ID
+ * @param parentCid - The parent conversation ID
+ */
+export async function analyzeRatio(
+  coachCid: string,
+  parentCid: string
+): Promise<void> {
+  try {
+    const coachRatioFn = httpsCallable<
+      { coachCid: string; parentCid: string },
+      void
+    >(functions, 'coachRatio');
+    
+    await coachRatioFn({ coachCid, parentCid });
+  } catch (error) {
+    console.error('Failed to analyze ratio:', error);
+    throw new Error('Failed to analyze ratio');
+  }
+}
+
+/**
+ * Request Four Horsemen analysis
+ * @param coachCid - The coach chat conversation ID
+ * @param parentCid - The parent conversation ID
+ */
+export async function analyzeHorsemen(
+  coachCid: string,
+  parentCid: string
+): Promise<void> {
+  try {
+    const coachHorsemenFn = httpsCallable<
+      { coachCid: string; parentCid: string },
+      void
+    >(functions, 'coachHorsemen');
+    
+    await coachHorsemenFn({ coachCid, parentCid });
+  } catch (error) {
+    console.error('Failed to analyze horsemen:', error);
+    throw new Error('Failed to analyze horsemen');
+  }
+}
+
+/**
+ * Request Love Map question generation
+ * @param coachCid - The coach chat conversation ID
+ * @param parentCid - The parent conversation ID
+ */
+export async function generateLoveMap(
+  coachCid: string,
+  parentCid: string
+): Promise<void> {
+  try {
+    const coachLoveMapFn = httpsCallable<
+      { coachCid: string; parentCid: string },
+      void
+    >(functions, 'coachLoveMap');
+    
+    await coachLoveMapFn({ coachCid, parentCid });
+  } catch (error) {
+    console.error('Failed to generate love map:', error);
+    throw new Error('Failed to generate love map');
+  }
+}

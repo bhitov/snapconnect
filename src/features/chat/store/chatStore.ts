@@ -8,7 +8,7 @@
 import { create } from 'zustand';
 
 import { chatService } from '../services/chatService';
-import { startCoachChat, sendCoachMessage, analyzeChat } from '../services/coachService';
+import { startCoachChat, sendCoachMessage, analyzeChat, analyzeRatio, analyzeHorsemen, generateLoveMap } from '../services/coachService';
 import type {
   ChatStore,
   ChatState,
@@ -509,6 +509,54 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       console.log('✅ ChatStore: Chat analysis completed');
     } catch (error) {
       console.error('❌ ChatStore: Failed to analyze chat:', error);
+      throw error;
+    }
+  },
+
+  analyzeRatio: async (coachCid: string, parentCid: string) => {
+    console.log('📊 ChatStore: Analyzing ratio:', { coachCid, parentCid });
+
+    try {
+      await analyzeRatio(coachCid, parentCid);
+      
+      // Reload messages to show the analysis
+      await get().silentLoadMessages(coachCid);
+      
+      console.log('✅ ChatStore: Ratio analysis completed');
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to analyze ratio:', error);
+      throw error;
+    }
+  },
+
+  analyzeHorsemen: async (coachCid: string, parentCid: string) => {
+    console.log('⚠️ ChatStore: Analyzing horsemen:', { coachCid, parentCid });
+
+    try {
+      await analyzeHorsemen(coachCid, parentCid);
+      
+      // Reload messages to show the analysis
+      await get().silentLoadMessages(coachCid);
+      
+      console.log('✅ ChatStore: Horsemen analysis completed');
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to analyze horsemen:', error);
+      throw error;
+    }
+  },
+
+  generateLoveMap: async (coachCid: string, parentCid: string) => {
+    console.log('💕 ChatStore: Generating love map:', { coachCid, parentCid });
+
+    try {
+      await generateLoveMap(coachCid, parentCid);
+      
+      // Reload messages to show the love map question
+      await get().silentLoadMessages(coachCid);
+      
+      console.log('✅ ChatStore: Love map generated');
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to generate love map:', error);
       throw error;
     }
   },

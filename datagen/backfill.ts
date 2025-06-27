@@ -63,7 +63,7 @@ async function classify(batch: string[]): Promise<{sentiment:string;horseman:str
     console.log(`🏷️  [CLASSIFY] Parsed type:`, typeof parsed, Array.isArray(parsed) ? 'Array' : 'Object');
     
     // Handle different response formats
-    let result: {sentiment:string;horseman:string}[];
+    let result: {sentiment:string;horseman:string}[][];
     if (Array.isArray(parsed)) {
       result = parsed;
     } else if (parsed.labels && Array.isArray(parsed.labels)) {
@@ -72,13 +72,13 @@ async function classify(batch: string[]): Promise<{sentiment:string;horseman:str
       result = parsed.results;
     } else {
       console.log(`🏷️  [CLASSIFY] Unexpected format, converting object to array`);
-      result = Object.values(parsed) as {sentiment:string;horseman:string}[];
+      result = Object.values(parsed) as {sentiment:string;horseman:string}[][];
     }
     
     console.log(`🏷️  [CLASSIFY] Final result:`, result);
     console.log(`🏷️  [CLASSIFY] Result length:`, result.length, 'Expected:', batch.length);
     
-    return result;
+    return result?.[0] || [];
     
   } catch (error) {
     console.error(`🏷️  [CLASSIFY] Error:`, error);
