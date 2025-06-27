@@ -320,6 +320,7 @@ export function ChatScreen() {
   const [isSending, setIsSending] = useState(false);
   const [showCoachModal, setShowCoachModal] = useState(false);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const flatListRef = useRef<FlatList>(null);
 
   /**
@@ -517,12 +518,20 @@ export function ChatScreen() {
    * Scroll to bottom when new messages arrive
    */
   useEffect(() => {
-    if (messages.length > 0) {
+    if (messages.length > 0 && !isInitialLoad) {
+      // Only scroll on new messages after initial load
       setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
+        // With inverted list, offset 0 is the bottom
+        flatListRef.current?.scrollToOffset({ 
+          offset: 0, 
+          animated: true 
+        });
       }, 100);
     }
-  }, [messages.length]);
+    if (isInitialLoad && messages.length > 0) {
+      setIsInitialLoad(false);
+    }
+  }, [messages.length, isInitialLoad]);
 
   /**
    * Handle sending text message
@@ -632,7 +641,11 @@ export function ChatScreen() {
       setTimeout(async () => {
         await loadMessages(parentCid);
         setTimeout(() => {
-          flatListRef.current?.scrollToEnd({ animated: true });
+          // With inverted list, offset 0 is the bottom
+          flatListRef.current?.scrollToOffset({ 
+            offset: 0, 
+            animated: true 
+          });
         }, 100);
       }, 200);
     } catch (error) {
@@ -661,8 +674,9 @@ export function ChatScreen() {
    * Handle scroll-to-bottom button visibility
    */
   const handleScroll = useCallback((event: any) => {
-    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
-    const isNearBottom = contentOffset.y >= contentSize.height - layoutMeasurement.height - 100;
+    const { contentOffset } = event.nativeEvent;
+    // With inverted list, being at bottom means offset is near 0
+    const isNearBottom = contentOffset.y <= 100;
     setShowScrollToBottom(!isNearBottom);
   }, []);
 
@@ -670,16 +684,13 @@ export function ChatScreen() {
    * Scroll to bottom of messages
    */
   const scrollToBottom = useCallback(() => {
-    if (messages.length > 0) {
-      // Scroll to the last message index specifically
-      flatListRef.current?.scrollToIndex({ 
-        index: messages.length - 1, 
-        animated: true,
-        viewPosition: 1 // 1 means bottom of the item should be at bottom of view
-      });
-    }
+    // With inverted FlatList, scrollToOffset 0 goes to bottom
+    flatListRef.current?.scrollToOffset({ 
+      offset: 0, 
+      animated: true 
+    });
     setShowScrollToBottom(false);
-  }, [messages.length]);
+  }, []);
 
   /**
    * Clear errors when component unmounts
@@ -768,12 +779,13 @@ export function ChatScreen() {
         {/* Messages List */}
         <FlatList
           ref={flatListRef}
-          data={messages}
+          data={[...messages].reverse()}
           renderItem={renderMessage}
           keyExtractor={item => item.id}
           style={styles.messagesList}
           contentContainerStyle={styles.messagesContent}
           showsVerticalScrollIndicator={false}
+          inverted
           onScroll={handleScroll}
           scrollEventThrottle={16}
           getItemLayout={(data, index) => ({
