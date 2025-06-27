@@ -550,6 +550,12 @@ export function ChatScreen() {
           text,
           recipientId: otherUser.uid,
         });
+      } else {
+        // Fallback: send to conversation directly (for when otherUser is missing)
+        await sendTextMessage({
+          text,
+          conversationId,
+        });
       }
 
       // Reload messages to show the new one
