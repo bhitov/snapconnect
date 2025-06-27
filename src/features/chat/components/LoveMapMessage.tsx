@@ -23,12 +23,18 @@ export function LoveMapMessage({ text, onSendQuestion }: LoveMapMessageProps) {
 
   // Extract question from text (look for "QUESTION: " prefix)
   const extractQuestion = (text: string): { beforeQuestion: string; question: string; afterQuestion: string } | null => {
-    const questionMatch = text.match(/(.*?)QUESTION:\s*(.+?)(?:\n|$)(.*)/s);
+    // Updated regex to better handle numbered lists and ensure clean capture groups
+    const questionMatch = text.match(/(.*?)(?:\d+\.\s*)?QUESTION:\s*(.+?)(?:\n|$)(.*)/s);
     if (questionMatch) {
+      // Clean up the beforeQuestion text to remove trailing numbers/periods
+      let beforeText = questionMatch[1]?.trim() || '';
+      // Remove trailing "2." or similar patterns
+      beforeText = beforeText.replace(/\n?\d+\.\s*$/, '').trim();
+      
       return {
-        beforeQuestion: questionMatch[1].trim(),
-        question: questionMatch[2].trim(),
-        afterQuestion: questionMatch[3].trim(),
+        beforeQuestion: beforeText,
+        question: questionMatch[2]?.trim() || '',
+        afterQuestion: questionMatch[3] ? questionMatch[3].trim() : '',
       };
     }
     return null;
@@ -41,31 +47,29 @@ export function LoveMapMessage({ text, onSendQuestion }: LoveMapMessageProps) {
       onSendQuestion(questionData.question);
     }
   };
-
   if (!questionData) {
     // No special question formatting needed, render as normal text
     return (
-      <Text style={[styles.messageText, { color: '#2C3E50' }]}>
-        {text}
-      </Text>
+      <View>
+        <Text style={[styles.messageText, { color: '#2C3E50' }]}>
+          {text}
+        </Text>
+      </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      {/* Coach explanation before question */}
-      {questionData.beforeQuestion && (
+      {questionData.beforeQuestion && questionData.beforeQuestion.length > 0 && (
         <Text style={[styles.messageText, { color: '#2C3E50' }]}>
-          {questionData.beforeQuestion}
+          {questionData.beforeQuestion || 'ABC'}
         </Text>
       )}
 
-      {/* Highlighted question with send button */}
       <View style={[styles.questionContainer, { borderColor: theme.colors.primary }]}>
         <Text style={[styles.questionText, { color: theme.colors.primary }]}>
-          {questionData.question}
+          {questionData.question || 'DEF'}
         </Text>
-        
         <TouchableOpacity
           style={[styles.sendButton, { backgroundColor: theme.colors.primary }]}
           onPress={handleSendQuestion}
@@ -77,14 +81,39 @@ export function LoveMapMessage({ text, onSendQuestion }: LoveMapMessageProps) {
         </TouchableOpacity>
       </View>
 
-      {/* Any additional explanation after question */}
-      {questionData.afterQuestion && (
-        <Text style={[styles.messageText, { color: '#2C3E50', marginTop: 8 }]}>
-          {questionData.afterQuestion}
-        </Text>
-      )}
     </View>
-  );
+  )
+
+//   return (
+//     <View style={styles.container}>
+//       {questionData.beforeQuestion && questionData.beforeQuestion.length > 0 && (
+//         <Text style={[styles.messageText, { color: '#2C3E50' }]}>
+//           {questionData.beforeQuestion || 'ABC'}
+//         </Text>
+//       )}
+// 
+//       <View style={[styles.questionContainer, { borderColor: theme.colors.primary }]}>
+//         <Text style={[styles.questionText, { color: theme.colors.primary }]}>
+//           {questionData.question || 'DEF'}
+//         </Text>
+//         <TouchableOpacity
+//           style={[styles.sendButton, { backgroundColor: theme.colors.primary }]}
+//           onPress={handleSendQuestion}
+//           activeOpacity={0.7}
+//         >
+//           <Text style={[styles.sendButtonText, { color: theme.colors.background }]}>
+//             Send Question
+//           </Text>
+//         </TouchableOpacity>
+//       </View>
+// 
+//       {questionData.afterQuestion && questionData.afterQuestion.length > 0 && (
+//         <Text style={[styles.messageText, { color: '#2C3E50', marginTop: 8 }]}>
+//           {questionData.afterQuestion || 'AHHH'}
+//         </Text>
+//       )}
+//     </View>
+//   );
 }
 
 const styles = StyleSheet.create({

@@ -434,4 +434,6 @@ export interface MessageItemProps {
   message: Message;
   isFromCurrentUser: boolean;
   onSnapPress?: (snap: SnapMessage) => void;
+  isCoachChat?: boolean;
+  onSendLoveMapQuestion?: (question: string) => void;
 }

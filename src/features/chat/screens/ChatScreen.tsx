@@ -319,6 +319,7 @@ export function ChatScreen() {
   const [messageText, setMessageText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [showCoachModal, setShowCoachModal] = useState(false);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
   /**
@@ -613,13 +614,26 @@ export function ChatScreen() {
         conversationId: parentCid,
       });
 
-      // Reload parent conversation messages if we're viewing it
       console.log('✅ Love map question sent to parent conversation');
+      
+      // Navigate back to parent chat and scroll to bottom
+      navigation.navigate('ChatScreen', {
+        conversationId: parentCid,
+        isCoach: false,
+      });
+      
+      // Load messages and scroll to bottom after navigation
+      setTimeout(async () => {
+        await loadMessages(parentCid);
+        setTimeout(() => {
+          flatListRef.current?.scrollToEnd({ animated: true });
+        }, 100);
+      }, 200);
     } catch (error) {
       console.error('❌ Failed to send love map question:', error);
       Alert.alert('Error', 'Failed to send question. Please try again.');
     }
-  }, [parentCid, currentUser, sendTextMessage]);
+  }, [parentCid, currentUser, sendTextMessage, navigation, loadMessages]);
 
   /**
    * Handle camera button press
@@ -636,6 +650,30 @@ export function ChatScreen() {
       console.warn('❌ ChatScreen: No parent navigator found');
     }
   }, [navigation]);
+
+  /**
+   * Handle scroll-to-bottom button visibility
+   */
+  const handleScroll = useCallback((event: any) => {
+    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+    const isNearBottom = contentOffset.y >= contentSize.height - layoutMeasurement.height - 100;
+    setShowScrollToBottom(!isNearBottom);
+  }, []);
+
+  /**
+   * Scroll to bottom of messages
+   */
+  const scrollToBottom = useCallback(() => {
+    if (messages.length > 0) {
+      // Scroll to the last message index specifically
+      flatListRef.current?.scrollToIndex({ 
+        index: messages.length - 1, 
+        animated: true,
+        viewPosition: 1 // 1 means bottom of the item should be at bottom of view
+      });
+    }
+    setShowScrollToBottom(false);
+  }, [messages.length]);
 
   /**
    * Clear errors when component unmounts
@@ -730,6 +768,17 @@ export function ChatScreen() {
           style={styles.messagesList}
           contentContainerStyle={styles.messagesContent}
           showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          getItemLayout={(data, index) => ({
+            length: 100, // Increased estimate to account for padding
+            offset: 100 * index,
+            index,
+          })}
+          onScrollToIndexFailed={() => {
+            // Fallback to scrollToEnd if scrollToIndex fails
+            flatListRef.current?.scrollToEnd({ animated: true });
+          }}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text
@@ -744,6 +793,27 @@ export function ChatScreen() {
             </View>
           }
         />
+
+        {/* Scroll to Bottom Button */}
+        {showScrollToBottom && (
+          <TouchableOpacity
+            style={[
+              styles.scrollToBottomButton,
+              { backgroundColor: '#6B73FF' } // Distinct purple color
+            ]}
+            onPress={scrollToBottom}
+            activeOpacity={0.7}
+          >
+            <Text
+              style={[
+                styles.scrollToBottomText,
+                { color: '#FFFFFF' }
+              ]}
+            >
+              ↓
+            </Text>
+          </TouchableOpacity>
+        )}
 
         {/* Input Area */}
         <View
@@ -1002,5 +1072,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     paddingHorizontal: 8,
+  },
+  scrollToBottomButton: {
+    position: 'absolute',
+    bottom: 90,
+    left: '50%',
+    marginLeft: -20, // Half of width to center
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  scrollToBottomText: {
+    fontSize: 20,
+    fontWeight: '600',
   },
 });
