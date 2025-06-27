@@ -395,8 +395,41 @@ export function ChatScreen() {
       headerStyle: {
         backgroundColor: theme.colors.background || '#FFFFFF',
       },
-      headerBackTitle: 'Chats',
+      headerBackTitle: isCoach ? 'Chat' : 'Chats',
       headerTintColor: theme.colors.primary || '#FFFC00',
+      ...(isCoach && parentCid && {
+        headerLeft: () => (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('ChatScreen', {
+                conversationId: parentCid,
+                isCoach: false,
+              });
+            }}
+            style={{ 
+              flexDirection: 'row', 
+              alignItems: 'center', 
+              marginLeft: 16,
+              paddingVertical: 8,
+              paddingHorizontal: 4,
+            }}
+          >
+            <Text style={{ 
+              fontSize: 17, 
+              color: theme.colors.primary || '#FFFC00',
+              marginRight: 4,
+            }}>
+              ←
+            </Text>
+            <Text style={{ 
+              fontSize: 17, 
+              color: theme.colors.primary || '#FFFC00',
+            }}>
+              Chat
+            </Text>
+          </TouchableOpacity>
+        ),
+      }),
       // Add Coach button for non-coach conversations, menu for coach chats
       headerRight: () => {
         if (isCoach) {
