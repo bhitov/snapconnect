@@ -182,11 +182,21 @@ export function ChatsScreen() {
    */
   const handleConversationPress = useCallback(
     (conversation: ConversationWithUser) => {
-      // Navigate to individual chat screen
-      navigation.navigate('ChatScreen', {
-        conversationId: conversation.id,
-        otherUser: conversation.otherUser,
-      });
+      if (conversation.isGroup) {
+        // Navigate to group chat screen
+        navigation.navigate('ChatScreen', {
+          conversationId: conversation.id,
+          isGroup: true,
+          ...(conversation.title && { groupTitle: conversation.title }),
+          ...(conversation.groupId && { groupId: conversation.groupId }),
+        });
+      } else if (conversation.otherUser) {
+        // Navigate to individual chat screen
+        navigation.navigate('ChatScreen', {
+          conversationId: conversation.id,
+          otherUser: conversation.otherUser,
+        });
+      }
     },
     [navigation]
   );
@@ -198,6 +208,16 @@ export function ChatsScreen() {
     ({ item: conversation }: { item: ConversationWithUser }) => {
       const hasUnread = conversation.unreadCount > 0;
       const lastMessage = conversation.lastMessage;
+      const isGroup = conversation.isGroup;
+
+      // Determine display name and avatar text
+      const displayName = isGroup 
+        ? (conversation.title || 'Unnamed Group')
+        : conversation.otherUser?.displayName || 'Unknown User';
+      
+      const avatarText = isGroup
+        ? '👥'
+        : (conversation.otherUser?.displayName?.charAt(0)?.toUpperCase() || '?');
 
       return (
         <TouchableOpacity
@@ -209,14 +229,14 @@ export function ChatsScreen() {
           onPress={() => handleConversationPress(conversation)}
           activeOpacity={0.7}
         >
-          {/* User Avatar */}
+          {/* User/Group Avatar */}
           <View
             style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
           >
             <Text
               style={[styles.avatarText, { color: theme.colors.background }]}
             >
-              {conversation.otherUser.displayName.charAt(0).toUpperCase()}
+              {avatarText}
             </Text>
           </View>
 
@@ -230,7 +250,7 @@ export function ChatsScreen() {
                   hasUnread && { fontWeight: '600' },
                 ]}
               >
-                {conversation.otherUser.displayName}
+                {displayName}
               </Text>
 
               {lastMessage && (
@@ -267,7 +287,7 @@ export function ChatsScreen() {
                     {getSnapStatusText(
                       lastMessage.status,
                       lastMessage.type,
-                      lastMessage.senderId !== conversation.otherUser.uid
+                      !isGroup && lastMessage.senderId !== conversation.otherUser?.uid
                     )}
                   </Text>
                 </View>

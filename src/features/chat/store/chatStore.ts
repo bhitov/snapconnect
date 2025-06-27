@@ -49,6 +49,13 @@ const initialState: ChatState = {
   // UI state
   selectedRecipients: [],
   isRefreshing: false,
+
+  // Group creation
+  groupCreationState: {
+    title: '',
+    selectedMembers: [],
+    isCreating: false,
+  },
 };
 
 /**
@@ -443,6 +450,135 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   clearMessagesError: () => {
     set({ messagesError: null });
   },
+
+  // Groups
+  createGroup: async (name: string, memberIds: string[], avatarUrl?: string) => {
+    console.log('👥 ChatStore: Creating group:', name, 'with members:', memberIds);
+
+    set(state => ({
+      groupCreationState: {
+        ...state.groupCreationState,
+        isCreating: true,
+      },
+    }));
+
+    try {
+      const conversationId = await chatService.createGroup(name, memberIds, avatarUrl);
+
+      // Reset group creation state
+      set(state => ({
+        groupCreationState: {
+          title: '',
+          selectedMembers: [],
+          isCreating: false,
+        },
+      }));
+
+      // Reload conversations to get the new group
+      await get().loadConversations();
+
+      console.log('✅ ChatStore: Created group:', conversationId);
+      return conversationId;
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to create group:', error);
+      set(state => ({
+        groupCreationState: {
+          ...state.groupCreationState,
+          isCreating: false,
+        },
+      }));
+      throw error;
+    }
+  },
+
+  addUsersToGroup: async (groupId: string, userIds: string[]) => {
+    console.log('👥 ChatStore: Adding users to group:', groupId, userIds);
+    
+    try {
+      await chatService.addUsersToGroup(groupId, userIds);
+      
+      // Reload conversations to reflect changes
+      await get().loadConversations();
+      
+      console.log('✅ ChatStore: Added users to group successfully');
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to add users to group:', error);
+      throw error;
+    }
+  },
+
+  removeUserFromGroup: async (groupId: string, userId: string) => {
+    console.log('👥 ChatStore: Removing user from group:', groupId, userId);
+    
+    try {
+      await chatService.removeUserFromGroup(groupId, userId);
+      
+      // Reload conversations to reflect changes
+      await get().loadConversations();
+      
+      console.log('✅ ChatStore: Removed user from group successfully');
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to remove user from group:', error);
+      throw error;
+    }
+  },
+
+  updateGroupTitle: async (groupId: string, title: string) => {
+    console.log('👥 ChatStore: Updating group title:', groupId, title);
+    // TODO: Implement in chatService
+  },
+
+  leaveGroup: async (groupId: string) => {
+    console.log('👥 ChatStore: Leaving group:', groupId);
+    // TODO: Implement in chatService
+  },
+
+  // Group creation UI
+  setGroupTitle: (title: string) => {
+    set(state => ({
+      groupCreationState: {
+        ...state.groupCreationState,
+        title,
+      },
+    }));
+  },
+
+  setGroupMembers: (memberIds: string[]) => {
+    set(state => ({
+      groupCreationState: {
+        ...state.groupCreationState,
+        selectedMembers: memberIds,
+      },
+    }));
+  },
+
+  addGroupMember: (memberId: string) => {
+    set(state => ({
+      groupCreationState: {
+        ...state.groupCreationState,
+        selectedMembers: [...state.groupCreationState.selectedMembers, memberId],
+      },
+    }));
+  },
+
+  removeGroupMember: (memberId: string) => {
+    set(state => ({
+      groupCreationState: {
+        ...state.groupCreationState,
+        selectedMembers: state.groupCreationState.selectedMembers.filter(id => id !== memberId),
+      },
+    }));
+  },
+
+  resetGroupCreation: () => {
+    set({
+      groupCreationState: {
+        title: '',
+        selectedMembers: [],
+        isCreating: false,
+      },
+    });
+  },
 }));
 
 // Performance selectors
@@ -481,3 +617,13 @@ export const useUnreadCount = () =>
 
 export const useHasUnreadMessages = () =>
   useChatStore(state => state.conversations.some(conv => conv.unreadCount > 0));
+
+// Group selectors
+export const useGroupCreationState = () =>
+  useChatStore(state => state.groupCreationState);
+export const useGroupTitle = () =>
+  useChatStore(state => state.groupCreationState.title);
+export const useGroupMembers = () =>
+  useChatStore(state => state.groupCreationState.selectedMembers);
+export const useIsCreatingGroup = () =>
+  useChatStore(state => state.groupCreationState.isCreating);

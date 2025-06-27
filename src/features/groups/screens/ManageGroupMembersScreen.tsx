@@ -1,0 +1,530 @@
+/**
+ * @file ManageGroupMembersScreen.tsx
+ * @description Screen for managing group members - add/remove functionality
+ * Admin can add/remove any member, regular members can only leave
+ */
+
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  FlatList,
+  Switch,
+  Image,
+  Modal,
+} from 'react-native';
+import { StackScreenProps } from '@react-navigation/stack';
+import { useFocusEffect } from '@react-navigation/native';
+
+import { Screen } from '@/shared/components/layout/Screen';
+import { useTheme } from '@/shared/hooks/useTheme';
+import { useChatStore } from '@/features/chat/store/chatStore';
+import { useFriendsStore } from '@/features/friends/store/friendsStore';
+import { useAuthStore } from '@/features/auth/store/authStore';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
+
+import type { GroupsStackParamList } from '@/shared/navigation/types';
+import type { FriendProfile } from '@/features/friends/types';
+
+type ManageGroupMembersScreenProps = StackScreenProps<
+  GroupsStackParamList,
+  'ManageGroupMembers'
+>;
+
+interface GroupMember {
+  uid: string;
+  displayName: string;
+  username: string;
+  photoURL?: string;
+  role: 'admin' | 'member';
+  joinedAt: number;
+  addedBy: string;
+}
+
+/**
+ * Simple UserAvatar component for displaying other users' avatars
+ */
+const UserAvatar = ({ photoURL, displayName, size = 40 }: { photoURL?: string | undefined; displayName: string; size?: number }) => {
+  const theme = useTheme();
+  
+  const avatarStyles = {
+    width: size,
+    height: size,
+    borderRadius: size / 2,
+    backgroundColor: theme.colors.primary,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+  };
+
+  const textStyles = {
+    color: theme.colors.onPrimary,
+    fontSize: size * 0.4,
+    fontWeight: 600 as const,
+  };
+
+  if (photoURL) {
+    return (
+      <Image
+        source={{ uri: resolveMediaUrl(photoURL) }}
+        style={avatarStyles}
+      />
+    );
+  }
+
+  return (
+    <View style={avatarStyles}>
+      <Text style={textStyles}>
+        {displayName.charAt(0).toUpperCase()}
+      </Text>
+    </View>
+  );
+};
+
+export function ManageGroupMembersScreen({
+  route,
+  navigation,
+}: ManageGroupMembersScreenProps) {
+  const { groupId } = route.params;
+  const theme = useTheme();
+  const { user: currentUser } = useAuthStore();
+  const { addUsersToGroup, removeUserFromGroup } = useChatStore();
+  const { friends, loadFriends } = useFriendsStore();
+
+  // State
+  const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
+  const [currentUserRole, setCurrentUserRole] = useState<'admin' | 'member'>('member');
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
+  
+  // Confirmation modal state
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [userToRemove, setUserToRemove] = useState<GroupMember | null>(null);
+
+  /**
+   * Load group data from Firebase
+   */
+  const loadGroupData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { chatService } = await import('@/features/chat/services/chatService');
+      
+      const groupData = await chatService.getGroupData(groupId);
+      
+      if (!groupData || !groupData.members) {
+        console.error('Group data not found or missing members');
+        return;
+      }
+
+      // Convert group members to our format and fetch user data
+      const memberPromises = Object.entries(groupData.members).map(async ([userId, memberInfo]: [string, any]) => {
+        try {
+          const userData = await chatService.getUserData(userId);
+          
+          return {
+            uid: userId,
+            displayName: userData?.displayName || userData?.username || 'Unknown User',
+            username: userData?.username || 'unknown',
+            photoURL: userData?.photoURL,
+            role: memberInfo.role,
+            joinedAt: memberInfo.joinedAt,
+            addedBy: memberInfo.addedBy,
+          } as GroupMember;
+        } catch (error) {
+          console.error('Failed to load user data for:', userId, error);
+          return {
+            uid: userId,
+            displayName: userId === currentUser?.uid ? 'You' : 'Unknown User',
+            username: 'unknown',
+            role: memberInfo.role,
+            joinedAt: memberInfo.joinedAt,
+            addedBy: memberInfo.addedBy,
+          } as GroupMember;
+        }
+      });
+
+      const members = await Promise.all(memberPromises);
+      
+      // Set current user role
+      const currentUserMember = members.find(member => member.uid === currentUser?.uid);
+      if (currentUserMember) {
+        setCurrentUserRole(currentUserMember.role);
+      }
+      
+      setGroupMembers(members);
+      console.log('✅ Loaded group members:', members.length);
+      
+    } catch (error) {
+      console.error('❌ Failed to load group data:', error);
+      Alert.alert('Error', 'Failed to load group data. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [groupId, currentUser]);
+
+  // Load data on screen focus
+  useFocusEffect(
+    useCallback(() => {
+      loadGroupData();
+      loadFriends();
+    }, [loadGroupData, loadFriends])
+  );
+
+  /**
+   * Filter friends not in group
+   */
+  const availableFriends = friends.filter(
+    friend => !groupMembers.some(member => member.uid === friend.uid)
+  );
+
+  /**
+   * Filter friends by search term
+   */
+  const filteredFriends = availableFriends.filter(friend =>
+    friend.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    friend.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  /**
+   * Handle adding selected friends
+   */
+  const handleAddFriends = async () => {
+    if (selectedFriends.length === 0) return;
+
+    try {
+      setIsLoading(true);
+      await addUsersToGroup(groupId, selectedFriends);
+      setSelectedFriends([]);
+      await loadGroupData();
+      console.log('✅ Successfully added friends to group');
+    } catch (error) {
+      console.error('Failed to add friends:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * Show confirmation modal for removing user
+   */
+  const showRemoveConfirmation = (member: GroupMember) => {
+    console.log('🔥 Showing remove confirmation for user:', member.uid, member.displayName);
+    setUserToRemove(member);
+    setShowConfirmModal(true);
+  };
+
+  /**
+   * Handle confirmed user removal
+   */
+  const handleConfirmRemoval = async () => {
+    if (!userToRemove) return;
+    
+    console.log('🔥 ManageGroupMembers: Starting to remove user:', userToRemove.uid, 'from group:', groupId);
+    
+    setShowConfirmModal(false);
+    
+    try {
+      setIsLoading(true);
+      console.log('🔥 ManageGroupMembers: Calling removeUserFromGroup...');
+      
+      await removeUserFromGroup(groupId, userToRemove.uid);
+      
+      console.log('🔥 ManageGroupMembers: Successfully removed user, reloading group data...');
+      await loadGroupData();
+      
+      console.log('🔥 ManageGroupMembers: Group data reloaded');
+      
+      if (userToRemove.uid === currentUser?.uid) {
+        console.log('🔥 ManageGroupMembers: User removed themselves, navigating back');
+        navigation.goBack();
+      }
+    } catch (error) {
+      console.error('❌ ManageGroupMembers: Failed to remove user:', error);
+    } finally {
+      setIsLoading(false);
+      setUserToRemove(null);
+    }
+  };
+
+  /**
+   * Cancel removal
+   */
+  const handleCancelRemoval = () => {
+    setShowConfirmModal(false);
+    setUserToRemove(null);
+  };
+
+  /**
+   * Render group member item
+   */
+  const renderMemberItem = ({ item: member }: { item: GroupMember }) => {
+    const isCurrentUser = member.uid === currentUser?.uid;
+    const canRemove = currentUserRole === 'admin' || isCurrentUser;
+
+    return (
+      <View style={[styles.memberItem, { borderBottomColor: theme.colors.border }]}>
+        <UserAvatar
+          photoURL={member.photoURL}
+          displayName={member.displayName}
+          size={50}
+        />
+        <View style={styles.memberInfo}>
+          <Text style={[styles.memberName, { color: theme.colors.text }]}>
+            {member.displayName} {isCurrentUser && '(You)'}
+          </Text>
+          <Text style={[styles.memberRole, { color: theme.colors.textSecondary }]}>
+            {member.role}
+          </Text>
+        </View>
+        {canRemove && (
+                      <TouchableOpacity
+              style={[styles.removeButton, { borderColor: theme.colors.error }]}
+              onPress={() => {
+                console.log('🔥 Remove button pressed for user:', member.uid, member.displayName);
+                showRemoveConfirmation(member);
+              }}
+            >
+            <Text style={[styles.removeButtonText, { color: theme.colors.error }]}>
+              {isCurrentUser ? 'Leave' : 'Remove'}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
+
+  /**
+   * Render friend item for adding
+   */
+  const renderFriendItem = ({ item: friend }: { item: FriendProfile }) => {
+    const isSelected = selectedFriends.includes(friend.uid);
+
+    return (
+      <View style={[styles.friendItem, { borderBottomColor: theme.colors.border }]}>
+        <UserAvatar
+          photoURL={friend.photoURL}
+          displayName={friend.displayName}
+          size={40}
+        />
+        <View style={styles.friendInfo}>
+          <Text style={[styles.friendName, { color: theme.colors.text }]}>
+            {friend.displayName}
+          </Text>
+          <Text style={[styles.friendUsername, { color: theme.colors.textSecondary }]}>
+            @{friend.username}
+          </Text>
+        </View>
+        <Switch
+          value={isSelected}
+          onValueChange={(value) => {
+            if (value) {
+              setSelectedFriends(prev => [...prev, friend.uid]);
+            } else {
+              setSelectedFriends(prev => prev.filter(id => id !== friend.uid));
+            }
+          }}
+          trackColor={{
+            false: theme.colors.border,
+            true: theme.colors.primary + '50',
+          }}
+          thumbColor={isSelected ? theme.colors.primary : theme.colors.surface}
+        />
+      </View>
+    );
+  };
+
+  if (isLoading && groupMembers.length === 0) {
+    return (
+      <Screen style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <Text style={[styles.loadingText, { color: theme.colors.textSecondary }]}>
+            Loading group data...
+          </Text>
+        </View>
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={[styles.backButton, { color: theme.colors.primary }]}>← Back</Text>
+        </TouchableOpacity>
+        <Text style={[styles.title, { color: theme.colors.text }]}>Manage Members</Text>
+      </View>
+
+      {/* Current Members Section */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+          Current Members ({groupMembers.length})
+        </Text>
+        <FlatList
+          data={groupMembers}
+          renderItem={renderMemberItem}
+          keyExtractor={(item) => item.uid}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+
+      {/* Add Members Section (Admin Only) */}
+      {currentUserRole === 'admin' && (
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            Add Members
+          </Text>
+          
+          {/* Search Bar */}
+          <TextInput
+            style={[
+              styles.searchInput,
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.border,
+                color: theme.colors.text,
+              },
+            ]}
+            placeholder="Search friends to add..."
+            placeholderTextColor={theme.colors.textSecondary}
+            value={searchTerm}
+            onChangeText={setSearchTerm}
+          />
+
+          {/* Friends List */}
+          <FlatList
+            data={filteredFriends}
+            renderItem={renderFriendItem}
+            keyExtractor={(item) => item.uid}
+            showsVerticalScrollIndicator={false}
+            style={styles.friendsList}
+          />
+
+          {/* Add Button */}
+          {selectedFriends.length > 0 && (
+            <TouchableOpacity
+              style={[styles.addButton, { backgroundColor: theme.colors.primary }]}
+              onPress={handleAddFriends}
+              disabled={isLoading}
+            >
+              <Text style={[styles.addButtonText, { color: theme.colors.onPrimary }]}>
+                Add {selectedFriends.length} Friend{selectedFriends.length > 1 ? 's' : ''}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+    </Screen>
+  );
+}
+
+const styles = {
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  backButton: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  title: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: -50, // Compensate for back button
+  },
+  section: {
+    marginBottom: 30,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  memberItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  memberInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  memberName: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  memberRole: {
+    fontSize: 14,
+    marginTop: 2,
+  },
+  removeButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderRadius: 6,
+  },
+  removeButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  searchInput: {
+    height: 44,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginBottom: 15,
+    fontSize: 16,
+  },
+  friendsList: {
+    maxHeight: 200,
+  },
+  friendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+  },
+  friendInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  friendName: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  friendUsername: {
+    fontSize: 14,
+    marginTop: 2,
+  },
+  addButton: {
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  addButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+}; 

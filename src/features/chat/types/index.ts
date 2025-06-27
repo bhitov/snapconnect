@@ -31,7 +31,7 @@ export type SnapDuration = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 export interface BaseMessage {
   id: string;
   senderId: string;
-  recipientId: string;
+  recipientId?: string; // Optional for group messages
   conversationId: string;
   type: MessageType;
   createdAt: number;
@@ -90,14 +90,16 @@ export interface Snap {
  */
 export interface TextMessageCreationData {
   text: string;
-  recipientId: string;
+  recipientId?: string; // Optional for group messages
+  conversationId?: string; // For group messages
 }
 
 /**
  * Snap creation data (before upload)
  */
 export interface SnapCreationData {
-  recipientId: string;
+  recipientId?: string; // Optional for group messages
+  conversationId?: string; // For group messages
   mediaUri: string; // local file URI
   mediaType: SnapMediaType;
   textOverlay?: string;
@@ -120,17 +122,38 @@ export interface SnapUploadProgress {
 }
 
 /**
- * Conversation interface (chat thread between two users)
+ * Group interface for group chats
+ */
+export interface Group {
+  id: string;
+  name: string;
+  createdBy: string;
+  createdAt: number;
+  members: Record<string, {
+    role: 'admin' | 'member';
+    joinedAt: number;
+    addedBy: string;
+  }>;
+  avatarUrl?: string;
+}
+
+/**
+ * Conversation interface (chat thread between users or groups)
  */
 export interface Conversation {
   id: string;
-  participants: [string, string]; // [userId1, userId2]
+  participants: string[]; // Array of user IDs (2 for DM, multiple for groups)
   lastMessageId?: string;
   lastMessageAt?: number;
   lastMessageType?: MessageType;
-  unreadCount: number;
+  unreadCount: number[];  // Array parallel to participants
   createdAt: number;
   updatedAt: number;
+  // Group-specific fields
+  isGroup?: boolean;
+  groupId?: string;
+  title?: string;
+  avatarUrl?: string;
 }
 
 /**
@@ -138,7 +161,7 @@ export interface Conversation {
  */
 export interface ConversationWithUser {
   id: string;
-  otherUser: {
+  otherUser?: {
     uid: string;
     username: string;
     displayName: string;
@@ -155,6 +178,12 @@ export interface ConversationWithUser {
   };
   unreadCount: number;
   updatedAt: number;
+  // Group-specific fields
+  isGroup?: boolean;
+  groupId?: string;
+  title?: string;
+  avatarUrl?: string;
+  participants?: string[];
 }
 
 /**
@@ -201,6 +230,13 @@ export interface ChatState {
   // UI state
   selectedRecipients: string[];
   isRefreshing: boolean;
+
+  // Group creation
+  groupCreationState: {
+    title: string;
+    selectedMembers: string[];
+    isCreating: boolean;
+  };
 }
 
 /**
@@ -212,6 +248,13 @@ export interface ChatActions {
   refreshConversations: () => Promise<void>;
   silentRefreshConversations: () => Promise<void>;
   createConversation: (otherUserId: string) => Promise<string>;
+
+  // Groups
+  createGroup: (name: string, memberIds: string[], avatarUrl?: string) => Promise<string>;
+  addUsersToGroup: (groupId: string, userIds: string[]) => Promise<void>;
+  removeUserFromGroup: (groupId: string, userId: string) => Promise<void>;
+  updateGroupTitle: (groupId: string, title: string) => Promise<void>;
+  leaveGroup: (groupId: string) => Promise<void>;
 
   // Messages
   loadMessages: (conversationId: string) => Promise<void>;
@@ -234,6 +277,13 @@ export interface ChatActions {
   removeRecipient: (recipientId: string) => void;
   clearRecipients: () => void;
 
+  // Group creation UI
+  setGroupTitle: (title: string) => void;
+  setGroupMembers: (memberIds: string[]) => void;
+  addGroupMember: (memberId: string) => void;
+  removeGroupMember: (memberId: string) => void;
+  resetGroupCreation: () => void;
+
   // Error handling
   clearError: () => void;
   clearSendError: () => void;
@@ -250,7 +300,7 @@ export interface ChatStore extends ChatState, ChatActions {}
  */
 export interface TextMessageDocument {
   senderId: string;
-  recipientId: string;
+  recipientId?: string; // Nullable for group messages
   conversationId: string;
   text: string;
   createdAt: number;
@@ -264,7 +314,7 @@ export interface TextMessageDocument {
  */
 export interface SnapDocument {
   senderId: string;
-  recipientId: string;
+  recipientId?: string; // Nullable for group messages
   conversationId: string;
   mediaUrl: string;
   mediaType: SnapMediaType;
@@ -281,13 +331,18 @@ export interface SnapDocument {
  * Firebase conversation document structure
  */
 export interface ConversationDocument {
-  participants: [string, string];
+  participants: string[];
   lastMessageId?: string;
   lastMessageAt?: number;
   lastMessageType?: MessageType;
-  unreadCount: [number, number]; // [participant0_unread, participant1_unread]
+  unreadCount: number[]; // Array parallel to participants
   createdAt: number;
   updatedAt: number;
+  // Group-specific fields
+  isGroup?: boolean;
+  groupId?: string;
+  title?: string;
+  avatarUrl?: string;
 }
 
 /**
@@ -339,12 +394,16 @@ export interface SnapTimerProps {
 
 export interface ChatScreenProps {
   conversationId: string;
-  otherUser: {
+  otherUser?: {
     uid: string;
     username: string;
     displayName: string;
     photoURL?: string;
   };
+  // Group-specific props
+  isGroup?: boolean;
+  groupTitle?: string;
+  groupId?: string;
 }
 
 export interface MessageItemProps {

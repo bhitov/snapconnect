@@ -126,23 +126,34 @@ class ChatService {
   }
 
   /**
-   * Send a text message to a recipient
+   * Send a text message to a recipient or group
    */
   async sendTextMessage(data: TextMessageCreationData): Promise<void> {
-    console.log('💬 ChatService: Sending text message to:', data.recipientId);
+    const target = data.recipientId ? `user: ${data.recipientId}` : `conversation: ${data.conversationId}`;
+    console.log('💬 ChatService: Sending text message to:', target);
 
     try {
       const currentUserId = this.getCurrentUserId();
       const messageId = generateId();
       const now = Date.now();
 
-      // Create or get conversation
-      const conversationId = await this.createConversation(data.recipientId);
+      let conversationId: string;
+
+      // Handle group messages vs direct messages
+      if (data.conversationId) {
+        // Group message - use existing conversation
+        conversationId = data.conversationId;
+      } else if (data.recipientId) {
+        // Direct message - create or get conversation
+        conversationId = await this.createConversation(data.recipientId);
+      } else {
+        throw new Error('Either recipientId or conversationId must be provided');
+      }
 
       // Create text message document
       const messageData: TextMessageDocument = {
         senderId: currentUserId,
-        recipientId: data.recipientId,
+        ...(data.recipientId && { recipientId: data.recipientId }), // Only include if exists
         conversationId,
         text: data.text,
         createdAt: now,
@@ -212,6 +223,74 @@ class ChatService {
       return downloadURL;
     } catch (error) {
       console.error('❌ ChatService: Media upload failed:', error);
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Create a group conversation
+   */
+  async createGroup(
+    name: string,
+    memberIds: string[],
+    avatarUrl?: string
+  ): Promise<string> {
+    console.log('👥 ChatService: Creating group:', name, 'with members:', memberIds);
+
+    try {
+      const currentUserId = this.getCurrentUserId();
+      const groupId = generateId();
+      const conversationId = generateId();
+      const now = Date.now();
+
+      // Include current user in members
+      const allMembers = [currentUserId, ...memberIds.filter(id => id !== currentUserId)];
+
+      // 1. Create group metadata
+      const groupData: any = {
+        id: groupId,
+        name,
+        createdBy: currentUserId,
+        createdAt: now,
+        members: Object.fromEntries(
+          allMembers.map(id => [
+            id,
+            {
+              role: id === currentUserId ? 'admin' : 'member',
+              joinedAt: now,
+              addedBy: currentUserId,
+            },
+          ])
+        ),
+      };
+
+      // Only add avatarUrl if it's provided
+      if (avatarUrl) {
+        groupData.avatarUrl = avatarUrl;
+      }
+
+      const groupRef = ref(this.database, `groups/${groupId}`);
+      await set(groupRef, groupData);
+
+      // 2. Create conversation shell
+      const conversationData: ConversationDocument = {
+        participants: allMembers,
+        unreadCount: Array(allMembers.length).fill(0),
+        isGroup: true,
+        groupId,
+        title: name,
+        ...(avatarUrl && { avatarUrl }),
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      const conversationRef = ref(this.database, `conversations/${conversationId}`);
+      await set(conversationRef, conversationData);
+
+      console.log('✅ ChatService: Created group:', groupId, 'with conversation:', conversationId);
+      return conversationId;
+    } catch (error) {
+      console.error('❌ ChatService: Failed to create group:', error);
       throw this.handleError(error);
     }
   }
@@ -456,7 +535,7 @@ class ChatService {
     messageId: string,
     messageType: MessageType,
     timestamp: number,
-    recipientId: string
+    recipientId?: string // Made optional for group messages
   ): Promise<void> {
     const conversationRef = ref(
       this.database,
@@ -471,17 +550,29 @@ class ChatService {
     const conversation = snapshot.val() as ConversationDocument;
     const currentUserId = this.getCurrentUserId();
 
-    // Find recipient index in participants array
-    const recipientIndex = conversation.participants.findIndex(
-      id => id === recipientId
-    );
-    if (recipientIndex === -1) {
-      throw new Error('Recipient not found in conversation participants');
-    }
+    let newUnreadCount = [...conversation.unreadCount];
 
-    // Create new unread count array with updated value
-    const newUnreadCount = [...conversation.unreadCount];
-    newUnreadCount[recipientIndex] = (newUnreadCount[recipientIndex] || 0) + 1;
+    if (conversation.isGroup) {
+      // For group messages, increment unread count for all participants except sender
+      const senderIndex = conversation.participants.findIndex(
+        id => id === currentUserId
+      );
+      
+      conversation.participants.forEach((participantId, index) => {
+        if (index !== senderIndex) {
+          newUnreadCount[index] = (newUnreadCount[index] || 0) + 1;
+        }
+      });
+    } else if (recipientId) {
+      // For one-to-one messages, increment unread count for recipient
+      const recipientIndex = conversation.participants.findIndex(
+        id => id === recipientId
+      );
+      if (recipientIndex === -1) {
+        throw new Error('Recipient not found in conversation participants');
+      }
+      newUnreadCount[recipientIndex] = (newUnreadCount[recipientIndex] || 0) + 1;
+    }
 
     // Update conversation
     await update(conversationRef, {
@@ -639,55 +730,93 @@ class ChatService {
         // Check if current user is participant
         if (!conversation.participants.includes(currentUserId)) continue;
 
-        // Get other user ID
-        const otherUserId = conversation.participants.find(
-          id => id !== currentUserId
-        );
-        if (!otherUserId) continue;
-
         // Get current user index for unread count access
         const currentUserIndex = conversation.participants.findIndex(
           id => id === currentUserId
         );
         if (currentUserIndex === -1) continue;
 
-        // Get other user data
-        const otherUserData = await this.getUserData(otherUserId);
-        if (!otherUserData) continue;
-
-        // Get last message data if exists
-        let lastMessage;
-        if (conversation.lastMessageId) {
-          const messageData = await this.getMessageData(
-            conversation.lastMessageId
-          );
-          if (messageData) {
-            lastMessage = {
-              id: conversation.lastMessageId,
-              senderId: messageData.senderId,
-              type: messageData.type,
-              ...(messageData.type === 'text' && { text: messageData.text }),
-              ...(messageData.type === 'snap' && {
-                mediaType: messageData.mediaType,
-              }),
-              createdAt: messageData.createdAt,
-              status: messageData.status,
-            };
+        // Handle group conversations
+        if (conversation.isGroup) {
+          // Get last message data if exists
+          let lastMessage;
+          if (conversation.lastMessageId) {
+            const messageData = await this.getMessageData(
+              conversation.lastMessageId
+            );
+            if (messageData) {
+              lastMessage = {
+                id: conversation.lastMessageId,
+                senderId: messageData.senderId,
+                type: messageData.type,
+                ...(messageData.type === 'text' && { text: messageData.text }),
+                ...(messageData.type === 'snap' && {
+                  mediaType: messageData.mediaType,
+                }),
+                createdAt: messageData.createdAt,
+                status: messageData.status,
+              };
+            }
           }
-        }
 
-        result.push({
-          id: conversationId,
-          otherUser: {
-            uid: otherUserId,
-            username: otherUserData.username,
-            displayName: otherUserData.displayName,
-            photoURL: otherUserData.photoURL,
-          },
-          ...(lastMessage && { lastMessage }),
-          unreadCount: conversation.unreadCount[currentUserIndex] || 0,
-          updatedAt: conversation.updatedAt,
-        });
+          result.push({
+            id: conversationId,
+            isGroup: true,
+            groupId: conversation.groupId,
+            title: conversation.title,
+            avatarUrl: conversation.avatarUrl,
+            participants: conversation.participants,
+            ...(lastMessage && { lastMessage }),
+            unreadCount: conversation.unreadCount[currentUserIndex] || 0,
+            updatedAt: conversation.updatedAt,
+          });
+        } else {
+          // Handle one-to-one conversations (existing logic)
+          
+          // Get other user ID
+          const otherUserId = conversation.participants.find(
+            id => id !== currentUserId
+          );
+          if (!otherUserId) continue;
+
+          // Get other user data
+          const otherUserData = await this.getUserData(otherUserId);
+          if (!otherUserData) continue;
+
+          // Get last message data if exists
+          let lastMessage;
+          if (conversation.lastMessageId) {
+            const messageData = await this.getMessageData(
+              conversation.lastMessageId
+            );
+            if (messageData) {
+              lastMessage = {
+                id: conversation.lastMessageId,
+                senderId: messageData.senderId,
+                type: messageData.type,
+                ...(messageData.type === 'text' && { text: messageData.text }),
+                ...(messageData.type === 'snap' && {
+                  mediaType: messageData.mediaType,
+                }),
+                createdAt: messageData.createdAt,
+                status: messageData.status,
+              };
+            }
+          }
+
+          result.push({
+            id: conversationId,
+            otherUser: {
+              uid: otherUserId,
+              username: otherUserData.username,
+              displayName: otherUserData.displayName,
+              photoURL: otherUserData.photoURL,
+            },
+            ...(lastMessage && { lastMessage }),
+            unreadCount: conversation.unreadCount[currentUserIndex] || 0,
+            updatedAt: conversation.updatedAt,
+          });
+        }
       }
 
       // Sort by most recent activity
@@ -773,7 +902,7 @@ class ChatService {
   /**
    * Get user data by ID
    */
-  private async getUserData(userId: string): Promise<any> {
+  async getUserData(userId: string): Promise<any> {
     const userRef = ref(this.database, `users/${userId}`);
     const snapshot = await get(userRef);
     return snapshot.exists() ? snapshot.val() : null;
@@ -1161,6 +1290,190 @@ class ChatService {
         '❌ ChatService: Failed to mark all messages as delivered:',
         error
       );
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Add users to an existing group
+   */
+  async addUsersToGroup(groupId: string, userIds: string[]): Promise<void> {
+    console.log('👥 ChatService: Adding users to group:', groupId, userIds);
+
+    try {
+      const currentUserId = this.getCurrentUserId();
+      const now = Date.now();
+
+      // Get current group data
+      const groupRef = ref(this.database, `groups/${groupId}`);
+      const groupSnapshot = await get(groupRef);
+      
+      if (!groupSnapshot.exists()) {
+        throw new Error('Group not found');
+      }
+
+      const groupData = groupSnapshot.val();
+      
+      // Check if current user is admin
+      if (groupData.members[currentUserId]?.role !== 'admin') {
+        throw new Error('Only admins can add members');
+      }
+
+      // Get conversation data
+      const conversationsRef = ref(this.database, 'conversations');
+      const conversationsSnapshot = await get(conversationsRef);
+      
+      let conversationId: string | null = null;
+      let conversationData: any = null;
+
+      if (conversationsSnapshot.exists()) {
+        const conversations = conversationsSnapshot.val();
+        for (const [id, conversation] of Object.entries(conversations)) {
+          if ((conversation as any).groupId === groupId) {
+            conversationId = id;
+            conversationData = conversation;
+            break;
+          }
+        }
+      }
+
+      if (!conversationId || !conversationData) {
+        throw new Error('Group conversation not found');
+      }
+
+      // Add new members to group metadata
+      const updatedMembers = { ...groupData.members };
+      userIds.forEach(userId => {
+        if (!updatedMembers[userId]) {
+          updatedMembers[userId] = {
+            role: 'member',
+            joinedAt: now,
+            addedBy: currentUserId,
+          };
+        }
+      });
+
+      // Update participants and unread counts arrays
+      const newParticipants = [...conversationData.participants];
+      const newUnreadCount = [...conversationData.unreadCount];
+      
+      userIds.forEach(userId => {
+        if (!newParticipants.includes(userId)) {
+          newParticipants.push(userId);
+          newUnreadCount.push(0);
+        }
+      });
+
+      // Update both group and conversation
+      const updates: Record<string, any> = {};
+      updates[`groups/${groupId}/members`] = updatedMembers;
+      updates[`conversations/${conversationId}/participants`] = newParticipants;
+      updates[`conversations/${conversationId}/unreadCount`] = newUnreadCount;
+      updates[`conversations/${conversationId}/updatedAt`] = now;
+
+      await update(ref(this.database), updates);
+
+      console.log('✅ ChatService: Added users to group successfully');
+    } catch (error) {
+      console.error('❌ ChatService: Failed to add users to group:', error);
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Remove user from group
+   */
+  async removeUserFromGroup(groupId: string, userId: string): Promise<void> {
+    console.log('👥 ChatService: Removing user from group:', groupId, userId);
+
+    try {
+      const currentUserId = this.getCurrentUserId();
+      const now = Date.now();
+
+      // Get current group data
+      const groupRef = ref(this.database, `groups/${groupId}`);
+      const groupSnapshot = await get(groupRef);
+      
+      if (!groupSnapshot.exists()) {
+        throw new Error('Group not found');
+      }
+
+      const groupData = groupSnapshot.val();
+      
+      // Check permissions: admin can remove others, users can remove themselves
+      const canRemove = groupData.members[currentUserId]?.role === 'admin' || currentUserId === userId;
+      if (!canRemove) {
+        throw new Error('Permission denied');
+      }
+
+      // Get conversation data
+      const conversationsRef = ref(this.database, 'conversations');
+      const conversationsSnapshot = await get(conversationsRef);
+      
+      let conversationId: string | null = null;
+      let conversationData: any = null;
+
+      if (conversationsSnapshot.exists()) {
+        const conversations = conversationsSnapshot.val();
+        for (const [id, conversation] of Object.entries(conversations)) {
+          if ((conversation as any).groupId === groupId) {
+            conversationId = id;
+            conversationData = conversation;
+            break;
+          }
+        }
+      }
+
+      if (!conversationId || !conversationData) {
+        throw new Error('Group conversation not found');
+      }
+
+      // Remove member from group metadata
+      const updatedMembers = { ...groupData.members };
+      delete updatedMembers[userId];
+
+      // Update participants and unread counts arrays
+      const userIndex = conversationData.participants.findIndex((id: string) => id === userId);
+      if (userIndex === -1) {
+        throw new Error('User not found in conversation participants');
+      }
+
+      const newParticipants = conversationData.participants.filter((_: any, index: number) => index !== userIndex);
+      const newUnreadCount = conversationData.unreadCount.filter((_: any, index: number) => index !== userIndex);
+
+      // Update both group and conversation
+      const updates: Record<string, any> = {};
+      updates[`groups/${groupId}/members`] = updatedMembers;
+      updates[`conversations/${conversationId}/participants`] = newParticipants;
+      updates[`conversations/${conversationId}/unreadCount`] = newUnreadCount;
+      updates[`conversations/${conversationId}/updatedAt`] = now;
+
+      await update(ref(this.database), updates);
+
+      console.log('✅ ChatService: Removed user from group successfully');
+    } catch (error) {
+      console.error('❌ ChatService: Failed to remove user from group:', error);
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Get group data by groupId
+   */
+  async getGroupData(groupId: string): Promise<any> {
+    console.log('👥 ChatService: Getting group data:', groupId);
+
+    try {
+      const groupRef = ref(this.database, `groups/${groupId}`);
+      const snapshot = await get(groupRef);
+
+      if (!snapshot.exists()) {
+        throw new Error('Group not found');
+      }
+
+      return snapshot.val();
+    } catch (error) {
+      console.error('❌ ChatService: Failed to get group data:', error);
       throw this.handleError(error);
     }
   }

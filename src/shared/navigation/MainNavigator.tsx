@@ -18,6 +18,9 @@ import {
   FriendsListScreen,
 } from '../../features/friends/screens';
 import { usePendingRequestsCount } from '../../features/friends/store/friendsStore';
+import { GroupsScreen, CreateGroupScreen } from '../../features/groups/screens';
+import { GroupInfoScreen } from '../../features/groups/screens/GroupInfoScreen';
+import { ManageGroupMembersScreen } from '../../features/groups/screens/ManageGroupMembersScreen';
 import { StoriesScreen } from '../../features/stories/screens/StoriesScreen';
 import { ViewStoryScreen } from '../../features/stories/screens/ViewStoryScreen';
 import { useTheme } from '../hooks/useTheme';
@@ -26,6 +29,7 @@ import {
   MainTabParamList,
   ChatStackParamList,
   FriendsStackParamList,
+  GroupsStackParamList,
   StoriesStackParamList,
 } from './types';
 
@@ -117,6 +121,24 @@ function FriendsStackNavigator() {
       />
       <FriendsStack.Screen name='Profile' component={ProfileScreen} />
     </FriendsStack.Navigator>
+  );
+}
+
+// Groups Stack Navigator
+const GroupsStack = createNativeStackNavigator<GroupsStackParamList>();
+
+function GroupsStackNavigator() {
+  return (
+    <GroupsStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <GroupsStack.Screen name='GroupsList' component={GroupsScreen} />
+      <GroupsStack.Screen name='CreateGroup' component={CreateGroupScreen} />
+      <GroupsStack.Screen name='GroupInfo' component={GroupInfoScreen} />
+      <GroupsStack.Screen name='ManageGroupMembers' component={ManageGroupMembersScreen} />
+    </GroupsStack.Navigator>
   );
 }
 
@@ -306,6 +328,17 @@ export function MainNavigator() {
             <FriendsTabIcon color={color} size={size} />
           ),
           tabBarButtonTestID: 'friends-tab-button',
+        }}
+      />
+      <Tab.Screen
+        name='Groups'
+        component={GroupsStackNavigator}
+        options={{
+          tabBarLabel: 'Groups',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='people' size={size} color={color} />
+          ),
+          tabBarButtonTestID: 'groups-tab-button',
         }}
       />
       <Tab.Screen

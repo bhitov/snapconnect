@@ -260,7 +260,7 @@ export function ChatScreen() {
   const navigation = useNavigation<ChatScreenNavigationProp>();
   const theme = useTheme();
 
-  const { conversationId, otherUser } = route.params;
+  const { conversationId, otherUser, isGroup, groupTitle } = route.params;
 
   // Auth state
   const currentUser = useAuthStore(state => state.user);
@@ -330,8 +330,12 @@ export function ChatScreen() {
    * Set navigation title and back button
    */
   useEffect(() => {
+    const title = isGroup 
+      ? (groupTitle || 'Group Chat')
+      : (otherUser?.displayName || 'Chat');
+      
     navigation.setOptions({
-      title: otherUser.displayName,
+      title,
       headerTitleStyle: {
         color: theme.colors.text || '#000000',
       },
@@ -341,7 +345,7 @@ export function ChatScreen() {
       headerBackTitle: 'Chats',
       headerTintColor: theme.colors.primary || '#FFFC00',
     });
-  }, [navigation, otherUser.displayName, theme]);
+  }, [navigation, otherUser?.displayName, isGroup, groupTitle, theme]);
 
   /**
    * Scroll to bottom when new messages arrive
@@ -365,10 +369,19 @@ export function ChatScreen() {
     setIsSending(true);
 
     try {
-      await sendTextMessage({
-        text,
-        recipientId: otherUser.uid,
-      });
+      if (isGroup) {
+        // Send message to group
+        await sendTextMessage({
+          text,
+          conversationId,
+        });
+      } else if (otherUser) {
+        // Send message to individual user
+        await sendTextMessage({
+          text,
+          recipientId: otherUser.uid,
+        });
+      }
 
       // Reload messages to show the new one
       await loadMessages(conversationId);
@@ -381,8 +394,9 @@ export function ChatScreen() {
   }, [
     messageText,
     currentUser,
-    otherUser.uid,
+    otherUser,
     conversationId,
+    isGroup,
     isSending,
     sendTextMessage,
     loadMessages,

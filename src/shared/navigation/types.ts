@@ -27,6 +27,9 @@ export type RootStackParamList = {
   };
   ProfileSettings: undefined;
   CreateGroup: undefined;
+  GroupInfo: {
+    groupId: string;
+  };
 };
 
 export type AuthStackParamList = {
@@ -37,22 +40,30 @@ export type AuthStackParamList = {
 };
 
 export type MainTabParamList = {
-  Chats: undefined;
+  Chats: undefined | {
+    screen: keyof ChatStackParamList;
+    params?: ChatStackParamList[keyof ChatStackParamList];
+  };
   Camera: undefined;
   Friends: undefined;
   Stories: undefined;
+  Groups: undefined;
 };
 
 export type ChatStackParamList = {
   ChatsList: undefined;
   ChatScreen: {
     conversationId: string;
-    otherUser: {
+    otherUser?: {
       uid: string;
       username: string;
       displayName: string;
       photoURL?: string;
     };
+    // Group chat params
+    isGroup?: boolean;
+    groupTitle?: string;
+    groupId?: string;
   };
 };
 
@@ -74,6 +85,17 @@ export type StoriesStackParamList = {
   CreateStory: {
     mediaUri: string;
     mediaType: 'photo' | 'video';
+  };
+};
+
+export type GroupsStackParamList = {
+  GroupsList: undefined;
+  CreateGroup: undefined;
+  GroupInfo: {
+    groupId: string;
+  };
+  ManageGroupMembers: {
+    groupId: string;
   };
 };
 
