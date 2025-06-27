@@ -2,14 +2,16 @@
  * Runner for minimal scenario generation
  * Creates only primary user and their partner with their conversation
  */
+
 import { generateMinimalScenario } from './scenarioGenerator';
+import { config } from './config';
 
 async function main() {
   console.log('🚀 Minimal Scenario Generator');
   console.log('============================\n');
   
   // Check OpenAI API key
-  const hasOpenAI = !!process.env.OPENAI_API_KEY;
+  const hasOpenAI = !!config.OPENAI_API_KEY;
   console.log(`🔑 OpenAI API Key: ${hasOpenAI ? '✅ Found' : '❌ Not found (will use simple messages)'}`);
   
   try {

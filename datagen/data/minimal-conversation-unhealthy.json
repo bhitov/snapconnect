@@ -1,0 +1,4053 @@
+{
+  "metadata": {
+    "generatedAt": "2025-06-27T04:47:24.998Z",
+    "type": "minimal-scenario",
+    "relationshipType": "unhealthy",
+    "totalUsers": 2,
+    "totalConversations": 1,
+    "totalMessages": 568
+  },
+  "users": {
+    "primaryUser": {
+      "uid": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+      "username": "jason_miller",
+      "displayName": "Jason Miller",
+      "email": "jason_miller@example.com",
+      "sex": "male",
+      "personality": [
+        "possessive",
+        "controlling",
+        "jealous"
+      ],
+      "relationshipStyle": "unhealthy",
+      "role": "primary",
+      "relationshipType": "unhealthy"
+    },
+    "primaryPartner": {
+      "uid": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+      "username": "sarah_jones",
+      "displayName": "Sarah Jones",
+      "email": "sarah_jones@example.com",
+      "sex": "female",
+      "personality": [
+        "defensive",
+        "inconsistent",
+        "critical"
+      ],
+      "relationshipStyle": "unhealthy",
+      "role": "primary-partner",
+      "relationshipType": "unhealthy"
+    }
+  },
+  "conversation": {
+    "type": "romantic-unhealthy",
+    "participants": [
+      {
+        "uid": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "username": "jason_miller",
+        "displayName": "Jason Miller",
+        "email": "jason_miller@example.com",
+        "sex": "male",
+        "personality": [
+          "possessive",
+          "controlling",
+          "jealous"
+        ],
+        "relationshipStyle": "unhealthy"
+      },
+      {
+        "uid": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "username": "sarah_jones",
+        "displayName": "Sarah Jones",
+        "email": "sarah_jones@example.com",
+        "sex": "female",
+        "personality": [
+          "defensive",
+          "inconsistent",
+          "critical"
+        ],
+        "relationshipStyle": "unhealthy"
+      }
+    ],
+    "conversationId": "833495c1-db47-4f3a-b8fb-26ca9b6483ae",
+    "messageCount": 568,
+    "messages": [
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Sarah, can you explain why you were late coming home last night?",
+        "timestamp": 1743741982106,
+        "date": "2025-04-04T04:46:22.106Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Jason, I told you I had to work late. Why do you keep questioning me?",
+        "timestamp": 1743760309378.7273,
+        "date": "2025-04-04T09:51:49.378Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just find it hard to believe sometimes. I worry about you.",
+        "timestamp": 1743778636651.4546,
+        "date": "2025-04-04T14:57:16.651Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I understand your concern, but I need you to trust me.",
+        "timestamp": 1743796963924.182,
+        "date": "2025-04-04T20:02:43.924Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Trust goes both ways. Why do you get defensive every time I ask a question?",
+        "timestamp": 1743815291196.9092,
+        "date": "2025-04-05T01:08:11.196Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Because it feels like you're interrogating me, Jason. It's suffocating.",
+        "timestamp": 1743833618469.6365,
+        "date": "2025-04-05T06:13:38.469Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm sorry if it comes off that way. I just want to make sure you're safe.",
+        "timestamp": 1743851945742.3635,
+        "date": "2025-04-05T11:19:05.742Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not about safety, Jason. It's about control.",
+        "timestamp": 1743870273015.0908,
+        "date": "2025-04-05T16:24:33.015Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm not trying to control you, Sarah. I just care about you.",
+        "timestamp": 1743888600287.818,
+        "date": "2025-04-05T21:30:00.287Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Sometimes it doesn't feel like care, it feels like possessiveness.",
+        "timestamp": 1743906927560.5454,
+        "date": "2025-04-06T02:35:27.560Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I promise I'll work on my approach. Can we talk about your coworker, Mark?",
+        "timestamp": 1743925254833.2727,
+        "date": "2025-04-06T07:40:54.833Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "What about him, Jason?",
+        "timestamp": 1743943582106,
+        "date": "2025-04-06T12:46:22.106Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm not comfortable with how close you two seem. Can you distance yourself from him?",
+        "timestamp": 1743961909378.7273,
+        "date": "2025-04-06T17:51:49.378Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Jason, Mark is just a friend and a colleague. I can't cut ties with him for no reason.",
+        "timestamp": 1743980236651.4546,
+        "date": "2025-04-06T22:57:16.651Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "It's for our relationship, Sarah. I can't help how I feel.",
+        "timestamp": 1743998563924.182,
+        "date": "2025-04-07T04:02:43.924Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This is not healthy, Jason. I won't cut off friendships for your insecurities.",
+        "timestamp": 1744016891196.9092,
+        "date": "2025-04-07T09:08:11.196Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Fine, I'll drop it. But it's hard seeing you with him all the time.",
+        "timestamp": 1744035218469.6365,
+        "date": "2025-04-07T14:13:38.469Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Maybe you should work on your trust issues, Jason. It's not fair to project them onto me.",
+        "timestamp": 1744053545742.3635,
+        "date": "2025-04-07T19:19:05.742Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I understand, Sarah. I'll try.",
+        "timestamp": 1744071873015.0908,
+        "date": "2025-04-08T00:24:33.015Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Thank you. I appreciate that.",
+        "timestamp": 1744090200287.818,
+        "date": "2025-04-08T05:30:00.287Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I went through your phone today, Sarah.",
+        "timestamp": 1744108527560.5454,
+        "date": "2025-04-08T10:35:27.560Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "What? Why would you do that, Jason?",
+        "timestamp": 1744126854833.2727,
+        "date": "2025-04-08T15:40:54.833Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I needed to make sure there was nothing going on with Mark.",
+        "timestamp": 1744145182106,
+        "date": "2025-04-08T20:46:22.106Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "That's a huge breach of trust, Jason. I can't believe you did that.",
+        "timestamp": 1744163509378.7273,
+        "date": "2025-04-09T01:51:49.378Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I had to know, Sarah. I'm sorry.",
+        "timestamp": 1744181836651.4546,
+        "date": "2025-04-09T06:57:16.651Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This is not okay. I need my privacy, Jason.",
+        "timestamp": 1744200163924.182,
+        "date": "2025-04-09T12:02:43.924Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I know, and I regret it. Can we move past this?",
+        "timestamp": 1744218491196.9092,
+        "date": "2025-04-09T17:08:11.196Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I don't know, Jason. I feel like I can't trust you anymore.",
+        "timestamp": 1744236818469.6365,
+        "date": "2025-04-09T22:13:38.469Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do whatever it takes to earn your trust back, Sarah.",
+        "timestamp": 1744255145742.3635,
+        "date": "2025-04-10T03:19:05.742Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's going to take time, Jason. This has really shaken me.",
+        "timestamp": 1744273473015.0908,
+        "date": "2025-04-10T08:24:33.015Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I understand. I'll do better, I promise.",
+        "timestamp": 1744291800287.818,
+        "date": "2025-04-10T13:30:00.287Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope so, Jason. I really do.",
+        "timestamp": 1744310127560.5454,
+        "date": "2025-04-10T18:35:27.560Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah.",
+        "timestamp": 1744328454833.2727,
+        "date": "2025-04-10T23:40:54.833Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I love you too, Jason, but we need to work on this.",
+        "timestamp": 1744346782106,
+        "date": "2025-04-11T04:46:22.106Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Sarah, we need to talk about what happened this week. Your constant criticism is getting out of hand.",
+        "timestamp": 1744346786202,
+        "date": "2025-04-11T04:46:26.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Oh, so now it's all about my criticism? What about your possessiveness, Jason?",
+        "timestamp": 1744369186202,
+        "date": "2025-04-11T10:59:46.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "My possessiveness wouldn't be an issue if you weren't always on the defensive!",
+        "timestamp": 1744391586202,
+        "date": "2025-04-11T17:13:06.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I'm defensive because you never trust me! Like demanding I cut ties with my coworker?!",
+        "timestamp": 1744413986202,
+        "date": "2025-04-11T23:26:26.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just don't like him, Sarah. Can't you see that?",
+        "timestamp": 1744436386202,
+        "date": "2025-04-12T05:39:46.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not about him, Jason. It's about you controlling every aspect of my life!",
+        "timestamp": 1744458786202,
+        "date": "2025-04-12T11:53:06.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm not controlling, Sarah. I just want us to be okay.",
+        "timestamp": 1744481186202,
+        "date": "2025-04-12T18:06:26.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Going through my phone is not okay, Jason! It's a violation of my privacy!",
+        "timestamp": 1744503586202,
+        "date": "2025-04-13T00:19:46.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I was just trying to understand, Sarah. Why can't you see that?",
+        "timestamp": 1744525986202,
+        "date": "2025-04-13T06:33:06.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Because it's not normal, Jason! You're suffocating me!",
+        "timestamp": 1744548386202,
+        "date": "2025-04-13T12:46:26.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be happy, Sarah. Is that too much to ask?",
+        "timestamp": 1744570786202,
+        "date": "2025-04-13T18:59:46.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Happiness shouldn't come at the cost of my freedom, Jason!",
+        "timestamp": 1744593186202,
+        "date": "2025-04-14T01:13:06.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I feel like you never listen to me, Sarah. It's always about you.",
+        "timestamp": 1744615586202,
+        "date": "2025-04-14T07:26:26.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Maybe if you trusted me, Jason, we wouldn't be in this mess!",
+        "timestamp": 1744637986202,
+        "date": "2025-04-14T13:39:46.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I do trust you, Sarah. It's just... hard sometimes.",
+        "timestamp": 1744660386202,
+        "date": "2025-04-14T19:53:06.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Hard? It's suffocating, Jason. I can't breathe in this relationship!",
+        "timestamp": 1744682786202,
+        "date": "2025-04-15T02:06:26.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I thought we could work through this, Sarah. I thought we loved each other.",
+        "timestamp": 1744705186202,
+        "date": "2025-04-15T08:19:46.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Love shouldn't feel like this, Jason. It shouldn't be a constant battle.",
+        "timestamp": 1744727586202,
+        "date": "2025-04-15T14:33:06.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want things to go back to how they used to be, Sarah. When we were happy.",
+        "timestamp": 1744749986202,
+        "date": "2025-04-15T20:46:26.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "We can't go back, Jason. We have to move forward, but not like this.",
+        "timestamp": 1744772386202,
+        "date": "2025-04-16T02:59:46.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll try to be better, Sarah. I'll try to trust you more.",
+        "timestamp": 1744794786202,
+        "date": "2025-04-16T09:13:06.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not just about trust, Jason. It's about respect and boundaries.",
+        "timestamp": 1744817186202,
+        "date": "2025-04-16T15:26:26.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll respect your boundaries, Sarah. I promise.",
+        "timestamp": 1744839586202,
+        "date": "2025-04-16T21:39:46.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope so, Jason. I really do. Because I can't take much more of this.",
+        "timestamp": 1744861986202,
+        "date": "2025-04-17T03:53:06.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah. I just want us to be happy.",
+        "timestamp": 1744884386202,
+        "date": "2025-04-17T10:06:26.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I love you too, Jason. But love alone can't fix this. We need to change.",
+        "timestamp": 1744906786202,
+        "date": "2025-04-17T16:19:46.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll change, Sarah. I'll do whatever it takes. Just don't leave me.",
+        "timestamp": 1744929186202,
+        "date": "2025-04-17T22:33:06.202Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I don't want to leave, Jason. I just want things to be healthy between us.",
+        "timestamp": 1744951586202,
+        "date": "2025-04-18T04:46:26.202Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Hey Sarah, we need to talk about your coworker again.",
+        "timestamp": 1744951593065,
+        "date": "2025-04-18T04:46:33.065Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "What now, Jason? Can't you see how controlling you're being?",
+        "timestamp": 1744961507819.0984,
+        "date": "2025-04-18T07:31:47.819Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just can't shake off this feeling of jealousy, Sarah.",
+        "timestamp": 1744971422573.1968,
+        "date": "2025-04-18T10:17:02.573Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I'm not going to cut ties just because you're insecure.",
+        "timestamp": 1744981337327.2952,
+        "date": "2025-04-18T13:02:17.327Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Insecure? I just want to protect what's mine.",
+        "timestamp": 1744991252081.3936,
+        "date": "2025-04-18T15:47:32.081Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I'm not a possession, Jason. I need my own space.",
+        "timestamp": 1745001166835.4917,
+        "date": "2025-04-18T18:32:46.835Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm not asking for much, Sarah. It's about respect.",
+        "timestamp": 1745011081589.59,
+        "date": "2025-04-18T21:18:01.589Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It feels suffocating to have you constantly watching over me.",
+        "timestamp": 1745020996343.6885,
+        "date": "2025-04-19T00:03:16.343Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm just looking out for us, Sarah. Can't you see that?",
+        "timestamp": 1745030911097.7869,
+        "date": "2025-04-19T02:48:31.097Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need to have my friendships, Jason. It's not healthy to isolate me.",
+        "timestamp": 1745040825851.8853,
+        "date": "2025-04-19T05:33:45.851Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "You're making me out to be the bad guy, Sarah.",
+        "timestamp": 1745050740605.9836,
+        "date": "2025-04-19T08:19:00.605Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "You're not giving me any room to breathe, Jason.",
+        "timestamp": 1745060655360.082,
+        "date": "2025-04-19T11:04:15.360Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want to feel secure in our relationship, Sarah.",
+        "timestamp": 1745070570114.1804,
+        "date": "2025-04-19T13:49:30.114Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Your demands are making me doubt everything, Jason.",
+        "timestamp": 1745080484868.2788,
+        "date": "2025-04-19T16:34:44.868Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Doubt what, Sarah? I just want us to be strong.",
+        "timestamp": 1745090399622.377,
+        "date": "2025-04-19T19:19:59.622Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Trust is a two-way street, Jason. Don't you get that?",
+        "timestamp": 1745100314376.4753,
+        "date": "2025-04-19T22:05:14.376Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just can't help feeling this way about your coworker, Sarah.",
+        "timestamp": 1745110229130.5737,
+        "date": "2025-04-20T00:50:29.130Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This jealousy is tearing us apart, Jason. Can't you see that?",
+        "timestamp": 1745120143884.672,
+        "date": "2025-04-20T03:35:43.884Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I feel like I'm losing you, Sarah. I can't stand the thought of that.",
+        "timestamp": 1745130058638.7705,
+        "date": "2025-04-20T06:20:58.638Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need you to trust me, Jason. I'm not your enemy.",
+        "timestamp": 1745139973392.869,
+        "date": "2025-04-20T09:06:13.392Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I feel like I'm not enough for you, Sarah.",
+        "timestamp": 1745149888146.9673,
+        "date": "2025-04-20T11:51:28.146Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This isn't about you not being enough, Jason. It's about control.",
+        "timestamp": 1745159802901.0657,
+        "date": "2025-04-20T14:36:42.901Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be happy, Sarah. Is that too much to ask?",
+        "timestamp": 1745169717655.1638,
+        "date": "2025-04-20T17:21:57.655Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Happiness shouldn't come at the cost of my autonomy, Jason.",
+        "timestamp": 1745179632409.2622,
+        "date": "2025-04-20T20:07:12.409Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Autonomy? I just want us to be a team, Sarah.",
+        "timestamp": 1745189547163.3606,
+        "date": "2025-04-20T22:52:27.163Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Your idea of teamwork is suffocating, Jason. I need space.",
+        "timestamp": 1745199461917.459,
+        "date": "2025-04-21T01:37:41.917Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I feel like I'm losing myself trying to please you, Sarah.",
+        "timestamp": 1745209376671.5574,
+        "date": "2025-04-21T04:22:56.671Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I can't lose myself in this relationship, Jason. I need to stand my ground.",
+        "timestamp": 1745219291425.6558,
+        "date": "2025-04-21T07:08:11.425Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm just trying to protect what we have, Sarah.",
+        "timestamp": 1745229206179.7542,
+        "date": "2025-04-21T09:53:26.179Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It feels like you're trying to control every aspect of my life, Jason.",
+        "timestamp": 1745239120933.8525,
+        "date": "2025-04-21T12:38:40.933Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I can't help feeling this way, Sarah. It's eating me up inside.",
+        "timestamp": 1745249035687.951,
+        "date": "2025-04-21T15:23:55.687Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Your feelings shouldn't override my boundaries, Jason.",
+        "timestamp": 1745258950442.049,
+        "date": "2025-04-21T18:09:10.442Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be close, Sarah. Why is that so hard to understand?",
+        "timestamp": 1745268865196.1475,
+        "date": "2025-04-21T20:54:25.196Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Closeness shouldn't come with chains, Jason. I need freedom.",
+        "timestamp": 1745278779950.2458,
+        "date": "2025-04-21T23:39:39.950Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm trying to make things work between us, Sarah. Can't you see that?",
+        "timestamp": 1745288694704.3442,
+        "date": "2025-04-22T02:24:54.704Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Making it work shouldn't involve eroding my trust, Jason.",
+        "timestamp": 1745298609458.4426,
+        "date": "2025-04-22T05:10:09.458Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just feel lost without you, Sarah. Can't you feel that?",
+        "timestamp": 1745308524212.541,
+        "date": "2025-04-22T07:55:24.212Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Feeling lost isn't an excuse to control me, Jason. I need respect.",
+        "timestamp": 1745318438966.6394,
+        "date": "2025-04-22T10:40:38.966Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm trying to be a good partner, Sarah. Can't you see that?",
+        "timestamp": 1745328353720.7378,
+        "date": "2025-04-22T13:25:53.720Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Being a good partner means trusting me, Jason. Can you do that?",
+        "timestamp": 1745338268474.8362,
+        "date": "2025-04-22T16:11:08.474Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be happy, Sarah. Why is that so hard to achieve?",
+        "timestamp": 1745348183228.9343,
+        "date": "2025-04-22T18:56:23.228Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Happiness shouldn't come at the cost of my individuality, Jason.",
+        "timestamp": 1745358097983.0327,
+        "date": "2025-04-22T21:41:37.983Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Individuality? I just want us to be a unit, Sarah.",
+        "timestamp": 1745368012737.131,
+        "date": "2025-04-23T00:26:52.737Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Being a unit doesn't mean losing myself, Jason. Can you understand that?",
+        "timestamp": 1745377927491.2295,
+        "date": "2025-04-23T03:12:07.491Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm feeling lost without your support, Sarah. Can't you see that?",
+        "timestamp": 1745387842245.328,
+        "date": "2025-04-23T05:57:22.245Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Your need for support shouldn't override my need for independence, Jason.",
+        "timestamp": 1745397756999.4263,
+        "date": "2025-04-23T08:42:36.999Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be a strong couple, Sarah. Is that too much to ask?",
+        "timestamp": 1745407671753.5247,
+        "date": "2025-04-23T11:27:51.753Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Strength shouldn't come from control, Jason. It should come from respect.",
+        "timestamp": 1745417586507.623,
+        "date": "2025-04-23T14:13:06.507Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm just trying to navigate this relationship, Sarah. Can't you see that?",
+        "timestamp": 1745427501261.7212,
+        "date": "2025-04-23T16:58:21.261Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Navigating shouldn't involve manipulating me, Jason. I need honesty.",
+        "timestamp": 1745437416015.8196,
+        "date": "2025-04-23T19:43:36.015Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be on the same page, Sarah. Why can't we do that?",
+        "timestamp": 1745447330769.918,
+        "date": "2025-04-23T22:28:50.769Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Being on the same page shouldn't mean erasing my boundaries, Jason. I need space.",
+        "timestamp": 1745457245524.0164,
+        "date": "2025-04-24T01:14:05.524Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I feel like I'm losing you, Sarah. Can't you feel that?",
+        "timestamp": 1745467160278.1147,
+        "date": "2025-04-24T03:59:20.278Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Feeling lost shouldn't lead to controlling behavior, Jason. I need autonomy.",
+        "timestamp": 1745477075032.2131,
+        "date": "2025-04-24T06:44:35.032Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm trying to protect what we have, Sarah. Can't you see that?",
+        "timestamp": 1745486989786.3115,
+        "date": "2025-04-24T09:29:49.786Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Protection shouldn't come at the cost of my freedom, Jason. I need trust.",
+        "timestamp": 1745496904540.41,
+        "date": "2025-04-24T12:15:04.540Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be happy together, Sarah. What's so wrong with that?",
+        "timestamp": 1745506819294.5083,
+        "date": "2025-04-24T15:00:19.294Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Happiness shouldn't be at the expense of my independence, Jason. I need respect.",
+        "timestamp": 1745516734048.6064,
+        "date": "2025-04-24T17:45:34.048Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I feel like I'm drowning without your support, Sarah. Can't you see that?",
+        "timestamp": 1745526648802.7048,
+        "date": "2025-04-24T20:30:48.802Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Drowning shouldn't be a result of your insecurities, Jason. I need space.",
+        "timestamp": 1745536563556.8032,
+        "date": "2025-04-24T23:16:03.556Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm trying to make things work between us, Sarah. Can't you understand that?",
+        "timestamp": 1745546478310.9016,
+        "date": "2025-04-25T02:01:18.310Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Making it work shouldn't involve controlling me, Jason. I need autonomy.",
+        "timestamp": 1745556393065,
+        "date": "2025-04-25T04:46:33.065Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Jason, I can't do this anymore. Your possessiveness is suffocating me.",
+        "timestamp": 1745556397775,
+        "date": "2025-04-25T04:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "What do you mean, Sarah? I just care about you and want to protect you.",
+        "timestamp": 1745577997775,
+        "date": "2025-04-25T10:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not protection, Jason. It's control. You constantly question my every move.",
+        "timestamp": 1745599597775,
+        "date": "2025-04-25T16:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want to make sure you're safe. Is that too much to ask?",
+        "timestamp": 1745621197775,
+        "date": "2025-04-25T22:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's more than that. You demand I cut ties with my male coworker. That's crossing a line.",
+        "timestamp": 1745642797775,
+        "date": "2025-04-26T04:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "He's always texting you! How am I supposed to trust that?",
+        "timestamp": 1745664397775,
+        "date": "2025-04-26T10:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Trust is earned, not demanded. I feel like I'm losing myself in this relationship.",
+        "timestamp": 1745685997775,
+        "date": "2025-04-26T16:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want what's best for us. I want you all to myself.",
+        "timestamp": 1745707597775,
+        "date": "2025-04-26T22:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need space to breathe, Jason. Your jealousy is overwhelming.",
+        "timestamp": 1745729197775,
+        "date": "2025-04-27T04:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I can't help it. I love you so much, Sarah.",
+        "timestamp": 1745750797775,
+        "date": "2025-04-27T10:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Love shouldn't feel like this, suffocating and controlling.",
+        "timestamp": 1745772397775,
+        "date": "2025-04-27T16:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll try to give you space, but I can't promise it'll be easy.",
+        "timestamp": 1745793997775,
+        "date": "2025-04-27T22:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Thank you, Jason. I appreciate you trying to understand.",
+        "timestamp": 1745815597775,
+        "date": "2025-04-28T04:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be happy together, Sarah.",
+        "timestamp": 1745837197775,
+        "date": "2025-04-28T10:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "But happiness shouldn't come at the cost of my freedom and sanity.",
+        "timestamp": 1745858797775,
+        "date": "2025-04-28T16:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll work on it, I promise. I don't want to lose you.",
+        "timestamp": 1745880397775,
+        "date": "2025-04-28T22:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I don't want to lose myself trying to please you, Jason.",
+        "timestamp": 1745901997775,
+        "date": "2025-04-29T04:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do better, Sarah. I'll change for you.",
+        "timestamp": 1745923597775,
+        "date": "2025-04-29T10:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope so, Jason. Because I can't continue like this.",
+        "timestamp": 1745945197775,
+        "date": "2025-04-29T16:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll be more mindful of how I come across to you, Sarah.",
+        "timestamp": 1745966797775,
+        "date": "2025-04-29T22:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "That's all I ask for, Jason. To be respected and trusted.",
+        "timestamp": 1745988397775,
+        "date": "2025-04-30T04:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I do trust you, Sarah. It's just my insecurities getting the best of me.",
+        "timestamp": 1746009997775,
+        "date": "2025-04-30T10:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Your insecurities are seeping into our relationship, Jason. It's toxic.",
+        "timestamp": 1746031597775,
+        "date": "2025-04-30T16:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll work on it, Sarah. I promise.",
+        "timestamp": 1746053197775,
+        "date": "2025-04-30T22:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Actions speak louder than words, Jason. I need to see real change.",
+        "timestamp": 1746074797775,
+        "date": "2025-05-01T04:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll show you, Sarah. I'll make things right.",
+        "timestamp": 1746096397775,
+        "date": "2025-05-01T10:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope so, Jason. For both our sakes.",
+        "timestamp": 1746117997775,
+        "date": "2025-05-01T16:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah. I'll do whatever it takes to make this work.",
+        "timestamp": 1746139597775,
+        "date": "2025-05-01T22:46:37.775Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I love you too, Jason. But we need to find a healthier way to love.",
+        "timestamp": 1746161197775,
+        "date": "2025-05-02T04:46:37.775Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Hey Sarah, we need to talk about your coworker again.",
+        "timestamp": 1746161201665,
+        "date": "2025-05-02T04:46:41.665Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Jason, I don't want to have this conversation again.",
+        "timestamp": 1746176709357.3076,
+        "date": "2025-05-02T09:05:09.357Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "It's important. I need you to cut ties with him.",
+        "timestamp": 1746192217049.6155,
+        "date": "2025-05-02T13:23:37.049Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Why do you always try to control who I talk to?",
+        "timestamp": 1746207724741.923,
+        "date": "2025-05-02T17:42:04.741Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want what's best for us.",
+        "timestamp": 1746223232434.2307,
+        "date": "2025-05-02T22:00:32.434Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It feels suffocating.",
+        "timestamp": 1746238740126.5386,
+        "date": "2025-05-03T02:19:00.126Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Trust me, I know what's best.",
+        "timestamp": 1746254247818.8462,
+        "date": "2025-05-03T06:37:27.818Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I can't keep feeling like I'm constantly walking on eggshells.",
+        "timestamp": 1746269755511.1538,
+        "date": "2025-05-03T10:55:55.511Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "You know I love you, right?",
+        "timestamp": 1746285263203.4614,
+        "date": "2025-05-03T15:14:23.203Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Love shouldn't feel this restrictive.",
+        "timestamp": 1746300770895.7693,
+        "date": "2025-05-03T19:32:50.895Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "You're overreacting.",
+        "timestamp": 1746316278588.077,
+        "date": "2025-05-03T23:51:18.588Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I'm tired of defending myself all the time.",
+        "timestamp": 1746331786280.3845,
+        "date": "2025-05-04T04:09:46.280Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want you to be safe.",
+        "timestamp": 1746347293972.6924,
+        "date": "2025-05-04T08:28:13.972Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This isn't about safety, it's about control.",
+        "timestamp": 1746362801665,
+        "date": "2025-05-04T12:46:41.665Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Why are you making this so difficult?",
+        "timestamp": 1746378309357.3076,
+        "date": "2025-05-04T17:05:09.357Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need you to trust me.",
+        "timestamp": 1746393817049.6155,
+        "date": "2025-05-04T21:23:37.049Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Trust goes both ways.",
+        "timestamp": 1746409324741.923,
+        "date": "2025-05-05T01:42:04.741Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I feel like you don't trust me at all.",
+        "timestamp": 1746424832434.2307,
+        "date": "2025-05-05T06:00:32.434Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "That's not true.",
+        "timestamp": 1746440340126.5386,
+        "date": "2025-05-05T10:19:00.126Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need you to respect my boundaries.",
+        "timestamp": 1746455847818.8462,
+        "date": "2025-05-05T14:37:27.818Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm just looking out for us.",
+        "timestamp": 1746471355511.1538,
+        "date": "2025-05-05T18:55:55.511Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This doesn't feel healthy.",
+        "timestamp": 1746486863203.4614,
+        "date": "2025-05-05T23:14:23.203Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "You're blowing things out of proportion.",
+        "timestamp": 1746502370895.7693,
+        "date": "2025-05-06T03:32:50.895Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I can't do this anymore.",
+        "timestamp": 1746517878588.077,
+        "date": "2025-05-06T07:51:18.588Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "What do you mean?",
+        "timestamp": 1746533386280.3845,
+        "date": "2025-05-06T12:09:46.280Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need space to figure things out.",
+        "timestamp": 1746548893972.6924,
+        "date": "2025-05-06T16:28:13.972Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Are you breaking up with me?",
+        "timestamp": 1746564401665,
+        "date": "2025-05-06T20:46:41.665Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I don't know yet.",
+        "timestamp": 1746579909357.3076,
+        "date": "2025-05-07T01:05:09.357Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Please don't leave me.",
+        "timestamp": 1746595417049.6155,
+        "date": "2025-05-07T05:23:37.049Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need to prioritize my well-being.",
+        "timestamp": 1746610924741.923,
+        "date": "2025-05-07T09:42:04.741Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll change, I promise.",
+        "timestamp": 1746626432434.2307,
+        "date": "2025-05-07T14:00:32.434Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not just about you changing.",
+        "timestamp": 1746641940126.5386,
+        "date": "2025-05-07T18:19:00.126Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I can't lose you.",
+        "timestamp": 1746657447818.8462,
+        "date": "2025-05-07T22:37:27.818Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need to find myself outside of this relationship.",
+        "timestamp": 1746672955511.1538,
+        "date": "2025-05-08T02:55:55.511Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I don't want to lose you.",
+        "timestamp": 1746688463203.4614,
+        "date": "2025-05-08T07:14:23.203Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need time to heal.",
+        "timestamp": 1746703970895.7693,
+        "date": "2025-05-08T11:32:50.895Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll give you space.",
+        "timestamp": 1746719478588.077,
+        "date": "2025-05-08T15:51:18.588Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope you understand.",
+        "timestamp": 1746734986280.3845,
+        "date": "2025-05-08T20:09:46.280Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah.",
+        "timestamp": 1746750493972.6924,
+        "date": "2025-05-09T00:28:13.972Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I love you too, Jason.",
+        "timestamp": 1746766001665,
+        "date": "2025-05-09T04:46:41.665Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Hey Sarah, can we talk about what happened this week?",
+        "timestamp": 1746766008836,
+        "date": "2025-05-09T04:46:48.836Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Hi Jason, sure. What's on your mind?",
+        "timestamp": 1746780760055.5122,
+        "date": "2025-05-09T08:52:40.055Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I felt like you were being distant and not listening to me.",
+        "timestamp": 1746795511275.0244,
+        "date": "2025-05-09T12:58:31.275Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I was just trying to set a boundary, Jason. I need some space.",
+        "timestamp": 1746810262494.5366,
+        "date": "2025-05-09T17:04:22.494Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Space? Are you talking about that guy from your work again?",
+        "timestamp": 1746825013714.0488,
+        "date": "2025-05-09T21:10:13.714Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Yes, but you know he's just a colleague. Why are you so jealous?",
+        "timestamp": 1746839764933.561,
+        "date": "2025-05-10T01:16:04.933Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I can't help it. It's just how I feel when you're around other guys.",
+        "timestamp": 1746854516153.0732,
+        "date": "2025-05-10T05:21:56.153Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I can't cut off everyone for your sake, Jason. That's not fair.",
+        "timestamp": 1746869267372.5854,
+        "date": "2025-05-10T09:27:47.372Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be exclusive. Is that too much to ask?",
+        "timestamp": 1746884018592.0977,
+        "date": "2025-05-10T13:33:38.592Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not about that. It's about trust and respect.",
+        "timestamp": 1746898769811.6099,
+        "date": "2025-05-10T17:39:29.811Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I feel like you don't understand where I'm coming from.",
+        "timestamp": 1746913521031.122,
+        "date": "2025-05-10T21:45:21.031Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I do, but you need to understand my perspective too.",
+        "timestamp": 1746928272250.634,
+        "date": "2025-05-11T01:51:12.250Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I know, I just get so insecure sometimes.",
+        "timestamp": 1746943023470.1462,
+        "date": "2025-05-11T05:57:03.470Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I try to reassure you, but it's never enough.",
+        "timestamp": 1746957774689.6584,
+        "date": "2025-05-11T10:02:54.689Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I know, I'm sorry for doubting you.",
+        "timestamp": 1746972525909.1707,
+        "date": "2025-05-11T14:08:45.909Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's okay. I just want us to communicate better.",
+        "timestamp": 1746987277128.6829,
+        "date": "2025-05-11T18:14:37.128Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll work on that. Can we move forward from here?",
+        "timestamp": 1747002028348.195,
+        "date": "2025-05-11T22:20:28.348Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope so. I want things to be better between us.",
+        "timestamp": 1747016779567.7073,
+        "date": "2025-05-12T02:26:19.567Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Me too. Let's do our best to make it work.",
+        "timestamp": 1747031530787.2195,
+        "date": "2025-05-12T06:32:10.787Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Agreed. Let's focus on understanding each other more.",
+        "timestamp": 1747046282006.7317,
+        "date": "2025-05-12T10:38:02.006Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll try to be less controlling, I promise.",
+        "timestamp": 1747061033226.244,
+        "date": "2025-05-12T14:43:53.226Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "And I'll work on being more consistent in standing up for myself.",
+        "timestamp": 1747075784445.756,
+        "date": "2025-05-12T18:49:44.445Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "That sounds like a plan. We'll get through this together.",
+        "timestamp": 1747090535665.2683,
+        "date": "2025-05-12T22:55:35.665Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I believe we can if we both put in the effort.",
+        "timestamp": 1747105286884.7805,
+        "date": "2025-05-13T03:01:26.884Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Thanks for being patient with me, Sarah.",
+        "timestamp": 1747120038104.2927,
+        "date": "2025-05-13T07:07:18.104Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Thank you for listening and acknowledging my feelings, Jason.",
+        "timestamp": 1747134789323.805,
+        "date": "2025-05-13T11:13:09.323Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I care about you, Sarah. I want us to be happy.",
+        "timestamp": 1747149540543.3171,
+        "date": "2025-05-13T15:19:00.543Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I care about you too, Jason. Let's keep moving forward positively.",
+        "timestamp": 1747164291762.8293,
+        "date": "2025-05-13T19:24:51.762Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm glad we had this talk. It gives me hope for us.",
+        "timestamp": 1747179042982.3416,
+        "date": "2025-05-13T23:30:42.982Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Me too. Let's keep the lines of communication open from now on.",
+        "timestamp": 1747193794201.8538,
+        "date": "2025-05-14T03:36:34.201Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Definitely. I'll be more mindful of how I express myself.",
+        "timestamp": 1747208545421.366,
+        "date": "2025-05-14T07:42:25.421Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "And I'll make sure to speak up when I feel uncomfortable.",
+        "timestamp": 1747223296640.878,
+        "date": "2025-05-14T11:48:16.640Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "It's a team effort. We'll make it through this, Sarah.",
+        "timestamp": 1747238047860.3901,
+        "date": "2025-05-14T15:54:07.860Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "We will, Jason. As long as we're both committed to making it work.",
+        "timestamp": 1747252799079.9023,
+        "date": "2025-05-14T19:59:59.079Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm committed to you, Sarah. I want us to be strong together.",
+        "timestamp": 1747267550299.4146,
+        "date": "2025-05-15T00:05:50.299Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I want that too. Let's keep supporting each other through this.",
+        "timestamp": 1747282301518.9268,
+        "date": "2025-05-15T04:11:41.518Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm grateful for your understanding, Sarah.",
+        "timestamp": 1747297052738.439,
+        "date": "2025-05-15T08:17:32.738Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "And I'm grateful for your willingness to change for the better, Jason.",
+        "timestamp": 1747311803957.9512,
+        "date": "2025-05-15T12:23:23.957Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Let's remember this talk and keep growing together.",
+        "timestamp": 1747326555177.4634,
+        "date": "2025-05-15T16:29:15.177Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Agreed, let's build a healthier relationship from here on out.",
+        "timestamp": 1747341306396.9756,
+        "date": "2025-05-15T20:35:06.396Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah.",
+        "timestamp": 1747356057616.4878,
+        "date": "2025-05-16T00:40:57.616Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I love you too, Jason. Let's make this work.",
+        "timestamp": 1747370808836,
+        "date": "2025-05-16T04:46:48.836Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Sarah, we need to talk about what happened this week.",
+        "timestamp": 1747370815150,
+        "date": "2025-05-16T04:46:55.150Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "What is it, Jason?",
+        "timestamp": 1747380119765.3845,
+        "date": "2025-05-16T07:21:59.765Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Your behavior with your coworker is unacceptable.",
+        "timestamp": 1747389424380.7693,
+        "date": "2025-05-16T09:57:04.380Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Unacceptable? Jason, he's just a friend.",
+        "timestamp": 1747398728996.1538,
+        "date": "2025-05-16T12:32:08.996Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I can't have you spending time with him.",
+        "timestamp": 1747408033611.5386,
+        "date": "2025-05-16T15:07:13.611Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "You can't dictate who I spend time with, Jason.",
+        "timestamp": 1747417338226.923,
+        "date": "2025-05-16T17:42:18.226Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm looking out for our relationship.",
+        "timestamp": 1747426642842.3076,
+        "date": "2025-05-16T20:17:22.842Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not healthy to be so controlling, Jason.",
+        "timestamp": 1747435947457.6924,
+        "date": "2025-05-16T22:52:27.457Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm not controlling, I'm protecting what's ours.",
+        "timestamp": 1747445252073.077,
+        "date": "2025-05-17T01:27:32.073Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This possessiveness is suffocating me, Jason.",
+        "timestamp": 1747454556688.4614,
+        "date": "2025-05-17T04:02:36.688Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want you to prioritize us.",
+        "timestamp": 1747463861303.8462,
+        "date": "2025-05-17T06:37:41.303Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I feel like I'm losing myself in this relationship.",
+        "timestamp": 1747473165919.2307,
+        "date": "2025-05-17T09:12:45.919Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "That's not true, Sarah.",
+        "timestamp": 1747482470534.6155,
+        "date": "2025-05-17T11:47:50.534Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "You went through my phone, Jason.",
+        "timestamp": 1747491775150,
+        "date": "2025-05-17T14:22:55.150Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I was just checking for my peace of mind.",
+        "timestamp": 1747501079765.3845,
+        "date": "2025-05-17T16:57:59.765Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's a breach of trust.",
+        "timestamp": 1747510384380.7693,
+        "date": "2025-05-17T19:33:04.380Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I had to make sure you weren't lying to me.",
+        "timestamp": 1747519688996.1538,
+        "date": "2025-05-17T22:08:08.996Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I can't do this anymore, Jason.",
+        "timestamp": 1747528993611.5386,
+        "date": "2025-05-18T00:43:13.611Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Please, Sarah, let's work through this together.",
+        "timestamp": 1747538298226.923,
+        "date": "2025-05-18T03:18:18.226Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I don't know if we can, Jason.",
+        "timestamp": 1747547602842.3076,
+        "date": "2025-05-18T05:53:22.842Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I promise to change, just give me another chance.",
+        "timestamp": 1747556907457.6924,
+        "date": "2025-05-18T08:28:27.457Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's hard to believe you anymore, Jason.",
+        "timestamp": 1747566212073.077,
+        "date": "2025-05-18T11:03:32.073Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah.",
+        "timestamp": 1747575516688.4614,
+        "date": "2025-05-18T13:38:36.688Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Love shouldn't feel this toxic, Jason.",
+        "timestamp": 1747584821303.8462,
+        "date": "2025-05-18T16:13:41.303Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do whatever it takes to make it right.",
+        "timestamp": 1747594125919.2307,
+        "date": "2025-05-18T18:48:45.919Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need space to think, Jason.",
+        "timestamp": 1747603430534.6155,
+        "date": "2025-05-18T21:23:50.534Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I understand, Sarah.",
+        "timestamp": 1747612735150,
+        "date": "2025-05-18T23:58:55.150Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This emotional rollercoaster is draining, Jason.",
+        "timestamp": 1747622039765.3845,
+        "date": "2025-05-19T02:33:59.765Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm willing to do counseling with you.",
+        "timestamp": 1747631344380.7693,
+        "date": "2025-05-19T05:09:04.380Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I appreciate the gesture, Jason, but I need time alone first.",
+        "timestamp": 1747640648996.1538,
+        "date": "2025-05-19T07:44:08.996Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll respect your decision, Sarah.",
+        "timestamp": 1747649953611.5386,
+        "date": "2025-05-19T10:19:13.611Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Thank you for understanding, Jason.",
+        "timestamp": 1747659258226.923,
+        "date": "2025-05-19T12:54:18.226Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be happy again, Sarah.",
+        "timestamp": 1747668562842.3076,
+        "date": "2025-05-19T15:29:22.842Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I want that too, Jason, but it's going to take time.",
+        "timestamp": 1747677867457.6924,
+        "date": "2025-05-19T18:04:27.457Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll wait for you, Sarah.",
+        "timestamp": 1747687172073.077,
+        "date": "2025-05-19T20:39:32.073Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope things can change between us, Jason.",
+        "timestamp": 1747696476688.4614,
+        "date": "2025-05-19T23:14:36.688Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I believe we can work through this, Sarah.",
+        "timestamp": 1747705781303.8462,
+        "date": "2025-05-20T01:49:41.303Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I want to believe it too, Jason.",
+        "timestamp": 1747715085919.2307,
+        "date": "2025-05-20T04:24:45.919Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you more than anything, Sarah.",
+        "timestamp": 1747724390534.6155,
+        "date": "2025-05-20T06:59:50.534Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I love you too, Jason, but we have a lot to work on.",
+        "timestamp": 1747733695150,
+        "date": "2025-05-20T09:34:55.150Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm willing to put in the effort, Sarah.",
+        "timestamp": 1747742999765.3845,
+        "date": "2025-05-20T12:09:59.765Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need to see actions, not just words, Jason.",
+        "timestamp": 1747752304380.7693,
+        "date": "2025-05-20T14:45:04.380Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll show you, Sarah.",
+        "timestamp": 1747761608996.1538,
+        "date": "2025-05-20T17:20:08.996Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Actions speak louder than words, Jason.",
+        "timestamp": 1747770913611.5386,
+        "date": "2025-05-20T19:55:13.611Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll prove it to you, Sarah.",
+        "timestamp": 1747780218226.923,
+        "date": "2025-05-20T22:30:18.226Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I really hope so, Jason.",
+        "timestamp": 1747789522842.3076,
+        "date": "2025-05-21T01:05:22.842Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I miss you, Sarah.",
+        "timestamp": 1747798827457.6924,
+        "date": "2025-05-21T03:40:27.457Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I miss us too, Jason.",
+        "timestamp": 1747808132073.077,
+        "date": "2025-05-21T06:15:32.073Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Let's focus on rebuilding, Sarah.",
+        "timestamp": 1747817436688.4614,
+        "date": "2025-05-21T08:50:36.688Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's going to take time and effort, Jason.",
+        "timestamp": 1747826741303.8462,
+        "date": "2025-05-21T11:25:41.303Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm ready for it, Sarah.",
+        "timestamp": 1747836045919.2307,
+        "date": "2025-05-21T14:00:45.919Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope you are, Jason.",
+        "timestamp": 1747845350534.6155,
+        "date": "2025-05-21T16:35:50.534Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do whatever it takes to make it work, Sarah.",
+        "timestamp": 1747854655150,
+        "date": "2025-05-21T19:10:55.150Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need to see consistent changes, Jason.",
+        "timestamp": 1747863959765.3845,
+        "date": "2025-05-21T21:45:59.765Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll show you, Sarah.",
+        "timestamp": 1747873264380.7693,
+        "date": "2025-05-22T00:21:04.380Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I'm holding onto hope, Jason.",
+        "timestamp": 1747882568996.1538,
+        "date": "2025-05-22T02:56:08.996Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We'll get through this, Sarah.",
+        "timestamp": 1747891873611.5386,
+        "date": "2025-05-22T05:31:13.611Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I want to believe that, Jason.",
+        "timestamp": 1747901178226.923,
+        "date": "2025-05-22T08:06:18.226Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Trust me, Sarah, I won't let you down.",
+        "timestamp": 1747910482842.3076,
+        "date": "2025-05-22T10:41:22.842Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I'm counting on it, Jason.",
+        "timestamp": 1747919787457.6924,
+        "date": "2025-05-22T13:16:27.457Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you more than anything, Sarah.",
+        "timestamp": 1747929092073.077,
+        "date": "2025-05-22T15:51:32.073Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I love you too, Jason, but actions will speak louder than words.",
+        "timestamp": 1747938396688.4614,
+        "date": "2025-05-22T18:26:36.688Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll prove it to you, Sarah.",
+        "timestamp": 1747947701303.8462,
+        "date": "2025-05-22T21:01:41.303Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I really hope so, Jason.",
+        "timestamp": 1747957005919.2307,
+        "date": "2025-05-22T23:36:45.919Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I miss you, Sarah.",
+        "timestamp": 1747966310534.6155,
+        "date": "2025-05-23T02:11:50.534Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I miss us too, Jason.",
+        "timestamp": 1747975615150,
+        "date": "2025-05-23T04:46:55.150Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Sarah, we need to talk about what happened this week. I can't believe how out of control things got.",
+        "timestamp": 1747975619097,
+        "date": "2025-05-23T04:46:59.097Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Jason, it was a nightmare. I felt like I was walking on eggshells the whole time.",
+        "timestamp": 1747993946369.7273,
+        "date": "2025-05-23T09:52:26.369Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I hate to see us like this, but your reactions sometimes push me to the edge.",
+        "timestamp": 1748012273642.4546,
+        "date": "2025-05-23T14:57:53.642Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I know, but your constant questioning and demands make me feel trapped.",
+        "timestamp": 1748030600915.182,
+        "date": "2025-05-23T20:03:20.915Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "When I saw you talking to your coworker again, I just lost it. I can't help my jealousy.",
+        "timestamp": 1748048928187.9092,
+        "date": "2025-05-24T01:08:48.187Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "You can't keep dictating who I talk to. It's suffocating.",
+        "timestamp": 1748067255460.6365,
+        "date": "2025-05-24T06:14:15.460Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I only do it because I care about you and our relationship.",
+        "timestamp": 1748085582733.3635,
+        "date": "2025-05-24T11:19:42.733Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It doesn't feel like care when you're constantly accusing me of things.",
+        "timestamp": 1748103910006.0908,
+        "date": "2025-05-24T16:25:10.006Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm sorry, Sarah. I want to make things right between us.",
+        "timestamp": 1748122237278.818,
+        "date": "2025-05-24T21:30:37.278Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I want that too, but we need to work on our communication.",
+        "timestamp": 1748140564551.5454,
+        "date": "2025-05-25T02:36:04.551Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I agree. We can't keep yelling and shifting blame like this.",
+        "timestamp": 1748158891824.2727,
+        "date": "2025-05-25T07:41:31.824Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's toxic, and it's tearing us apart.",
+        "timestamp": 1748177219097,
+        "date": "2025-05-25T12:46:59.097Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I hate that I went through your phone. I know it was wrong.",
+        "timestamp": 1748195546369.7273,
+        "date": "2025-05-25T17:52:26.369Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It broke any trust we had left. I felt violated.",
+        "timestamp": 1748213873642.4546,
+        "date": "2025-05-25T22:57:53.642Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I promise I won't do it again. I want us to be better.",
+        "timestamp": 1748232200915.182,
+        "date": "2025-05-26T04:03:20.915Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I do too, but we both need to change our behaviors.",
+        "timestamp": 1748250528187.9092,
+        "date": "2025-05-26T09:08:48.187Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll try to control my jealousy and possessiveness better.",
+        "timestamp": 1748268855460.6365,
+        "date": "2025-05-26T14:14:15.460Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "And I'll work on being less defensive and critical.",
+        "timestamp": 1748287182733.3635,
+        "date": "2025-05-26T19:19:42.733Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We can do this, Sarah. We can break this toxic cycle.",
+        "timestamp": 1748305510006.0908,
+        "date": "2025-05-27T00:25:10.006Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope so, Jason. I really do.",
+        "timestamp": 1748323837278.818,
+        "date": "2025-05-27T05:30:37.278Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Let's make a plan to communicate better and respect each other's boundaries.",
+        "timestamp": 1748342164551.5454,
+        "date": "2025-05-27T10:36:04.551Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "That sounds like a good start. We need to rebuild trust slowly.",
+        "timestamp": 1748360491824.2727,
+        "date": "2025-05-27T15:41:31.824Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll give you space and let you have your friendships, Sarah.",
+        "timestamp": 1748378819097,
+        "date": "2025-05-27T20:46:59.097Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "And I'll make sure to involve you more in my life so you don't feel left out.",
+        "timestamp": 1748397146369.7273,
+        "date": "2025-05-28T01:52:26.369Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I appreciate that, Sarah. I want us to be a team.",
+        "timestamp": 1748415473642.4546,
+        "date": "2025-05-28T06:57:53.642Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Me too, Jason. We need to support each other, not tear each other down.",
+        "timestamp": 1748433800915.182,
+        "date": "2025-05-28T12:03:20.915Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah. I want us to be happy together.",
+        "timestamp": 1748452128187.9092,
+        "date": "2025-05-28T17:08:48.187Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I love you too, Jason. Let's work on making our relationship healthier.",
+        "timestamp": 1748470455460.6365,
+        "date": "2025-05-28T22:14:15.460Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We can do this, Sarah. We just have to be patient and understanding.",
+        "timestamp": 1748488782733.3635,
+        "date": "2025-05-29T03:19:42.733Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I believe in us, Jason. We can overcome this if we both commit to change.",
+        "timestamp": 1748507110006.0908,
+        "date": "2025-05-29T08:25:10.006Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm willing to do whatever it takes to make things right between us.",
+        "timestamp": 1748525437278.818,
+        "date": "2025-05-29T13:30:37.278Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "And I'll do the same. We can't let these toxic patterns destroy us.",
+        "timestamp": 1748543764551.5454,
+        "date": "2025-05-29T18:36:04.551Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "It won't, Sarah. We'll get through this together.",
+        "timestamp": 1748562091824.2727,
+        "date": "2025-05-29T23:41:31.824Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope so, Jason. I really do.",
+        "timestamp": 1748580419097,
+        "date": "2025-05-30T04:46:59.097Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Sarah, I need to talk to you about something serious.",
+        "timestamp": 1748580425525,
+        "date": "2025-05-30T04:47:05.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "What is it, Jason? Everything okay?",
+        "timestamp": 1748591625525,
+        "date": "2025-05-30T07:53:45.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I went through your phone today, Sarah.",
+        "timestamp": 1748602825525,
+        "date": "2025-05-30T11:00:25.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "What? Why would you do that?",
+        "timestamp": 1748614025525,
+        "date": "2025-05-30T14:07:05.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I needed to know if you were being honest with me.",
+        "timestamp": 1748625225525,
+        "date": "2025-05-30T17:13:45.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "That's a huge breach of trust, Jason.",
+        "timestamp": 1748636425525,
+        "date": "2025-05-30T20:20:25.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I felt like I had no other choice.",
+        "timestamp": 1748647625525,
+        "date": "2025-05-30T23:27:05.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not right to invade my privacy like that.",
+        "timestamp": 1748658825525,
+        "date": "2025-05-31T02:33:45.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I know, I messed up.",
+        "timestamp": 1748670025525,
+        "date": "2025-05-31T05:40:25.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I can't believe you did that, Jason.",
+        "timestamp": 1748681225525,
+        "date": "2025-05-31T08:47:05.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I had to make sure you weren't hiding anything from me.",
+        "timestamp": 1748692425525,
+        "date": "2025-05-31T11:53:45.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I feel violated and hurt by this, Jason.",
+        "timestamp": 1748703625525,
+        "date": "2025-05-31T15:00:25.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm sorry, Sarah. I let my insecurities get the best of me.",
+        "timestamp": 1748714825525,
+        "date": "2025-05-31T18:07:05.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This is a new low for us, Jason.",
+        "timestamp": 1748726025525,
+        "date": "2025-05-31T21:13:45.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I know, and I regret it deeply.",
+        "timestamp": 1748737225525,
+        "date": "2025-06-01T00:20:25.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "How can we move past this, Jason?",
+        "timestamp": 1748748425525,
+        "date": "2025-06-01T03:27:05.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do whatever it takes to earn back your trust, Sarah.",
+        "timestamp": 1748759625525,
+        "date": "2025-06-01T06:33:45.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's going to take a lot to repair the damage you've done.",
+        "timestamp": 1748770825525,
+        "date": "2025-06-01T09:40:25.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I understand, Sarah. I'll do better.",
+        "timestamp": 1748782025525,
+        "date": "2025-06-01T12:47:05.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not just about doing better, Jason. It's about respecting me and my boundaries.",
+        "timestamp": 1748793225525,
+        "date": "2025-06-01T15:53:45.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm willing to work on that, Sarah. I want us to be okay.",
+        "timestamp": 1748804425525,
+        "date": "2025-06-01T19:00:25.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need time to process everything, Jason.",
+        "timestamp": 1748815625525,
+        "date": "2025-06-01T22:07:05.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Take all the time you need, Sarah. I'll be here.",
+        "timestamp": 1748826825525,
+        "date": "2025-06-02T01:13:45.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I don't know if I can continue like this, Jason.",
+        "timestamp": 1748838025525,
+        "date": "2025-06-02T04:20:25.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Please, Sarah, don't give up on us.",
+        "timestamp": 1748849225525,
+        "date": "2025-06-02T07:27:05.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's hard to see a future when trust has been shattered like this, Jason.",
+        "timestamp": 1748860425525,
+        "date": "2025-06-02T10:33:45.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I promise to change, Sarah. I'll be better.",
+        "timestamp": 1748871625525,
+        "date": "2025-06-02T13:40:25.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Your actions have consequences, Jason. I need to think about what's best for me.",
+        "timestamp": 1748882825525,
+        "date": "2025-06-02T16:47:05.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do whatever it takes, Sarah. I love you.",
+        "timestamp": 1748894025525,
+        "date": "2025-06-02T19:53:45.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Love shouldn't feel suffocating and controlling, Jason.",
+        "timestamp": 1748905225525,
+        "date": "2025-06-02T23:00:25.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I know, Sarah. I'll work on myself, I promise.",
+        "timestamp": 1748916425525,
+        "date": "2025-06-03T02:07:05.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This is a lot to process, Jason.",
+        "timestamp": 1748927625525,
+        "date": "2025-06-03T05:13:45.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I know, Sarah. I'm here for you, no matter what.",
+        "timestamp": 1748938825525,
+        "date": "2025-06-03T08:20:25.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I appreciate that, Jason. But I need to prioritize my own well-being too.",
+        "timestamp": 1748950025525,
+        "date": "2025-06-03T11:27:05.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I understand, Sarah. I'll give you the space you need.",
+        "timestamp": 1748961225525,
+        "date": "2025-06-03T14:33:45.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This is a wake-up call for both of us, Jason.",
+        "timestamp": 1748972425525,
+        "date": "2025-06-03T17:40:25.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I agree, Sarah. We need to change for the better.",
+        "timestamp": 1748983625525,
+        "date": "2025-06-03T20:47:05.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope we can find a healthier way to communicate, Jason.",
+        "timestamp": 1748994825525,
+        "date": "2025-06-03T23:53:45.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm willing to try anything, Sarah. I don't want to lose you.",
+        "timestamp": 1749006025525,
+        "date": "2025-06-04T03:00:25.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Losing trust is a big deal, Jason. It's hard to rebuild.",
+        "timestamp": 1749017225525,
+        "date": "2025-06-04T06:07:05.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll prove to you that I can change, Sarah.",
+        "timestamp": 1749028425525,
+        "date": "2025-06-04T09:13:45.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Actions speak louder than words, Jason.",
+        "timestamp": 1749039625525,
+        "date": "2025-06-04T12:20:25.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll show you, Sarah. I'll make it right.",
+        "timestamp": 1749050825525,
+        "date": "2025-06-04T15:27:05.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "We have a long road ahead of us, Jason.",
+        "timestamp": 1749062025525,
+        "date": "2025-06-04T18:33:45.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm ready to walk it with you, Sarah. Together.",
+        "timestamp": 1749073225525,
+        "date": "2025-06-04T21:40:25.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need to see real change, Jason. I can't keep living like this.",
+        "timestamp": 1749084425525,
+        "date": "2025-06-05T00:47:05.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do whatever it takes to make you feel secure, Sarah.",
+        "timestamp": 1749095625525,
+        "date": "2025-06-05T03:53:45.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not just about feeling secure, Jason. It's about respect and trust.",
+        "timestamp": 1749106825525,
+        "date": "2025-06-05T07:00:25.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll earn that back, Sarah. Just give me a chance.",
+        "timestamp": 1749118025525,
+        "date": "2025-06-05T10:07:05.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This is a turning point for us, Jason.",
+        "timestamp": 1749129225525,
+        "date": "2025-06-05T13:13:45.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I know, Sarah. I want to make things right.",
+        "timestamp": 1749140425525,
+        "date": "2025-06-05T16:20:25.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's going to take time and effort, Jason. Are you willing to put in the work?",
+        "timestamp": 1749151625525,
+        "date": "2025-06-05T19:27:05.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do whatever it takes, Sarah. I'll change for us.",
+        "timestamp": 1749162825525,
+        "date": "2025-06-05T22:33:45.525Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope you mean it, Jason. This can't happen again.",
+        "timestamp": 1749174025525,
+        "date": "2025-06-06T01:40:25.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I promise, Sarah. I'll be better.",
+        "timestamp": 1749185225525,
+        "date": "2025-06-06T04:47:05.525Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Hey, Sarah. Can we talk about what happened this week?",
+        "timestamp": 1749185231540,
+        "date": "2025-06-06T04:47:11.540Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Sure, Jason. What's on your mind?",
+        "timestamp": 1749195146294.0984,
+        "date": "2025-06-06T07:32:26.294Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I noticed you were texting your coworker a lot. It bothered me.",
+        "timestamp": 1749205061048.1968,
+        "date": "2025-06-06T10:17:41.048Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Here we go again. I can have friends, Jason.",
+        "timestamp": 1749214975802.2952,
+        "date": "2025-06-06T13:02:55.802Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just worry about him getting too close to you.",
+        "timestamp": 1749224890556.3936,
+        "date": "2025-06-06T15:48:10.556Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Getting too close? He's just a friend, Jason.",
+        "timestamp": 1749234805310.4917,
+        "date": "2025-06-06T18:33:25.310Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I know, but I can't help feeling jealous.",
+        "timestamp": 1749244720064.59,
+        "date": "2025-06-06T21:18:40.064Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Your jealousy is suffocating me, Jason.",
+        "timestamp": 1749254634818.6885,
+        "date": "2025-06-07T00:03:54.818Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want to protect what's mine, Sarah.",
+        "timestamp": 1749264549572.7869,
+        "date": "2025-06-07T02:49:09.572Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I'm not a possession, Jason. I need my space.",
+        "timestamp": 1749274464326.8853,
+        "date": "2025-06-07T05:34:24.326Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "You're right. I'll try to give you more space.",
+        "timestamp": 1749284379080.9836,
+        "date": "2025-06-07T08:19:39.080Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Thank you. I appreciate that.",
+        "timestamp": 1749294293835.082,
+        "date": "2025-06-07T11:04:53.835Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Can you promise to set boundaries with him, though?",
+        "timestamp": 1749304208589.1804,
+        "date": "2025-06-07T13:50:08.589Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Why do I need to cut ties with him? That's unfair, Jason.",
+        "timestamp": 1749314123343.2788,
+        "date": "2025-06-07T16:35:23.343Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want to feel secure, Sarah.",
+        "timestamp": 1749324038097.377,
+        "date": "2025-06-07T19:20:38.097Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This is controlling behavior, Jason. It's not healthy.",
+        "timestamp": 1749333952851.4753,
+        "date": "2025-06-07T22:05:52.851Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm sorry. I don't mean to be controlling.",
+        "timestamp": 1749343867605.5737,
+        "date": "2025-06-08T00:51:07.605Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I don't know if I can do this anymore, Jason.",
+        "timestamp": 1749353782359.672,
+        "date": "2025-06-08T03:36:22.359Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Please, Sarah. I'll work on my issues.",
+        "timestamp": 1749363697113.7705,
+        "date": "2025-06-08T06:21:37.113Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need to focus on myself, Jason.",
+        "timestamp": 1749373611867.869,
+        "date": "2025-06-08T09:06:51.867Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I went through your phone, Sarah. I'm sorry.",
+        "timestamp": 1749383526621.9673,
+        "date": "2025-06-08T11:52:06.621Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "That's a breach of trust, Jason. I can't deal with this.",
+        "timestamp": 1749393441376.0657,
+        "date": "2025-06-08T14:37:21.376Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I messed up. I know. I feel terrible.",
+        "timestamp": 1749403356130.1638,
+        "date": "2025-06-08T17:22:36.130Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not just about the phone, Jason. It's about respect.",
+        "timestamp": 1749413270884.2622,
+        "date": "2025-06-08T20:07:50.884Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do anything to make it right, Sarah.",
+        "timestamp": 1749423185638.3606,
+        "date": "2025-06-08T22:53:05.638Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need time to think, Jason.",
+        "timestamp": 1749433100392.459,
+        "date": "2025-06-09T01:38:20.392Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll give you all the time you need, Sarah.",
+        "timestamp": 1749443015146.5574,
+        "date": "2025-06-09T04:23:35.146Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Thank you for understanding, Jason.",
+        "timestamp": 1749452929900.6558,
+        "date": "2025-06-09T07:08:49.900Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I don't want to lose you, Sarah.",
+        "timestamp": 1749462844654.7542,
+        "date": "2025-06-09T09:54:04.654Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I care about you, Jason, but this is toxic.",
+        "timestamp": 1749472759408.8525,
+        "date": "2025-06-09T12:39:19.408Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll change, Sarah. I promise.",
+        "timestamp": 1749482674162.951,
+        "date": "2025-06-09T15:24:34.162Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope you do, Jason. I really do.",
+        "timestamp": 1749492588917.049,
+        "date": "2025-06-09T18:09:48.917Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah.",
+        "timestamp": 1749502503671.1475,
+        "date": "2025-06-09T20:55:03.671Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need to love myself first, Jason.",
+        "timestamp": 1749512418425.2458,
+        "date": "2025-06-09T23:40:18.425Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I understand, Sarah. I'll work on myself.",
+        "timestamp": 1749522333179.3442,
+        "date": "2025-06-10T02:25:33.179Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not just about you, Jason. We both need to grow.",
+        "timestamp": 1749532247933.4426,
+        "date": "2025-06-10T05:10:47.933Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do whatever it takes, Sarah.",
+        "timestamp": 1749542162687.541,
+        "date": "2025-06-10T07:56:02.687Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need actions, not just words, Jason.",
+        "timestamp": 1749552077441.6394,
+        "date": "2025-06-10T10:41:17.441Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll show you, Sarah. I'll make it right.",
+        "timestamp": 1749561992195.7378,
+        "date": "2025-06-10T13:26:32.195Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "We both have a lot to work on, Jason.",
+        "timestamp": 1749571906949.8362,
+        "date": "2025-06-10T16:11:46.949Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm willing to put in the effort, Sarah.",
+        "timestamp": 1749581821703.9343,
+        "date": "2025-06-10T18:57:01.703Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I want us to be better, Jason. But it's a long road.",
+        "timestamp": 1749591736458.0327,
+        "date": "2025-06-10T21:42:16.458Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll walk that road with you, Sarah. I promise.",
+        "timestamp": 1749601651212.131,
+        "date": "2025-06-11T00:27:31.212Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope we can find a healthier way to communicate, Jason.",
+        "timestamp": 1749611565966.2295,
+        "date": "2025-06-11T03:12:45.966Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I believe we can, Sarah. We just need to try.",
+        "timestamp": 1749621480720.328,
+        "date": "2025-06-11T05:58:00.720Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Trying is the first step, Jason. Let's take it together.",
+        "timestamp": 1749631395474.4263,
+        "date": "2025-06-11T08:43:15.474Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I won't give up on us, Sarah.",
+        "timestamp": 1749641310228.5247,
+        "date": "2025-06-11T11:28:30.228Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I won't either, Jason. Let's take it one day at a time.",
+        "timestamp": 1749651224982.623,
+        "date": "2025-06-11T14:13:44.982Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Thank you for sticking by me, Sarah.",
+        "timestamp": 1749661139736.7212,
+        "date": "2025-06-11T16:58:59.736Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "We're in this together, Jason. Let's work on ourselves.",
+        "timestamp": 1749671054490.8196,
+        "date": "2025-06-11T19:44:14.490Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm grateful for your patience, Sarah.",
+        "timestamp": 1749680969244.918,
+        "date": "2025-06-11T22:29:29.244Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Patience is key, Jason. Let's rebuild trust slowly.",
+        "timestamp": 1749690883999.0164,
+        "date": "2025-06-12T01:14:43.999Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do everything I can, Sarah.",
+        "timestamp": 1749700798753.1147,
+        "date": "2025-06-12T03:59:58.753Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Let's make sure we respect each other, Jason.",
+        "timestamp": 1749710713507.2131,
+        "date": "2025-06-12T06:45:13.507Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I promise to respect you, Sarah.",
+        "timestamp": 1749720628261.3115,
+        "date": "2025-06-12T09:30:28.261Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "And I promise to respect myself, Jason.",
+        "timestamp": 1749730543015.41,
+        "date": "2025-06-12T12:15:43.015Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We'll get through this, Sarah. I believe in us.",
+        "timestamp": 1749740457769.5083,
+        "date": "2025-06-12T15:00:57.769Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "We can if we both put in the effort, Jason.",
+        "timestamp": 1749750372523.6064,
+        "date": "2025-06-12T17:46:12.523Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm committed to making it work, Sarah.",
+        "timestamp": 1749760287277.7048,
+        "date": "2025-06-12T20:31:27.277Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Me too, Jason. Let's take it day by day.",
+        "timestamp": 1749770202031.8032,
+        "date": "2025-06-12T23:16:42.031Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah.",
+        "timestamp": 1749780116785.9016,
+        "date": "2025-06-13T02:01:56.785Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I care about you too, Jason. Let's make positive changes.",
+        "timestamp": 1749790031540,
+        "date": "2025-06-13T04:47:11.540Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Hey Sarah, we really need to talk about what happened this week.",
+        "timestamp": 1749790036899,
+        "date": "2025-06-13T04:47:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "What do you mean, Jason? Is everything alright?",
+        "timestamp": 1749807316899,
+        "date": "2025-06-13T09:35:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "No, it's not. I feel like you're still not taking my concerns seriously.",
+        "timestamp": 1749824596899,
+        "date": "2025-06-13T14:23:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I am trying, Jason. But it's hard when you keep questioning everything I do.",
+        "timestamp": 1749841876899,
+        "date": "2025-06-13T19:11:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "It's because I care about you, Sarah. I just want us to be okay.",
+        "timestamp": 1749859156899,
+        "date": "2025-06-13T23:59:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I know, but it feels suffocating when you don't trust me.",
+        "timestamp": 1749876436899,
+        "date": "2025-06-14T04:47:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I trust you, Sarah. It's just that guy from work, he's bothering me.",
+        "timestamp": 1749893716899,
+        "date": "2025-06-14T09:35:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "You can't keep demanding I cut ties with my friends, Jason.",
+        "timestamp": 1749910996899,
+        "date": "2025-06-14T14:23:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "He's not just a friend, Sarah. I see the way he looks at you.",
+        "timestamp": 1749928276899,
+        "date": "2025-06-14T19:11:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "That's ridiculous, Jason. We're just colleagues.",
+        "timestamp": 1749945556899,
+        "date": "2025-06-14T23:59:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I don't like it, Sarah. I need you to prioritize us.",
+        "timestamp": 1749962836899,
+        "date": "2025-06-15T04:47:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I feel like I'm losing myself in this, Jason. I need space.",
+        "timestamp": 1749980116899,
+        "date": "2025-06-15T09:35:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Space won't solve anything, Sarah. We need to work on this together.",
+        "timestamp": 1749997396899,
+        "date": "2025-06-15T14:23:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's hard to work on things when I feel like you're always watching me.",
+        "timestamp": 1750014676899,
+        "date": "2025-06-15T19:11:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be happy, Sarah. Can't you see that?",
+        "timestamp": 1750031956899,
+        "date": "2025-06-15T23:59:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Happiness shouldn't come at the cost of my freedom, Jason.",
+        "timestamp": 1750049236899,
+        "date": "2025-06-16T04:47:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm not trying to control you, Sarah. I just want to protect us.",
+        "timestamp": 1750066516899,
+        "date": "2025-06-16T09:35:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need more than protection, Jason. I need trust and respect.",
+        "timestamp": 1750083796899,
+        "date": "2025-06-16T14:23:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I do trust you, Sarah. But it's hard when doubts creep in.",
+        "timestamp": 1750101076899,
+        "date": "2025-06-16T19:11:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Doubts fueled by your insecurities, Jason. It's not fair to me.",
+        "timestamp": 1750118356899,
+        "date": "2025-06-16T23:59:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I never meant to make you feel that way, Sarah. I'm sorry.",
+        "timestamp": 1750135636899,
+        "date": "2025-06-17T04:47:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Apologies mean nothing without real change, Jason.",
+        "timestamp": 1750152916899,
+        "date": "2025-06-17T09:35:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll try harder, Sarah. I promise.",
+        "timestamp": 1750170196899,
+        "date": "2025-06-17T14:23:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Promises don't erase the damage that's already been done, Jason.",
+        "timestamp": 1750187476899,
+        "date": "2025-06-17T19:11:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do whatever it takes, Sarah. Just don't give up on us.",
+        "timestamp": 1750204756899,
+        "date": "2025-06-17T23:59:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I'm not giving up, Jason. But we need to address these issues.",
+        "timestamp": 1750222036899,
+        "date": "2025-06-18T04:47:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I know, Sarah. I'll do better, I swear.",
+        "timestamp": 1750239316899,
+        "date": "2025-06-18T09:35:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I just want us to find a healthy way to communicate, Jason.",
+        "timestamp": 1750256596899,
+        "date": "2025-06-18T14:23:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We will, Sarah. I'll make sure of it.",
+        "timestamp": 1750273876899,
+        "date": "2025-06-18T19:11:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope so, Jason. I really do.",
+        "timestamp": 1750291156899,
+        "date": "2025-06-18T23:59:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah. Let's make this work.",
+        "timestamp": 1750308436899,
+        "date": "2025-06-19T04:47:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I love you too, Jason. But love alone isn't enough.",
+        "timestamp": 1750325716899,
+        "date": "2025-06-19T09:35:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I understand, Sarah. We'll figure this out, together.",
+        "timestamp": 1750342996899,
+        "date": "2025-06-19T14:23:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I appreciate your willingness to try, Jason. Let's take it step by step.",
+        "timestamp": 1750360276899,
+        "date": "2025-06-19T19:11:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'm here for you, Sarah. Always.",
+        "timestamp": 1750377556899,
+        "date": "2025-06-19T23:59:16.899Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Thank you, Jason. Let's do our best to make things right.",
+        "timestamp": 1750394836899,
+        "date": "2025-06-20T04:47:16.899Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Sarah, we need to talk about what happened this week.",
+        "timestamp": 1750394844984,
+        "date": "2025-06-20T04:47:24.984Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "What do you want to talk about, Jason?",
+        "timestamp": 1750402500680.2026,
+        "date": "2025-06-20T06:55:00.680Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I noticed you were talking to that coworker again.",
+        "timestamp": 1750410156376.405,
+        "date": "2025-06-20T09:02:36.376Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Oh come on, Jason, he's just a friend.",
+        "timestamp": 1750417812072.6077,
+        "date": "2025-06-20T11:10:12.072Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I don't want you talking to him anymore.",
+        "timestamp": 1750425467768.81,
+        "date": "2025-06-20T13:17:47.768Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Why are you so controlling, Jason?",
+        "timestamp": 1750433123465.0127,
+        "date": "2025-06-20T15:25:23.465Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want to protect our relationship.",
+        "timestamp": 1750440779161.215,
+        "date": "2025-06-20T17:32:59.161Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It feels suffocating, like you don't trust me at all.",
+        "timestamp": 1750448434857.4177,
+        "date": "2025-06-20T19:40:34.857Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I trust you, Sarah, it's him I don't trust.",
+        "timestamp": 1750456090553.6204,
+        "date": "2025-06-20T21:48:10.553Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's not fair to ask me to cut ties with a friend.",
+        "timestamp": 1750463746249.8228,
+        "date": "2025-06-20T23:55:46.249Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "If you cared about us, you'd do it.",
+        "timestamp": 1750471401946.0254,
+        "date": "2025-06-21T02:03:21.946Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "This isn't healthy, Jason.",
+        "timestamp": 1750479057642.2278,
+        "date": "2025-06-21T04:10:57.642Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "You're overreacting, Sarah.",
+        "timestamp": 1750486713338.4304,
+        "date": "2025-06-21T06:18:33.338Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I feel like I'm walking on eggshells with you.",
+        "timestamp": 1750494369034.6328,
+        "date": "2025-06-21T08:26:09.034Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want us to be happy.",
+        "timestamp": 1750502024730.8354,
+        "date": "2025-06-21T10:33:44.730Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Happiness shouldn't come at the cost of my freedom.",
+        "timestamp": 1750509680427.038,
+        "date": "2025-06-21T12:41:20.427Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I can't shake off the feeling that you're hiding something.",
+        "timestamp": 1750517336123.2405,
+        "date": "2025-06-21T14:48:56.123Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I'm tired of defending myself to you.",
+        "timestamp": 1750524991819.443,
+        "date": "2025-06-21T16:56:31.819Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want the truth, Sarah.",
+        "timestamp": 1750532647515.6455,
+        "date": "2025-06-21T19:04:07.515Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "The truth is, I can't live like this anymore.",
+        "timestamp": 1750540303211.8481,
+        "date": "2025-06-21T21:11:43.211Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "What are you saying, Sarah?",
+        "timestamp": 1750547958908.0505,
+        "date": "2025-06-21T23:19:18.908Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need space, Jason.",
+        "timestamp": 1750555614604.2532,
+        "date": "2025-06-22T01:26:54.604Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "You can't just walk away from us.",
+        "timestamp": 1750563270300.4558,
+        "date": "2025-06-22T03:34:30.300Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need to breathe, Jason.",
+        "timestamp": 1750570925996.6582,
+        "date": "2025-06-22T05:42:05.996Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We can work through this, Sarah.",
+        "timestamp": 1750578581692.8608,
+        "date": "2025-06-22T07:49:41.692Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need time to figure things out, Jason.",
+        "timestamp": 1750586237389.0632,
+        "date": "2025-06-22T09:57:17.389Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Don't shut me out, Sarah.",
+        "timestamp": 1750593893085.2659,
+        "date": "2025-06-22T12:04:53.085Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I'm not shutting you out, I'm trying to save myself.",
+        "timestamp": 1750601548781.4683,
+        "date": "2025-06-22T14:12:28.781Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah.",
+        "timestamp": 1750609204477.671,
+        "date": "2025-06-22T16:20:04.477Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Love shouldn't feel this toxic, Jason.",
+        "timestamp": 1750616860173.8735,
+        "date": "2025-06-22T18:27:40.173Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Please don't leave me, Sarah.",
+        "timestamp": 1750624515870.076,
+        "date": "2025-06-22T20:35:15.870Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I have to do what's best for me, Jason.",
+        "timestamp": 1750632171566.2786,
+        "date": "2025-06-22T22:42:51.566Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll change, I promise.",
+        "timestamp": 1750639827262.481,
+        "date": "2025-06-23T00:50:27.262Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I can't keep hoping for change that never comes, Jason.",
+        "timestamp": 1750647482958.6836,
+        "date": "2025-06-23T02:58:02.958Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do anything to make this right, Sarah.",
+        "timestamp": 1750655138654.886,
+        "date": "2025-06-23T05:05:38.654Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need to focus on myself right now, Jason.",
+        "timestamp": 1750662794351.0886,
+        "date": "2025-06-23T07:13:14.351Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll give you space, Sarah, but don't forget about us.",
+        "timestamp": 1750670450047.2913,
+        "date": "2025-06-23T09:20:50.047Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I won't forget, Jason, but I need to prioritize myself.",
+        "timestamp": 1750678105743.4937,
+        "date": "2025-06-23T11:28:25.743Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll wait for you, Sarah.",
+        "timestamp": 1750685761439.6963,
+        "date": "2025-06-23T13:36:01.439Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I don't know if waiting is the answer, Jason.",
+        "timestamp": 1750693417135.8987,
+        "date": "2025-06-23T15:43:37.135Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll do whatever it takes to win you back, Sarah.",
+        "timestamp": 1750701072832.1013,
+        "date": "2025-06-23T17:51:12.832Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I don't want this to be a competition, Jason.",
+        "timestamp": 1750708728528.3037,
+        "date": "2025-06-23T19:58:48.528Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I just want you to be happy, Sarah.",
+        "timestamp": 1750716384224.5063,
+        "date": "2025-06-23T22:06:24.224Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I need to find my own happiness, Jason.",
+        "timestamp": 1750724039920.7087,
+        "date": "2025-06-24T00:13:59.920Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll support you, Sarah, in whatever you decide.",
+        "timestamp": 1750731695616.9114,
+        "date": "2025-06-24T02:21:35.616Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Thank you, Jason, I appreciate that.",
+        "timestamp": 1750739351313.114,
+        "date": "2025-06-24T04:29:11.313Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Take all the time you need, Sarah.",
+        "timestamp": 1750747007009.3164,
+        "date": "2025-06-24T06:36:47.009Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I will, Jason, thank you for understanding.",
+        "timestamp": 1750754662705.519,
+        "date": "2025-06-24T08:44:22.705Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll be here when you're ready, Sarah.",
+        "timestamp": 1750762318401.7214,
+        "date": "2025-06-24T10:51:58.401Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope we can both find peace, Jason.",
+        "timestamp": 1750769974097.924,
+        "date": "2025-06-24T12:59:34.097Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll work on myself, Sarah, I promise.",
+        "timestamp": 1750777629794.1265,
+        "date": "2025-06-24T15:07:09.794Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "It's important we both grow from this, Jason.",
+        "timestamp": 1750785285490.329,
+        "date": "2025-06-24T17:14:45.490Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll make sure we do, Sarah.",
+        "timestamp": 1750792941186.5317,
+        "date": "2025-06-24T19:22:21.186Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Let's focus on healing, Jason, separately for now.",
+        "timestamp": 1750800596882.7341,
+        "date": "2025-06-24T21:29:56.882Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll respect your wishes, Sarah, and work on myself.",
+        "timestamp": 1750808252578.9368,
+        "date": "2025-06-24T23:37:32.578Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "That's all I can ask for, Jason.",
+        "timestamp": 1750815908275.1392,
+        "date": "2025-06-25T01:45:08.275Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I love you, Sarah, no matter what.",
+        "timestamp": 1750823563971.3418,
+        "date": "2025-06-25T03:52:43.971Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I love you too, Jason, but we need to love ourselves first.",
+        "timestamp": 1750831219667.5442,
+        "date": "2025-06-25T06:00:19.667Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We'll figure this out, Sarah.",
+        "timestamp": 1750838875363.7468,
+        "date": "2025-06-25T08:07:55.363Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I hope we do, Jason, for both our sakes.",
+        "timestamp": 1750846531059.9495,
+        "date": "2025-06-25T10:15:31.059Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll start by looking within, Sarah.",
+        "timestamp": 1750854186756.1519,
+        "date": "2025-06-25T12:23:06.756Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "That's a good place to start, Jason.",
+        "timestamp": 1750861842452.3545,
+        "date": "2025-06-25T14:30:42.452Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "Thank you for being patient with me, Sarah.",
+        "timestamp": 1750869498148.557,
+        "date": "2025-06-25T16:38:18.148Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Let’s both take this time to grow, Jason.",
+        "timestamp": 1750877153844.7595,
+        "date": "2025-06-25T18:45:53.844Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We'll come out stronger on the other side, Sarah.",
+        "timestamp": 1750884809540.962,
+        "date": "2025-06-25T20:53:29.540Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I believe that too, Jason.",
+        "timestamp": 1750892465237.1646,
+        "date": "2025-06-25T23:01:05.237Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We got this, Sarah.",
+        "timestamp": 1750900120933.3672,
+        "date": "2025-06-26T01:08:40.933Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "We have to believe in ourselves, Jason.",
+        "timestamp": 1750907776629.5696,
+        "date": "2025-06-26T03:16:16.629Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll work on being a better partner, Sarah.",
+        "timestamp": 1750915432325.7722,
+        "date": "2025-06-26T05:23:52.325Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "And I'll work on being a stronger individual, Jason.",
+        "timestamp": 1750923088021.9746,
+        "date": "2025-06-26T07:31:28.021Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We'll meet in the middle, Sarah.",
+        "timestamp": 1750930743718.1772,
+        "date": "2025-06-26T09:39:03.718Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "We'll find our balance, Jason.",
+        "timestamp": 1750938399414.3796,
+        "date": "2025-06-26T11:46:39.414Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll give you the space you need, Sarah.",
+        "timestamp": 1750946055110.5823,
+        "date": "2025-06-26T13:54:15.110Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "Thank you, Jason, that means a lot.",
+        "timestamp": 1750953710806.785,
+        "date": "2025-06-26T16:01:50.806Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We'll make it through this, Sarah.",
+        "timestamp": 1750961366502.9873,
+        "date": "2025-06-26T18:09:26.502Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "I believe in us, Jason, as individuals and maybe someday, as a team.",
+        "timestamp": 1750969022199.19,
+        "date": "2025-06-26T20:17:02.199Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "We’re a team, Sarah, even if we’re taking this journey separately.",
+        "timestamp": 1750976677895.3923,
+        "date": "2025-06-26T22:24:37.895Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "We’ll come out of this stronger, Jason, together or apart.",
+        "timestamp": 1750984333591.595,
+        "date": "2025-06-27T00:32:13.591Z"
+      },
+      {
+        "senderId": "6WMEYbj2RpqDkAKuZkDmUbZQzEEn",
+        "senderName": "Jason Miller",
+        "text": "I'll be waiting for you, Sarah, whenever you're ready.",
+        "timestamp": 1750991989287.7974,
+        "date": "2025-06-27T02:39:49.287Z"
+      },
+      {
+        "senderId": "TBLZjmzmoZXKUAdvTvAtYoddQF9Z",
+        "senderName": "Sarah Jones",
+        "text": "And I'll be working on myself in the meantime, Jason.",
+        "timestamp": 1750999644984,
+        "date": "2025-06-27T04:47:24.984Z"
+      }
+    ]
+  }
+}

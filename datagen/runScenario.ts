@@ -2,13 +2,15 @@
  * Scenario Runner - Easy execution of different test scenarios
  * Run with: npx tsx datagen/runScenario.ts
  */
+
 import { generateScenario } from './scenarioGenerator';
+import { config } from './config';
 
 async function main() {
   console.log('🚀 Starting AI-powered scenario generation...\n');
   
   // Check for OpenAI API key
-  if (!process.env.OPENAI_API_KEY) {
+  if (!config.OPENAI_API_KEY) {
     console.log('⚠️  OpenAI API key not found. Set OPENAI_API_KEY environment variable for AI-generated conversations.');
     console.log('    Falling back to simple placeholder messages.\n');
   } else {

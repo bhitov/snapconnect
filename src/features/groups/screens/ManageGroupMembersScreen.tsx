@@ -83,6 +83,120 @@ const UserAvatar = ({ photoURL, displayName, size = 40 }: { photoURL?: string | 
   );
 };
 
+/**
+ * Confirmation Modal Component
+ */
+const ConfirmationModal = ({ 
+  visible, 
+  user, 
+  isCurrentUser, 
+  onConfirm, 
+  onCancel 
+}: {
+  visible: boolean;
+  user: GroupMember | null;
+  isCurrentUser: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) => {
+  const theme = useTheme();
+
+  if (!user) return null;
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onCancel}
+    >
+      <View style={{
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+      }}>
+        <View style={{
+          backgroundColor: theme.colors.surface,
+          borderRadius: 12,
+          padding: 24,
+          width: '100%',
+          maxWidth: 400,
+        }}>
+          <Text style={{
+            fontSize: 18,
+            fontWeight: '600' as const,
+            color: theme.colors.onSurface,
+            marginBottom: 12,
+            textAlign: 'center',
+          }}>
+            {isCurrentUser ? 'Leave Group' : 'Remove Member'}
+          </Text>
+          
+          <Text style={{
+            fontSize: 16,
+            color: theme.colors.onSurface,
+            marginBottom: 24,
+            textAlign: 'center',
+          }}>
+            {isCurrentUser 
+              ? 'Are you sure you want to leave this group?' 
+              : `Remove ${user.displayName} from the group?`
+            }
+          </Text>
+
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            gap: 12,
+          }}>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                backgroundColor: theme.colors.surface,
+                borderWidth: 1,
+                borderColor: theme.colors.outline,
+                borderRadius: 8,
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+              }}
+              onPress={onCancel}
+            >
+              <Text style={{
+                color: theme.colors.onSurface,
+                fontWeight: '600' as const,
+                textAlign: 'center',
+              }}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                backgroundColor: theme.colors.error,
+                borderRadius: 8,
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+              }}
+              onPress={onConfirm}
+            >
+              <Text style={{
+                color: theme.colors.onError,
+                fontWeight: '600' as const,
+                textAlign: 'center',
+              }}>
+                {isCurrentUser ? 'Leave' : 'Remove'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
 export function ManageGroupMembersScreen({
   route,
   navigation,

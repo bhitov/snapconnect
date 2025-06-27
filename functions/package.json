@@ -1,0 +1,11 @@
+{
+    "name": "coach-functions",
+    "engines": { "node": "18" },
+    "main": "lib/index.js",
+    "scripts": {
+      "lint": "eslint src --ext .ts",
+      "build": "tsc -p tsconfig.json",
+      "serve": "firebase emulators:start --only functions,database,ui",
+      "deploy": "npm run build && firebase deploy --only functions"
+    }
+  }

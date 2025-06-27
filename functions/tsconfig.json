@@ -1,0 +1,11 @@
+  {
+    "extends": "../tsconfig.json",       // inherit every root setting
+    "compilerOptions": {
+      "rootDir": "src",                  // <functions>/src
+      "outDir":  "lib",                  // JS output -> <functions>/lib
+      // Optionally tighten Node-only overrides:
+      "types": ["node"],                 // don’t pull in RN types
+      "lib": ["es2020"]
+    },
+    "include": ["src"]                   // only compile the Functions code
+  }

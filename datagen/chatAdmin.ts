@@ -135,7 +135,7 @@ export async function sendBulkTexts(
     senderId: string;
     text: string;
     recipientId?: string;
-    createdAt?: number;
+    createdAt: number;
   }>
 ) {
   if (messages.length === 0) return [];

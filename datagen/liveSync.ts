@@ -1,14 +1,15 @@
 import { db } from './admin';
 import { DataSnapshot } from 'firebase-admin/database';
 import { Pinecone } from '@pinecone-database/pinecone';
+import { config } from './config';
 
 /**
  * Live sync service that listens to Firebase database changes and syncs to Pinecone
  * for real-time vector search capabilities on chat messages
  */
 
-const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
-const index = pinecone.index(process.env.PINECONE_INDEX!);
+const pinecone = new Pinecone({ apiKey: config.PINECONE_API_KEY });
+const index = pinecone.index(config.PINECONE_INDEX);
 
 /**
  * Listen for new text messages and sync them to Pinecone for vector search

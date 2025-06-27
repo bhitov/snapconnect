@@ -3,6 +3,7 @@
  * Generates users with diverse personalities and relationship dynamics
  * Includes healthy/unhealthy relationship patterns for testing
  */
+
 import { 
   createUserProfile, 
   createDirectConversation, 
@@ -12,9 +13,10 @@ import {
 import OpenAI from 'openai';
 import * as fs from 'fs';
 import * as path from 'path';
+import { config } from './config';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: config.OPENAI_API_KEY
 });
 
 // Configuration
@@ -28,7 +30,7 @@ interface ScenarioConfig {
 
 const DEFAULT_CONFIG: ScenarioConfig = {
   totalUsers: 20,
-  messagesPerConversation: 25,
+  messagesPerConversation: 1200,
   groupChatSize: 6,
   useAI: true,
   saveToFile: false
@@ -99,7 +101,7 @@ function generateUser(sex: 'male' | 'female', relationshipStyle: 'healthy' | 'ne
 }
 
 /**
- * Generate conversation messages based on relationship dynamics
+ * Generate conversation messages between users with realistic content and timing
  */
 async function generateConversationMessages(
   user1: UserProfile, 
@@ -109,87 +111,122 @@ async function generateConversationMessages(
   groupMembers?: UserProfile[], // Optional parameter for group chat members
   useAI: boolean = true
 ): Promise<Array<{ senderId: string; text: string; createdAt: number }>> {
+  console.log('🤖 [DEBUG] generateConversationMessages called');
+  console.log('🤖 [DEBUG] user1:', { name: user1.displayName, uid: user1.uid });
+  console.log('🤖 [DEBUG] user2:', { name: user2.displayName, uid: user2.uid });
+  console.log('🤖 [DEBUG] count:', count);
+  console.log('🤖 [DEBUG] conversationType:', conversationType);
+  console.log('🤖 [DEBUG] useAI:', useAI);
+  console.log('🤖 [DEBUG] OPENAI_API_KEY present:', !!config.OPENAI_API_KEY);
+
   const participants = groupMembers || [user1, user2];
-  
-  if (!useAI) {
-    // Fallback to simple messages if AI is disabled
-    const messages: Array<{ senderId: string; text: string; createdAt: number }> = [];
-    const baseTime = Date.now() - (count * 60000);
+  console.log('🤖 [DEBUG] participants:', participants.map(p => ({ name: p.displayName, uid: p.uid })));
+
+  if (!useAI || !config.OPENAI_API_KEY) {
+    console.log('🤖 [DEBUG] Using fallback messages (no AI)');
     
-    for (let i = 0; i < count; i++) {
-      const sender = Math.random() > 0.5 ? user1 : user2;
+    // Calculate realistic timestamps spread over 3 months
+    const startTime = Date.now() - (12 * 7 * 24 * 60 * 60 * 1000); // 12 weeks ago
+    const totalDuration = 12 * 7 * 24 * 60 * 60 * 1000; // 12 weeks in milliseconds
+    const messageInterval = count > 1 ? totalDuration / (count - 1) : 0;
+    
+    console.log('🤖 [DEBUG] Fallback timestamp calculation:');
+    console.log('🤖 [DEBUG] Total duration (days):', totalDuration / (24 * 60 * 60 * 1000));
+    console.log('🤖 [DEBUG] Message interval (hours):', messageInterval / (60 * 60 * 1000));
+    
+    return Array.from({ length: count }, (_, i) => {
+      const sender = participants[i % participants.length];
+      if (!sender) {
+        console.log('🤖 [WARNING] No sender found for index:', i);
+        return { senderId: '', text: '', createdAt: 0 };
+      }
       
-      messages.push({
+      return {
         senderId: sender.uid,
-        text: `Message ${i + 1} from ${sender.displayName}`,
-        createdAt: baseTime + (i * 60000) + Math.floor(Math.random() * 30000)
-      });
-    }
-    
-    return messages.sort((a, b) => a.createdAt - b.createdAt);
+        text: `Fallback message ${i + 1} from ${sender.displayName}`,
+        createdAt: startTime + (i * messageInterval)
+      };
+    }).filter(msg => msg.senderId); // Filter out empty messages
   }
 
-  console.log(`🤖 Generating AI conversation: ${conversationType} (${participants.length} participants)`);
-  
   try {
-    // Generate 3-month story outline
-    const storyOutline = await generateStoryOutline(conversationType, participants);
-    console.log(`📖 Generated story outline with ${storyOutline.weeklyOutline.length} weeks`);
+    console.log('🤖 [DEBUG] Generating AI conversation');
+    const { overarchingStory, weeklyOutline } = await generateStoryOutline(conversationType, participants);
+    console.log('🤖 [DEBUG] Story outline generated:', { 
+      storyLength: overarchingStory.length, 
+      weekCount: weeklyOutline.length 
+    });
+
+    const messagesPerWeek = Math.ceil(count / 12);
+    console.log('🤖 [DEBUG] Messages per week:', messagesPerWeek);
     
-    // Generate messages for selected weeks (distribute count across multiple weeks)
-    const weeksToUse = Math.min(4, storyOutline.weeklyOutline.length); // Use up to 4 weeks for variety
-    const messagesPerWeek = Math.ceil(count / weeksToUse);
-    const allMessages: Array<{ senderId: string; text: string; createdAt: number }> = [];
-    
-    for (let i = 0; i < weeksToUse; i++) {
-      const weekTheme = storyOutline.weeklyOutline[i * Math.floor(storyOutline.weeklyOutline.length / weeksToUse)] || storyOutline.weeklyOutline[i] || 'General conversation';
+    const allMessages: Array<{ senderId: string; text: string; timestamp: number }> = [];
+
+    for (let weekIndex = 0; weekIndex < Math.min(weeklyOutline.length, 12); weekIndex++) {
+      const weekEvent = weeklyOutline[weekIndex];
+      if (!weekEvent) {
+        console.log('🤖 [WARNING] No event for week:', weekIndex + 1);
+        continue;
+      }
+
+      console.log(`🤖 [DEBUG] Generating week ${weekIndex + 1}: ${weekEvent}`);
+      
       const weekMessages = await generateWeeklyMessages(
         participants,
-        weekTheme,
+        weekEvent,
         messagesPerWeek,
         conversationType,
-        storyOutline.overarchingStory
+        overarchingStory,
+        weekIndex
       );
-      
-      // Convert timestamp to createdAt and adjust for chronological order
-      const baseTime = Date.now() - ((weeksToUse - i) * 7 * 24 * 60 * 60 * 1000); // Week spacing
-      weekMessages.forEach((msg, index) => {
-        allMessages.push({
-          senderId: msg.senderId,
-          text: msg.text,
-          createdAt: baseTime + (index * 60000) + Math.floor(Math.random() * 30000)
-        });
-      });
+
+      console.log(`🤖 [DEBUG] Week ${weekIndex + 1} generated ${weekMessages.length} messages`);
+      allMessages.push(...weekMessages);
     }
-    
-    // Sort by timestamp and trim to exact count needed
-    const sortedMessages = allMessages
+
+    console.log('🤖 [DEBUG] Total AI messages generated:', allMessages.length);
+
+    // Convert to the expected format and sort by timestamp
+    const formattedMessages = allMessages
+      .map(msg => ({
+        senderId: msg.senderId,
+        text: msg.text,
+        createdAt: msg.timestamp
+      }))
       .sort((a, b) => a.createdAt - b.createdAt)
-      .slice(0, count);
-    
-    console.log(`✅ Generated ${sortedMessages.length} AI messages`);
-    return sortedMessages;
-    
+      .slice(0, count); // Ensure we don't exceed requested count
+
+    console.log('🤖 [DEBUG] Final formatted messages:', formattedMessages.length);
+    console.log('🤖 [DEBUG] Sender distribution:', 
+      formattedMessages.reduce((acc, msg) => {
+        const sender = participants.find(p => p.uid === msg.senderId);
+        const name = sender?.displayName || 'Unknown';
+        acc[name] = (acc[name] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>)
+    );
+
+    return formattedMessages;
+
   } catch (error) {
-    console.error('Error generating AI conversation:', error);
-    console.log('🔄 Falling back to simple messages');
+    console.error('🤖 [ERROR] Error in generateConversationMessages:', error);
+    console.log('🤖 [DEBUG] Falling back to simple messages');
     
-    // Fallback to simple messages on error
-    const messages: Array<{ senderId: string; text: string; createdAt: number }> = [];
-    const baseTime = Date.now() - (count * 60000);
+    // Fallback to simple messages with realistic timestamps
+    const startTime = Date.now() - (12 * 7 * 24 * 60 * 60 * 1000); // 12 weeks ago
+    const totalDuration = 12 * 7 * 24 * 60 * 60 * 1000; // 12 weeks in milliseconds
+    const messageInterval = count > 1 ? totalDuration / (count - 1) : 0;
     
-    for (let i = 0; i < count; i++) {
-      const sender = participants[Math.floor(Math.random() * participants.length)];
-      if (!sender) continue;
+    return Array.from({ length: count }, (_, i) => {
+      const sender = participants[i % participants.length];
+      if (!sender) return { senderId: '', text: '', createdAt: 0 };
       
-      messages.push({
+      return {
         senderId: sender.uid,
-        text: `Message ${i + 1} from ${sender.displayName}`,
-        createdAt: baseTime + (i * 60000) + Math.floor(Math.random() * 30000)
-      });
-    }
-    
-    return messages.sort((a, b) => a.createdAt - b.createdAt);
+        text: `Error fallback message ${i + 1} from ${sender.displayName}`,
+        createdAt: startTime + (i * messageInterval)
+      };
+    }).filter(msg => msg.senderId);
   }
 }
 
@@ -200,242 +237,273 @@ async function generateOverarchingStory(
   conversationType: 'romantic-healthy' | 'romantic-unhealthy' | 'friendly' | 'group',
   participants: UserProfile[]
 ): Promise<string> {
-  if (!process.env.OPENAI_API_KEY) {
-    return `A simple ${conversationType} story between the participants over 3 months.`;
-  }
-
+  console.log('🤖 [DEBUG] generateOverarchingStory called');
+  console.log('🤖 [DEBUG] conversationType:', conversationType);
+  console.log('🤖 [DEBUG] participants:', participants.map(p => ({ name: p.displayName, personality: p.personality })));
+  
   const participantDescriptions = participants.map(p => 
-    `${p.displayName} (${p.sex}, personality: ${p.personality.join(', ')}, relationship style: ${p.relationshipStyle})`
+    `${p.displayName}: ${p.sex}, personality traits: ${p.personality.join(', ')}, communication style: ${p.relationshipStyle}`
   ).join('\n');
 
-  const conversationContext = {
-    'romantic-healthy': 'a loving, supportive romantic relationship with good communication and healthy conflict resolution',
-    'romantic-unhealthy': 'a troubled romantic relationship with communication issues, unhealthy patterns, jealousy, and emotional volatility',
-    'friendly': 'a casual friendship with shared interests, mutual support, and occasional social activities',
-    'group': 'a friend group with diverse personalities, group dynamics, shared activities, and interpersonal relationships'
-  };
+  let systemPrompt: string;
+  let userPrompt: string;
 
-  const prompt = `Create a compelling 3-month overarching story for ${conversationContext[conversationType]} between these people:
+  if (conversationType === 'romantic-unhealthy') {
+    systemPrompt = `You are a creative writer specializing in realistic relationship dynamics. Create a compelling 3-month story arc for an unhealthy romantic relationship between these people:
 
 ${participantDescriptions}
 
-**CRITICAL FORMATTING REQUIREMENT: Your response must be EXACTLY one paragraph of narrative text. Do not include any headers, bullet points, numbered lists, or formatting. Just write the story as a single continuous paragraph.**
+CRITICAL: This is an unhealthy relationship that should remain mostly unhealthy throughout the 3 months. The relationship should consistently exhibit unhealthy patterns like jealousy, control, manipulation, poor communication, and toxic behaviors. Don't make it cartoonishly bad, there must be something they like about each other and some good moments, but I am not looking for a redemption arc.
 
-Write a realistic, engaging story that shows the natural progression of ${conversationType === 'group' ? 'group dynamics' : 'their relationship'} over 3 months. Include specific events, conflicts, developments, and resolutions that would naturally occur based on their personality traits and relationship styles.
+The story should span 3 months and include specific events, conflicts, and ongoing unhealthy dynamics that would generate natural conversation topics, as well as the mundane daily life of the characters.`;
 
-The story should be detailed enough to later break down into weekly chat message themes. Focus on authentic human experiences and emotions that match their personalities.`;
+    userPrompt = `Create a realistic 3-month story arc for these ${participants.length} people in an unhealthy romantic relationship. The relationship should START unhealthy and STAY unhealthy - no growth, no realizations, no positive changes. Include specific events, ongoing conflicts, jealousy, control issues, and toxic patterns that persist throughout all 3 months. Do NOT include any happy endings or relationship improvements. Return as a single paragraph only.`;
+  } else {
+    systemPrompt = `You are a creative writer specializing in realistic relationship dynamics. Create a compelling 3-month story arc for a ${conversationType.replace('-', ' ')} conversation between these people:
+
+${participantDescriptions}
+
+The story should span 3 months and include specific events, challenges, and growth moments that would generate natural conversation topics, as well as the mundane daily lives of the characters.`;
+
+    userPrompt = `Create a realistic 3-month story arc for these ${participants.length} people in a ${conversationType.replace('-', ' ')} relationship. Include specific events, challenges, and growth that would generate natural conversations.`;
+  }
+
+  console.log('🤖 [DEBUG] OpenAI Request - generateOverarchingStory');
+  console.log('🤖 [DEBUG] System Prompt:', systemPrompt);
+  console.log('🤖 [DEBUG] User Prompt:', userPrompt);
 
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
-        {
-          role: 'system',
-          content: 'You are a creative writer specializing in realistic relationship and social dynamics. You MUST follow formatting instructions EXACTLY. Write compelling, believable stories that reflect authentic human behavior and personality differences.'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
       ],
-      temperature: 0.8,
-      max_tokens: 600
+      max_tokens: 3000,
+      temperature: 0.8
     });
 
-    return response.choices[0]?.message?.content?.trim() || `A ${conversationType} story over 3 months.`;
+    console.log('🤖 [DEBUG] OpenAI Response - generateOverarchingStory');
+    console.log('🤖 [DEBUG] Full response object:', JSON.stringify(response, null, 2));
+    
+    const story = response.choices[0]?.message?.content?.trim() || '';
+    console.log('🤖 [DEBUG] Extracted story:', story);
+    console.log('🤖 [DEBUG] Story length:', story.length);
+    
+    return story;
   } catch (error) {
-    console.error('Error generating overarching story:', error);
-    return `A ${conversationType} story between the participants over 3 months.`;
+    console.error('🤖 [ERROR] OpenAI API error in generateOverarchingStory:', error);
+    throw error;
   }
 }
 
 /**
- * Generate a 3-month story outline for a conversation type
+ * Generate weekly story outline from overarching story
  */
 async function generateStoryOutline(
   conversationType: 'romantic-healthy' | 'romantic-unhealthy' | 'friendly' | 'group',
   participants: UserProfile[]
 ): Promise<{ overarchingStory: string; weeklyOutline: string[] }> {
-  if (!process.env.OPENAI_API_KEY) {
-    console.log('⚠️ No OpenAI API key found, using placeholder story');
-    return {
-      overarchingStory: `A simple ${conversationType} story over 3 months.`,
-      weeklyOutline: Array.from({ length: 12 }, (_, i) => `Week ${i + 1}: General conversation topics`)
-    };
-  }
-
-  // First generate the overarching story
+  console.log('🤖 [DEBUG] generateStoryOutline called');
+  console.log('🤖 [DEBUG] conversationType:', conversationType);
+  
   const overarchingStory = await generateOverarchingStory(conversationType, participants);
-  console.log(`📖 Generated overarching story: ${overarchingStory.substring(0, 100)}...`);
+  console.log('🤖 [DEBUG] Generated overarching story:', overarchingStory);
 
-  const participantDescriptions = participants.map(p => 
-    `${p.displayName} (${p.sex}, personality: ${p.personality.join(', ')}, relationship style: ${p.relationshipStyle})`
-  ).join('\n');
-
-  const prompt = `Based on this overarching story, break it down into 12 weekly themes:
-
-**OVERARCHING STORY:**
-${overarchingStory}
-
-**PARTICIPANTS:**
-${participantDescriptions}
-
-**CRITICAL FORMATTING REQUIREMENT: Your response must be EXACTLY 12 lines, each formatted as "Week X: [theme]" where X is the week number (1-12). Do not include any other text, headers, explanations, or formatting. Each line must start with "Week" followed by the number, colon, space, then the theme.**
-
-Break down the overarching story into 12 weekly themes that would naturally progress the story and generate realistic chat messages. Each week should represent specific events, emotions, or developments from the story.
-
-Example format (you MUST follow this EXACTLY):
-Week 1: Initial meeting and first impressions
-Week 2: Getting to know each other better
-Week 3: First conflict or disagreement`;
-
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a story breakdown specialist. You MUST follow formatting instructions EXACTLY. Your response must be precisely 12 lines starting with "Week 1:" through "Week 12:" with no additional text or formatting.'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 400
-    });
-
-    const content = response.choices[0]?.message?.content || '';
-    const weeks = content
-      .split('\n')
-      .filter(line => line.trim().startsWith('Week'))
-      .map(line => line.trim())
-      .slice(0, 12); // Ensure exactly 12 weeks
-    
-    // Fill in missing weeks if needed
-    while (weeks.length < 12) {
-      weeks.push(`Week ${weeks.length + 1}: Continuing story development`);
-    }
-    
-    return {
-      overarchingStory,
-      weeklyOutline: weeks
-    };
-  } catch (error) {
-    console.error('Error generating story outline:', error);
-    return {
-      overarchingStory,
-      weeklyOutline: Array.from({ length: 12 }, (_, i) => `Week ${i + 1}: Story development`)
-    };
-  }
-}
-
-/**
- * Generate realistic chat messages for a specific week based on the story theme
- */
-async function generateWeeklyMessages(
-  participants: UserProfile[],
-  weekTheme: string,
-  messageCount: number,
-  conversationType: string,
-  overarchingStory: string
-): Promise<Array<{ senderId: string; text: string; timestamp: number }>> {
   const participantDescriptions = participants.map(p => 
     `${p.displayName}: ${p.sex}, personality traits: ${p.personality.join(', ')}, communication style: ${p.relationshipStyle}`
   ).join('\n');
 
-  const prompt = `Generate realistic chat messages for this scenario:
+  const systemPrompt = `You are a story planning expert. Break down stories into weekly events for chat conversations.
 
-**OVERARCHING STORY CONTEXT:**
+You MUST follow formatting instructions EXACTLY. Return EXACTLY 12 lines, each formatted as:
+Week X: [what happened that week]
+
+Each line should describe specific events, developments, or situations that occurred that week in the story. Focus on concrete happenings, not abstract themes.
+
+No additional text, no explanations, no bullet points. Just 12 lines exactly as shown above.`;
+
+  const userPrompt = `Break this 3-month story into 12 weekly events - what specifically happened each week:
+
 ${overarchingStory}
 
-**CURRENT WEEK THEME:**
-${weekTheme}
-
-**PARTICIPANTS:**
+Participants:
 ${participantDescriptions}
 
-**CONVERSATION TYPE:** ${conversationType}
+Return exactly 12 lines formatted as "Week X: [what happened that week]" - focus on specific events, not themes.`;
 
-**CRITICAL FORMATTING REQUIREMENT: Your response must be EXACTLY ${messageCount} lines, each formatted as "[Name]: [message text]" where Name is one of the participant names listed above. Do not include any headers, explanations, timestamps, or other formatting. Each line must start with a participant name followed by colon, space, then the message text.**
-
-Requirements for message content:
-- Messages should reflect each person's personality and communication style
-- Include natural conversation flow with responses to each other
-- Mix of message lengths (some short, some longer) 
-- Include realistic texting language and occasional emojis
-- Show personality differences in how they communicate
-- Make it feel like real people texting about the current week theme
-- Stay consistent with the overarching story context
-
-Example format (you MUST follow this EXACTLY):
-${participants[0]?.displayName}: Hey, how's it going?
-${participants[1]?.displayName}: Not bad! Just dealing with work stuff
-${participants[0]?.displayName}: Yeah I totally get that 😅
-
-Generate EXACTLY ${messageCount} messages with varied senders that naturally flow together.`;
+  console.log('🤖 [DEBUG] OpenAI Request - generateStoryOutline');
+  console.log('🤖 [DEBUG] System Prompt:', systemPrompt);
+  console.log('🤖 [DEBUG] User Prompt:', userPrompt);
 
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
-        {
-          role: 'system',
-          content: 'You are an expert at writing realistic text message conversations. You MUST follow formatting instructions EXACTLY. Your response must be the exact number of lines requested, each starting with a participant name followed by colon and space. No additional text or formatting allowed.'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
       ],
-      temperature: 0.9,
-      max_tokens: 1200
+      max_tokens: 400,
+      temperature: 0.7
     });
 
-    const content = response.choices[0]?.message?.content || '';
-    const lines = content
-      .split('\n')
-      .map(line => line.trim())
-      .filter(line => line.includes(':') && line.length > 0);
+    console.log('🤖 [DEBUG] OpenAI Response - generateStoryOutline');
+    console.log('🤖 [DEBUG] Full response object:', JSON.stringify(response, null, 2));
+    
+    const content = response.choices[0]?.message?.content?.trim() || '';
+    console.log('🤖 [DEBUG] Raw outline content:', content);
+    
+    const weeklyOutline = content.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    console.log('🤖 [DEBUG] Parsed weekly outline:', weeklyOutline);
+    console.log('🤖 [DEBUG] Number of weeks:', weeklyOutline.length);
 
-    const messages = lines
-      .map((line, index) => {
-        const colonIndex = line.indexOf(':');
-        if (colonIndex === -1) return null;
-        
-        const name = line.substring(0, colonIndex).trim();
-        const messageText = line.substring(colonIndex + 1).trim();
-        
-        if (!name || !messageText) return null;
-        
-        const sender = participants.find(p => p.displayName === name);
-        if (!sender) return null;
-        
-        return {
-          senderId: sender.uid,
-          text: messageText,
-          timestamp: Date.now() - ((messageCount - index) * 60000) + Math.floor(Math.random() * 30000)
-        };
-      })
-      .filter(msg => msg !== null) as Array<{ senderId: string; text: string; timestamp: number }>;
+    return { overarchingStory, weeklyOutline };
+  } catch (error) {
+    console.error('🤖 [ERROR] OpenAI API error in generateStoryOutline:', error);
+    throw error;
+  }
+}
 
-    // Ensure we have the right number of messages, pad if necessary
-    while (messages.length < messageCount && participants.length > 0) {
-      const sender = participants[messages.length % participants.length];
-      if (!sender) break;
-      
+/**
+ * Generate messages for a specific week using OpenAI
+ */
+async function generateWeeklyMessages(
+  participants: UserProfile[],
+  weekEvent: string,
+  messageCount: number,
+  conversationType: string,
+  overarchingStory: string,
+  weekIndex: number = 0
+): Promise<Array<{ senderId: string; text: string; timestamp: number }>> {
+  console.log('🤖 [DEBUG] generateWeeklyMessages called');
+  console.log('🤖 [DEBUG] participants:', participants.map(p => ({ name: p.displayName, uid: p.uid })));
+  console.log('🤖 [DEBUG] weekEvent:', weekEvent);
+  console.log('🤖 [DEBUG] messageCount:', messageCount);
+  console.log('🤖 [DEBUG] conversationType:', conversationType);
+  console.log('🤖 [DEBUG] weekIndex:', weekIndex);
+
+  const participantDescriptions = participants.map(p => 
+    `${p.displayName}: ${p.sex}, personality traits: ${p.personality.join(', ')}, communication style: ${p.relationshipStyle}`
+  ).join('\n');
+
+  const systemPrompt = `You are a chat conversation generator. Create realistic messages between people discussing what happened in their story.
+
+You MUST follow formatting instructions EXACTLY. Return EXACTLY ${messageCount} lines, each formatted as:
+[Name]: [message text]
+
+Where [Name] is one of: ${participants.map(p => p.displayName).join(', ')}
+
+Rules:
+- Alternate between different speakers naturally
+- Messages should be about what happened that specific week in their story
+- Messages should feel like real people texting about their experiences
+- No additional text, explanations, or formatting
+- Just ${messageCount} lines of messages`;
+
+  const userPrompt = `Generate ${messageCount} chat messages about what happened this week in their story:
+
+WHAT HAPPENED THIS WEEK: ${weekEvent}
+
+OVERALL STORY CONTEXT: ${overarchingStory}
+
+PARTICIPANTS:
+${participantDescriptions}
+
+The messages should be the participants discussing, reacting to, and talking about what happened that week. Show their personalities through how they communicate about these events. Also include some mundane daily life of the characters.
+
+Return exactly ${messageCount} lines formatted as "[Name]: [message]"`;
+
+  console.log('🤖 [DEBUG] OpenAI Request - generateWeeklyMessages');
+  console.log('🤖 [DEBUG] System Prompt:', systemPrompt);
+  console.log('🤖 [DEBUG] User Prompt:', userPrompt);
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      max_tokens: Math.min(4000, messageCount * 50),
+      temperature: 0.9
+    });
+
+    console.log('🤖 [DEBUG] OpenAI Response - generateWeeklyMessages');
+    console.log('🤖 [DEBUG] Full response object:', JSON.stringify(response, null, 2));
+    
+    const content = response.choices[0]?.message?.content?.trim() || '';
+    console.log('🤖 [DEBUG] Raw messages content:', content);
+    
+    const lines = content.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    console.log('🤖 [DEBUG] Parsed lines:', lines);
+    console.log('🤖 [DEBUG] Number of lines:', lines.length);
+
+    // Calculate realistic timestamps for this week
+    const startTime = Date.now() - (12 * 7 * 24 * 60 * 60 * 1000); // 12 weeks ago
+    const weekStartTime = startTime + (weekIndex * 7 * 24 * 60 * 60 * 1000); // Start of this week
+    const weekDuration = 7 * 24 * 60 * 60 * 1000; // 1 week in milliseconds
+    const messageInterval = lines.length > 1 ? weekDuration / (lines.length - 1) : 0; // Spread across the week
+
+    console.log('🤖 [DEBUG] Timestamp calculation:');
+    console.log('🤖 [DEBUG] Week start time:', new Date(weekStartTime).toISOString());
+    console.log('🤖 [DEBUG] Week duration (ms):', weekDuration);
+    console.log('🤖 [DEBUG] Message interval (ms):', messageInterval);
+    console.log('🤖 [DEBUG] Message interval (hours):', messageInterval / (60 * 60 * 1000));
+
+    const messages: Array<{ senderId: string; text: string; timestamp: number }> = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (!line) continue;
+
+      const colonIndex = line.indexOf(':');
+      if (colonIndex === -1) {
+        console.log('🤖 [WARNING] Line missing colon:', line);
+        continue;
+      }
+
+      const senderName = line.substring(0, colonIndex).trim();
+      const messageText = line.substring(colonIndex + 1).trim();
+
+      console.log('🤖 [DEBUG] Processing message:', { senderName, messageText });
+
+      // Find participant by display name
+      const sender = participants.find(p => p.displayName === senderName);
+      if (!sender) {
+        console.log('🤖 [WARNING] Unknown sender:', senderName);
+        console.log('🤖 [DEBUG] Available participants:', participants.map(p => p.displayName));
+        continue;
+      }
+
+      // Calculate timestamp for this message, spread evenly across the week
+      const messageTimestamp = weekStartTime + (i * messageInterval);
+
       messages.push({
         senderId: sender.uid,
-        text: `Additional message about ${weekTheme}`,
-        timestamp: Date.now() - ((messageCount - messages.length) * 60000)
+        text: messageText,
+        timestamp: messageTimestamp
+      });
+
+      console.log('🤖 [DEBUG] Added message:', {
+        senderId: sender.uid,
+        senderName: sender.displayName,
+        text: messageText,
+        timestamp: messageTimestamp,
+        date: new Date(messageTimestamp).toISOString()
       });
     }
 
-    return messages.slice(0, messageCount);
+    console.log('🤖 [DEBUG] Final messages array:', messages);
+    console.log('🤖 [DEBUG] Total messages generated:', messages.length);
+    console.log('🤖 [DEBUG] Time span:', {
+      start: new Date(messages[0]?.timestamp || 0).toISOString(),
+      end: new Date(messages[messages.length - 1]?.timestamp || 0).toISOString()
+    });
+
+    return messages;
   } catch (error) {
-    console.error('Error generating weekly messages:', error);
-    return [];
+    console.error('🤖 [ERROR] OpenAI API error in generateWeeklyMessages:', error);
+    throw error;
   }
 }
 
@@ -446,8 +514,8 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
   const finalConfig = { ...DEFAULT_CONFIG, ...config };
   console.log(`🎭 Generating scenario with ${finalConfig.totalUsers} users...`);
   
-  // PHASE 1: GENERATE ALL USER DATA (no DB insertions yet)
-  console.log('📝 Phase 1: Generating user profiles...');
+  // PHASE 1: GENERATE USER PROFILES AND CREATE ACCOUNTS
+  console.log('👤 Phase 1: Creating user accounts...');
   
   // Create primary user (healthy relationship style)
   const primaryUser: UserProfile = {
@@ -471,8 +539,6 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
     relationshipStyle: 'healthy'
   };
 
-  console.log('✅ User profiles generated');
-  
   // Create secondary user (female, unhealthy relationship)
   const secondaryUserData = generateUser('female', 'unhealthy');
   const secondaryUser: UserProfile = { ...secondaryUserData, uid: '' };
@@ -497,6 +563,35 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
   }
   
   console.log(`👥 Generated ${remainingUsers.length} additional users`);
+
+  // Create all user accounts in database
+  const { email: _, ...primaryUserProfileData } = primaryUser;
+  const primaryUserId = await createUserProfile(primaryUserProfileData);
+  primaryUser.uid = primaryUserId;
+  
+  const { email: __, ...primaryPartnerProfileData } = primaryPartner;
+  const primaryPartnerId = await createUserProfile(primaryPartnerProfileData);
+  primaryPartner.uid = primaryPartnerId;
+  
+  const { email: ___, ...secondaryUserProfileData } = secondaryUserData;
+  const secondaryUserId = await createUserProfile(secondaryUserProfileData);
+  secondaryUser.uid = secondaryUserId;
+  
+  const { email: ____, ...secondaryPartnerProfileData } = secondaryPartnerData;
+  const secondaryPartnerId = await createUserProfile(secondaryPartnerProfileData);
+  secondaryPartner.uid = secondaryPartnerId;
+  
+  // Create remaining user accounts
+  for (let i = 0; i < remainingUsers.length; i++) {
+    const userData = remainingUsers[i];
+    if (!userData) continue;
+    
+    const { email: _____, ...userProfileData } = userData;
+    const userId = await createUserProfile(userProfileData);
+    remainingUsers[i]!.uid = userId;
+  }
+  
+  console.log('✅ All user accounts created');
   
   // PHASE 2: GENERATE ALL CONVERSATION DATA (no DB insertions yet)
   console.log('💬 Phase 2: Generating conversations...');
@@ -602,41 +697,8 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
   );
   console.log(`👥 Generated group chat: Study Buddies (${group2Messages.length} messages)`);
   
-  // PHASE 3: DATABASE INSERTIONS (all at once)
-  console.log('💾 Phase 3: Inserting data into database...');
-  
-  // Insert all users
-  console.log('👤 Creating user accounts...');
-  const { email: _, ...primaryUserProfileData } = primaryUser;
-  const primaryUserId = await createUserProfile(primaryUserProfileData);
-  primaryUser.uid = primaryUserId;
-  
-  const { email: __, ...primaryPartnerProfileData } = primaryPartner;
-  const primaryPartnerId = await createUserProfile(primaryPartnerProfileData);
-  primaryPartner.uid = primaryPartnerId;
-  
-  const { email: ___, ...secondaryUserProfileData } = secondaryUserData;
-  const secondaryUserId = await createUserProfile(secondaryUserProfileData);
-  secondaryUser.uid = secondaryUserId;
-  
-  const { email: ____, ...secondaryPartnerProfileData } = secondaryPartnerData;
-  const secondaryPartnerId = await createUserProfile(secondaryPartnerProfileData);
-  secondaryPartner.uid = secondaryPartnerId;
-  
-  // Insert remaining users
-  for (let i = 0; i < remainingUsers.length; i++) {
-    const userData = remainingUsers[i];
-    if (!userData) continue;
-    
-    const { email: _____, ...userProfileData } = userData;
-    const userId = await createUserProfile(userProfileData);
-    remainingUsers[i]!.uid = userId;
-  }
-  
-  console.log('✅ All user accounts created');
-  
-  // Create conversations (but don't insert messages yet)
-  console.log('💬 Creating conversations...');
+  // PHASE 3: CREATE CONVERSATION STRUCTURES
+  console.log('💬 Phase 3: Creating conversation structures...');
   
   // Create all conversation structures
   const primaryConversationId = await createDirectConversation(primaryUser.uid, primaryPartner.uid);
@@ -652,8 +714,8 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
   
   console.log('✅ All conversations created');
   
-  // Prepare all messages with correct UIDs
-  console.log('📝 Preparing messages...');
+  // PHASE 4: PREPARE MESSAGES WITH CORRECT UIDS
+  console.log('📝 Phase 4: Preparing messages...');
   
   // 1. Primary relationship conversation messages
   const primaryMessagesWithUIDs = primaryMessages.map(msg => ({
@@ -699,15 +761,10 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
   
   console.log('✅ All messages prepared');
   
-  console.log(`✅ Scenario generation complete!`);
-  console.log(`📊 Summary:`);
-  console.log(`   • ${finalConfig.totalUsers} users created`);
-  console.log(`   • 4 direct conversations`);
-  console.log(`   • 2 group chats`);
-  console.log(`   • ${(finalConfig.messagesPerConversation * 4) + (finalConfig.messagesPerConversation * 2)} total messages`);
+  console.log('✅ All messages prepared');
 
-  // Insert all messages at the very end
-  console.log('💾 Inserting all messages...');
+  // PHASE 5: INSERT ALL MESSAGES (BULK OPERATIONS)
+  console.log('💾 Phase 5: Inserting all messages...');
   await sendBulkTexts(primaryConversationId, primaryMessagesWithUIDs);
   await sendBulkTexts(secondaryConversationId, secondaryMessagesWithUIDs);
   await sendBulkTexts(friendConversation1Id, friendMessages1WithUIDs);
@@ -715,6 +772,13 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
   await sendBulkTexts(group1Result.cid, group1MessagesWithUIDs);
   await sendBulkTexts(group2Result.cid, group2MessagesWithUIDs);
   console.log('✅ All messages inserted');
+
+  console.log(`\n🎉 Scenario generation complete!`);
+  console.log(`📊 Summary:`);
+  console.log(`   • ${finalConfig.totalUsers} users created`);
+  console.log(`   • 4 direct conversations`);
+  console.log(`   • 2 group chats`);
+  console.log(`   • ${(finalConfig.messagesPerConversation * 4) + (finalConfig.messagesPerConversation * 2)} total messages`);
   
   // Save all conversation data to JSON file
   if (finalConfig.saveToFile) {
@@ -935,60 +999,74 @@ function saveConversationsToFile(
  * Generate a minimal scenario with only primary user and their partner
  * Perfect for focused testing or quick setup
  */
-export async function generateMinimalScenario(config: Partial<ScenarioConfig> = {}) {
+export async function generateMinimalScenario(
+  config: Partial<ScenarioConfig> = {},
+  useUnhealthyRelationship: boolean = false
+) {
   const finalConfig = { ...DEFAULT_CONFIG, ...config };
   
   console.log('🚀 Starting minimal scenario generation...');
   console.log('📋 Configuration:');
   console.log(`   • Messages: ${finalConfig.messagesPerConversation}`);
   console.log(`   • AI Generation: ${finalConfig.useAI ? 'Enabled' : 'Disabled'}`);
-  console.log(`   • Save to JSON: ${finalConfig.saveToFile ? 'Enabled' : 'Disabled'}\n`);
+  console.log(`   • Save to JSON: ${finalConfig.saveToFile ? 'Enabled' : 'Disabled'}`);
+  console.log(`   • Relationship Type: ${useUnhealthyRelationship ? 'Unhealthy' : 'Healthy'}\n`);
 
-  /* ---------- PHASE 1: Generate User Data ---------- */
-  console.log('👥 Phase 1: Generating user profiles...');
+  /* ---------- PHASE 1: Create User Accounts ---------- */
+  console.log('👤 Phase 1: Creating user accounts...');
   
-  // Create primary user (healthy relationship style)
-  const primaryUser: UserProfile = {
-    uid: '', // Will be filled when created in database
-    username: 'alex_chen',
-    displayName: 'Alex Chen',
-    email: 'alex_chen@example.com',
-    sex: 'male',
-    personality: ['empathetic', 'communicative', 'supportive'],
-    relationshipStyle: 'healthy'
-  };
+  let primaryUser: UserProfile;
+  let primaryPartner: UserProfile;
+  let conversationType: 'romantic-healthy' | 'romantic-unhealthy';
 
-  // Create primary partner (healthy relationship style)
-  const primaryPartner: UserProfile = {
-    uid: '', // Will be filled when created in database
-    username: 'emma_davis',
-    displayName: 'Emma Davis',
-    email: 'emma_davis@example.com',
-    sex: 'female',
-    personality: ['understanding', 'affectionate', 'trustworthy'],
-    relationshipStyle: 'healthy'
-  };
+  if (useUnhealthyRelationship) {
+    // Create unhealthy relationship users with different names
+    primaryUser = {
+      uid: '', // Will be filled when created in database
+      username: 'jason_miller',
+      displayName: 'Jason Miller',
+      email: 'jason_miller@example.com',
+      sex: 'male',
+      personality: ['possessive', 'controlling', 'jealous'],
+      relationshipStyle: 'unhealthy'
+    };
 
-  console.log('✅ User profiles generated');
+    primaryPartner = {
+      uid: '', // Will be filled when created in database
+      username: 'sarah_jones',
+      displayName: 'Sarah Jones',
+      email: 'sarah_jones@example.com',
+      sex: 'female',
+      personality: ['defensive', 'inconsistent', 'critical'],
+      relationshipStyle: 'unhealthy'
+    };
 
-  /* ---------- PHASE 2: Generate Conversation Data ---------- */
-  console.log('💬 Phase 2: Generating conversation content...');
-  
-  // Generate primary relationship conversation
-  const primaryMessages = await generateConversationMessages(
-    primaryUser,
-    primaryPartner,
-    finalConfig.messagesPerConversation,
-    'romantic-healthy',
-    undefined,
-    finalConfig.useAI
-  );
+    conversationType = 'romantic-unhealthy';
+  } else {
+    // Create healthy relationship users (original names)
+    primaryUser = {
+      uid: '', // Will be filled when created in database
+      username: 'alex_chen',
+      displayName: 'Alex Chen',
+      email: 'alex_chen2@example.com',
+      sex: 'male',
+      personality: ['empathetic', 'communicative', 'supportive'],
+      relationshipStyle: 'healthy'
+    };
 
-  console.log('✅ Conversation content generated');
+    primaryPartner = {
+      uid: '', // Will be filled when created in database
+      username: 'emma_davis',
+      displayName: 'Emma Davis',
+      email: 'emma_davis2@example.com',
+      sex: 'female',
+      personality: ['understanding', 'affectionate', 'trustworthy'],
+      relationshipStyle: 'healthy'
+    };
 
-  /* ---------- PHASE 3: Create Database Structure ---------- */
-  console.log('🗄️ Phase 3: Creating database structure...');
-  
+    conversationType = 'romantic-healthy';
+  }
+
   // Create users in database and get real UIDs
   const primaryUserUID = await createUserProfile({
     username: primaryUser.username,
@@ -1004,13 +1082,33 @@ export async function generateMinimalScenario(config: Partial<ScenarioConfig> = 
   primaryUser.uid = primaryUserUID;
   primaryPartner.uid = primaryPartnerUID;
 
+  console.log('✅ User accounts created');
+
+  /* ---------- PHASE 2: Generate Conversation Data ---------- */
+  console.log('💬 Phase 2: Generating conversation content...');
+  
+  // Generate primary relationship conversation
+  const primaryMessages = await generateConversationMessages(
+    primaryUser,
+    primaryPartner,
+    finalConfig.messagesPerConversation,
+    conversationType,
+    undefined,
+    finalConfig.useAI
+  );
+
+  console.log('✅ Conversation content generated');
+
+  /* ---------- PHASE 3: Create Conversation Structure ---------- */
+  console.log('💬 Phase 3: Creating conversation structure...');
+  
   // Create conversation
   const conversationId = await createDirectConversation(primaryUserUID, primaryPartnerUID);
 
-  console.log('✅ Database structure created');
+  console.log('✅ Conversation structure created');
 
-  /* ---------- PHASE 4: Message Insertion ---------- */
-  console.log('💾 Phase 4: Preparing messages...');
+  /* ---------- PHASE 4: Prepare and Insert Messages ---------- */
+  console.log('📝 Phase 4: Preparing messages...');
   
   // Map temporary sender IDs to real UIDs for messages
   const messagesWithUIDs = primaryMessages.map(msg => ({
@@ -1018,6 +1116,8 @@ export async function generateMinimalScenario(config: Partial<ScenarioConfig> = 
     text: msg.text,
     createdAt: msg.createdAt
   }));
+
+  console.log('✅ Messages prepared');
 
   // Save to JSON file if requested
   if (finalConfig.saveToFile) {
@@ -1027,14 +1127,21 @@ export async function generateMinimalScenario(config: Partial<ScenarioConfig> = 
       {
         id: conversationId,
         messages: messagesWithUIDs
-      }
+      },
+      conversationType
     );
   }
 
-  // Insert all messages
+  // Insert all messages (bulk operation)
   console.log('💾 Inserting messages...');
   await sendBulkTexts(conversationId, messagesWithUIDs);
   console.log('✅ Messages inserted');
+
+  console.log(`\n🎉 Minimal scenario generation complete!`);
+  console.log(`📊 Summary:`);
+  console.log(`   • 2 users created`);
+  console.log(`   • 1 conversation`);
+  console.log(`   • ${messagesWithUIDs.length} messages`);
 
   return {
     users: {
@@ -1059,12 +1166,16 @@ export async function generateMinimalScenario(config: Partial<ScenarioConfig> = 
 function saveMinimalConversationToFile(
   primaryUser: UserProfile,
   primaryPartner: UserProfile,
-  conversation: { id: string; messages: Array<{ senderId: string; text: string; createdAt: number }> }
+  conversation: { id: string; messages: Array<{ senderId: string; text: string; createdAt: number }> },
+  conversationType: 'romantic-healthy' | 'romantic-unhealthy'
 ) {
+  const relationshipType = conversationType === 'romantic-healthy' ? 'healthy' : 'unhealthy';
+  
   const conversationData = {
     metadata: {
       generatedAt: new Date().toISOString(),
       type: 'minimal-scenario',
+      relationshipType: relationshipType,
       totalUsers: 2,
       totalConversations: 1,
       totalMessages: conversation.messages.length
@@ -1073,16 +1184,16 @@ function saveMinimalConversationToFile(
       primaryUser: {
         ...primaryUser,
         role: 'primary',
-        relationshipType: 'healthy'
+        relationshipType: relationshipType
       },
       primaryPartner: {
         ...primaryPartner,
         role: 'primary-partner',
-        relationshipType: 'healthy'
+        relationshipType: relationshipType
       }
     },
     conversation: {
-      type: 'romantic-healthy',
+      type: conversationType,
       participants: [primaryUser, primaryPartner],
       conversationId: conversation.id,
       messageCount: conversation.messages.length,
@@ -1102,11 +1213,12 @@ function saveMinimalConversationToFile(
     fs.mkdirSync(dataDir, { recursive: true });
   }
 
-  // Write to file
-  const filePath = path.join(dataDir, 'minimal-conversation.json');
+  // Write to file with relationship type in filename
+  const filename = `minimal-conversation-${relationshipType}.json`;
+  const filePath = path.join(dataDir, filename);
   fs.writeFileSync(filePath, JSON.stringify(conversationData, null, 2));
   
-  console.log(`💾 Minimal conversation saved to: ${filePath}`);
+  console.log(`💾 Minimal ${relationshipType} conversation saved to: ${filePath}`);
   console.log(`📊 File contains ${conversationData.metadata.totalMessages} messages`);
 }
 
