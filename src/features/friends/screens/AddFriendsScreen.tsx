@@ -33,8 +33,11 @@ import {
 } from '../store/friendsStore';
 import { FriendSearchResult, FriendshipStatus } from '../types';
 
+import type { FriendsStackParamList } from '@/shared/navigation/types';
+import type { StackNavigationProp } from '@react-navigation/stack';
+
 interface AddFriendsScreenProps {
-  navigation: any;
+  navigation: StackNavigationProp<FriendsStackParamList, 'AddFriends'>;
 }
 
 /**
@@ -94,7 +97,7 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
         `Friend request sent to ${username}!`,
         [{ text: 'OK' }]
       );
-    } catch (error: any) {
+    } catch (error) {
       console.error(
         '❌ AddFriendsScreen: Failed to send friend request:',
         error
@@ -102,7 +105,9 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
 
       Alert.alert(
         'Failed to Send Request',
-        error.message || 'Unable to send friend request. Please try again.',
+        error instanceof Error
+          ? error.message
+          : 'Unable to send friend request. Please try again.',
         [{ text: 'OK' }]
       );
     } finally {

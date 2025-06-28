@@ -47,9 +47,12 @@ import type {
   SnapUploadProgress,
   MessageType,
   MessageStatus,
+  Group,
   // Legacy types for backward compatibility
   Snap,
 } from '../types';
+import type { User } from '@/features/auth/types/authTypes';
+import type { FirebaseError } from 'firebase/app';
 
 /**
  * Chat service class for managing all chat-related operations
@@ -80,47 +83,57 @@ class ChatService {
   /**
    * Handle service errors with user-friendly messages
    */
-  private handleError(error: any): ChatError {
+  private handleError(error: unknown): ChatError {
     console.error('❌ ChatService: Error:', error);
 
-    if (error.code) {
-      switch (error.code) {
-        case 'storage/unauthorized':
-          return {
-            type: 'permission_denied',
-            message: 'Permission denied. Please check your authentication.',
-            details: error.code,
-          };
-        case 'storage/canceled':
-          return {
-            type: 'upload_failed',
-            message: 'Upload was canceled.',
-            details: error.code,
-          };
-        case 'storage/unknown':
-          return {
-            type: 'storage_error',
-            message: 'An unknown storage error occurred.',
-            details: error.code,
-          };
-        case 'network-request-failed':
-          return {
-            type: 'network_error',
-            message: 'Network error. Please check your connection.',
-            details: error.code,
-          };
-        default:
-          return {
-            type: 'unknown',
-            message: error.message || 'An unexpected error occurred.',
-            details: error.code,
-          };
+    if (error instanceof Error) {
+      const firebaseError = error as FirebaseError;
+
+      if (firebaseError.code) {
+        switch (firebaseError.code) {
+          case 'storage/unauthorized':
+            return {
+              type: 'permission_denied',
+              message: 'Permission denied. Please check your authentication.',
+              details: firebaseError.code,
+            };
+          case 'storage/canceled':
+            return {
+              type: 'upload_failed',
+              message: 'Upload was canceled.',
+              details: firebaseError.code,
+            };
+          case 'storage/unknown':
+            return {
+              type: 'storage_error',
+              message: 'An unknown storage error occurred.',
+              details: firebaseError.code,
+            };
+          case 'network-request-failed':
+            return {
+              type: 'network_error',
+              message: 'Network error. Please check your connection.',
+              details: firebaseError.code,
+            };
+          default:
+            return {
+              type: 'unknown',
+              message: firebaseError.message || 'An unexpected error occurred.',
+              details: firebaseError.code,
+            };
+        }
       }
+
+      return {
+        type: 'unknown',
+        message: firebaseError.message || 'An unexpected error occurred.',
+        details: firebaseError.code || firebaseError,
+      };
     }
 
     return {
       type: 'unknown',
-      message: error.message || 'An unexpected error occurred.',
+      message: 'An unexpected error occurred.',
       details: error,
     };
   }
@@ -259,7 +272,7 @@ class ChatService {
       ];
 
       // 1. Create group metadata
-      const groupData: any = {
+      const groupData: Group = {
         id: groupId,
         name,
         createdBy: currentUserId,
@@ -274,12 +287,8 @@ class ChatService {
             },
           ])
         ),
+        ...(avatarUrl && { avatarUrl }),
       };
-
-      // Only add avatarUrl if it's provided
-      if (avatarUrl) {
-        groupData.avatarUrl = avatarUrl;
-      }
 
       const groupRef = ref(this.database, `groups/${groupId}`);
       await set(groupRef, groupData);
@@ -439,15 +448,24 @@ class ChatService {
         status: 'processing',
       });
 
-      // Create or get conversation
-      const conversationId = await this.createConversation(data.recipientId);
+      // Determine conversation ID
+      let conversationId: string;
+      if (data.conversationId) {
+        conversationId = data.conversationId;
+      } else if (data.recipientId) {
+        conversationId = await this.createConversation(data.recipientId);
+      } else {
+        throw new Error(
+          'Either recipientId or conversationId must be provided'
+        );
+      }
 
       // Create snap document
       const currentUserId = this.getCurrentUserId();
       const now = Date.now();
       const snapData: SnapDocument = {
         senderId: currentUserId,
-        recipientId: data.recipientId,
+        recipientId: data.recipientId || '', // Empty string for group messages
         conversationId,
         mediaUrl,
         mediaType: data.mediaType,
@@ -486,7 +504,7 @@ class ChatService {
         snapId,
         progress: 0,
         status: 'error',
-        error: (error as any).message || 'Failed to send snap',
+        error: error instanceof Error ? error.message : 'Failed to send snap',
       });
       throw this.handleError(error);
     }
@@ -658,11 +676,13 @@ class ChatService {
           id: childSnapshot.key || '',
           type: 'text',
           senderId: messageData.senderId,
-          recipientId: messageData.recipientId,
           conversationId: messageData.conversationId,
           text: messageData.text,
           createdAt: messageData.createdAt,
           status: messageData.status,
+          ...(messageData.recipientId && {
+            recipientId: messageData.recipientId,
+          }),
           ...(messageData.deliveredAt && {
             deliveredAt: messageData.deliveredAt,
           }),
@@ -704,8 +724,8 @@ class ChatService {
           id: childSnapshot.key || '',
           type: 'snap',
           senderId: snapData.senderId,
-          recipientId: snapData.recipientId,
           conversationId: snapData.conversationId,
+          ...(snapData.recipientId && { recipientId: snapData.recipientId }),
           mediaUrl: snapData.mediaUrl,
           mediaType: snapData.mediaType,
           ...(snapData.textOverlay && { textOverlay: snapData.textOverlay }),
@@ -783,9 +803,11 @@ class ChatService {
           result.push({
             id: conversationId,
             isGroup: true,
-            groupId: conversation.groupId,
-            title: conversation.title,
-            avatarUrl: conversation.avatarUrl,
+            ...(conversation.groupId && { groupId: conversation.groupId }),
+            ...(conversation.title && { title: conversation.title }),
+            ...(conversation.avatarUrl && {
+              avatarUrl: conversation.avatarUrl,
+            }),
             participants: conversation.participants,
             ...(lastMessage && { lastMessage }),
             unreadCount: conversation.unreadCount[currentUserIndex] || 0,
@@ -839,7 +861,9 @@ class ChatService {
               uid: otherUserId,
               username: otherUserData.username,
               displayName: otherUserData.displayName,
-              photoURL: otherUserData.photoURL,
+              ...(otherUserData.photoURL && {
+                photoURL: otherUserData.photoURL,
+              }),
             },
             ...(lastMessage && { lastMessage }),
             unreadCount: conversation.unreadCount[currentUserIndex] || 0,
@@ -913,6 +937,7 @@ class ChatService {
         // Check if snap belongs to this conversation
         const isRelevant =
           (snapData.senderId === currentUserId &&
+            snapData.recipientId &&
             conversation.participants.includes(snapData.recipientId)) ||
           (snapData.recipientId === currentUserId &&
             conversation.participants.includes(snapData.senderId));
@@ -920,7 +945,17 @@ class ChatService {
         if (isRelevant) {
           result.push({
             id: snapId,
-            ...snapData,
+            senderId: snapData.senderId,
+            recipientId: snapData.recipientId || '',
+            mediaUrl: snapData.mediaUrl,
+            mediaType: snapData.mediaType,
+            ...(snapData.textOverlay && { textOverlay: snapData.textOverlay }),
+            duration: snapData.duration,
+            createdAt: snapData.createdAt,
+            expiresAt: snapData.expiresAt,
+            status: snapData.status,
+            ...(snapData.viewedAt && { viewedAt: snapData.viewedAt }),
+            ...(snapData.deliveredAt && { deliveredAt: snapData.deliveredAt }),
           });
         }
       }
@@ -939,10 +974,10 @@ class ChatService {
   /**
    * Get user data by ID
    */
-  async getUserData(userId: string): Promise<any> {
+  async getUserData(userId: string): Promise<User | null> {
     const userRef = ref(this.database, `users/${userId}`);
     const snapshot = await get(userRef);
-    return snapshot.exists() ? snapshot.val() : null;
+    return snapshot.exists() ? (snapshot.val() as User) : null;
   }
 
   /**
@@ -956,13 +991,25 @@ class ChatService {
   /**
    * Get message data by ID (private method) - checks both text messages and snaps
    */
-  private async getMessageData(messageId: string): Promise<any | null> {
+  private async getMessageData(messageId: string): Promise<Message | null> {
     // Try text messages first
     const textMessageRef = ref(this.database, `textMessages/${messageId}`);
     const textSnapshot = await get(textMessageRef);
 
     if (textSnapshot.exists()) {
-      return { ...textSnapshot.val(), type: 'text' };
+      const data = textSnapshot.val() as TextMessageDocument;
+      return {
+        id: messageId,
+        type: 'text',
+        senderId: data.senderId,
+        conversationId: data.conversationId,
+        text: data.text,
+        createdAt: data.createdAt,
+        status: data.status,
+        ...(data.recipientId && { recipientId: data.recipientId }),
+        ...(data.deliveredAt && { deliveredAt: data.deliveredAt }),
+        ...(data.viewedAt && { viewedAt: data.viewedAt }),
+      } as TextMessage;
     }
 
     // Try snaps
@@ -970,7 +1017,23 @@ class ChatService {
     const snapSnapshot = await get(snapRef);
 
     if (snapSnapshot.exists()) {
-      return { ...snapSnapshot.val(), type: 'snap' };
+      const data = snapSnapshot.val() as SnapDocument;
+      return {
+        id: messageId,
+        type: 'snap',
+        senderId: data.senderId,
+        conversationId: data.conversationId,
+        mediaUrl: data.mediaUrl,
+        mediaType: data.mediaType,
+        duration: data.duration,
+        createdAt: data.createdAt,
+        expiresAt: data.expiresAt,
+        status: data.status,
+        ...(data.recipientId && { recipientId: data.recipientId }),
+        ...(data.textOverlay && { textOverlay: data.textOverlay }),
+        ...(data.deliveredAt && { deliveredAt: data.deliveredAt }),
+        ...(data.viewedAt && { viewedAt: data.viewedAt }),
+      } as SnapMessage;
     }
 
     return null;
@@ -1180,7 +1243,7 @@ class ChatService {
         const expiredSnaps: string[] = [];
 
         for (const [snapId, snapData] of Object.entries(
-          snaps as Record<string, any>
+          snaps as Record<string, SnapDocument>
         )) {
           // Only delete snaps that are truly expired (24 hours old)
           // Viewed snaps remain in chat history permanently but become unviewable
@@ -1275,7 +1338,8 @@ class ChatService {
       );
       const snapSnapshot = await get(snapQuery);
 
-      const updates: Record<string, any> = {};
+      const updates: Record<string, MessageStatus | number | number[] | null> =
+        {};
       const now = Date.now();
 
       // Mark undelivered text messages as delivered
@@ -1368,14 +1432,14 @@ class ChatService {
       const conversationsSnapshot = await get(conversationsRef);
 
       let conversationId: string | null = null;
-      let conversationData: any = null;
+      let conversationData: ConversationDocument | null = null;
 
       if (conversationsSnapshot.exists()) {
         const conversations = conversationsSnapshot.val();
         for (const [id, conversation] of Object.entries(conversations)) {
-          if ((conversation as any).groupId === groupId) {
+          if ((conversation as ConversationDocument).groupId === groupId) {
             conversationId = id;
-            conversationData = conversation;
+            conversationData = conversation as ConversationDocument;
             break;
           }
         }
@@ -1409,7 +1473,7 @@ class ChatService {
       });
 
       // Update both group and conversation
-      const updates: Record<string, any> = {};
+      const updates: Record<string, unknown> = {};
       updates[`groups/${groupId}/members`] = updatedMembers;
       updates[`conversations/${conversationId}/participants`] = newParticipants;
       updates[`conversations/${conversationId}/unreadCount`] = newUnreadCount;
@@ -1457,14 +1521,14 @@ class ChatService {
       const conversationsSnapshot = await get(conversationsRef);
 
       let conversationId: string | null = null;
-      let conversationData: any = null;
+      let conversationData: ConversationDocument | null = null;
 
       if (conversationsSnapshot.exists()) {
         const conversations = conversationsSnapshot.val();
         for (const [id, conversation] of Object.entries(conversations)) {
-          if ((conversation as any).groupId === groupId) {
+          if ((conversation as ConversationDocument).groupId === groupId) {
             conversationId = id;
-            conversationData = conversation;
+            conversationData = conversation as ConversationDocument;
             break;
           }
         }
@@ -1487,14 +1551,14 @@ class ChatService {
       }
 
       const newParticipants = conversationData.participants.filter(
-        (_: any, index: number) => index !== userIndex
+        (_participant: string, index: number) => index !== userIndex
       );
       const newUnreadCount = conversationData.unreadCount.filter(
-        (_: any, index: number) => index !== userIndex
+        (_count: number, index: number) => index !== userIndex
       );
 
       // Update both group and conversation
-      const updates: Record<string, any> = {};
+      const updates: Record<string, unknown> = {};
       updates[`groups/${groupId}/members`] = updatedMembers;
       updates[`conversations/${conversationId}/participants`] = newParticipants;
       updates[`conversations/${conversationId}/unreadCount`] = newUnreadCount;
@@ -1512,7 +1576,7 @@ class ChatService {
   /**
    * Get group data by groupId
    */
-  async getGroupData(groupId: string): Promise<any> {
+  async getGroupData(groupId: string): Promise<Group | null> {
     console.log('👥 ChatService: Getting group data:', groupId);
 
     try {
@@ -1523,7 +1587,7 @@ class ChatService {
         throw new Error('Group not found');
       }
 
-      return snapshot.val();
+      return snapshot.val() as Group;
     } catch (error) {
       console.error('❌ ChatService: Failed to get group data:', error);
       throw this.handleError(error);

@@ -134,7 +134,12 @@ async function classify(
       continue;
     }
 
-    const rows = Object.entries(msgSnap.val() as Record<string, any>);
+    const rows = Object.entries(
+      msgSnap.val() as Record<
+        string,
+        { text: string; senderId?: string; createdAt?: number }
+      >
+    );
     const texts = rows.map(([, m]) => m.text);
     console.log(`📞 Found ${texts.length} messages in conversation ${cid}`);
 
@@ -167,8 +172,8 @@ async function classify(
       values: vectors[i] || [],
       metadata: {
         conversationId: cid,
-        senderId: m.senderId,
-        createdAt: m.createdAt,
+        ...(m.senderId && { senderId: m.senderId }),
+        ...(m.createdAt && { createdAt: m.createdAt }),
         text: m.text,
         sentiment: labels[i]?.sentiment || 'neu',
         horseman: labels[i]?.horseman || 'none',

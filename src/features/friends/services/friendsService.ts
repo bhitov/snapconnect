@@ -21,6 +21,7 @@ import {
   limitToFirst,
   onValue,
   off,
+  type DataSnapshot,
 } from 'firebase/database';
 
 import { generateId } from '@/shared/utils/idGenerator';
@@ -37,6 +38,9 @@ import {
   FriendshipStatus,
   FriendsError,
 } from '../types';
+
+import type { User } from '@/features/auth/types/authTypes';
+import type { FirebaseError } from 'firebase/app';
 
 /**
  * Friends service class
@@ -59,35 +63,43 @@ class FriendsService {
   /**
    * Handle Firebase errors with user-friendly messages
    */
-  private handleError(error: any): FriendsError {
+  private handleError(error: unknown): FriendsError {
     console.error('❌ FriendsService: Error:', error);
 
-    if (error.code) {
-      switch (error.code) {
-        case 'PERMISSION_DENIED':
-          return {
-            type: 'permission_denied',
-            message: 'You do not have permission to perform this action.',
-            code: error.code,
-          };
-        case 'NETWORK_ERROR':
-          return {
-            type: 'network_error',
-            message: 'Network error. Please check your connection.',
-            code: error.code,
-          };
-        default:
-          return {
-            type: 'unknown',
-            message: error.message || 'An unexpected error occurred.',
-            code: error.code,
-          };
+    if (error instanceof Error) {
+      const firebaseError = error as FirebaseError;
+      if (firebaseError.code) {
+        switch (firebaseError.code) {
+          case 'PERMISSION_DENIED':
+            return {
+              type: 'permission_denied',
+              message: 'You do not have permission to perform this action.',
+              code: firebaseError.code,
+            };
+          case 'NETWORK_ERROR':
+            return {
+              type: 'network_error',
+              message: 'Network error. Please check your connection.',
+              code: firebaseError.code,
+            };
+          default:
+            return {
+              type: 'unknown',
+              message: error.message || 'An unexpected error occurred.',
+              code: firebaseError.code,
+            };
+        }
       }
+
+      return {
+        type: 'unknown',
+        message: error.message || 'An unexpected error occurred.',
+      };
     }
 
     return {
       type: 'unknown',
-      message: error.message || 'An unexpected error occurred.',
+      message: 'An unexpected error occurred.',
     };
   }
 
@@ -123,7 +135,7 @@ class FriendsService {
 
       // Process each user and determine friendship status
       for (const [userId, userData] of Object.entries(
-        users as Record<string, any>
+        users as Record<string, User>
       )) {
         // Skip current user
         if (userId === currentUserId) continue;
@@ -134,7 +146,7 @@ class FriendsService {
           uid: userId,
           username: userData.username,
           displayName: userData.displayName,
-          photoURL: userData.photoURL,
+          ...(userData.photoURL && { photoURL: userData.photoURL }),
           friendshipStatus,
           lastActive: userData.lastActive,
         });
@@ -218,12 +230,14 @@ class FriendsService {
     ]);
 
     // Check if any friendship involves both users
-    const checkSnapshot = (snapshot: any, otherUserId: string) => {
+    const checkSnapshot = (snapshot: DataSnapshot, otherUserId: string) => {
       if (!snapshot.exists()) return false;
 
       const friendships = snapshot.val();
-      return Object.values(friendships as Record<string, any>).some(
-        (friendship: any) =>
+      return Object.values(
+        friendships as Record<string, FriendshipDocument>
+      ).some(
+        friendship =>
           (friendship.user1Id === user1Id && friendship.user2Id === user2Id) ||
           (friendship.user1Id === user2Id && friendship.user2Id === user1Id)
       );
@@ -253,8 +267,10 @@ class FriendsService {
     if (!snapshot.exists()) return false;
 
     const requests = snapshot.val();
-    return Object.values(requests as Record<string, any>).some(
-      (request: any) =>
+    return Object.values(
+      requests as Record<string, FriendRequestDocument>
+    ).some(
+      request =>
         request.receiverId === receiverId && request.status === 'pending'
     );
   }
@@ -322,9 +338,9 @@ class FriendsService {
         senderId: currentUserId,
         receiverId: data.receiverId,
         senderData: {
-          username: senderData.username || '',
-          displayName: senderData.displayName || '',
-          ...(senderData.photoURL && { photoURL: senderData.photoURL }),
+          username: senderData?.username || '',
+          displayName: senderData?.displayName || '',
+          ...(senderData?.photoURL && { photoURL: senderData.photoURL }),
         },
         receiverData: {
           username: receiverData.username || '',
@@ -350,10 +366,10 @@ class FriendsService {
   /**
    * Get user data by ID
    */
-  private async getUserData(userId: string): Promise<any> {
+  private async getUserData(userId: string): Promise<User | null> {
     const userRef = ref(this.database, `users/${userId}`);
     const snapshot = await get(userRef);
-    return snapshot.exists() ? snapshot.val() : null;
+    return snapshot.exists() ? (snapshot.val() as User) : null;
   }
 
   /**
@@ -467,7 +483,11 @@ class FriendsService {
       for (const [friendshipId, friendship] of Object.entries(
         friendships as Record<string, FriendshipDocument>
       )) {
-        let friendData: any;
+        let friendData: {
+          username: string;
+          displayName: string;
+          photoURL?: string;
+        };
         let friendId: string;
 
         // Determine which user is the friend
@@ -488,7 +508,9 @@ class FriendsService {
           uid: friendId,
           username: currentUserData?.username || friendData.username,
           displayName: currentUserData?.displayName || friendData.displayName,
-          photoURL: currentUserData?.photoURL,
+          ...(currentUserData?.photoURL && {
+            photoURL: currentUserData.photoURL,
+          }),
           friendshipId,
           friendsSince: friendship.createdAt,
         });
@@ -679,7 +701,11 @@ class FriendsService {
       for (const [friendshipId, friendship] of Object.entries(
         friendships as Record<string, FriendshipDocument>
       )) {
-        let friendData: any;
+        let friendData: {
+          username: string;
+          displayName: string;
+          photoURL?: string;
+        };
         let friendId: string;
 
         if (friendship.user1Id === currentUserId) {
@@ -699,7 +725,9 @@ class FriendsService {
           uid: friendId,
           username: currentUserData?.username || friendData.username,
           displayName: currentUserData?.displayName || friendData.displayName,
-          photoURL: currentUserData?.photoURL,
+          ...(currentUserData?.photoURL && {
+            photoURL: currentUserData.photoURL,
+          }),
           friendshipId,
           friendsSince: friendship.createdAt,
         });

@@ -400,7 +400,7 @@ export type ChatErrorType =
 export interface ChatError {
   type: ChatErrorType;
   message: string;
-  details?: any;
+  details?: unknown;
 }
 
 /**

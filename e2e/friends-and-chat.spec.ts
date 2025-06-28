@@ -461,7 +461,7 @@ test.describe('Friends and Chat Comprehensive Flows', () => {
         for (let i = 0; i < testMessages.length; i++) {
           try {
             if (await messageInput.isVisible({ timeout: 2000 })) {
-              await messageInput.fill(testMessages[i]);
+              await messageInput.fill(testMessages[i] || '');
 
               // Try to send via button or Enter
               const sendButton = page
@@ -476,7 +476,7 @@ test.describe('Friends and Chat Comprehensive Flows', () => {
               }
 
               console.log(
-                `✓ Sent message ${i + 1}: ${testMessages[i].substring(0, 30)}...`
+                `✓ Sent message ${i + 1}: ${(testMessages[i] || '').substring(0, 30)}...`
               );
               await page.waitForTimeout(500);
 

@@ -22,6 +22,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -48,6 +50,7 @@ import type {
   SnapMessage,
   ChatScreenProps,
 } from '../types';
+import type { User } from '@/features/auth/types/authTypes';
 import type {
   ChatStackParamList,
   RootStackParamList,
@@ -146,10 +149,20 @@ function MessageItem({
   onSnapPress?: (snap: SnapMessage) => void;
   isCoachChat?: boolean;
   onSendLoveMapQuestion?: (question: string) => void;
-  currentUser?: any;
-  otherUser?: any;
+  currentUser?: User | null;
+  otherUser?: {
+    uid: string;
+    username: string;
+    displayName: string;
+    photoURL?: string;
+  };
   isGroup?: boolean;
-  senderData?: any;
+  senderData?: {
+    uid: string;
+    username: string;
+    displayName: string;
+    photoURL?: string;
+  };
 }) {
   const theme = useTheme();
   const isCoachMessage = isCoachChat && message.senderId === 'coach';
@@ -433,9 +446,9 @@ export function ChatScreen() {
   const [showCoachModal, setShowCoachModal] = useState(false);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [groupMembersData, setGroupMembersData] = useState<Record<string, any>>(
-    {}
-  );
+  const [groupMembersData, setGroupMembersData] = useState<
+    Record<string, User>
+  >({});
   const [resolvedOtherUser, setResolvedOtherUser] = useState(otherUser);
   const flatListRef = useRef<FlatList>(null);
 
@@ -472,7 +485,7 @@ export function ChatScreen() {
         await markAllMessagesAsDelivered(conversationId);
       };
 
-      loadAndMarkDelivered().catch((error: any) => {
+      loadAndMarkDelivered().catch(error => {
         console.error('Failed to load messages or mark as delivered:', error);
       });
     }, [conversationId, loadMessages, markAllMessagesAsDelivered])
@@ -499,7 +512,7 @@ export function ChatScreen() {
     if (isGroup && messages.length > 0) {
       const fetchGroupMembersData = async () => {
         const uniqueSenderIds = [...new Set(messages.map(m => m.senderId))];
-        const membersData: Record<string, any> = {};
+        const membersData: Record<string, User> = {};
 
         for (const senderId of uniqueSenderIds) {
           if (!groupMembersData[senderId]) {
@@ -653,7 +666,7 @@ export function ChatScreen() {
                 navigation.push('ChatScreen', {
                   conversationId: parentCid,
                   isCoach: false,
-                  parentCid: undefined, // Clear parentCid to prevent custom back button
+                  // Don't include parentCid at all instead of setting it to undefined
                   ...(parentConversation?.otherUser && {
                     otherUser: parentConversation.otherUser,
                   }),
@@ -866,7 +879,7 @@ export function ChatScreen() {
         navigation.push('ChatScreen', {
           conversationId: parentCid,
           isCoach: false,
-          parentCid: undefined, // Clear parentCid to prevent custom back button
+          // Don't include parentCid at all instead of setting it to undefined
           ...(parentConversation?.otherUser && {
             otherUser: parentConversation.otherUser,
           }),
@@ -917,12 +930,15 @@ export function ChatScreen() {
   /**
    * Handle scroll-to-bottom button visibility
    */
-  const handleScroll = useCallback((event: any) => {
-    const { contentOffset } = event.nativeEvent;
-    // With inverted list, being at bottom means offset is near 0
-    const isNearBottom = contentOffset.y <= 100;
-    setShowScrollToBottom(!isNearBottom);
-  }, []);
+  const handleScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const { contentOffset } = event.nativeEvent;
+      // With inverted list, being at bottom means offset is near 0
+      const isNearBottom = contentOffset.y <= 100;
+      setShowScrollToBottom(!isNearBottom);
+    },
+    []
+  );
 
   /**
    * Scroll to bottom of messages
@@ -961,17 +977,17 @@ export function ChatScreen() {
           isFromCurrentUser={isFromCurrentUser}
           onSnapPress={handleSnapPress}
           isCoachChat={isCoach || false}
-          onSendLoveMapQuestion={
-            isCoach ? handleSendLoveMapQuestion : undefined
-          }
+          {...(isCoach && {
+            onSendLoveMapQuestion: handleSendLoveMapQuestion,
+          })}
           currentUser={currentUser}
-          otherUser={resolvedOtherUser}
-          isGroup={isGroup}
-          senderData={
-            isGroup && !isFromCurrentUser
-              ? groupMembersData[item.senderId]
-              : undefined
-          }
+          {...(resolvedOtherUser && { otherUser: resolvedOtherUser })}
+          {...(typeof isGroup === 'boolean' && { isGroup })}
+          {...(isGroup &&
+            !isFromCurrentUser &&
+            groupMembersData[item.senderId] && {
+              senderData: groupMembersData[item.senderId],
+            })}
         />
       );
     },

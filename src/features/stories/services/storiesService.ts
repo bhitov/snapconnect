@@ -49,11 +49,14 @@ class StoriesService {
     return user.uid;
   }
 
-  private handleError(error: any): StoryError {
+  private handleError(error: unknown): StoryError {
     console.error('❌ StoriesService: Error:', error);
     return {
       type: 'unknown',
-      message: error.message || 'An unexpected error occurred.',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'An unexpected error occurred.',
       details: error,
     };
   }
@@ -152,10 +155,10 @@ class StoriesService {
       console.log('✅ StoriesService: Download URL obtained:', downloadURL);
 
       return downloadURL;
-    } catch (error: any) {
+    } catch (error) {
       console.error('❌ StoriesService: Media upload failed:', error);
       throw new Error(
-        `Failed to upload media: ${error?.message || 'Unknown error'}`
+        `Failed to upload media: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
   }

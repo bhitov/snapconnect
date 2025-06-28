@@ -158,9 +158,11 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
       }
 
       setIsLoading(false);
-    } catch (loadError: any) {
+    } catch (loadError) {
       console.error('❌ ViewStoryScreen: Failed to load story:', loadError);
-      setError(loadError.message || 'Failed to load story');
+      setError(
+        loadError instanceof Error ? loadError.message : 'Failed to load story'
+      );
       setIsLoading(false);
     }
   }, [storyId]);

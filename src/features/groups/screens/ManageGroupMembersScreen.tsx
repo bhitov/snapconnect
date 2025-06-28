@@ -17,6 +17,7 @@ import {
   Switch,
   Image,
   Modal,
+  Alert,
 } from 'react-native';
 
 import { useAuthStore } from '@/features/auth/store/authStore';
@@ -117,8 +118,8 @@ const ConfirmationModal = ({
         style={{
           flex: 1,
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          justifyContent: 'center',
-          alignItems: 'center',
+          justifyContent: 'center' as const,
+          alignItems: 'center' as const,
           padding: 20,
         }}
       >
@@ -137,7 +138,7 @@ const ConfirmationModal = ({
               fontWeight: '600' as const,
               color: theme.colors.onSurface,
               marginBottom: 12,
-              textAlign: 'center',
+              textAlign: 'center' as const,
             }}
           >
             {isCurrentUser ? 'Leave Group' : 'Remove Member'}
@@ -148,7 +149,7 @@ const ConfirmationModal = ({
               fontSize: 16,
               color: theme.colors.onSurface,
               marginBottom: 24,
-              textAlign: 'center',
+              textAlign: 'center' as const,
             }}
           >
             {isCurrentUser
@@ -158,8 +159,8 @@ const ConfirmationModal = ({
 
           <View
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
+              flexDirection: 'row' as const,
+              justifyContent: 'space-between' as const,
               gap: 12,
             }}
           >
@@ -179,7 +180,7 @@ const ConfirmationModal = ({
                 style={{
                   color: theme.colors.onSurface,
                   fontWeight: '600' as const,
-                  textAlign: 'center',
+                  textAlign: 'center' as const,
                 }}
               >
                 Cancel
@@ -200,7 +201,7 @@ const ConfirmationModal = ({
                 style={{
                   color: theme.colors.onError,
                   fontWeight: '600' as const,
-                  textAlign: 'center',
+                  textAlign: 'center' as const,
                 }}
               >
                 {isCurrentUser ? 'Leave' : 'Remove'}
@@ -255,7 +256,10 @@ export function ManageGroupMembersScreen({
 
       // Convert group members to our format and fetch user data
       const memberPromises = Object.entries(groupData.members).map(
-        async ([userId, memberInfo]: [string, any]) => {
+        async ([userId, memberInfo]: [
+          string,
+          { role: 'admin' | 'member'; joinedAt: number; addedBy: string },
+        ]) => {
           try {
             const userData = await chatService.getUserData(userId);
 
@@ -508,7 +512,9 @@ export function ManageGroupMembersScreen({
   if (isLoading && groupMembers.length === 0) {
     return (
       <Screen
-        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        {...(theme.colors.background && {
+          backgroundColor: theme.colors.background,
+        })}
       >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size='large' color={theme.colors.primary} />
@@ -524,7 +530,9 @@ export function ManageGroupMembersScreen({
 
   return (
     <Screen
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      {...(theme.colors.background && {
+        backgroundColor: theme.colors.background,
+      })}
     >
       {/* Header */}
       <View style={styles.header}>
@@ -617,27 +625,27 @@ const styles = {
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
     paddingVertical: 20,
   },
   backButton: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600' as const,
   },
   title: {
     flex: 1,
-    textAlign: 'center',
+    textAlign: 'center' as const,
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: 'bold' as const,
     marginLeft: -50, // Compensate for back button
   },
   section: {
@@ -645,12 +653,12 @@ const styles = {
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: 'bold' as const,
     marginBottom: 15,
   },
   memberItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
     paddingVertical: 12,
     borderBottomWidth: 1,
   },
@@ -660,7 +668,7 @@ const styles = {
   },
   memberName: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600' as const,
   },
   memberRole: {
     fontSize: 14,
@@ -674,7 +682,7 @@ const styles = {
   },
   removeButtonText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '600' as const,
   },
   searchInput: {
     height: 44,
@@ -688,8 +696,8 @@ const styles = {
     maxHeight: 200,
   },
   friendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
     paddingVertical: 10,
     borderBottomWidth: 1,
   },
@@ -699,7 +707,7 @@ const styles = {
   },
   friendName: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600' as const,
   },
   friendUsername: {
     fontSize: 14,
@@ -708,11 +716,11 @@ const styles = {
   addButton: {
     padding: 15,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: 'center' as const,
     marginTop: 15,
   },
   addButtonText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: 'bold' as const,
   },
 };

@@ -6,7 +6,10 @@
 
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  type NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import { Text, View, TouchableOpacity } from 'react-native';
 
 import { ProfileScreen } from '../../features/auth/screens';
@@ -37,7 +40,14 @@ import {
 const ChatStack = createNativeStackNavigator<ChatStackParamList>();
 
 // Chat header back button component
-function ChatHeaderBackButton({ navigation }: { navigation: any }) {
+function ChatHeaderBackButton({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<
+    ChatStackParamList,
+    keyof ChatStackParamList
+  >;
+}) {
   const theme = useTheme();
   return (
     <TouchableOpacity

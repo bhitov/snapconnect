@@ -82,7 +82,9 @@ export class SeedDataHelper {
             user.uid = authData.localId;
 
             // Create user profile in Firestore
-            const db = (window as any).firebase?.firestore?.();
+            const db = (
+              window as unknown as { firebase?: { firestore?: () => any } }
+            ).firebase?.firestore?.();
             if (db) {
               await db
                 .collection('users')
@@ -128,7 +130,9 @@ export class SeedDataHelper {
 
         return new Promise(async (resolve, reject) => {
           try {
-            const db = (window as any).firebase?.firestore?.();
+            const db = (
+              window as unknown as { firebase?: { firestore?: () => any } }
+            ).firebase?.firestore?.();
             if (!db) {
               throw new Error('Firestore not available');
             }
@@ -136,6 +140,14 @@ export class SeedDataHelper {
             for (const rel of relationships) {
               const user1 = users[rel.user1Index];
               const user2 = users[rel.user2Index];
+              if (!user1 || !user2) {
+                console.error(
+                  'Invalid user indices:',
+                  rel.user1Index,
+                  rel.user2Index
+                );
+                continue;
+              }
               const friendshipId = `${user1.uid}_${user2.uid}`;
 
               // Create friendship document
@@ -165,7 +177,7 @@ export class SeedDataHelper {
               }
 
               console.log(
-                `Created friendship: ${user1.username} -> ${user2.username} (${rel.status})`
+                `Created friendship: ${user1?.username} -> ${user2?.username} (${rel.status})`
               );
             }
             resolve(undefined);
@@ -200,7 +212,9 @@ export class SeedDataHelper {
 
         return new Promise(async (resolve, reject) => {
           try {
-            const db = (window as any).firebase?.firestore?.();
+            const db = (
+              window as unknown as { firebase?: { firestore?: () => any } }
+            ).firebase?.firestore?.();
             if (!db) {
               throw new Error('Firestore not available');
             }
@@ -208,6 +222,14 @@ export class SeedDataHelper {
             for (const conv of conversations) {
               const user1 = users[conv.user1Index];
               const user2 = users[conv.user2Index];
+              if (!user1 || !user2) {
+                console.error(
+                  'Invalid user indices:',
+                  conv.user1Index,
+                  conv.user2Index
+                );
+                continue;
+              }
               const chatId = `${[user1.uid, user2.uid].sort().join('_')}`;
 
               // Create or update chat document
@@ -238,7 +260,12 @@ export class SeedDataHelper {
               // Create messages
               for (let i = 0; i < conv.messages.length; i++) {
                 const msg = conv.messages[i];
+                if (!msg) continue;
                 const sender = users[msg.senderId];
+                if (!sender) {
+                  console.error('Invalid sender index:', msg.senderId);
+                  continue;
+                }
                 const timestamp = new Date();
 
                 // Subtract minutes for older messages
@@ -269,7 +296,7 @@ export class SeedDataHelper {
               }
 
               console.log(
-                `Created chat with ${conv.messages.length} messages: ${user1.username} <-> ${user2.username}`
+                `Created chat with ${conv.messages.length} messages: ${user1?.username} <-> ${user2?.username}`
               );
             }
             resolve(undefined);

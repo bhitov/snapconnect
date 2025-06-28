@@ -32,8 +32,11 @@ import {
 } from '../store/friendsStore';
 import { FriendRequest } from '../types';
 
+import type { FriendsStackParamList } from '@/shared/navigation/types';
+import type { StackNavigationProp } from '@react-navigation/stack';
+
 interface FriendRequestsScreenProps {
-  navigation: any;
+  navigation: StackNavigationProp<FriendsStackParamList, 'FriendRequests'>;
 }
 
 type TabType = 'received' | 'sent';
@@ -97,7 +100,7 @@ export function FriendRequestsScreen({
         `You are now friends with ${request.senderDisplayName}!`,
         [{ text: 'OK' }]
       );
-    } catch (error: any) {
+    } catch (error) {
       console.error(
         '❌ FriendRequestsScreen: Failed to accept friend request:',
         error
@@ -105,7 +108,9 @@ export function FriendRequestsScreen({
 
       Alert.alert(
         'Failed to Accept Request',
-        error.message || 'Unable to accept friend request. Please try again.',
+        error instanceof Error
+          ? error.message
+          : 'Unable to accept friend request. Please try again.',
         [{ text: 'OK' }]
       );
     } finally {
@@ -144,7 +149,7 @@ export function FriendRequestsScreen({
                 `Friend request from ${request.senderDisplayName} has been rejected.`,
                 [{ text: 'OK' }]
               );
-            } catch (error: any) {
+            } catch (error) {
               console.error(
                 '❌ FriendRequestsScreen: Failed to reject friend request:',
                 error
@@ -152,8 +157,9 @@ export function FriendRequestsScreen({
 
               Alert.alert(
                 'Failed to Reject Request',
-                error.message ||
-                  'Unable to reject friend request. Please try again.',
+                error instanceof Error
+                  ? error.message
+                  : 'Unable to reject friend request. Please try again.',
                 [{ text: 'OK' }]
               );
             } finally {
@@ -193,7 +199,7 @@ export function FriendRequestsScreen({
                 `Friend request to ${request.receiverDisplayName} has been canceled.`,
                 [{ text: 'OK' }]
               );
-            } catch (error: any) {
+            } catch (error) {
               console.error(
                 '❌ FriendRequestsScreen: Failed to cancel friend request:',
                 error
@@ -201,8 +207,9 @@ export function FriendRequestsScreen({
 
               Alert.alert(
                 'Failed to Cancel Request',
-                error.message ||
-                  'Unable to cancel friend request. Please try again.',
+                error instanceof Error
+                  ? error.message
+                  : 'Unable to cancel friend request. Please try again.',
                 [{ text: 'OK' }]
               );
             } finally {

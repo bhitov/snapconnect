@@ -103,22 +103,9 @@ export function SnapViewingScreen() {
 
       // Convert SnapMessage to legacy Snap format for compatibility
       const snap: Snap = {
+        ...snapMessage,
         id: snapId,
-        senderId: snapMessage.senderId,
-        recipientId: snapMessage.recipientId,
-        mediaUrl: snapMessage.mediaUrl,
-        mediaType: snapMessage.mediaType,
-        ...(snapMessage.textOverlay && {
-          textOverlay: snapMessage.textOverlay,
-        }),
-        duration: snapMessage.duration,
-        createdAt: snapMessage.createdAt,
-        expiresAt: snapMessage.expiresAt,
-        status: snapMessage.status,
-        ...(snapMessage.deliveredAt && {
-          deliveredAt: snapMessage.deliveredAt,
-        }),
-        ...(snapMessage.viewedAt && { viewedAt: snapMessage.viewedAt }),
+        recipientId: snapMessage.recipientId || '',
       };
 
       // Check if snap has expired

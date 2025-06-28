@@ -70,7 +70,7 @@ export interface RecordingState {
   duration: number; // current recording duration in milliseconds
   startTime?: number;
   maxDuration: number; // maximum allowed duration in milliseconds
-  intervalRef?: NodeJS.Timeout; // reference to the recording timer interval
+  intervalRef?: number; // reference to the recording timer interval (browser setInterval returns number)
   recordingPromise?: Promise<{ uri: string } | undefined>; // promise from recordAsync
 }
 
@@ -192,7 +192,7 @@ export interface CameraState {
 
   // Camera view visibility (for temporary hiding after preview)
   cameraViewVisible: boolean;
-  cameraViewDelayTimeout: NodeJS.Timeout | null;
+  cameraViewDelayTimeout: number | null;
 }
 
 /**

@@ -14,8 +14,15 @@ export class NavigationHelper {
   async getCurrentRouteName(): Promise<string | null> {
     return await this.page.evaluate(() => {
       // Access the navigation ref that was created in src/shared/navigation/navigationRef.ts
-      // @ts-ignore - navigationRef is globally accessible in the app
-      const navRef = window.__navigationRef || window.navigationRef;
+      // navigationRef is globally accessible in the app
+      const navRef =
+        (
+          window as unknown as {
+            __navigationRef?: any;
+            navigationRef?: any;
+          }
+        ).__navigationRef ||
+        (window as unknown as { navigationRef?: any }).navigationRef;
       if (navRef && navRef.getCurrentRoute) {
         const route = navRef.getCurrentRoute();
         return route ? route.name : null;
@@ -27,10 +34,17 @@ export class NavigationHelper {
   /**
    * Get the navigation state using the navigation ref
    */
-  async getNavigationState(): Promise<any> {
+  async getNavigationState(): Promise<unknown> {
     return await this.page.evaluate(() => {
-      // @ts-ignore - navigationRef is globally accessible in the app
-      const navRef = window.__navigationRef || window.navigationRef;
+      // navigationRef is globally accessible in the app
+      const navRef =
+        (
+          window as unknown as {
+            __navigationRef?: any;
+            navigationRef?: any;
+          }
+        ).__navigationRef ||
+        (window as unknown as { navigationRef?: any }).navigationRef;
       if (navRef && navRef.getRootState) {
         return navRef.getRootState();
       }
@@ -72,8 +86,10 @@ export class NavigationHelper {
         if (root) {
           // Access React internal instance to find navigation ref
           const reactInternalInstance =
-            (root as any)._reactInternalInstance ||
-            (root as any).__reactInternalInstance;
+            (root as unknown as { _reactInternalInstance?: unknown })
+              ._reactInternalInstance ||
+            (root as unknown as { __reactInternalInstance?: unknown })
+              .__reactInternalInstance;
           if (reactInternalInstance) {
             // Navigate through React fiber tree to find navigation ref
             // This is implementation-specific and may need adjustment
@@ -93,14 +109,27 @@ export class NavigationHelper {
 export async function injectNavigationHelpers(page: Page): Promise<void> {
   await page.addInitScript(() => {
     // This script runs before the page loads, setting up helpers
-    (window as any).__navigationHelpers = {
+    (
+      window as unknown as { __navigationHelpers?: unknown }
+    ).__navigationHelpers = {
       getCurrentRoute: () => {
         // This will be populated by the app when navigation ref is ready
-        const navRef = (window as any).__navigationRef;
+        const navRef = (
+          window as unknown as {
+            __navigationRef?: { getCurrentRoute?: () => { name?: string } };
+          }
+        ).__navigationRef;
         return navRef?.getCurrentRoute?.()?.name || null;
       },
       getNavigationState: () => {
-        const navRef = (window as any).__navigationRef;
+        const navRef = (
+          window as unknown as {
+            __navigationRef?: {
+              getCurrentRoute?: () => { name?: string };
+              getRootState?: () => any;
+            };
+          }
+        ).__navigationRef;
         return navRef?.getRootState?.() || null;
       },
     };

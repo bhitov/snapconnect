@@ -8,14 +8,33 @@ import { getDatabase } from 'firebase-admin/database';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import OpenAI from 'openai';
 
+// Type definitions
+interface TextMessage {
+  id?: string;
+  senderId: string;
+  text: string;
+  createdAt: number;
+  conversationId: string;
+}
+
 // Load environment variables from root project directory
 config({ path: resolve(__dirname, '../../.env.local') });
 
 initializeApp(); // auto-detects emulator or prod
 const db = getDatabase();
 
-const pine = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
-const index = pine.index(process.env.PINECONE_INDEX!);
+const pineconeApiKey = process.env.PINECONE_API_KEY;
+const pineconeIndex = process.env.PINECONE_INDEX;
+
+if (!pineconeApiKey) {
+  throw new Error('PINECONE_API_KEY environment variable is not set');
+}
+if (!pineconeIndex) {
+  throw new Error('PINECONE_INDEX environment variable is not set');
+}
+
+const pine = new Pinecone({ apiKey: pineconeApiKey });
+const index = pine.index(pineconeIndex);
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const DIM = 1536; // text-embedding-3-small
@@ -42,7 +61,7 @@ async function callOpenAI(
     model?: string;
     temperature?: number;
     maxTokens?: number;
-    responseFormat?: any;
+    responseFormat?: { type: string };
   } = {}
 ) {
   const {
@@ -102,9 +121,9 @@ function cosineSimilarity(vecA: number[], vecB: number[]): number {
   let normB = 0;
 
   for (let i = 0; i < vecA.length; i++) {
-    dotProduct += vecA[i] * vecB[i];
-    normA += vecA[i] * vecA[i];
-    normB += vecB[i] * vecB[i];
+    dotProduct += (vecA[i] || 0) * (vecB[i] || 0);
+    normA += (vecA[i] || 0) * (vecA[i] || 0);
+    normB += (vecB[i] || 0) * (vecB[i] || 0);
   }
 
   return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
@@ -216,7 +235,7 @@ export const coachReply = onCall<CoachReplyData>(async request => {
     .equalTo(coachCid)
     .limitToLast(20)
     .get();
-  const coachCtx = Object.values(coachCtxSnap.val() ?? {}) as any[];
+  const coachCtx = Object.values(coachCtxSnap.val() ?? {}) as TextMessage[];
   coachCtx.sort((a, b) => a.createdAt - b.createdAt); // oldest→newest
   const coachLines = coachCtx
     .map(m => `${m.senderId === 'coach' ? 'Coach' : 'You'}: ${m.text}`)
@@ -506,7 +525,7 @@ export const coachLoveMap = onCall<CoachLoveMapData>(async request => {
     .orderByChild('conversationId')
     .equalTo(coachCid)
     .get();
-  const coachCtx = Object.values(coachCtxSnap.val() ?? {}) as any[];
+  const coachCtx = Object.values(coachCtxSnap.val() ?? {}) as TextMessage[];
   coachCtx.sort((a, b) => a.createdAt - b.createdAt);
   const coachHistory = coachCtx
     .map(m => `${m.senderId === 'coach' ? 'Coach' : 'User'}: ${m.text}`)
@@ -529,7 +548,7 @@ export const coachLoveMap = onCall<CoachLoveMapData>(async request => {
       });
       return {
         topic,
-        embedding: embedding.data[0].embedding,
+        embedding: embedding.data[0]?.embedding || [],
       };
     })
   );
@@ -563,8 +582,9 @@ export const coachLoveMap = onCall<CoachLoveMapData>(async request => {
   console.log('💕 Least Discussed Topics:', sortedTopics);
 
   // Randomly select one from bottom half
-  const selectedTopic =
-    sortedTopics[Math.floor(Math.random() * sortedTopics.length)][0];
+  const selectedTopicData =
+    sortedTopics[Math.floor(Math.random() * sortedTopics.length)];
+  const selectedTopic = selectedTopicData ? selectedTopicData[0] : 'general';
 
   const response = await callOpenAI(
     [
@@ -579,7 +599,7 @@ export const coachLoveMap = onCall<CoachLoveMapData>(async request => {
       },
       {
         role: 'user',
-        content: `**TOPIC ANALYSIS:** Based on semantic analysis of their conversation, the topic "${selectedTopic}" appears to be under-explored (similarity score: ${topicScores[selectedTopic].toFixed(3)}).
+        content: `**TOPIC ANALYSIS:** Based on semantic analysis of their conversation, the topic "${selectedTopic}" appears to be under-explored (similarity score: ${(topicScores[selectedTopic] || 0).toFixed(3)}).
 
 **GOTTMAN CONTEXT:** Love Maps help couples stay connected to each other's inner world. Provide a brief explanation of why "${selectedTopic}" matters for building Love Maps, then suggest a specific question. Format your response as:
 

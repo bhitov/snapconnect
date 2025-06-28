@@ -249,7 +249,9 @@ export function ChatsScreen() {
               {hasAvatar ? (
                 <Image
                   source={{
-                    uri: resolveMediaUrl(conversation.otherUser!.photoURL!),
+                    uri: resolveMediaUrl(
+                      conversation.otherUser?.photoURL || ''
+                    ),
                   }}
                   style={styles.avatarImage}
                 />
@@ -356,7 +358,7 @@ export function ChatsScreen() {
               onPress={() => {
                 // Navigate to coach chat
                 navigation.navigate('ChatScreen', {
-                  conversationId: conversation.coachChatId!,
+                  conversationId: conversation.coachChatId || '',
                   isCoach: true,
                   parentCid: conversation.id,
                 });

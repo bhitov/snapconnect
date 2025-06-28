@@ -142,7 +142,10 @@ export function GroupsScreen() {
    * Handle chat bubble press - navigate to chat screen
    */
   const handleChatPress = useCallback(
-    (conversation: ConversationWithUser, event: any) => {
+    (
+      conversation: ConversationWithUser,
+      event: { stopPropagation: () => void }
+    ) => {
       // Stop event propagation to prevent group press
       event.stopPropagation();
       console.log('Chat bubble pressed:', conversation.id);

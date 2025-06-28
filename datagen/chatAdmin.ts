@@ -120,7 +120,8 @@ export async function sendText(
   text: string,
   recipientId?: string
 ) {
-  const mid = db.ref('textMessages').push().key!; // push() generates a key
+  const mid = db.ref('textMessages').push().key;
+  if (!mid) throw new Error('Failed to generate message ID');
   const now = Date.now();
 
   await db.ref(`textMessages/${mid}`).set({
@@ -157,11 +158,12 @@ export async function sendBulkTexts(
 
   const now = Date.now();
   const messageIds: string[] = [];
-  const updates: Record<string, any> = {};
+  const updates: Record<string, unknown> = {};
 
   // Generate message IDs and prepare updates for all messages
   for (let i = 0; i < messages.length; i++) {
-    const mid = db.ref('textMessages').push().key!;
+    const mid = db.ref('textMessages').push().key;
+    if (!mid) throw new Error('Failed to generate message ID');
     const message = messages[i];
     if (!message) continue; // Type guard for array access
 

@@ -31,7 +31,10 @@ import { resolveMediaUrl } from '../../../shared/utils/resolveMediaUrl';
 import { useAuthStore, useAuthUser } from '../store/authStore';
 
 import type { RootStackParamList } from '../../../shared/navigation/types';
-import type { ProfileUpdate } from '../types/authTypes';
+import type { ProfileUpdate, User } from '../types/authTypes';
+
+// Extended user type that includes bio
+type UserWithBio = User & { bio?: string };
 
 type ProfileSettingsScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -76,7 +79,7 @@ export function ProfileSettingsScreen({
     reset,
   } = useForm<ProfileSettingsForm>({
     defaultValues: {
-      bio: (user as any)?.bio || '',
+      bio: (user as UserWithBio)?.bio || '',
     },
   });
 

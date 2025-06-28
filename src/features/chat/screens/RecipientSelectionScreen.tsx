@@ -33,6 +33,7 @@ import {
 } from '../store/chatStore';
 
 import type { SnapCreationData, SnapDuration } from '../types';
+import type { FriendProfile } from '@/features/friends/types';
 import type { StoryCreationData, StoryPrivacy } from '@/features/stories/types';
 import type { RootStackParamList } from '@/shared/navigation/types';
 import type { RouteProp } from '@react-navigation/native';
@@ -265,7 +266,7 @@ export function RecipientSelectionScreen() {
   /**
    * Render friend item for selection
    */
-  const renderFriendItem = ({ item: friend }: { item: any }) => {
+  const renderFriendItem = ({ item: friend }: { item: FriendProfile }) => {
     const isSelected = selectedRecipients.includes(friend.uid);
 
     return (

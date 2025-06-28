@@ -4,6 +4,14 @@
  * Defines story data models, interfaces, and component props following SnapConnect patterns.
  */
 
+import type {
+  StoriesStackParamList,
+  MainTabParamList,
+} from '@/shared/navigation/types';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { CompositeNavigationProp } from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
+
 /**
  * Story privacy levels
  */
@@ -165,7 +173,7 @@ export type StoryErrorType =
 export interface StoryError {
   type: StoryErrorType;
   message: string;
-  details?: any;
+  details?: unknown;
 }
 
 /**
@@ -269,13 +277,21 @@ export interface StoryProgressBarProps {
  * Screen prop interfaces
  */
 export interface StoriesScreenProps {
-  navigation: any;
-  route: any;
+  navigation: CompositeNavigationProp<
+    StackNavigationProp<StoriesStackParamList, 'StoriesList'>,
+    BottomTabNavigationProp<MainTabParamList>
+  >;
+  route: {
+    key: string;
+    name: 'StoriesList';
+  };
 }
 
 export interface ViewStoryScreenProps {
-  navigation: any;
+  navigation: StackNavigationProp<StoriesStackParamList, 'ViewStory'>;
   route: {
+    key: string;
+    name: 'ViewStory';
     params: {
       userId: string;
       storyId: string;
@@ -284,8 +300,10 @@ export interface ViewStoryScreenProps {
 }
 
 export interface CreateStoryScreenProps {
-  navigation: any;
+  navigation: StackNavigationProp<StoriesStackParamList, 'CreateStory'>;
   route: {
+    key: string;
+    name: 'CreateStory';
     params: {
       mediaUri: string;
       mediaType: StoryMediaType;

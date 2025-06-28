@@ -71,12 +71,13 @@ export const useFriendsStore = create<FriendsStore>()(
           '✅ FriendsStore: Friends loaded successfully:',
           friends.length
         );
-      } catch (error: any) {
+      } catch (error) {
         console.error('❌ FriendsStore: Failed to load friends:', error);
 
         set({
           friendsLoading: false,
-          friendsError: error.message || 'Failed to load friends',
+          friendsError:
+            error instanceof Error ? error.message : 'Failed to load friends',
         });
       }
     },
@@ -99,12 +100,15 @@ export const useFriendsStore = create<FriendsStore>()(
         });
 
         console.log('✅ FriendsStore: Friends refreshed successfully');
-      } catch (error: any) {
+      } catch (error) {
         console.error('❌ FriendsStore: Failed to refresh friends:', error);
 
         set({
           isRefreshing: false,
-          friendsError: error.message || 'Failed to refresh friends',
+          friendsError:
+            error instanceof Error
+              ? error.message
+              : 'Failed to refresh friends',
         });
       }
     },
@@ -128,7 +132,7 @@ export const useFriendsStore = create<FriendsStore>()(
         });
 
         console.log('✅ FriendsStore: Friend requests loaded successfully');
-      } catch (error: any) {
+      } catch (error) {
         console.error(
           '❌ FriendsStore: Failed to load friend requests:',
           error
@@ -136,7 +140,10 @@ export const useFriendsStore = create<FriendsStore>()(
 
         set({
           requestsLoading: false,
-          requestsError: error.message || 'Failed to load friend requests',
+          requestsError:
+            error instanceof Error
+              ? error.message
+              : 'Failed to load friend requests',
         });
       }
     },
@@ -167,11 +174,14 @@ export const useFriendsStore = create<FriendsStore>()(
         set({ searchResults: updatedResults });
 
         console.log('✅ FriendsStore: Friend request sent successfully');
-      } catch (error: any) {
+      } catch (error) {
         console.error('❌ FriendsStore: Failed to send friend request:', error);
 
         set({
-          requestsError: error.message || 'Failed to send friend request',
+          requestsError:
+            error instanceof Error
+              ? error.message
+              : 'Failed to send friend request',
         });
 
         throw error; // Re-throw for UI handling
@@ -196,14 +206,17 @@ export const useFriendsStore = create<FriendsStore>()(
         console.log(
           '✅ FriendsStore: Friend request response sent successfully'
         );
-      } catch (error: any) {
+      } catch (error) {
         console.error(
           '❌ FriendsStore: Failed to respond to friend request:',
           error
         );
 
         set({
-          requestsError: error.message || 'Failed to respond to friend request',
+          requestsError:
+            error instanceof Error
+              ? error.message
+              : 'Failed to respond to friend request',
         });
 
         throw error; // Re-throw for UI handling
@@ -223,14 +236,17 @@ export const useFriendsStore = create<FriendsStore>()(
         await get().loadFriendRequests();
 
         console.log('✅ FriendsStore: Friend request canceled successfully');
-      } catch (error: any) {
+      } catch (error) {
         console.error(
           '❌ FriendsStore: Failed to cancel friend request:',
           error
         );
 
         set({
-          requestsError: error.message || 'Failed to cancel friend request',
+          requestsError:
+            error instanceof Error
+              ? error.message
+              : 'Failed to cancel friend request',
         });
 
         throw error; // Re-throw for UI handling
@@ -273,12 +289,12 @@ export const useFriendsStore = create<FriendsStore>()(
           results.length,
           'results'
         );
-      } catch (error: any) {
+      } catch (error) {
         console.error('❌ FriendsStore: Search failed:', error);
 
         set({
           searchLoading: false,
-          searchError: error.message || 'Search failed',
+          searchError: error instanceof Error ? error.message : 'Search failed',
           searchResults: [],
         });
       }
@@ -310,11 +326,12 @@ export const useFriendsStore = create<FriendsStore>()(
         await get().loadFriends();
 
         console.log('✅ FriendsStore: Friend removed successfully');
-      } catch (error: any) {
+      } catch (error) {
         console.error('❌ FriendsStore: Failed to remove friend:', error);
 
         set({
-          friendsError: error.message || 'Failed to remove friend',
+          friendsError:
+            error instanceof Error ? error.message : 'Failed to remove friend',
         });
 
         throw error; // Re-throw for UI handling

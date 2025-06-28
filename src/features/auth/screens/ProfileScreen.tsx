@@ -23,8 +23,11 @@ import { chatService } from '../../chat/services/chatService';
 import { useAuthStore, useAuthUser } from '../store/authStore';
 
 import type { RootStackParamList } from '../../../shared/navigation/types';
+import type { User } from '../types/authTypes';
 
 type ProfileScreenProps = NativeStackScreenProps<RootStackParamList, 'Profile'>;
+
+type UserWithBio = User & { bio?: string };
 
 /**
  * Profile viewing screen component
@@ -35,7 +38,7 @@ type ProfileScreenProps = NativeStackScreenProps<RootStackParamList, 'Profile'>;
 export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
   const theme = useTheme();
   const currentUser = useAuthUser();
-  const [profileUser, setProfileUser] = useState<any>(null);
+  const [profileUser, setProfileUser] = useState<UserWithBio | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Get user ID from route params, default to current user
@@ -325,8 +328,8 @@ export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
         {/* Bio Section */}
         <View style={styles.bioSection}>
           <Text style={styles.bioLabel}>About</Text>
-          {(user as any)?.bio ? (
-            <Text style={styles.bioText}>{(user as any).bio}</Text>
+          {user?.bio ? (
+            <Text style={styles.bioText}>{user.bio}</Text>
           ) : (
             <Text style={styles.noBioText}>
               {isOwnProfile

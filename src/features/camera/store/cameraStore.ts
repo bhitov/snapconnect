@@ -332,9 +332,12 @@ export const useCameraStore = create<CameraStore>()(
           }, 100);
 
           // Store the interval reference and recording promise for cleanup
-          set(state => {
-            (state.recording as any).intervalRef = recordingInterval;
-            state.recording.recordingPromise = recordingPromise;
+          set({
+            recording: {
+              ...get().recording,
+              intervalRef: recordingInterval,
+              recordingPromise,
+            },
           });
 
           console.log('✅ CameraStore: Video recording started');
@@ -676,7 +679,7 @@ export const useCameraStore = create<CameraStore>()(
             });
           }, delayMs);
 
-          state.cameraViewDelayTimeout = timeoutId as any;
+          state.cameraViewDelayTimeout = timeoutId;
         });
       },
 

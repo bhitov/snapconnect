@@ -56,6 +56,14 @@ export function RootNavigator() {
     isProfileComplete()
   );
 
+  // Expose navigation ref to window for E2E testing - must be before any conditional returns
+  useEffect(() => {
+    if (navigationRef.current) {
+      (window as unknown as { __navigationRef?: unknown }).__navigationRef =
+        navigationRef.current;
+    }
+  }, []);
+
   // Show loading screen while auth is initializing
   if (isInitializing) {
     return (
@@ -75,13 +83,6 @@ export function RootNavigator() {
 
   // Determine if user should see the main app
   const shouldShowMainApp = isAuthenticated && isProfileComplete();
-
-  // Expose navigation ref to window for E2E testing
-  useEffect(() => {
-    if (navigationRef.current) {
-      (window as any).__navigationRef = navigationRef.current;
-    }
-  }, []);
 
   return (
     <NavigationContainer ref={navigationRef}>

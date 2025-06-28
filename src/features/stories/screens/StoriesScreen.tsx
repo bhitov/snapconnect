@@ -22,7 +22,7 @@ import {
   useStoriesError,
 } from '../store/storiesStore';
 
-import type { StoriesScreenProps, StoryWithUser } from '../types';
+import type { StoriesScreenProps, StoryWithUser, StoryViewer } from '../types';
 
 /**
  * Stories screen component
@@ -133,7 +133,7 @@ export function StoriesScreen({ navigation }: StoriesScreenProps) {
   /**
    * Handle viewers press - show viewers list
    */
-  const handleViewersPress = React.useCallback((viewers: any[]) => {
+  const handleViewersPress = React.useCallback((viewers: StoryViewer[]) => {
     console.log('👥 StoriesScreen: Showing viewers:', viewers.length);
 
     // For now, show a simple alert with viewer count

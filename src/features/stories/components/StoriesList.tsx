@@ -94,15 +94,6 @@ export function StoriesList({
     return `story-${item.id}-${index}`;
   };
 
-  /**
-   * Get item layout for performance optimization
-   */
-  const getItemLayout = (data: any, index: number) => ({
-    length: 90, // Story item width + padding
-    offset: 90 * index,
-    index,
-  });
-
   // Prepare data with add button at the beginning
   const listData = React.useMemo(() => {
     const data: (StoryWithUser | 'add-button')[] = [];
@@ -158,7 +149,6 @@ export function StoriesList({
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
-        getItemLayout={getItemLayout}
         removeClippedSubviews={true}
         maxToRenderPerBatch={10}
         windowSize={10}

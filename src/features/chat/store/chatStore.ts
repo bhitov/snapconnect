@@ -96,7 +96,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       set({
         conversationsLoading: false,
         conversationsError:
-          (error as any).message || 'Failed to load conversations',
+          error instanceof Error
+            ? error.message
+            : 'Failed to load conversations',
       });
     }
   },
@@ -124,7 +126,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       set({
         isRefreshing: false,
         conversationsError:
-          (error as any).message || 'Failed to refresh conversations',
+          error instanceof Error
+            ? error.message
+            : 'Failed to refresh conversations',
       });
     }
   },
@@ -191,7 +195,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       console.error('❌ ChatStore: Failed to load messages:', error);
       set({
         messagesLoading: false,
-        messagesError: (error as any).message || 'Failed to load messages',
+        messagesError:
+          error instanceof Error ? error.message : 'Failed to load messages',
       });
     }
   },
@@ -233,7 +238,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     } catch (error) {
       console.error('❌ ChatStore: Failed to send text message:', error);
       set({
-        sendError: (error as any).message || 'Failed to send text message',
+        sendError:
+          error instanceof Error
+            ? error.message
+            : 'Failed to send text message',
       });
       throw error;
     }
@@ -272,7 +280,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     } catch (error) {
       console.error('❌ ChatStore: Failed to send snap:', error);
       set({
-        sendError: (error as any).message || 'Failed to send snap',
+        sendError:
+          error instanceof Error ? error.message : 'Failed to send snap',
       });
       throw error;
     }
@@ -501,7 +510,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     } catch (error) {
       console.error('❌ ChatStore: Failed to send coach message:', error);
       set({
-        sendError: (error as any).message || 'Failed to send coach message',
+        sendError:
+          error instanceof Error
+            ? error.message
+            : 'Failed to send coach message',
       });
       throw error;
     }

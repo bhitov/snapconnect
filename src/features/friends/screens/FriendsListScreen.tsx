@@ -34,8 +34,19 @@ import {
 } from '../store/friendsStore';
 import { FriendProfile } from '../types';
 
+import type {
+  FriendsStackParamList,
+  MainTabParamList,
+} from '@/shared/navigation/types';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { CompositeNavigationProp } from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
+
 interface FriendsListScreenProps {
-  navigation: any;
+  navigation: CompositeNavigationProp<
+    StackNavigationProp<FriendsStackParamList, 'FriendsList'>,
+    BottomTabNavigationProp<MainTabParamList>
+  >;
 }
 
 /**
@@ -111,7 +122,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
             uid: friend.uid,
             username: friend.username,
             displayName: friend.displayName,
-            photoURL: friend.photoURL,
+            ...(friend.photoURL && { photoURL: friend.photoURL }),
           },
         },
       });

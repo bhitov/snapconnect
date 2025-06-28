@@ -19,7 +19,7 @@ db.ref('textMessages').on('child_added', async (snap: DataSnapshot) => {
   const m = snap.val();
   await index.upsert([
     {
-      id: snap.key!,
+      id: snap.key || '',
       values: computeEmbedding(`${m.senderId} ${m.text}`),
       metadata: {
         conversationId: m.conversationId,

@@ -763,7 +763,8 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
 
     const { email: _____, ...userProfileData } = userData;
     const userId = await createUserProfile(userProfileData);
-    remainingUsers[i]!.uid = userId;
+    // userData is guaranteed to exist here because of the check above
+    userData.uid = userId;
   }
 
   console.log('✅ All user accounts created');
@@ -861,8 +862,8 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
 
   console.log(`🤖 Generating group chat 1...`);
   const group1Messages = await generateConversationMessages(
-    group1Users[0]!, // Primary user as main participant
-    group1Users[1]!, // Secondary user as second participant
+    group1Users[0] as UserProfile, // Primary user as main participant
+    group1Users[1] as UserProfile, // Secondary user as second participant
     finalConfig.messagesPerConversation,
     'group',
     group1Users, // Pass all group members
@@ -890,8 +891,8 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
 
   console.log(`🤖 Generating group chat 2...`);
   const group2Messages = await generateConversationMessages(
-    group2Users[0]!, // Primary user as main participant
-    group2Users[1]!, // Secondary user as second participant
+    group2Users[0] as UserProfile, // Primary user as main participant
+    group2Users[1] as UserProfile, // Secondary user as second participant
     finalConfig.messagesPerConversation,
     'group',
     group2Users, // Pass all group members
@@ -968,7 +969,7 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
     const sender = group1Users.find(u => u.displayName === msg.senderId);
     return {
       ...msg,
-      senderId: sender?.uid || group1Users[0]!.uid,
+      senderId: sender?.uid || (group1Users[0] as UserProfile).uid,
     };
   });
 
@@ -977,7 +978,7 @@ export async function generateScenario(config: Partial<ScenarioConfig> = {}) {
     const sender = group2Users.find(u => u.displayName === msg.senderId);
     return {
       ...msg,
-      senderId: sender?.uid || group2Users[0]!.uid,
+      senderId: sender?.uid || (group2Users[0] as UserProfile).uid,
     };
   });
 
