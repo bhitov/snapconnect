@@ -2,13 +2,24 @@
 
 A relationship-focused messaging app that combines ephemeral snaps with persistent text messaging and AI-powered relationship coaching.
 
-## Running the app
+## Running the app on a real android devie
+
+install expo go on an android phone
+
+download the `.env.local` file and put it in the root directory
+install packages `npm install`
+build the firebase functions `cd functions. npm install. npm run build.`
+run `npm run start:firebase`. scan the qr code in expo go. sometimes you have to hit the `r` key too? might as well to be safe
+
+
+## Running the app with firebase emulators and android emulators (fallback if first method doesn't work)
 
 download the `.env.local` file and put it in the root directory
 install packages `npm install`
 build the firebase functions `cd functions. npm install. npm run build.`
 run the firebase emulator `npm run emulator` or `npm run emulator:persist` if you want the data to be stored when you close the emulator
 simultaneously, run expo go `npm run start`, then hit `a` to open up the android emulator.
+
 
 use the example data:
 
