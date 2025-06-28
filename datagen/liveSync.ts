@@ -1,6 +1,7 @@
-import { db } from './admin';
-import { DataSnapshot } from 'firebase-admin/database';
 import { Pinecone } from '@pinecone-database/pinecone';
+import { DataSnapshot } from 'firebase-admin/database';
+
+import { db } from './admin';
 import { config } from './config';
 
 /**
@@ -16,11 +17,17 @@ const index = pinecone.index(config.PINECONE_INDEX);
  */
 db.ref('textMessages').on('child_added', async (snap: DataSnapshot) => {
   const m = snap.val();
-  await index.upsert([{
-    id: snap.key!,
-    values: computeEmbedding(`${m.senderId} ${m.text}`),
-    metadata: { conversationId: m.conversationId, senderId: m.senderId, createdAt: m.createdAt }
-  }]);
+  await index.upsert([
+    {
+      id: snap.key!,
+      values: computeEmbedding(`${m.senderId} ${m.text}`),
+      metadata: {
+        conversationId: m.conversationId,
+        senderId: m.senderId,
+        createdAt: m.createdAt,
+      },
+    },
+  ]);
 
   console.log(`📌 Pinecone upsert ${snap.key}`);
 });

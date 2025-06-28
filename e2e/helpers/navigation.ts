@@ -41,9 +41,12 @@ export class NavigationHelper {
   /**
    * Wait for a specific route to be active
    */
-  async waitForRoute(routeName: string, timeout: number = 5000): Promise<boolean> {
+  async waitForRoute(
+    routeName: string,
+    timeout: number = 5000
+  ): Promise<boolean> {
     const startTime = Date.now();
-    
+
     while (Date.now() - startTime < timeout) {
       const currentRoute = await this.getCurrentRouteName();
       if (currentRoute === routeName) {
@@ -51,7 +54,7 @@ export class NavigationHelper {
       }
       await this.page.waitForTimeout(100);
     }
-    
+
     return false;
   }
 
@@ -68,7 +71,9 @@ export class NavigationHelper {
         const root = document.getElementById('root');
         if (root) {
           // Access React internal instance to find navigation ref
-          const reactInternalInstance = (root as any)._reactInternalInstance || (root as any).__reactInternalInstance;
+          const reactInternalInstance =
+            (root as any)._reactInternalInstance ||
+            (root as any).__reactInternalInstance;
           if (reactInternalInstance) {
             // Navigate through React fiber tree to find navigation ref
             // This is implementation-specific and may need adjustment
@@ -76,7 +81,7 @@ export class NavigationHelper {
           }
         }
       };
-      
+
       findNavigationRef();
     });
   }
@@ -97,7 +102,7 @@ export async function injectNavigationHelpers(page: Page): Promise<void> {
       getNavigationState: () => {
         const navRef = (window as any).__navigationRef;
         return navRef?.getRootState?.() || null;
-      }
+      },
     };
   });
 }
@@ -106,8 +111,8 @@ export async function injectNavigationHelpers(page: Page): Promise<void> {
  * Poll-based approach to wait for navigation changes
  */
 export async function waitForNavigationChange(
-  page: Page, 
-  expectedRoute: string, 
+  page: Page,
+  expectedRoute: string,
   timeout: number = 3000
 ): Promise<boolean> {
   const helper = new NavigationHelper(page);

@@ -2,9 +2,11 @@
  * Chat administration utilities for creating and managing users, conversations, groups, and messages
  * Used for seeding test data and administrative operations
  */
-import { db } from './admin';
-import { getAuth } from 'firebase-admin/auth';
 import { randomUUID } from 'crypto';
+
+import { getAuth } from 'firebase-admin/auth';
+
+import { db } from './admin';
 
 const auth = getAuth();
 
@@ -16,19 +18,19 @@ export async function createUserProfile(data: {
   bio?: string;
 }) {
   const now = Date.now();
-  
+
   // Generate simple email from username
   const email = `${data.username}@example.com`;
   const password = 'pass123word';
-  
+
   // Create Firebase Auth user
   const userRecord = await auth.createUser({
-    email: email,
-    password: password,
+    email,
+    password,
     displayName: data.displayName,
-    ...(data.photoURL && { photoURL: data.photoURL })
+    ...(data.photoURL && { photoURL: data.photoURL }),
   });
-  
+
   const uid = userRecord.uid;
 
   const profile = {
@@ -59,17 +61,21 @@ export async function createDirectConversation(a: string, b: string) {
 
   await db.ref(`conversations/${cid}`).set({
     participants: [a, b],
-    unreadCount : [0, 0],
-    createdAt   : now,
-    updatedAt   : now,
-    isGroup     : false,
+    unreadCount: [0, 0],
+    createdAt: now,
+    updatedAt: now,
+    isGroup: false,
   });
 
   return cid;
 }
 
 /* ---------- GROUPS ---------- */
-export async function createGroup(name: string, memberIds: string[], avatarUrl?: string) {
+export async function createGroup(
+  name: string,
+  memberIds: string[],
+  avatarUrl?: string
+) {
   const gid = randomUUID();
   const cid = randomUUID();
   const now = Date.now();
@@ -83,7 +89,11 @@ export async function createGroup(name: string, memberIds: string[], avatarUrl?:
     members: Object.fromEntries(
       memberIds.map(uid => [
         uid,
-        { role: uid === creator ? 'admin' : 'member', joinedAt: now, addedBy: creator }
+        {
+          role: uid === creator ? 'admin' : 'member',
+          joinedAt: now,
+          addedBy: creator,
+        },
       ])
     ),
     ...(avatarUrl && { avatarUrl }),
@@ -91,21 +101,26 @@ export async function createGroup(name: string, memberIds: string[], avatarUrl?:
 
   await db.ref(`conversations/${cid}`).set({
     participants: memberIds,
-    unreadCount : Array(memberIds.length).fill(0),
-    isGroup     : true,
-    groupId     : gid,
-    title       : name,
+    unreadCount: Array(memberIds.length).fill(0),
+    isGroup: true,
+    groupId: gid,
+    title: name,
     avatarUrl,
-    createdAt   : now,
-    updatedAt   : now,
+    createdAt: now,
+    updatedAt: now,
   });
 
   return { gid, cid };
 }
 
 /* ---------- TEXT MESSAGES ---------- */
-export async function sendText(conversationId: string, senderId: string, text: string, recipientId?: string) {
-  const mid = db.ref('textMessages').push().key!;     // push() generates a key
+export async function sendText(
+  conversationId: string,
+  senderId: string,
+  text: string,
+  recipientId?: string
+) {
+  const mid = db.ref('textMessages').push().key!; // push() generates a key
   const now = Date.now();
 
   await db.ref(`textMessages/${mid}`).set({
@@ -114,14 +129,14 @@ export async function sendText(conversationId: string, senderId: string, text: s
     conversationId,
     text,
     createdAt: now,
-    status   : 'sent',
+    status: 'sent',
   });
 
   await db.ref(`conversations/${conversationId}`).update({
-    lastMessageId  : mid,
+    lastMessageId: mid,
     lastMessageType: 'text',
-    lastMessageAt  : now,
-    updatedAt      : now,
+    lastMessageAt: now,
+    updatedAt: now,
   });
 }
 
@@ -131,12 +146,12 @@ export async function sendText(conversationId: string, senderId: string, text: s
  */
 export async function sendBulkTexts(
   conversationId: string,
-  messages: Array<{
+  messages: {
     senderId: string;
     text: string;
     recipientId?: string;
     createdAt: number;
-  }>
+  }[]
 ) {
   if (messages.length === 0) return [];
 
@@ -149,7 +164,7 @@ export async function sendBulkTexts(
     const mid = db.ref('textMessages').push().key!;
     const message = messages[i];
     if (!message) continue; // Type guard for array access
-    
+
     messageIds.push(mid);
 
     updates[`textMessages/${mid}`] = {
@@ -165,16 +180,17 @@ export async function sendBulkTexts(
   // Update conversation with the last message info
   const lastMessage = messages[messages.length - 1];
   const lastMessageId = messageIds[messageIds.length - 1];
-  
+
   if (lastMessage && lastMessageId) {
     updates[`conversations/${conversationId}/lastMessageId`] = lastMessageId;
     updates[`conversations/${conversationId}/lastMessageType`] = 'text';
-    updates[`conversations/${conversationId}/lastMessageAt`] = lastMessage.createdAt || now + messages.length - 1;
+    updates[`conversations/${conversationId}/lastMessageAt`] =
+      lastMessage.createdAt || now + messages.length - 1;
     updates[`conversations/${conversationId}/updatedAt`] = now;
   }
 
   // Execute all updates in a single atomic operation
   await db.ref().update(updates);
-  
+
   return messageIds;
 }

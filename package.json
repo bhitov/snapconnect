@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "expo/AppEntry.js",
   "scripts": {
-    "build:functions":   "npm --prefix functions run build",
+    "build:functions": "npm --prefix functions run build",
     "start": "expo start",
     "start:tunnel": "expo start --tunnel",
     "camera-test": "EXPO_PUBLIC_CAMERA_TEST=true EXPO_PUBLIC_PROD_TEST=true expo start --tunnel --clear",

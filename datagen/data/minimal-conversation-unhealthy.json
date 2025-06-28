@@ -14,11 +14,7 @@
       "displayName": "Jason Miller",
       "email": "jason_miller@example.com",
       "sex": "male",
-      "personality": [
-        "possessive",
-        "controlling",
-        "jealous"
-      ],
+      "personality": ["possessive", "controlling", "jealous"],
       "relationshipStyle": "unhealthy",
       "role": "primary",
       "relationshipType": "unhealthy"
@@ -29,11 +25,7 @@
       "displayName": "Sarah Jones",
       "email": "sarah_jones@example.com",
       "sex": "female",
-      "personality": [
-        "defensive",
-        "inconsistent",
-        "critical"
-      ],
+      "personality": ["defensive", "inconsistent", "critical"],
       "relationshipStyle": "unhealthy",
       "role": "primary-partner",
       "relationshipType": "unhealthy"
@@ -48,11 +40,7 @@
         "displayName": "Jason Miller",
         "email": "jason_miller@example.com",
         "sex": "male",
-        "personality": [
-          "possessive",
-          "controlling",
-          "jealous"
-        ],
+        "personality": ["possessive", "controlling", "jealous"],
         "relationshipStyle": "unhealthy"
       },
       {
@@ -61,11 +49,7 @@
         "displayName": "Sarah Jones",
         "email": "sarah_jones@example.com",
         "sex": "female",
-        "personality": [
-          "defensive",
-          "inconsistent",
-          "critical"
-        ],
+        "personality": ["defensive", "inconsistent", "critical"],
         "relationshipStyle": "unhealthy"
       }
     ],

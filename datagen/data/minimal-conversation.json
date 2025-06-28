@@ -13,11 +13,7 @@
       "displayName": "Alex Chen",
       "email": "alex_chen2@example.com",
       "sex": "male",
-      "personality": [
-        "empathetic",
-        "communicative",
-        "supportive"
-      ],
+      "personality": ["empathetic", "communicative", "supportive"],
       "relationshipStyle": "healthy",
       "role": "primary",
       "relationshipType": "healthy"
@@ -28,11 +24,7 @@
       "displayName": "Emma Davis",
       "email": "emma_davis2@example.com",
       "sex": "female",
-      "personality": [
-        "understanding",
-        "affectionate",
-        "trustworthy"
-      ],
+      "personality": ["understanding", "affectionate", "trustworthy"],
       "relationshipStyle": "healthy",
       "role": "primary-partner",
       "relationshipType": "healthy"
@@ -47,11 +39,7 @@
         "displayName": "Alex Chen",
         "email": "alex_chen2@example.com",
         "sex": "male",
-        "personality": [
-          "empathetic",
-          "communicative",
-          "supportive"
-        ],
+        "personality": ["empathetic", "communicative", "supportive"],
         "relationshipStyle": "healthy"
       },
       {
@@ -60,11 +48,7 @@
         "displayName": "Emma Davis",
         "email": "emma_davis2@example.com",
         "sex": "female",
-        "personality": [
-          "understanding",
-          "affectionate",
-          "trustworthy"
-        ],
+        "personality": ["understanding", "affectionate", "trustworthy"],
         "relationshipStyle": "healthy"
       }
     ],

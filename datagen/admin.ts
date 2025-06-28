@@ -10,7 +10,8 @@ import { getDatabase } from 'firebase-admin/database';
 // Set client SDK environment variables
 process.env.EXPO_PUBLIC_FIREBASE_API_KEY = 'test-api-key';
 process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN = 'localhost:9099';
-process.env.EXPO_PUBLIC_FIREBASE_DATABASE_URL = 'http://localhost:9000?ns=snapconnect-d75c6';
+process.env.EXPO_PUBLIC_FIREBASE_DATABASE_URL =
+  'http://localhost:9000?ns=snapconnect-d75c6';
 process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID = 'snapconnect-d75c6';
 process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET = 'default-bucket';
 process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID = '123456789012';
@@ -28,7 +29,7 @@ console.log(`   • Database URL: http://localhost:9000?ns=snapconnect-d75c6`);
 export const app = initializeApp({
   credential: applicationDefault(),
   databaseURL: 'http://localhost:9000?ns=snapconnect-d75c6-default-rtdb',
-  projectId: 'snapconnect-d75c6'
+  projectId: 'snapconnect-d75c6',
 });
 
 export const db = getDatabase(app);

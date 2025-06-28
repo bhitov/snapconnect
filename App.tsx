@@ -2,7 +2,7 @@
  * @file App.tsx
  * @description Main application entry point for SnapConnect.
  * Sets up navigation and global app configuration.
- * 
+ *
  * Can conditionally show camera test screen when EXPO_PUBLIC_CAMERA_TEST=true
  */
 
@@ -10,11 +10,11 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import CameraTestScreen from './src/camera-test/CameraTestScreen';
 import { useIsDarkMode } from './src/shared/hooks/useTheme';
 import { RootNavigator } from './src/shared/navigation/RootNavigator';
 import { runFirebaseDebug } from './src/shared/services/firebase/debug';
 import { isDev } from './src/shared/utils/isDev';
-import CameraTestScreen from './src/camera-test/CameraTestScreen';
 
 /**
  * Main application component
@@ -46,7 +46,7 @@ export default function App() {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <CameraTestScreen />
-        <StatusBar style="light" />
+        <StatusBar style='light' />
       </GestureHandlerRootView>
     );
   }
