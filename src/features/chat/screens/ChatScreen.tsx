@@ -21,11 +21,13 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
 import { CoachModal } from '../components/CoachModal';
 import { LoveMapMessage } from '../components/LoveMapMessage';
@@ -290,14 +292,21 @@ function MessageItem({
               { backgroundColor: theme.colors.primary },
             ]}
           >
-            <Text
-              style={[
-                styles.messageAvatarText,
-                { color: theme.colors.background },
-              ]}
-            >
-              {avatarInfo.text}
-            </Text>
+            {avatarInfo.photoURL ? (
+              <Image
+                source={{ uri: resolveMediaUrl(avatarInfo.photoURL) }}
+                style={styles.messageAvatarImage}
+              />
+            ) : (
+              <Text
+                style={[
+                  styles.messageAvatarText,
+                  { color: theme.colors.background },
+                ]}
+              >
+                {avatarInfo.text}
+              </Text>
+            )}
           </View>
         </View>
       )}
@@ -350,14 +359,21 @@ function MessageItem({
               { backgroundColor: theme.colors.primary },
             ]}
           >
-            <Text
-              style={[
-                styles.messageAvatarText,
-                { color: theme.colors.background },
-              ]}
-            >
-              {avatarInfo.text}
-            </Text>
+            {avatarInfo.photoURL ? (
+              <Image
+                source={{ uri: resolveMediaUrl(avatarInfo.photoURL) }}
+                style={styles.messageAvatarImage}
+              />
+            ) : (
+              <Text
+                style={[
+                  styles.messageAvatarText,
+                  { color: theme.colors.background },
+                ]}
+              >
+                {avatarInfo.text}
+              </Text>
+            )}
           </View>
         </View>
       )}
@@ -1180,6 +1196,11 @@ const styles = StyleSheet.create({
   messageAvatarText: {
     fontSize: 14,
     fontWeight: '600',
+  },
+  messageAvatarImage: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
   },
   messageBubble: {
     maxWidth: '80%',

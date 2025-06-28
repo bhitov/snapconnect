@@ -155,10 +155,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
         <View style={styles.friendContent}>
           {/* Avatar */}
           <View
-            style={[
-              styles.avatar,
-              { backgroundColor: theme.colors.background },
-            ]}
+            style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
           >
             {item.photoURL ? (
               <Image
@@ -166,7 +163,9 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
                 style={styles.avatarImage}
               />
             ) : (
-              <Text style={[styles.avatarText, { color: theme.colors.text }]}>
+              <Text
+                style={[styles.avatarText, { color: theme.colors.background }]}
+              >
                 {item.displayName?.charAt(0)?.toUpperCase() ||
                   item.username?.charAt(0)?.toUpperCase() ||
                   '?'}

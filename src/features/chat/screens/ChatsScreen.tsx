@@ -14,11 +14,13 @@ import {
   RefreshControl,
   StyleSheet,
   Alert,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
 import { usePolling } from '../hooks';
 import {
@@ -226,6 +228,9 @@ export function ChatsScreen() {
             conversation.otherUser?.username?.charAt(0)?.toUpperCase() ||
             '?';
 
+      const hasAvatar =
+        !isGroup && !conversation.isCoach && conversation.otherUser?.photoURL;
+
       return (
         <TouchableOpacity
           style={[
@@ -241,11 +246,23 @@ export function ChatsScreen() {
             <View
               style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
             >
-              <Text
-                style={[styles.avatarText, { color: theme.colors.background }]}
-              >
-                {avatarText}
-              </Text>
+              {hasAvatar ? (
+                <Image
+                  source={{
+                    uri: resolveMediaUrl(conversation.otherUser!.photoURL!),
+                  }}
+                  style={styles.avatarImage}
+                />
+              ) : (
+                <Text
+                  style={[
+                    styles.avatarText,
+                    { color: theme.colors.background },
+                  ]}
+                >
+                  {avatarText}
+                </Text>
+              )}
             </View>
           </View>
 
@@ -536,6 +553,11 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 18,
     fontWeight: '600',
+  },
+  avatarImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   coachBadge: {
     backgroundColor: '#E8F4F8',

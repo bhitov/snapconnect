@@ -481,11 +481,14 @@ class FriendsService {
           continue; // This friendship doesn't involve current user
         }
 
+        // Fetch current user data to get latest photoURL
+        const currentUserData = await this.getUserData(friendId);
+
         friends.push({
           uid: friendId,
-          username: friendData.username,
-          displayName: friendData.displayName,
-          photoURL: friendData.photoURL,
+          username: currentUserData?.username || friendData.username,
+          displayName: currentUserData?.displayName || friendData.displayName,
+          photoURL: currentUserData?.photoURL,
           friendshipId,
           friendsSince: friendship.createdAt,
         });
@@ -689,11 +692,14 @@ class FriendsService {
           continue;
         }
 
+        // Fetch current user data to get latest photoURL
+        const currentUserData = await this.getUserData(friendId);
+
         friends.push({
           uid: friendId,
-          username: friendData.username,
-          displayName: friendData.displayName,
-          photoURL: friendData.photoURL,
+          username: currentUserData?.username || friendData.username,
+          displayName: currentUserData?.displayName || friendData.displayName,
+          photoURL: currentUserData?.photoURL,
           friendshipId,
           friendsSince: friendship.createdAt,
         });
