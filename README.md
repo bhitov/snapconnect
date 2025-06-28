@@ -8,7 +8,6 @@ install expo go on an android phone
 
 download the `.env.local` file and put it in the root directory
 install packages `npm install`
-build the firebase functions `cd functions. npm install. npm run build.`
 run `npm run start:firebase`. scan the qr code in expo go. sometimes you have to hit the `r` key too? might as well to be safe
 
 
