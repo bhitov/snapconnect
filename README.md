@@ -4,6 +4,7 @@ A relationship-focused messaging app that combines ephemeral snaps with persiste
 
 ## Running the app
 
+download the `.env.local` file and put it in the root directory
 install packages `npm install`
 build the firebase functions `cd functions. npm install. npm run build.`
 run the firebase emulator `npm run emulator` or `npm run emulator:persist` if you want the data to be stored when you close the emulator
