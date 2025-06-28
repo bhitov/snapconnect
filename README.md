@@ -6,7 +6,7 @@ A relationship-focused messaging app that combines ephemeral snaps with persiste
 
 install expo go on an android phone
 
-download the `.env.local` file and put it in the root directory
+download the `.env.local` file and put it in the root directory (send to ash over slack but I can send it to whoever is reviewing this directly if that is easier, just send me a message)
 install packages `npm install`
 run `npm run start:firebase`. scan the qr code in expo go. sometimes you have to hit the `r` key too? might as well to be safe
 
