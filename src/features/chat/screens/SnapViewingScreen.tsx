@@ -266,7 +266,7 @@ export function SnapViewingScreen() {
       stopTimer();
       stopViewingSnap();
     };
-  }, []);
+  }, [loadSnap, stopTimer, stopViewingSnap]);
 
   /**
    * Start timer when viewing session starts

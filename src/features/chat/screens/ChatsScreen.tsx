@@ -161,7 +161,7 @@ export function ChatsScreen() {
    */
   useEffect(() => {
     void loadConversations();
-  }, []);
+  }, [loadConversations]);
 
   /**
    * Refresh conversations when screen comes into focus
@@ -169,7 +169,7 @@ export function ChatsScreen() {
   useFocusEffect(
     useCallback(() => {
       void refreshConversations();
-    }, [])
+    }, [refreshConversations])
   );
 
   /**
@@ -177,7 +177,7 @@ export function ChatsScreen() {
    */
   const handleRefresh = useCallback(() => {
     void refreshConversations();
-  }, []);
+  }, [refreshConversations]);
 
   /**
    * Handle conversation press - navigate to individual chat screen
@@ -392,7 +392,7 @@ export function ChatsScreen() {
         </Text>
       </View>
     ),
-    []
+    [theme.colors.text, theme.colors.textSecondary]
   );
 
   /**

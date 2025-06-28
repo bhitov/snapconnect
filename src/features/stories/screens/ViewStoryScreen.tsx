@@ -165,7 +165,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
       );
       setIsLoading(false);
     }
-  }, [storyId]);
+  }, [storyId, userId]);
 
   /**
    * Start progress animation for current post
@@ -210,7 +210,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
 
     progressStartTime.current = Date.now();
     requestAnimationFrame(updateProgress);
-  }, [story, isPlaying, currentPostIndex, progress]);
+  }, [story, isPlaying, currentPostIndex, progress, goToNextPost]);
 
   // Progress tracking
   const progressStartTime = React.useRef(Date.now());

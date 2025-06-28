@@ -104,7 +104,7 @@ export function GroupsScreen() {
    */
   useEffect(() => {
     void loadConversations();
-  }, []);
+  }, [loadConversations]);
 
   /**
    * Refresh conversations when screen comes into focus
@@ -121,7 +121,7 @@ export function GroupsScreen() {
    */
   const handleRefresh = useCallback(() => {
     void refreshConversations();
-  }, []);
+  }, [refreshConversations]);
 
   /**
    * Handle group press - navigate to group info screen

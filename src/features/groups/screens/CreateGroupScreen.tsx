@@ -77,7 +77,7 @@ export function CreateGroupScreen() {
    */
   useEffect(() => {
     void loadFriends();
-  }, []);
+  }, [loadFriends]);
 
   /**
    * Reset group creation state when screen focuses
@@ -85,7 +85,7 @@ export function CreateGroupScreen() {
   useFocusEffect(
     useCallback(() => {
       resetGroupCreation();
-    }, [])
+    }, [resetGroupCreation])
   );
 
   /**

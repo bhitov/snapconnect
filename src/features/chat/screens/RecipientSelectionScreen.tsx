@@ -121,14 +121,14 @@ export function RecipientSelectionScreen() {
     return () => {
       clearRecipients();
     };
-  }, []);
+  }, [clearRecipients, loadFriends]);
 
   /**
    * Clear send error when component mounts
    */
   useEffect(() => {
     clearSendError();
-  }, []);
+  }, [clearSendError]);
 
   /**
    * Handle recipient selection toggle

@@ -541,7 +541,7 @@ export function ChatScreen() {
 
       void fetchGroupMembersData();
     }
-  }, [isGroup, messages]);
+  }, [isGroup, messages, groupMembersData]);
 
   /**
    * Handle coach button press
