@@ -28,15 +28,8 @@ export function resolveMediaUrl(mediaUrl: string): string {
 
   // In production, return URL as-is
   if (!isDev()) {
-    console.log('🌐 resolveMediaUrl: Production mode, returning original URL');
     return mediaUrl;
   }
-
-  console.log(
-    '🔧 resolveMediaUrl: DEV mode, transforming URL for platform:',
-    Platform.OS
-  );
-  console.log('📥 resolveMediaUrl: Original URL:', mediaUrl);
 
   // In development, transform Firebase Storage emulator URLs
   try {
@@ -56,13 +49,10 @@ export function resolveMediaUrl(mediaUrl: string): string {
 
       // Create new URL with emulator host
       const resolvedUrl = `http://${emulatorHost}${url.pathname}${url.search}`;
-
-      console.log('📤 resolveMediaUrl: Resolved URL:', resolvedUrl);
       return resolvedUrl;
     }
 
     // If not a Firebase Storage URL, return as-is
-    console.log('📤 resolveMediaUrl: Non-Firebase URL, returning unchanged');
     return mediaUrl;
   } catch (error) {
     // If URL parsing fails, return original URL

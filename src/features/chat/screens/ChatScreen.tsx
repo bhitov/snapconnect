@@ -39,6 +39,7 @@ import {
   useMessagesLoading,
   useMessagesError,
   useSendError,
+  useConversations,
 } from '../store/chatStore';
 
 import type {
@@ -407,6 +408,7 @@ export function ChatScreen() {
   const isLoading = useMessagesLoading();
   const messagesError = useMessagesError();
   const sendError = useSendError();
+  const conversations = useConversations();
 
   // Chat actions
   const {
@@ -434,6 +436,7 @@ export function ChatScreen() {
   const [groupMembersData, setGroupMembersData] = useState<Record<string, any>>(
     {}
   );
+  const [resolvedOtherUser, setResolvedOtherUser] = useState(otherUser);
   const flatListRef = useRef<FlatList>(null);
 
   /**
@@ -474,6 +477,20 @@ export function ChatScreen() {
       });
     }, [conversationId, loadMessages, markAllMessagesAsDelivered])
   );
+
+  /**
+   * Resolve otherUser data when missing (e.g., when navigating from coach chat)
+   */
+  useEffect(() => {
+    if (!isGroup && !isCoach && !resolvedOtherUser && conversationId) {
+      // Find the conversation in the store
+      const conversation = conversations.find(c => c.id === conversationId);
+      if (conversation?.otherUser) {
+        console.log('📱 ChatScreen: Resolved missing otherUser from store');
+        setResolvedOtherUser(conversation.otherUser);
+      }
+    }
+  }, [conversationId, isGroup, isCoach, resolvedOtherUser, conversations]);
 
   /**
    * Fetch group members data when in a group chat
@@ -576,7 +593,7 @@ export function ChatScreen() {
       ? 'Coach Chat'
       : isGroup
         ? groupTitle || 'Group Chat'
-        : otherUser?.displayName || 'Chat';
+        : resolvedOtherUser?.displayName || 'Chat';
 
     navigation.setOptions({
       title,
@@ -586,16 +603,60 @@ export function ChatScreen() {
       headerStyle: {
         backgroundColor: theme.colors.background || '#FFFFFF',
       },
-      headerBackTitle: isCoach ? 'Chat' : 'Chats',
+      headerBackTitle: 'Chats',
       headerTintColor: theme.colors.primary || '#FFFC00',
+      // Custom back button for non-coach chats to go directly to Chats screen
+      ...(!isCoach && {
+        headerLeft: () => (
+          <TouchableOpacity
+            onPress={() => {
+              // Navigate directly to Chats list screen instead of going back
+              navigation.navigate('ChatsList');
+            }}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginLeft: 16,
+              paddingVertical: 8,
+              paddingHorizontal: 4,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 17,
+                color: theme.colors.primary || '#FFFC00',
+                marginRight: 4,
+              }}
+            >
+              ←
+            </Text>
+            <Text
+              style={{
+                fontSize: 17,
+                color: theme.colors.primary || '#FFFC00',
+              }}
+            >
+              Chats
+            </Text>
+          </TouchableOpacity>
+        ),
+      }),
       ...(isCoach &&
         parentCid && {
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('ChatScreen', {
+                // Find parent conversation to get otherUser data
+                const parentConversation = conversations.find(
+                  c => c.id === parentCid
+                );
+                navigation.push('ChatScreen', {
                   conversationId: parentCid,
                   isCoach: false,
+                  parentCid: undefined, // Clear parentCid to prevent custom back button
+                  ...(parentConversation?.otherUser && {
+                    otherUser: parentConversation.otherUser,
+                  }),
                 });
               }}
               style={{
@@ -670,11 +731,13 @@ export function ChatScreen() {
     });
   }, [
     navigation,
-    otherUser?.displayName,
+    resolvedOtherUser?.displayName,
     isGroup,
     groupTitle,
     theme,
     isCoach,
+    parentCid,
+    conversations,
     handleCoachPress,
     handleAnalyzeChat,
   ]);
@@ -718,11 +781,11 @@ export function ChatScreen() {
           text,
           conversationId,
         });
-      } else if (otherUser) {
+      } else if (resolvedOtherUser) {
         // Send message to individual user
         await sendTextMessage({
           text,
-          recipientId: otherUser.uid,
+          recipientId: resolvedOtherUser.uid,
         });
       } else {
         // Fallback: send to conversation directly (for when otherUser is missing)
@@ -743,7 +806,7 @@ export function ChatScreen() {
   }, [
     messageText,
     currentUser,
-    otherUser,
+    resolvedOtherUser,
     conversationId,
     isGroup,
     isCoach,
@@ -798,9 +861,15 @@ export function ChatScreen() {
         console.log('✅ Love map question sent to parent conversation');
 
         // Navigate back to parent chat and scroll to bottom
-        navigation.navigate('ChatScreen', {
+        // Find parent conversation to get otherUser data
+        const parentConversation = conversations.find(c => c.id === parentCid);
+        navigation.push('ChatScreen', {
           conversationId: parentCid,
           isCoach: false,
+          parentCid: undefined, // Clear parentCid to prevent custom back button
+          ...(parentConversation?.otherUser && {
+            otherUser: parentConversation.otherUser,
+          }),
         });
 
         // Load messages and scroll to bottom after navigation
@@ -819,7 +888,14 @@ export function ChatScreen() {
         Alert.alert('Error', 'Failed to send question. Please try again.');
       }
     },
-    [parentCid, currentUser, sendTextMessage, navigation, loadMessages]
+    [
+      parentCid,
+      currentUser,
+      sendTextMessage,
+      navigation,
+      loadMessages,
+      conversations,
+    ]
   );
 
   /**
@@ -889,7 +965,7 @@ export function ChatScreen() {
             isCoach ? handleSendLoveMapQuestion : undefined
           }
           currentUser={currentUser}
-          otherUser={otherUser}
+          otherUser={resolvedOtherUser}
           isGroup={isGroup}
           senderData={
             isGroup && !isFromCurrentUser
@@ -901,7 +977,7 @@ export function ChatScreen() {
     },
     [
       currentUser,
-      otherUser,
+      resolvedOtherUser,
       handleSnapPress,
       isCoach,
       handleSendLoveMapQuestion,
