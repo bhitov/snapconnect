@@ -34,7 +34,7 @@ module.exports = {
     // TypeScript specific rules
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/no-non-null-assertion': 'error',
     // '@typescript-eslint/prefer-const': 'error',
     '@typescript-eslint/no-var-requires': 'error',
