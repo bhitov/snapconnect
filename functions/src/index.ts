@@ -17,7 +17,7 @@ const db      = getDatabase();
 
 const pine    = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
 const index   = pine.index(process.env.PINECONE_INDEX!);
-const openai  = new OpenAI();
+const openai  = new OpenAI({apiKey: process.env.OPENAI_API_KEY});
 
 const DIM = 1536;                             // text-embedding-3-small
 const RECENT_PARENT = 50;                     // last 50 msgs

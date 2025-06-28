@@ -132,15 +132,40 @@ function MessageItem({
   onSnapPress,
   isCoachChat,
   onSendLoveMapQuestion,
+  currentUser,
+  otherUser,
 }: {
   message: Message;
   isFromCurrentUser: boolean;
   onSnapPress?: (snap: SnapMessage) => void;
   isCoachChat?: boolean;
   onSendLoveMapQuestion?: (question: string) => void;
+  currentUser?: any;
+  otherUser?: any;
 }) {
   const theme = useTheme();
   const isCoachMessage = isCoachChat && message.senderId === 'coach';
+
+  // Get avatar info for the message sender
+  const getAvatarInfo = () => {
+    if (isCoachMessage) {
+      return { text: '🎓', photoURL: null };
+    }
+    
+    if (isFromCurrentUser) {
+      return {
+        text: currentUser?.displayName?.charAt(0)?.toUpperCase() || currentUser?.username?.charAt(0)?.toUpperCase() || '?',
+        photoURL: currentUser?.photoURL
+      };
+    } else {
+      return {
+        text: otherUser?.displayName?.charAt(0)?.toUpperCase() || '?',
+        photoURL: otherUser?.photoURL
+      };
+    }
+  };
+
+  const avatarInfo = getAvatarInfo();
 
   const handleSnapPress = useCallback(() => {
     if (message.type === 'snap' && onSnapPress) {
@@ -234,9 +259,17 @@ function MessageItem({
         isFromCurrentUser ? styles.sentMessage : styles.receivedMessage,
       ]}
     >
-      {isCoachMessage && (
-        <Text style={styles.coachAvatar}>🎓</Text>
+      {/* Avatar for all messages */}
+      {!isFromCurrentUser && (
+        <View style={styles.avatarContainer}>
+          <View style={[styles.messageAvatar, { backgroundColor: theme.colors.primary }]}>
+            <Text style={[styles.messageAvatarText, { color: theme.colors.background }]}>
+              {avatarInfo.text}
+            </Text>
+          </View>
+        </View>
       )}
+      
       <View
         style={[
           styles.messageBubble,
@@ -275,6 +308,17 @@ function MessageItem({
           )}
         </View>
       </View>
+      
+      {/* Avatar for current user messages */}
+      {isFromCurrentUser && (
+        <View style={styles.avatarContainer}>
+          <View style={[styles.messageAvatar, { backgroundColor: theme.colors.primary }]}>
+            <Text style={[styles.messageAvatarText, { color: theme.colors.background }]}>
+              {avatarInfo.text}
+            </Text>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -718,10 +762,12 @@ export function ChatScreen() {
           onSnapPress={handleSnapPress}
           isCoachChat={isCoach || false}
           onSendLoveMapQuestion={isCoach ? handleSendLoveMapQuestion : undefined}
+          currentUser={currentUser}
+          otherUser={otherUser}
         />
       );
     },
-    [currentUser, handleSnapPress, isCoach, handleSendLoveMapQuestion]
+    [currentUser, otherUser, handleSnapPress, isCoach, handleSendLoveMapQuestion]
   );
 
   if (isLoading && messages.length === 0) {
@@ -991,12 +1037,30 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     marginVertical: 4,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
   },
   sentMessage: {
     alignItems: 'flex-end',
+    justifyContent: 'flex-end',
   },
   receivedMessage: {
     alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+  },
+  avatarContainer: {
+    marginHorizontal: 8,
+  },
+  messageAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  messageAvatarText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   messageBubble: {
     maxWidth: '80%',
@@ -1037,10 +1101,6 @@ const styles = StyleSheet.create({
   },
   messageStatus: {
     fontSize: 12,
-  },
-  coachAvatar: {
-    fontSize: 24,
-    marginBottom: 4,
   },
   inputContainer: {
     flexDirection: 'row',
