@@ -673,20 +673,9 @@ class ChatService {
       snapshot.forEach(childSnapshot => {
         const messageData = childSnapshot.val() as TextMessageDocument;
         const message: TextMessage = {
+          ...messageData,
           id: childSnapshot.key || '',
           type: 'text',
-          senderId: messageData.senderId,
-          conversationId: messageData.conversationId,
-          text: messageData.text,
-          createdAt: messageData.createdAt,
-          status: messageData.status,
-          ...(messageData.recipientId && {
-            recipientId: messageData.recipientId,
-          }),
-          ...(messageData.deliveredAt && {
-            deliveredAt: messageData.deliveredAt,
-          }),
-          ...(messageData.viewedAt && { viewedAt: messageData.viewedAt }),
         };
         messages.push(message);
       });
@@ -721,20 +710,9 @@ class ChatService {
       snapshot.forEach(childSnapshot => {
         const snapData = childSnapshot.val() as SnapDocument;
         const message: SnapMessage = {
+          ...snapData,
           id: childSnapshot.key || '',
           type: 'snap',
-          senderId: snapData.senderId,
-          conversationId: snapData.conversationId,
-          ...(snapData.recipientId && { recipientId: snapData.recipientId }),
-          mediaUrl: snapData.mediaUrl,
-          mediaType: snapData.mediaType,
-          ...(snapData.textOverlay && { textOverlay: snapData.textOverlay }),
-          duration: snapData.duration,
-          createdAt: snapData.createdAt,
-          expiresAt: snapData.expiresAt,
-          status: snapData.status,
-          ...(snapData.deliveredAt && { deliveredAt: snapData.deliveredAt }),
-          ...(snapData.viewedAt && { viewedAt: snapData.viewedAt }),
         };
         messages.push(message);
       });
@@ -944,18 +922,9 @@ class ChatService {
 
         if (isRelevant) {
           result.push({
+            ...snapData,
             id: snapId,
-            senderId: snapData.senderId,
             recipientId: snapData.recipientId || '',
-            mediaUrl: snapData.mediaUrl,
-            mediaType: snapData.mediaType,
-            ...(snapData.textOverlay && { textOverlay: snapData.textOverlay }),
-            duration: snapData.duration,
-            createdAt: snapData.createdAt,
-            expiresAt: snapData.expiresAt,
-            status: snapData.status,
-            ...(snapData.viewedAt && { viewedAt: snapData.viewedAt }),
-            ...(snapData.deliveredAt && { deliveredAt: snapData.deliveredAt }),
           });
         }
       }
@@ -999,16 +968,9 @@ class ChatService {
     if (textSnapshot.exists()) {
       const data = textSnapshot.val() as TextMessageDocument;
       return {
+        ...data,
         id: messageId,
         type: 'text',
-        senderId: data.senderId,
-        conversationId: data.conversationId,
-        text: data.text,
-        createdAt: data.createdAt,
-        status: data.status,
-        ...(data.recipientId && { recipientId: data.recipientId }),
-        ...(data.deliveredAt && { deliveredAt: data.deliveredAt }),
-        ...(data.viewedAt && { viewedAt: data.viewedAt }),
       } as TextMessage;
     }
 
@@ -1019,20 +981,9 @@ class ChatService {
     if (snapSnapshot.exists()) {
       const data = snapSnapshot.val() as SnapDocument;
       return {
+        ...data,
         id: messageId,
         type: 'snap',
-        senderId: data.senderId,
-        conversationId: data.conversationId,
-        mediaUrl: data.mediaUrl,
-        mediaType: data.mediaType,
-        duration: data.duration,
-        createdAt: data.createdAt,
-        expiresAt: data.expiresAt,
-        status: data.status,
-        ...(data.recipientId && { recipientId: data.recipientId }),
-        ...(data.textOverlay && { textOverlay: data.textOverlay }),
-        ...(data.deliveredAt && { deliveredAt: data.deliveredAt }),
-        ...(data.viewedAt && { viewedAt: data.viewedAt }),
       } as SnapMessage;
     }
 

@@ -8,6 +8,11 @@ import { getDatabase } from 'firebase-admin/database';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import OpenAI from 'openai';
 
+import type {
+  ChatCompletionCreateParamsNonStreaming,
+  ChatCompletionMessageParam,
+} from 'openai/resources/chat/completions';
+
 // Type definitions
 interface TextMessage {
   id?: string;
@@ -56,12 +61,12 @@ const LOVE_MAP_TOPICS = [
 
 // Central OpenAI function with logging
 async function callOpenAI(
-  messages: { role: string; content: string }[],
+  messages: ChatCompletionMessageParam[],
   options: {
     model?: string;
     temperature?: number;
     maxTokens?: number;
-    responseFormat?: { type: string };
+    responseFormat?: ChatCompletionCreateParamsNonStreaming['response_format'];
   } = {}
 ) {
   const {
@@ -78,19 +83,18 @@ async function callOpenAI(
     messageCount: messages.length,
     messages: messages.map(m => ({
       role: m.role,
-      contentLength: m.content.length,
+      contentLength: typeof m.content === 'string' ? m.content.length : 0,
       contentPreview: m.content,
     })),
   });
 
-  const requestOptions: any = {
+  const requestOptions: ChatCompletionCreateParamsNonStreaming = {
     model,
     temperature,
     messages,
+    ...(maxTokens && { max_tokens: maxTokens }),
+    ...(responseFormat && { response_format: responseFormat }),
   };
-
-  if (maxTokens) requestOptions.max_tokens = maxTokens;
-  if (responseFormat) requestOptions.response_format = responseFormat;
 
   const response = await openai.chat.completions.create(requestOptions);
 
