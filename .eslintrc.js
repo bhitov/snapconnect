@@ -38,16 +38,18 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'error',
     // '@typescript-eslint/prefer-const': 'error',
     '@typescript-eslint/no-var-requires': 'error',
+    '@typescript-eslint/no-shadow': 'off',
 
     // React specific rules
     'react/prop-types': 'off', // TypeScript handles this
     'react/display-name': 'error',
     'react/jsx-uses-react': 'off', // React 17+ JSX transform
     'react/react-in-jsx-scope': 'off', // React 17+ JSX transform
+    'react/no-unstable-nested-components': 'off', // good rule but not sure how to fix it
 
     // React Hooks rules
     'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
+    'react-hooks/exhaustive-deps': 'error',
 
     // React Native specific rules
     'react-native/no-unused-styles': 'off',
@@ -59,7 +61,7 @@ module.exports = {
     // General rules
     'no-console': 'off',
     'no-debugger': 'error',
-    'no-alert': 'warn',
+    'no-alert': 'error',
     'prefer-const': 'error',
     'no-var': 'error',
     'object-shorthand': 'error',

@@ -312,14 +312,10 @@ export function ProfileSettingsScreen({
       console.log('✅ ProfileSettings: Logout successful');
     } catch (logoutError) {
       console.error('❌ ProfileSettings: Logout failed:', logoutError);
-      // Use platform-specific alert for error messages as they're less critical
-      if (Platform.OS === 'web') {
-        window.alert('Failed to logout. Please try again.');
-      } else {
-        Alert.alert('Logout Failed', 'Failed to logout. Please try again.', [
-          { text: 'OK' },
-        ]);
-      }
+      // Use React Native Alert for all platforms
+      Alert.alert('Logout Failed', 'Failed to logout. Please try again.', [
+        { text: 'OK' },
+      ]);
     }
   }, [logout]);
 
