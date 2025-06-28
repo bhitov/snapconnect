@@ -6,4 +6,4 @@
 export { GroupsScreen } from './GroupsScreen';
 export { CreateGroupScreen } from './CreateGroupScreen';
 export { GroupInfoScreen } from './GroupInfoScreen';
-export { ManageGroupMembersScreen } from './ManageGroupMembersScreen'; 
+export { ManageGroupMembersScreen } from './ManageGroupMembersScreen';

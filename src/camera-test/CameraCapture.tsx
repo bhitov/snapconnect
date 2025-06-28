@@ -4,7 +4,12 @@
  * Handles permissions and basic camera functionality.
  */
 
-import { CameraView, CameraType, useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
+import {
+  CameraView,
+  CameraType,
+  useCameraPermissions,
+  useMicrophonePermissions,
+} from 'expo-camera';
 import { useState, useRef } from 'react';
 import {
   View,
@@ -25,7 +30,8 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
   const [facing, setFacing] = useState<CameraType>('back');
   const [mode, setMode] = useState<'picture' | 'video'>('picture');
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  const [microphonePermission, requestMicrophonePermission] = useMicrophonePermissions();
+  const [microphonePermission, requestMicrophonePermission] =
+    useMicrophonePermissions();
   const [isRecording, setIsRecording] = useState(false);
   const cameraRef = useRef<CameraView>(null);
 
@@ -49,10 +55,12 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
   if (!cameraPermission.granted || !microphonePermission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Camera and microphone permissions required</Text>
+        <Text style={styles.text}>
+          Camera and microphone permissions required
+        </Text>
         <Text style={styles.subText}>
-          Camera: {cameraPermission.granted ? '✅' : '❌'} | 
-          Microphone: {microphonePermission.granted ? '✅' : '❌'}
+          Camera: {cameraPermission.granted ? '✅' : '❌'} | Microphone:{' '}
+          {microphonePermission.granted ? '✅' : '❌'}
         </Text>
         <TouchableOpacity style={styles.button} onPress={requestAllPermissions}>
           <Text style={styles.buttonText}>Grant Permissions</Text>
@@ -66,13 +74,13 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
    */
   const takePhoto = async () => {
     if (!cameraRef.current) return;
-    
+
     try {
       const photo = await cameraRef.current.takePictureAsync({
         quality: 0.8,
         base64: false,
       });
-      
+
       if (photo?.uri) {
         onMediaCaptured({ uri: photo.uri, type: 'photo' });
       }
@@ -87,7 +95,7 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
    */
   const toggleVideoRecording = async () => {
     if (!cameraRef.current) return;
-    
+
     try {
       if (isRecording) {
         setIsRecording(false);
@@ -97,9 +105,9 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
         const video = await cameraRef.current.recordAsync({
           maxDuration: 30, // 30 seconds max
         });
-        
+
         setIsRecording(false);
-        
+
         if (video?.uri) {
           onMediaCaptured({ uri: video.uri, type: 'video' });
         }
@@ -127,18 +135,20 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
 
   return (
     <View style={styles.container}>
-      <CameraView 
+      <CameraView
         ref={cameraRef}
-        style={styles.camera} 
+        style={styles.camera}
         facing={facing}
         mode={mode}
       />
-      
+
       {/* Overlay positioned absolutely on top of camera */}
       <View style={styles.overlay}>
         {/* Status indicator */}
         <View style={styles.status}>
-          <Text style={styles.statusText}>Camera Test - {mode.toUpperCase()}</Text>
+          <Text style={styles.statusText}>
+            Camera Test - {mode.toUpperCase()}
+          </Text>
           {isRecording && (
             <View style={styles.recordingContainer}>
               <View style={styles.recordingDot} />
@@ -149,39 +159,47 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
 
         {/* Mode Toggle */}
         <View style={styles.modeToggle}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
               styles.modeButton,
-              mode === 'picture' && styles.activeModeButton
-            ]} 
+              mode === 'picture' && styles.activeModeButton,
+            ]}
             onPress={() => setMode('picture')}
             disabled={isRecording}
           >
-            <Text style={[
-              styles.modeButtonText,
-              mode === 'picture' && styles.activeModeButtonText
-            ]}>PHOTO</Text>
+            <Text
+              style={[
+                styles.modeButtonText,
+                mode === 'picture' && styles.activeModeButtonText,
+              ]}
+            >
+              PHOTO
+            </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={[
               styles.modeButton,
-              mode === 'video' && styles.activeModeButton
-            ]} 
+              mode === 'video' && styles.activeModeButton,
+            ]}
             onPress={() => setMode('video')}
             disabled={isRecording}
           >
-            <Text style={[
-              styles.modeButtonText,
-              mode === 'video' && styles.activeModeButtonText
-            ]}>VIDEO</Text>
+            <Text
+              style={[
+                styles.modeButtonText,
+                mode === 'video' && styles.activeModeButtonText,
+              ]}
+            >
+              VIDEO
+            </Text>
           </TouchableOpacity>
         </View>
 
         {/* Controls */}
         <View style={styles.controls}>
-          <TouchableOpacity 
-            style={styles.flipButton} 
+          <TouchableOpacity
+            style={styles.flipButton}
             onPress={toggleCameraFacing}
             disabled={isRecording}
           >
@@ -189,18 +207,12 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
           </TouchableOpacity>
 
           {mode === 'picture' ? (
-            <TouchableOpacity 
-              style={styles.captureButton} 
-              onPress={takePhoto}
-            >
+            <TouchableOpacity style={styles.captureButton} onPress={takePhoto}>
               <Text style={styles.buttonText}>Take Photo</Text>
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity 
-              style={[
-                styles.videoButton, 
-                isRecording && styles.recording
-              ]} 
+            <TouchableOpacity
+              style={[styles.videoButton, isRecording && styles.recording]}
               onPress={toggleVideoRecording}
             >
               <Text style={styles.buttonText}>
@@ -341,4 +353,4 @@ const styles = StyleSheet.create({
   activeModeButtonText: {
     color: '#fff',
   },
-}); 
+});

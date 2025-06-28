@@ -137,7 +137,10 @@ function GroupsStackNavigator() {
       <GroupsStack.Screen name='GroupsList' component={GroupsScreen} />
       <GroupsStack.Screen name='CreateGroup' component={CreateGroupScreen} />
       <GroupsStack.Screen name='GroupInfo' component={GroupInfoScreen} />
-      <GroupsStack.Screen name='ManageGroupMembers' component={ManageGroupMembersScreen} />
+      <GroupsStack.Screen
+        name='ManageGroupMembers'
+        component={ManageGroupMembersScreen}
+      />
     </GroupsStack.Navigator>
   );
 }

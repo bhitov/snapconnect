@@ -62,13 +62,13 @@ class AuthService {
       );
 
       // Get user profile from database
-      let userProfile = await this.getUserProfile(firebaseUser.uid);
+      const userProfile = await this.getUserProfile(firebaseUser.uid);
 
       // If no user profile exists, create one automatically
       if (!userProfile) {
         throw new Error('User profile not found');
-//         console.log('⚠️ AuthService: User profile not found, creating automatically');
-//         userProfile = await this.createDefaultUserProfile(firebaseUser, email);
+        //         console.log('⚠️ AuthService: User profile not found, creating automatically');
+        //         userProfile = await this.createDefaultUserProfile(firebaseUser, email);
       }
 
       // Update last active timestamp
@@ -201,21 +201,23 @@ class AuthService {
       return null;
     }
 
-    let userProfile = await this.getUserProfile(firebaseUser.uid);
-    
+    const userProfile = await this.getUserProfile(firebaseUser.uid);
+
     // If no user profile exists, create one automatically
     if (!userProfile) {
-      console.log('⚠️ AuthService: User profile not found in getCurrentUser, creating automatically');
+      console.log(
+        '⚠️ AuthService: User profile not found in getCurrentUser, creating automatically'
+      );
       throw new Error('User profile not found');
-      
-//       try {
-//         userProfile = await this.createDefaultUserProfile(firebaseUser);
-//       } catch (error) {
-//         console.error('❌ AuthService: Failed to create user profile automatically:', error);
-//         return null;
-//       }
+
+      //       try {
+      //         userProfile = await this.createDefaultUserProfile(firebaseUser);
+      //       } catch (error) {
+      //         console.error('❌ AuthService: Failed to create user profile automatically:', error);
+      //         return null;
+      //       }
     }
-    
+
     return userProfile;
   }
 
@@ -236,18 +238,21 @@ class AuthService {
 
       if (firebaseUser) {
         try {
-          let userProfile = await this.getUserProfile(firebaseUser.uid);
-          
+          const userProfile = await this.getUserProfile(firebaseUser.uid);
+
           // If no user profile exists, create one automatically
           if (!userProfile) {
             throw new Error('User profile not found');
-//             console.log('⚠️ AuthService: User profile not found in auth state change, creating automatically');
-//             userProfile = await this.createDefaultUserProfile(firebaseUser);
+            //             console.log('⚠️ AuthService: User profile not found in auth state change, creating automatically');
+            //             userProfile = await this.createDefaultUserProfile(firebaseUser);
           }
-          
+
           callback(userProfile);
         } catch (error) {
-          console.error('❌ AuthService: Error getting/creating user profile:', error);
+          console.error(
+            '❌ AuthService: Error getting/creating user profile:',
+            error
+          );
           callback(null);
         }
       } else {
@@ -468,7 +473,10 @@ class AuthService {
    * @returns {Promise<string>} Available username
    */
   private async generateAvailableUsername(baseName: string): Promise<string> {
-    console.log('🎯 AuthService: Generating available username from base:', baseName);
+    console.log(
+      '🎯 AuthService: Generating available username from base:',
+      baseName
+    );
 
     // Clean the base name - remove special characters and make lowercase
     const cleanBaseName = baseName
@@ -491,19 +499,22 @@ class AuthService {
 
     while (attempt <= maxAttempts) {
       const candidateUsername = `${finalBaseName}${attempt}`;
-      
+
       if (await this.checkUsernameAvailability(candidateUsername)) {
         console.log('✅ AuthService: Generated username:', candidateUsername);
         return candidateUsername;
       }
-      
+
       attempt++;
     }
 
     // If we somehow can't find an available username after 100 attempts,
     // generate one with timestamp as a fallback
     const timestampUsername = `${finalBaseName}${Date.now().toString().slice(-6)}`;
-    console.log('⚠️ AuthService: Using timestamp-based username:', timestampUsername);
+    console.log(
+      '⚠️ AuthService: Using timestamp-based username:',
+      timestampUsername
+    );
     return timestampUsername;
   }
 
@@ -514,39 +525,39 @@ class AuthService {
    * @param {string} fallbackEmail - Fallback email if Firebase user email is null
    * @returns {Promise<User>} Created user profile
    */
-//   private async createDefaultUserProfile(firebaseUser: FirebaseUser, fallbackEmail?: string): Promise<User> {
-//     console.log('🔧 AuthService: Creating default user profile for UID:', firebaseUser.uid);
-// 
-//     // // Generate a default username from email or displayName
-//     // const defaultUsername = await this.generateAvailableUsername(
-//     //   firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'user'
-//     // );
-// 
-//     // Create user profile data
-//     const userProfileData: UserProfileData = {
-//       uid: firebaseUser.uid,
-//       email: (firebaseUser.email || fallbackEmail || '').toLowerCase(),
-//       username: firebaseUser.displayName,
-//       displayName: firebaseUser.displayName || firebaseUser.username,
-//       createdAt: Date.now(),
-//       lastActive: Date.now(),
-//       profileSetupCompleted: false, // User needs to complete profile setup
-//       ...(firebaseUser.photoURL && { photoURL: firebaseUser.photoURL }),
-//     };
-// 
-//     // Save profile to database
-//     await this.createUserProfile(userProfileData);
-// 
-//     // Update Firebase Auth profile if needed
-//     if (!firebaseUser.displayName) {
-//       await updateProfile(firebaseUser, {
-//         displayName: defaultUsername,
-//       });
-//     }
-// 
-//     console.log('✅ AuthService: Default user profile created successfully');
-//     return userProfileData;
-//   }
+  //   private async createDefaultUserProfile(firebaseUser: FirebaseUser, fallbackEmail?: string): Promise<User> {
+  //     console.log('🔧 AuthService: Creating default user profile for UID:', firebaseUser.uid);
+  //
+  //     // // Generate a default username from email or displayName
+  //     // const defaultUsername = await this.generateAvailableUsername(
+  //     //   firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'user'
+  //     // );
+  //
+  //     // Create user profile data
+  //     const userProfileData: UserProfileData = {
+  //       uid: firebaseUser.uid,
+  //       email: (firebaseUser.email || fallbackEmail || '').toLowerCase(),
+  //       username: firebaseUser.displayName,
+  //       displayName: firebaseUser.displayName || firebaseUser.username,
+  //       createdAt: Date.now(),
+  //       lastActive: Date.now(),
+  //       profileSetupCompleted: false, // User needs to complete profile setup
+  //       ...(firebaseUser.photoURL && { photoURL: firebaseUser.photoURL }),
+  //     };
+  //
+  //     // Save profile to database
+  //     await this.createUserProfile(userProfileData);
+  //
+  //     // Update Firebase Auth profile if needed
+  //     if (!firebaseUser.displayName) {
+  //       await updateProfile(firebaseUser, {
+  //         displayName: defaultUsername,
+  //       });
+  //     }
+  //
+  //     console.log('✅ AuthService: Default user profile created successfully');
+  //     return userProfileData;
+  //   }
 
   /**
    * Create user profile in database

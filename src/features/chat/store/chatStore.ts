@@ -8,7 +8,15 @@
 import { create } from 'zustand';
 
 import { chatService } from '../services/chatService';
-import { startCoachChat, sendCoachMessage, analyzeChat, analyzeRatio, analyzeHorsemen, generateLoveMap } from '../services/coachService';
+import {
+  startCoachChat,
+  sendCoachMessage,
+  analyzeChat,
+  analyzeRatio,
+  analyzeHorsemen,
+  generateLoveMap,
+} from '../services/coachService';
+
 import type {
   ChatStore,
   ChatState,
@@ -457,19 +465,17 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     try {
       const coachCid = await startCoachChat(parentCid);
-      
+
       // Update the parent conversation with the coach chat ID
       const { conversations } = get();
       const updatedConversations = conversations.map(conv =>
-        conv.id === parentCid
-          ? { ...conv, coachChatId: coachCid }
-          : conv
+        conv.id === parentCid ? { ...conv, coachChatId: coachCid } : conv
       );
       set({ conversations: updatedConversations });
-      
+
       // Reload conversations to get the new coach chat
       await get().loadConversations();
-      
+
       console.log('✅ ChatStore: Created coach chat:', coachCid);
       return coachCid;
     } catch (error) {
@@ -478,15 +484,19 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
   },
 
-  sendCoachMessage: async (coachCid: string, parentCid: string, text: string) => {
+  sendCoachMessage: async (
+    coachCid: string,
+    parentCid: string,
+    text: string
+  ) => {
     console.log('🎓 ChatStore: Sending coach message:', { coachCid, text });
 
     try {
       await sendCoachMessage(coachCid, parentCid, text);
-      
+
       // Reload messages to show the coach response
       await get().silentLoadMessages(coachCid);
-      
+
       console.log('✅ ChatStore: Coach message sent successfully');
     } catch (error) {
       console.error('❌ ChatStore: Failed to send coach message:', error);
@@ -497,15 +507,23 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
   },
 
-  analyzeChat: async (coachCid: string, parentCid: string, messageCount: number = 30) => {
-    console.log('🎓 ChatStore: Analyzing chat:', { coachCid, parentCid, messageCount });
+  analyzeChat: async (
+    coachCid: string,
+    parentCid: string,
+    messageCount: number = 30
+  ) => {
+    console.log('🎓 ChatStore: Analyzing chat:', {
+      coachCid,
+      parentCid,
+      messageCount,
+    });
 
     try {
       await analyzeChat(coachCid, parentCid, messageCount);
-      
+
       // Reload messages to show the analysis
       await get().silentLoadMessages(coachCid);
-      
+
       console.log('✅ ChatStore: Chat analysis completed');
     } catch (error) {
       console.error('❌ ChatStore: Failed to analyze chat:', error);
@@ -518,10 +536,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     try {
       await analyzeRatio(coachCid, parentCid);
-      
+
       // Reload messages to show the analysis
       await get().silentLoadMessages(coachCid);
-      
+
       console.log('✅ ChatStore: Ratio analysis completed');
     } catch (error) {
       console.error('❌ ChatStore: Failed to analyze ratio:', error);
@@ -534,10 +552,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     try {
       await analyzeHorsemen(coachCid, parentCid);
-      
+
       // Reload messages to show the analysis
       await get().silentLoadMessages(coachCid);
-      
+
       console.log('✅ ChatStore: Horsemen analysis completed');
     } catch (error) {
       console.error('❌ ChatStore: Failed to analyze horsemen:', error);
@@ -550,10 +568,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     try {
       await generateLoveMap(coachCid, parentCid);
-      
+
       // Reload messages to show the love map question
       await get().silentLoadMessages(coachCid);
-      
+
       console.log('✅ ChatStore: Love map generated');
     } catch (error) {
       console.error('❌ ChatStore: Failed to generate love map:', error);
@@ -562,8 +580,17 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   // Groups
-  createGroup: async (name: string, memberIds: string[], avatarUrl?: string) => {
-    console.log('👥 ChatStore: Creating group:', name, 'with members:', memberIds);
+  createGroup: async (
+    name: string,
+    memberIds: string[],
+    avatarUrl?: string
+  ) => {
+    console.log(
+      '👥 ChatStore: Creating group:',
+      name,
+      'with members:',
+      memberIds
+    );
 
     set(state => ({
       groupCreationState: {
@@ -573,7 +600,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }));
 
     try {
-      const conversationId = await chatService.createGroup(name, memberIds, avatarUrl);
+      const conversationId = await chatService.createGroup(
+        name,
+        memberIds,
+        avatarUrl
+      );
 
       // Reset group creation state
       set(state => ({
@@ -603,13 +634,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   addUsersToGroup: async (groupId: string, userIds: string[]) => {
     console.log('👥 ChatStore: Adding users to group:', groupId, userIds);
-    
+
     try {
       await chatService.addUsersToGroup(groupId, userIds);
-      
+
       // Reload conversations to reflect changes
       await get().loadConversations();
-      
+
       console.log('✅ ChatStore: Added users to group successfully');
     } catch (error) {
       console.error('❌ ChatStore: Failed to add users to group:', error);
@@ -619,13 +650,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   removeUserFromGroup: async (groupId: string, userId: string) => {
     console.log('👥 ChatStore: Removing user from group:', groupId, userId);
-    
+
     try {
       await chatService.removeUserFromGroup(groupId, userId);
-      
+
       // Reload conversations to reflect changes
       await get().loadConversations();
-      
+
       console.log('✅ ChatStore: Removed user from group successfully');
     } catch (error) {
       console.error('❌ ChatStore: Failed to remove user from group:', error);
@@ -666,7 +697,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     set(state => ({
       groupCreationState: {
         ...state.groupCreationState,
-        selectedMembers: [...state.groupCreationState.selectedMembers, memberId],
+        selectedMembers: [
+          ...state.groupCreationState.selectedMembers,
+          memberId,
+        ],
       },
     }));
   },
@@ -675,7 +709,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     set(state => ({
       groupCreationState: {
         ...state.groupCreationState,
-        selectedMembers: state.groupCreationState.selectedMembers.filter(id => id !== memberId),
+        selectedMembers: state.groupCreationState.selectedMembers.filter(
+          id => id !== memberId
+        ),
       },
     }));
   },

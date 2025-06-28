@@ -519,7 +519,6 @@ export function ProfileSetupScreen({ navigation: _ }: ProfileSetupScreenProps) {
           >
             Complete Setup
           </Button>
-
         </View>
       </ScrollView>
     </Screen>

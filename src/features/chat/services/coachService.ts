@@ -15,11 +15,11 @@ const functions = getFunctions();
  */
 export async function startCoachChat(parentCid: string): Promise<string> {
   try {
-    const startCoachChatFn = httpsCallable<{ parentCid: string }, { coachCid: string }>(
-      functions,
-      'startCoachChat'
-    );
-    
+    const startCoachChatFn = httpsCallable<
+      { parentCid: string },
+      { coachCid: string }
+    >(functions, 'startCoachChat');
+
     const result = await startCoachChatFn({ parentCid });
     return result.data.coachCid;
   } catch (error) {
@@ -44,7 +44,7 @@ export async function sendCoachMessage(
       { coachCid: string; parentCid: string; userText: string },
       void
     >(functions, 'coachReply');
-    
+
     await coachReplyFn({ coachCid, parentCid, userText });
   } catch (error) {
     console.error('Failed to send coach message:', error);
@@ -68,7 +68,7 @@ export async function analyzeChat(
       { coachCid: string; parentCid: string; n: number },
       void
     >(functions, 'coachAnalyze');
-    
+
     await coachAnalyzeFn({ coachCid, parentCid, n: messageCount });
   } catch (error) {
     console.error('Failed to analyze chat:', error);
@@ -90,7 +90,7 @@ export async function analyzeRatio(
       { coachCid: string; parentCid: string },
       void
     >(functions, 'coachRatio');
-    
+
     await coachRatioFn({ coachCid, parentCid });
   } catch (error) {
     console.error('Failed to analyze ratio:', error);
@@ -112,7 +112,7 @@ export async function analyzeHorsemen(
       { coachCid: string; parentCid: string },
       void
     >(functions, 'coachHorsemen');
-    
+
     await coachHorsemenFn({ coachCid, parentCid });
   } catch (error) {
     console.error('Failed to analyze horsemen:', error);
@@ -134,7 +134,7 @@ export async function generateLoveMap(
       { coachCid: string; parentCid: string },
       void
     >(functions, 'coachLoveMap');
-    
+
     await coachLoveMapFn({ coachCid, parentCid });
   } catch (error) {
     console.error('Failed to generate love map:', error);

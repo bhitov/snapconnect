@@ -24,11 +24,11 @@ import {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 
+import { useCameraStore } from '../../../features/camera/store/cameraStore';
 import { useTheme } from '../../hooks/useTheme';
 import { RootStackParamList } from '../../navigation/types';
 import { generateId } from '../../utils/idGenerator';
 import { resolveMediaUrl } from '../../utils/resolveMediaUrl';
-import { useCameraStore } from '../../../features/camera/store/cameraStore';
 
 // Constants
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -139,10 +139,10 @@ export function SnapPreviewScreen() {
    */
   const handleRetake = useCallback(() => {
     console.log('🔄 SnapPreviewScreen: Retaking media');
-    
+
     // Hide camera view temporarily when going back (5 seconds for testing)
     hideCameraViewTemporarily();
-    
+
     navigation.goBack();
   }, [navigation, hideCameraViewTemporarily]);
 

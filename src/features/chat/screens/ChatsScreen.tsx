@@ -212,17 +212,19 @@ export function ChatsScreen() {
       const hasCoachChat = !conversation.isCoach && conversation.coachChatId;
 
       // Determine display name and avatar text
-      const displayName = isGroup 
-        ? (conversation.title || 'Unnamed Group')
+      const displayName = isGroup
+        ? conversation.title || 'Unnamed Group'
         : conversation.isCoach
-        ? 'Coach Chat'
-        : conversation.otherUser?.displayName || 'Unknown User';
-      
+          ? 'Coach Chat'
+          : conversation.otherUser?.displayName || 'Unknown User';
+
       const avatarText = isGroup
         ? '👥'
         : conversation.isCoach
-        ? '🎓'
-        : (conversation.otherUser?.displayName?.charAt(0)?.toUpperCase() || '?');
+          ? '🎓'
+          : conversation.otherUser?.displayName?.charAt(0)?.toUpperCase() ||
+            conversation.otherUser?.username?.charAt(0)?.toUpperCase() ||
+            '?';
 
       return (
         <TouchableOpacity
@@ -294,7 +296,8 @@ export function ChatsScreen() {
                     {getSnapStatusText(
                       lastMessage.status,
                       lastMessage.type,
-                      !isGroup && lastMessage.senderId !== conversation.otherUser?.uid
+                      !isGroup &&
+                        lastMessage.senderId !== conversation.otherUser?.uid
                     )}
                   </Text>
                 </View>

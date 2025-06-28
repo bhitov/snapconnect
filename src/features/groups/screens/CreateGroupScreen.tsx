@@ -4,6 +4,7 @@
  * Allows users to select friends, set group name, and create the group.
  */
 
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import React, { useEffect, useCallback, useState } from 'react';
 import {
@@ -17,21 +18,19 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from '@/shared/hooks/useTheme';
-
-import {
-  useFriendsStore,
-  useFriendsList,
-  useFriendsLoading,
-} from '../../friends/store/friendsStore';
 
 import {
   useChatStore,
   useGroupCreationState,
   useIsCreatingGroup,
 } from '../../chat/store/chatStore';
+import {
+  useFriendsStore,
+  useFriendsList,
+  useFriendsLoading,
+} from '../../friends/store/friendsStore';
 
 import type { FriendProfile } from '../../friends/types';
 import type {
@@ -92,9 +91,10 @@ export function CreateGroupScreen() {
   /**
    * Filter friends based on search query
    */
-  const filteredFriends = friends.filter(friend =>
-    friend.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    friend.username.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredFriends = friends.filter(
+    friend =>
+      friend.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      friend.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   /**
@@ -102,8 +102,10 @@ export function CreateGroupScreen() {
    */
   const handleFriendToggle = useCallback(
     (friend: FriendProfile) => {
-      const isSelected = groupCreationState.selectedMembers.includes(friend.uid);
-      
+      const isSelected = groupCreationState.selectedMembers.includes(
+        friend.uid
+      );
+
       if (isSelected) {
         removeGroupMember(friend.uid);
       } else {
@@ -123,7 +125,10 @@ export function CreateGroupScreen() {
     }
 
     if (groupCreationState.selectedMembers.length < 2) {
-      Alert.alert('Error', 'Please select at least 2 friends to create a group');
+      Alert.alert(
+        'Error',
+        'Please select at least 2 friends to create a group'
+      );
       return;
     }
 
@@ -154,7 +159,9 @@ export function CreateGroupScreen() {
    */
   const renderFriendItem = useCallback(
     ({ item: friend }: { item: FriendProfile }) => {
-      const isSelected = groupCreationState.selectedMembers.includes(friend.uid);
+      const isSelected = groupCreationState.selectedMembers.includes(
+        friend.uid
+      );
 
       return (
         <TouchableOpacity
@@ -163,7 +170,7 @@ export function CreateGroupScreen() {
             styles.friendItem,
             { backgroundColor: theme.colors.background },
             isSelected && {
-              backgroundColor: theme.colors.primary + '20', // 20% opacity
+              backgroundColor: `${theme.colors.primary}20`, // 20% opacity
             },
           ]}
           onPress={() => handleFriendToggle(friend)}
@@ -180,7 +187,7 @@ export function CreateGroupScreen() {
               >
                 {/* TODO: Add proper image component when available */}
                 <Ionicons
-                  name="person"
+                  name='person'
                   size={20}
                   color={theme.colors.textSecondary}
                 />
@@ -192,7 +199,12 @@ export function CreateGroupScreen() {
                   { backgroundColor: theme.colors.primary },
                 ]}
               >
-                <Text style={[styles.avatarText, { color: theme.colors.background }]}>
+                <Text
+                  style={[
+                    styles.avatarText,
+                    { color: theme.colors.background },
+                  ]}
+                >
                   {friend.displayName.charAt(0).toUpperCase()}
                 </Text>
               </View>
@@ -210,7 +222,10 @@ export function CreateGroupScreen() {
             </Text>
             <Text
               testID={`friend-username-${friend.uid}`}
-              style={[styles.friendUsername, { color: theme.colors.textSecondary }]}
+              style={[
+                styles.friendUsername,
+                { color: theme.colors.textSecondary },
+              ]}
               numberOfLines={1}
             >
               @{friend.username}
@@ -228,7 +243,7 @@ export function CreateGroupScreen() {
           >
             {isSelected && (
               <Ionicons
-                name="checkmark"
+                name='checkmark'
                 size={16}
                 color={theme.colors.background}
               />
@@ -244,12 +259,9 @@ export function CreateGroupScreen() {
    * Render empty state
    */
   const renderEmptyState = () => (
-    <View
-      testID="create-group-empty-state"
-      style={styles.emptyState}
-    >
+    <View testID='create-group-empty-state' style={styles.emptyState}>
       <Ionicons
-        name="people-outline"
+        name='people-outline'
         size={48}
         color={theme.colors.textSecondary}
         style={styles.emptyIcon}
@@ -260,22 +272,25 @@ export function CreateGroupScreen() {
     </View>
   );
 
-  const canCreateGroup = groupCreationState.title.trim().length > 0 && 
-                        groupCreationState.selectedMembers.length >= 2;
+  const canCreateGroup =
+    groupCreationState.title.trim().length > 0 &&
+    groupCreationState.selectedMembers.length >= 2;
 
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[styles.header, { backgroundColor: theme.colors.background }]}
+      >
         <TouchableOpacity
-          testID="back-button"
+          testID='back-button'
           style={styles.backButton}
           onPress={handleBack}
         >
           <Ionicons
-            name="arrow-back"
+            name='arrow-back'
             size={24}
             color={theme.colors.textPrimary}
           />
@@ -284,19 +299,20 @@ export function CreateGroupScreen() {
           New Group
         </Text>
         <TouchableOpacity
-          testID="create-group-done-button"
+          testID='create-group-done-button'
           style={[
             styles.doneButton,
-            { backgroundColor: canCreateGroup ? theme.colors.primary : theme.colors.disabled },
+            {
+              backgroundColor: canCreateGroup
+                ? theme.colors.primary
+                : theme.colors.disabled,
+            },
           ]}
           onPress={handleCreateGroup}
           disabled={!canCreateGroup || isCreatingGroup}
         >
           {isCreatingGroup ? (
-            <ActivityIndicator
-              size="small"
-              color={theme.colors.background}
-            />
+            <ActivityIndicator size='small' color={theme.colors.background} />
           ) : (
             <Text
               style={[
@@ -311,12 +327,17 @@ export function CreateGroupScreen() {
       </View>
 
       {/* Group Name Input */}
-      <View style={[styles.inputSection, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[
+          styles.inputSection,
+          { backgroundColor: theme.colors.background },
+        ]}
+      >
         <Text style={[styles.inputLabel, { color: theme.colors.textPrimary }]}>
           Group Name
         </Text>
         <TextInput
-          testID="group-name-input"
+          testID='group-name-input'
           style={[
             styles.input,
             {
@@ -325,7 +346,7 @@ export function CreateGroupScreen() {
               borderColor: theme.colors.border,
             },
           ]}
-          placeholder="Enter group name..."
+          placeholder='Enter group name...'
           placeholderTextColor={theme.colors.textSecondary}
           value={groupCreationState.title}
           onChangeText={setGroupTitle}
@@ -336,18 +357,30 @@ export function CreateGroupScreen() {
 
       {/* Selected Members Count */}
       {groupCreationState.selectedMembers.length > 0 && (
-        <View style={[styles.selectedSection, { backgroundColor: theme.colors.surface }]}>
+        <View
+          style={[
+            styles.selectedSection,
+            { backgroundColor: theme.colors.surface },
+          ]}
+        >
           <Text
-            testID="selected-count"
+            testID='selected-count'
             style={[styles.selectedText, { color: theme.colors.textPrimary }]}
           >
-            {groupCreationState.selectedMembers.length} member{groupCreationState.selectedMembers.length === 1 ? '' : 's'} selected
+            {groupCreationState.selectedMembers.length} member
+            {groupCreationState.selectedMembers.length === 1 ? '' : 's'}{' '}
+            selected
           </Text>
         </View>
       )}
 
       {/* Search Bar */}
-      <View style={[styles.searchSection, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[
+          styles.searchSection,
+          { backgroundColor: theme.colors.background },
+        ]}
+      >
         <View
           style={[
             styles.searchBar,
@@ -358,18 +391,15 @@ export function CreateGroupScreen() {
           ]}
         >
           <Ionicons
-            name="search"
+            name='search'
             size={20}
             color={theme.colors.textSecondary}
             style={styles.searchIcon}
           />
           <TextInput
-            testID="friend-search-input"
-            style={[
-              styles.searchInput,
-              { color: theme.colors.textPrimary },
-            ]}
-            placeholder="Search friends..."
+            testID='friend-search-input'
+            style={[styles.searchInput, { color: theme.colors.textPrimary }]}
+            placeholder='Search friends...'
             placeholderTextColor={theme.colors.textSecondary}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -379,7 +409,7 @@ export function CreateGroupScreen() {
 
       {/* Friends List */}
       <FlatList
-        testID="friends-list"
+        testID='friends-list'
         data={filteredFriends}
         keyExtractor={item => item.uid}
         renderItem={renderFriendItem}
@@ -391,10 +421,7 @@ export function CreateGroupScreen() {
       {/* Loading Indicator */}
       {isLoadingFriends && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator
-            size="large"
-            color={theme.colors.primary}
-          />
+          <ActivityIndicator size='large' color={theme.colors.primary} />
         </View>
       )}
     </SafeAreaView>
@@ -552,4 +579,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.8)',
   },
-}); 
+});

@@ -22,6 +22,7 @@ import {
   connectStorageEmulator,
 } from 'firebase/storage';
 import { Platform } from 'react-native';
+
 import { isDev } from '../../utils/isDev';
 
 // Firebase configuration from environment variables

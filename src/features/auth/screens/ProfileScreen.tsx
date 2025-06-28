@@ -6,7 +6,7 @@
 
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { resolveMediaUrl } from '../../../shared/utils/resolveMediaUrl';
+import { chatService } from '../../chat/services/chatService';
 import { useAuthStore, useAuthUser } from '../store/authStore';
 
 import type { RootStackParamList } from '../../../shared/navigation/types';
@@ -34,13 +35,42 @@ type ProfileScreenProps = NativeStackScreenProps<RootStackParamList, 'Profile'>;
 export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
   const theme = useTheme();
   const currentUser = useAuthUser();
+  const [profileUser, setProfileUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Get user ID from route params, default to current user
   const userId = route.params?.userId || currentUser?.uid;
+  const isOwnProfile = userId === currentUser?.uid;
 
-  // For now, only support viewing own profile (can be extended later for other users)
-  const user = currentUser;
-  const isOwnProfile = true;
+  // Fetch user data
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!userId) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        if (isOwnProfile && currentUser) {
+          // Use current user data if viewing own profile
+          setProfileUser(currentUser);
+        } else {
+          // Fetch other user's data
+          const userData = await chatService.getUserData(userId);
+          setProfileUser(userData);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+        setProfileUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [userId, isOwnProfile, currentUser]);
+
+  const user = profileUser;
 
   console.log('👤 ProfileScreen: Viewing profile:', {
     userId,
@@ -170,6 +200,39 @@ export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
       textAlign: 'center',
     },
   });
+
+  if (isLoading) {
+    return (
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
+        <View
+          style={[styles.header, { borderBottomColor: theme.colors.border }]}
+        >
+          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+            <Ionicons
+              name='chevron-back'
+              size={24}
+              color={theme.colors.primary}
+            />
+            <Text
+              style={[styles.backButtonText, { color: theme.colors.primary }]}
+            >
+              Back
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.centered}>
+          <Text
+            style={[styles.errorText, { color: theme.colors.textSecondary }]}
+          >
+            Loading...
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   if (!user) {
     return (

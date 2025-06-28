@@ -166,11 +166,11 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
                 style={styles.avatarImage}
               />
             ) : (
-              <Ionicons
-                name='person'
-                size={24}
-                color={theme.colors.textSecondary}
-              />
+              <Text style={[styles.avatarText, { color: theme.colors.text }]}>
+                {item.displayName?.charAt(0)?.toUpperCase() ||
+                  item.username?.charAt(0)?.toUpperCase() ||
+                  '?'}
+              </Text>
             )}
           </View>
 
@@ -283,7 +283,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
             { backgroundColor: theme.colors.surface },
           ]}
           onPress={() => navigation.navigate('FriendRequests')}
-          testID="requests-button"
+          testID='requests-button'
         >
           <Ionicons name='mail' size={20} color={theme.colors.text} />
           <Text style={[styles.requestsText, { color: theme.colors.text }]}>
@@ -435,6 +435,10 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
+  },
+  avatarText: {
+    fontSize: 20,
+    fontWeight: '600',
   },
   friendInfo: {
     flex: 1,

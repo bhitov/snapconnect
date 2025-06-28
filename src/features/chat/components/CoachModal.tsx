@@ -4,13 +4,8 @@
  */
 
 import React from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
+
 import { useTheme } from '@/shared/hooks/useTheme';
 
 interface CoachModalProps {
@@ -19,7 +14,11 @@ interface CoachModalProps {
   onOptionSelect: (option: 'ratio' | 'horsemen' | 'lovemap') => void;
 }
 
-export function CoachModal({ visible, onClose, onOptionSelect }: CoachModalProps) {
+export function CoachModal({
+  visible,
+  onClose,
+  onOptionSelect,
+}: CoachModalProps) {
   const theme = useTheme();
 
   const handleOptionPress = (option: 'ratio' | 'horsemen' | 'lovemap') => {
@@ -31,17 +30,24 @@ export function CoachModal({ visible, onClose, onOptionSelect }: CoachModalProps
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType='fade'
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={[styles.modal, { backgroundColor: theme.colors.background }]}>
+        <View
+          style={[styles.modal, { backgroundColor: theme.colors.background }]}
+        >
           <View style={styles.header}>
             <Text style={[styles.title, { color: theme.colors.text }]}>
               Coach Analysis
             </Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Text style={[styles.closeText, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.closeText,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 ✕
               </Text>
             </TouchableOpacity>
@@ -53,14 +59,23 @@ export function CoachModal({ visible, onClose, onOptionSelect }: CoachModalProps
               onPress={() => handleOptionPress('ratio')}
               activeOpacity={0.7}
             >
-              <Text style={[styles.optionIcon, { color: theme.colors.primary }]}>
+              <Text
+                style={[styles.optionIcon, { color: theme.colors.primary }]}
+              >
                 📊
               </Text>
               <View style={styles.optionContent}>
-                <Text style={[styles.optionTitle, { color: theme.colors.text }]}>
+                <Text
+                  style={[styles.optionTitle, { color: theme.colors.text }]}
+                >
                   Positive/Negative Ratio
                 </Text>
-                <Text style={[styles.optionDescription, { color: theme.colors.textSecondary }]}>
+                <Text
+                  style={[
+                    styles.optionDescription,
+                    { color: theme.colors.textSecondary },
+                  ]}
+                >
                   Analyze the balance of positive vs negative interactions
                 </Text>
               </View>
@@ -71,14 +86,23 @@ export function CoachModal({ visible, onClose, onOptionSelect }: CoachModalProps
               onPress={() => handleOptionPress('horsemen')}
               activeOpacity={0.7}
             >
-              <Text style={[styles.optionIcon, { color: theme.colors.primary }]}>
+              <Text
+                style={[styles.optionIcon, { color: theme.colors.primary }]}
+              >
                 ⚠️
               </Text>
               <View style={styles.optionContent}>
-                <Text style={[styles.optionTitle, { color: theme.colors.text }]}>
+                <Text
+                  style={[styles.optionTitle, { color: theme.colors.text }]}
+                >
                   Four Horsemen Analysis
                 </Text>
-                <Text style={[styles.optionDescription, { color: theme.colors.textSecondary }]}>
+                <Text
+                  style={[
+                    styles.optionDescription,
+                    { color: theme.colors.textSecondary },
+                  ]}
+                >
                   Identify criticism, contempt, and defensiveness patterns
                 </Text>
               </View>
@@ -89,14 +113,23 @@ export function CoachModal({ visible, onClose, onOptionSelect }: CoachModalProps
               onPress={() => handleOptionPress('lovemap')}
               activeOpacity={0.7}
             >
-              <Text style={[styles.optionIcon, { color: theme.colors.primary }]}>
+              <Text
+                style={[styles.optionIcon, { color: theme.colors.primary }]}
+              >
                 💕
               </Text>
               <View style={styles.optionContent}>
-                <Text style={[styles.optionTitle, { color: theme.colors.text }]}>
+                <Text
+                  style={[styles.optionTitle, { color: theme.colors.text }]}
+                >
                   Love Map Questions
                 </Text>
-                <Text style={[styles.optionDescription, { color: theme.colors.textSecondary }]}>
+                <Text
+                  style={[
+                    styles.optionDescription,
+                    { color: theme.colors.textSecondary },
+                  ]}
+                >
                   Discover topics to deepen your connection
                 </Text>
               </View>

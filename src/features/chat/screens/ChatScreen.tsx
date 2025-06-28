@@ -26,10 +26,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { useTheme } from '@/shared/hooks/useTheme';
+
 import { CoachModal } from '../components/CoachModal';
 import { LoveMapMessage } from '../components/LoveMapMessage';
-
 import { usePolling } from '../hooks';
+import { chatService } from '../services/chatService';
 import {
   useChatStore,
   useCurrentMessages,
@@ -48,8 +49,8 @@ import type {
   ChatStackParamList,
   RootStackParamList,
 } from '@/shared/navigation/types';
-import type { StackNavigationProp } from '@react-navigation/stack';
 import type { CompositeNavigationProp } from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
 
 type ChatScreenRouteProp = {
   key: string;
@@ -134,6 +135,8 @@ function MessageItem({
   onSendLoveMapQuestion,
   currentUser,
   otherUser,
+  isGroup,
+  senderData,
 }: {
   message: Message;
   isFromCurrentUser: boolean;
@@ -142,6 +145,8 @@ function MessageItem({
   onSendLoveMapQuestion?: (question: string) => void;
   currentUser?: any;
   otherUser?: any;
+  isGroup?: boolean;
+  senderData?: any;
 }) {
   const theme = useTheme();
   const isCoachMessage = isCoachChat && message.senderId === 'coach';
@@ -151,16 +156,33 @@ function MessageItem({
     if (isCoachMessage) {
       return { text: '🎓', photoURL: null };
     }
-    
+
     if (isFromCurrentUser) {
       return {
-        text: currentUser?.displayName?.charAt(0)?.toUpperCase() || currentUser?.username?.charAt(0)?.toUpperCase() || '?',
-        photoURL: currentUser?.photoURL
+        text:
+          currentUser?.displayName?.charAt(0)?.toUpperCase() ||
+          currentUser?.username?.charAt(0)?.toUpperCase() ||
+          '?',
+        photoURL: currentUser?.photoURL,
       };
     } else {
+      // In group chats, use sender data if available
+      if (isGroup && senderData) {
+        return {
+          text:
+            senderData.displayName?.charAt(0)?.toUpperCase() ||
+            senderData.username?.charAt(0)?.toUpperCase() ||
+            '?',
+          photoURL: senderData.photoURL,
+        };
+      }
+      // In one-on-one chats, use otherUser
       return {
-        text: otherUser?.displayName?.charAt(0)?.toUpperCase() || '?',
-        photoURL: otherUser?.photoURL
+        text:
+          otherUser?.displayName?.charAt(0)?.toUpperCase() ||
+          otherUser?.username?.charAt(0)?.toUpperCase() ||
+          '?',
+        photoURL: otherUser?.photoURL,
       };
     }
   };
@@ -176,7 +198,7 @@ function MessageItem({
   const renderMessageContent = () => {
     if (message.type === 'text') {
       const textMessage = message as TextMessage;
-      
+
       // Use special LoveMapMessage component for coach messages
       if (isCoachMessage && onSendLoveMapQuestion) {
         return (
@@ -186,7 +208,7 @@ function MessageItem({
           />
         );
       }
-      
+
       return (
         <Text
           style={[
@@ -262,14 +284,24 @@ function MessageItem({
       {/* Avatar for all messages */}
       {!isFromCurrentUser && (
         <View style={styles.avatarContainer}>
-          <View style={[styles.messageAvatar, { backgroundColor: theme.colors.primary }]}>
-            <Text style={[styles.messageAvatarText, { color: theme.colors.background }]}>
+          <View
+            style={[
+              styles.messageAvatar,
+              { backgroundColor: theme.colors.primary },
+            ]}
+          >
+            <Text
+              style={[
+                styles.messageAvatarText,
+                { color: theme.colors.background },
+              ]}
+            >
               {avatarInfo.text}
             </Text>
           </View>
         </View>
       )}
-      
+
       <View
         style={[
           styles.messageBubble,
@@ -277,8 +309,8 @@ function MessageItem({
             backgroundColor: isCoachMessage
               ? '#E8F4F8'
               : isFromCurrentUser
-              ? theme.colors.primary
-              : theme.colors.surface,
+                ? theme.colors.primary
+                : theme.colors.surface,
           },
         ]}
       >
@@ -308,12 +340,22 @@ function MessageItem({
           )}
         </View>
       </View>
-      
+
       {/* Avatar for current user messages */}
       {isFromCurrentUser && (
         <View style={styles.avatarContainer}>
-          <View style={[styles.messageAvatar, { backgroundColor: theme.colors.primary }]}>
-            <Text style={[styles.messageAvatarText, { color: theme.colors.background }]}>
+          <View
+            style={[
+              styles.messageAvatar,
+              { backgroundColor: theme.colors.primary },
+            ]}
+          >
+            <Text
+              style={[
+                styles.messageAvatarText,
+                { color: theme.colors.background },
+              ]}
+            >
               {avatarInfo.text}
             </Text>
           </View>
@@ -331,7 +373,15 @@ export function ChatScreen() {
   const navigation = useNavigation<ChatScreenNavigationProp>();
   const theme = useTheme();
 
-  const { conversationId, otherUser, isGroup, groupTitle, isCoach, parentCid, coachChatId } = route.params;
+  const {
+    conversationId,
+    otherUser,
+    isGroup,
+    groupTitle,
+    isCoach,
+    parentCid,
+    coachChatId,
+  } = route.params;
 
   // Auth state
   const currentUser = useAuthStore(state => state.user);
@@ -365,6 +415,9 @@ export function ChatScreen() {
   const [showCoachModal, setShowCoachModal] = useState(false);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [groupMembersData, setGroupMembersData] = useState<Record<string, any>>(
+    {}
+  );
   const flatListRef = useRef<FlatList>(null);
 
   /**
@@ -407,17 +460,48 @@ export function ChatScreen() {
   );
 
   /**
+   * Fetch group members data when in a group chat
+   */
+  useEffect(() => {
+    if (isGroup && messages.length > 0) {
+      const fetchGroupMembersData = async () => {
+        const uniqueSenderIds = [...new Set(messages.map(m => m.senderId))];
+        const membersData: Record<string, any> = {};
+
+        for (const senderId of uniqueSenderIds) {
+          if (!groupMembersData[senderId]) {
+            try {
+              const userData = await chatService.getUserData(senderId);
+              if (userData) {
+                membersData[senderId] = userData;
+              }
+            } catch (error) {
+              console.error('Failed to fetch user data for:', senderId, error);
+            }
+          }
+        }
+
+        if (Object.keys(membersData).length > 0) {
+          setGroupMembersData(prev => ({ ...prev, ...membersData }));
+        }
+      };
+
+      fetchGroupMembersData();
+    }
+  }, [isGroup, messages]);
+
+  /**
    * Handle coach button press
    */
   const handleCoachPress = useCallback(async () => {
     try {
       let coachCid = coachChatId;
-      
+
       // If no coach chat exists, create one
       if (!coachCid) {
         coachCid = await startCoachChat(conversationId);
       }
-      
+
       // Navigate to coach chat
       navigation.navigate('ChatScreen', {
         conversationId: coachCid,
@@ -432,26 +516,29 @@ export function ChatScreen() {
   /**
    * Handle coach analysis option selection
    */
-  const handleCoachAnalysis = useCallback(async (option: 'ratio' | 'horsemen' | 'lovemap') => {
-    try {
-      switch (option) {
-        case 'ratio':
-          await analyzeRatio(conversationId, parentCid || '');
-          console.log('✅ Ratio analysis completed');
-          break;
-        case 'horsemen':
-          await analyzeHorsemen(conversationId, parentCid || '');
-          console.log('✅ Horsemen analysis completed');
-          break;
-        case 'lovemap':
-          await generateLoveMap(conversationId, parentCid || '');
-          console.log('✅ Love map generated');
-          break;
+  const handleCoachAnalysis = useCallback(
+    async (option: 'ratio' | 'horsemen' | 'lovemap') => {
+      try {
+        switch (option) {
+          case 'ratio':
+            await analyzeRatio(conversationId, parentCid || '');
+            console.log('✅ Ratio analysis completed');
+            break;
+          case 'horsemen':
+            await analyzeHorsemen(conversationId, parentCid || '');
+            console.log('✅ Horsemen analysis completed');
+            break;
+          case 'lovemap':
+            await generateLoveMap(conversationId, parentCid || '');
+            console.log('✅ Love map generated');
+            break;
+        }
+      } catch (error) {
+        console.error('❌ Failed to perform coach analysis:', error);
       }
-    } catch (error) {
-      console.error('❌ Failed to perform coach analysis:', error);
-    }
-  }, [conversationId, parentCid, analyzeRatio, analyzeHorsemen, generateLoveMap]);
+    },
+    [conversationId, parentCid, analyzeRatio, analyzeHorsemen, generateLoveMap]
+  );
 
   /**
    * Handle analyze chat (legacy function for old analyze option)
@@ -471,10 +558,10 @@ export function ChatScreen() {
   useEffect(() => {
     const title = isCoach
       ? 'Coach Chat'
-      : isGroup 
-      ? (groupTitle || 'Group Chat')
-      : (otherUser?.displayName || 'Chat');
-      
+      : isGroup
+        ? groupTitle || 'Group Chat'
+        : otherUser?.displayName || 'Chat';
+
     navigation.setOptions({
       title,
       headerTitleStyle: {
@@ -485,39 +572,44 @@ export function ChatScreen() {
       },
       headerBackTitle: isCoach ? 'Chat' : 'Chats',
       headerTintColor: theme.colors.primary || '#FFFC00',
-      ...(isCoach && parentCid && {
-        headerLeft: () => (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('ChatScreen', {
-                conversationId: parentCid,
-                isCoach: false,
-              });
-            }}
-            style={{ 
-              flexDirection: 'row', 
-              alignItems: 'center', 
-              marginLeft: 16,
-              paddingVertical: 8,
-              paddingHorizontal: 4,
-            }}
-          >
-            <Text style={{ 
-              fontSize: 17, 
-              color: theme.colors.primary || '#FFFC00',
-              marginRight: 4,
-            }}>
-              ←
-            </Text>
-            <Text style={{ 
-              fontSize: 17, 
-              color: theme.colors.primary || '#FFFC00',
-            }}>
-              Chat
-            </Text>
-          </TouchableOpacity>
-        ),
-      }),
+      ...(isCoach &&
+        parentCid && {
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('ChatScreen', {
+                  conversationId: parentCid,
+                  isCoach: false,
+                });
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginLeft: 16,
+                paddingVertical: 8,
+                paddingHorizontal: 4,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 17,
+                  color: theme.colors.primary || '#FFFC00',
+                  marginRight: 4,
+                }}
+              >
+                ←
+              </Text>
+              <Text
+                style={{
+                  fontSize: 17,
+                  color: theme.colors.primary || '#FFFC00',
+                }}
+              >
+                Chat
+              </Text>
+            </TouchableOpacity>
+          ),
+        }),
       // Add Coach button for non-coach conversations, menu for coach chats
       headerRight: () => {
         if (isCoach) {
@@ -527,17 +619,21 @@ export function ChatScreen() {
               onPress={() => setShowCoachModal(true)}
               style={{ marginRight: 16 }}
             >
-              <View style={{
-                backgroundColor: theme.colors.primary,
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 6,
-              }}>
-                <Text style={{ 
-                  color: theme.colors.background,
-                  fontSize: 14,
-                  fontWeight: '600',
-                }}>
+              <View
+                style={{
+                  backgroundColor: theme.colors.primary,
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 6,
+                }}
+              >
+                <Text
+                  style={{
+                    color: theme.colors.background,
+                    fontSize: 14,
+                    fontWeight: '600',
+                  }}
+                >
                   Prompts
                 </Text>
               </View>
@@ -556,7 +652,16 @@ export function ChatScreen() {
         }
       },
     });
-  }, [navigation, otherUser?.displayName, isGroup, groupTitle, theme, isCoach, handleCoachPress, handleAnalyzeChat]);
+  }, [
+    navigation,
+    otherUser?.displayName,
+    isGroup,
+    groupTitle,
+    theme,
+    isCoach,
+    handleCoachPress,
+    handleAnalyzeChat,
+  ]);
 
   /**
    * Scroll to bottom when new messages arrive
@@ -566,9 +671,9 @@ export function ChatScreen() {
       // Only scroll on new messages after initial load
       setTimeout(() => {
         // With inverted list, offset 0 is the bottom
-        flatListRef.current?.scrollToOffset({ 
-          offset: 0, 
-          animated: true 
+        flatListRef.current?.scrollToOffset({
+          offset: 0,
+          animated: true,
         });
       }, 100);
     }
@@ -663,40 +768,43 @@ export function ChatScreen() {
   /**
    * Handle sending love map question to parent conversation
    */
-  const handleSendLoveMapQuestion = useCallback(async (question: string) => {
-    if (!parentCid || !currentUser) return;
+  const handleSendLoveMapQuestion = useCallback(
+    async (question: string) => {
+      if (!parentCid || !currentUser) return;
 
-    try {
-      // Send the question to the parent conversation
-      await sendTextMessage({
-        text: question,
-        conversationId: parentCid,
-      });
+      try {
+        // Send the question to the parent conversation
+        await sendTextMessage({
+          text: question,
+          conversationId: parentCid,
+        });
 
-      console.log('✅ Love map question sent to parent conversation');
-      
-      // Navigate back to parent chat and scroll to bottom
-      navigation.navigate('ChatScreen', {
-        conversationId: parentCid,
-        isCoach: false,
-      });
-      
-      // Load messages and scroll to bottom after navigation
-      setTimeout(async () => {
-        await loadMessages(parentCid);
-        setTimeout(() => {
-          // With inverted list, offset 0 is the bottom
-          flatListRef.current?.scrollToOffset({ 
-            offset: 0, 
-            animated: true 
-          });
-        }, 100);
-      }, 200);
-    } catch (error) {
-      console.error('❌ Failed to send love map question:', error);
-      Alert.alert('Error', 'Failed to send question. Please try again.');
-    }
-  }, [parentCid, currentUser, sendTextMessage, navigation, loadMessages]);
+        console.log('✅ Love map question sent to parent conversation');
+
+        // Navigate back to parent chat and scroll to bottom
+        navigation.navigate('ChatScreen', {
+          conversationId: parentCid,
+          isCoach: false,
+        });
+
+        // Load messages and scroll to bottom after navigation
+        setTimeout(async () => {
+          await loadMessages(parentCid);
+          setTimeout(() => {
+            // With inverted list, offset 0 is the bottom
+            flatListRef.current?.scrollToOffset({
+              offset: 0,
+              animated: true,
+            });
+          }, 100);
+        }, 200);
+      } catch (error) {
+        console.error('❌ Failed to send love map question:', error);
+        Alert.alert('Error', 'Failed to send question. Please try again.');
+      }
+    },
+    [parentCid, currentUser, sendTextMessage, navigation, loadMessages]
+  );
 
   /**
    * Handle camera button press
@@ -729,9 +837,9 @@ export function ChatScreen() {
    */
   const scrollToBottom = useCallback(() => {
     // With inverted FlatList, scrollToOffset 0 goes to bottom
-    flatListRef.current?.scrollToOffset({ 
-      offset: 0, 
-      animated: true 
+    flatListRef.current?.scrollToOffset({
+      offset: 0,
+      animated: true,
     });
     setShowScrollToBottom(false);
   }, []);
@@ -761,13 +869,29 @@ export function ChatScreen() {
           isFromCurrentUser={isFromCurrentUser}
           onSnapPress={handleSnapPress}
           isCoachChat={isCoach || false}
-          onSendLoveMapQuestion={isCoach ? handleSendLoveMapQuestion : undefined}
+          onSendLoveMapQuestion={
+            isCoach ? handleSendLoveMapQuestion : undefined
+          }
           currentUser={currentUser}
           otherUser={otherUser}
+          isGroup={isGroup}
+          senderData={
+            isGroup && !isFromCurrentUser
+              ? groupMembersData[item.senderId]
+              : undefined
+          }
         />
       );
     },
-    [currentUser, otherUser, handleSnapPress, isCoach, handleSendLoveMapQuestion]
+    [
+      currentUser,
+      otherUser,
+      handleSnapPress,
+      isCoach,
+      handleSendLoveMapQuestion,
+      isGroup,
+      groupMembersData,
+    ]
   );
 
   if (isLoading && messages.length === 0) {
@@ -863,17 +987,12 @@ export function ChatScreen() {
           <TouchableOpacity
             style={[
               styles.scrollToBottomButton,
-              { backgroundColor: '#6B73FF' } // Distinct purple color
+              { backgroundColor: '#6B73FF' }, // Distinct purple color
             ]}
             onPress={scrollToBottom}
             activeOpacity={0.7}
           >
-            <Text
-              style={[
-                styles.scrollToBottomText,
-                { color: '#FFFFFF' }
-              ]}
-            >
+            <Text style={[styles.scrollToBottomText, { color: '#FFFFFF' }]}>
               ↓
             </Text>
           </TouchableOpacity>
@@ -920,7 +1039,7 @@ export function ChatScreen() {
             multiline
             maxLength={500}
             editable={!isSending}
-            testID="message-input"
+            testID='message-input'
           />
 
           <TouchableOpacity
@@ -936,7 +1055,7 @@ export function ChatScreen() {
             onPress={handleSendMessage}
             disabled={!messageText.trim() || isSending}
             activeOpacity={0.7}
-            testID="send-button"
+            testID='send-button'
           >
             <Text
               style={[

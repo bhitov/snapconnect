@@ -4,6 +4,7 @@
  * Displays group chats with unread counts and creation abilities.
  */
 
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import React, { useEffect, useCallback } from 'react';
 import {
@@ -16,7 +17,6 @@ import {
   SafeAreaView,
   Image,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 // Note: Using Image instead of ProfileAvatar since that's for current user
 import { useTheme } from '@/shared/hooks/useTheme';
@@ -129,7 +129,7 @@ export function GroupsScreen() {
   const handleGroupPress = useCallback(
     (conversation: ConversationWithUser) => {
       console.log('Group info pressed:', conversation.id);
-      
+
       // Navigate to GroupInfo screen
       navigation.navigate('GroupInfo', {
         groupId: conversation.groupId || conversation.id,
@@ -146,7 +146,7 @@ export function GroupsScreen() {
       // Stop event propagation to prevent group press
       event.stopPropagation();
       console.log('Chat bubble pressed:', conversation.id);
-      
+
       // Navigate to ChatScreen in the Chats tab (nested navigator navigation)
       navigation.navigate('Chats', {
         screen: 'ChatScreen',
@@ -186,15 +186,15 @@ export function GroupsScreen() {
           onPress={() => handleGroupPress(conversation)}
           activeOpacity={0.7}
         >
-                     {/* Group Avatar */}
-           <View style={styles.avatarContainer}>
-             {conversation.avatarUrl ? (
-               <Image
-                 source={{ uri: conversation.avatarUrl }}
-                 style={styles.groupAvatar}
-                 testID={`group-avatar-${conversation.id}`}
-               />
-             ) : (
+          {/* Group Avatar */}
+          <View style={styles.avatarContainer}>
+            {conversation.avatarUrl ? (
+              <Image
+                source={{ uri: conversation.avatarUrl }}
+                style={styles.groupAvatar}
+                testID={`group-avatar-${conversation.id}`}
+              />
+            ) : (
               <View
                 testID={`group-default-avatar-${conversation.id}`}
                 style={[
@@ -203,7 +203,7 @@ export function GroupsScreen() {
                 ]}
               >
                 <Ionicons
-                  name="people"
+                  name='people'
                   size={24}
                   color={theme.colors.background}
                 />
@@ -217,8 +217,15 @@ export function GroupsScreen() {
                   { backgroundColor: theme.colors.primary },
                 ]}
               >
-                <Text style={[styles.unreadCount, { color: theme.colors.background }]}>
-                  {conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
+                <Text
+                  style={[
+                    styles.unreadCount,
+                    { color: theme.colors.background },
+                  ]}
+                >
+                  {conversation.unreadCount > 99
+                    ? '99+'
+                    : conversation.unreadCount}
                 </Text>
               </View>
             )}
@@ -244,7 +251,10 @@ export function GroupsScreen() {
                   style={[
                     styles.timestamp,
                     { color: theme.colors.textSecondary },
-                    hasUnread && [styles.unreadText, { color: theme.colors.primary }],
+                    hasUnread && [
+                      styles.unreadText,
+                      { color: theme.colors.primary },
+                    ],
                   ]}
                 >
                   {formatTimestamp(lastMessage.createdAt)}
@@ -259,15 +269,18 @@ export function GroupsScreen() {
                 style={[
                   styles.lastMessage,
                   { color: theme.colors.textSecondary },
-                  hasUnread && [styles.unreadText, { color: theme.colors.textPrimary }],
+                  hasUnread && [
+                    styles.unreadText,
+                    { color: theme.colors.textPrimary },
+                  ],
                 ]}
                 numberOfLines={1}
               >
                 {lastMessage.type === 'text'
                   ? lastMessage.text
                   : lastMessage.type === 'snap'
-                  ? `📸 ${lastMessage.mediaType === 'photo' ? 'Photo' : 'Video'}`
-                  : 'Message'}
+                    ? `📸 ${lastMessage.mediaType === 'photo' ? 'Photo' : 'Video'}`
+                    : 'Message'}
               </Text>
             )}
           </View>
@@ -275,12 +288,15 @@ export function GroupsScreen() {
           {/* Chat Bubble Button */}
           <TouchableOpacity
             testID={`group-chat-button-${conversation.id}`}
-            style={[styles.chatBubble, { backgroundColor: theme.colors.primary }]}
-            onPress={(event) => handleChatPress(conversation, event)}
+            style={[
+              styles.chatBubble,
+              { backgroundColor: theme.colors.primary },
+            ]}
+            onPress={event => handleChatPress(conversation, event)}
             activeOpacity={0.7}
           >
             <Ionicons
-              name="chatbubble"
+              name='chatbubble'
               size={20}
               color={theme.colors.background}
             />
@@ -296,11 +312,11 @@ export function GroupsScreen() {
    */
   const renderEmptyState = () => (
     <View
-      testID="groups-empty-state"
+      testID='groups-empty-state'
       style={[styles.emptyState, { backgroundColor: theme.colors.background }]}
     >
       <Ionicons
-        name="people-outline"
+        name='people-outline'
         size={64}
         color={theme.colors.textSecondary}
         style={styles.emptyIcon}
@@ -308,15 +324,19 @@ export function GroupsScreen() {
       <Text style={[styles.emptyTitle, { color: theme.colors.textPrimary }]}>
         No Groups Yet
       </Text>
-      <Text style={[styles.emptySubtitle, { color: theme.colors.textSecondary }]}>
+      <Text
+        style={[styles.emptySubtitle, { color: theme.colors.textSecondary }]}
+      >
         Create a group to chat with multiple friends at once
       </Text>
       <TouchableOpacity
-        testID="create-first-group-button"
+        testID='create-first-group-button'
         style={[styles.createButton, { backgroundColor: theme.colors.primary }]}
         onPress={handleCreateGroup}
       >
-        <Text style={[styles.createButtonText, { color: theme.colors.background }]}>
+        <Text
+          style={[styles.createButtonText, { color: theme.colors.background }]}
+        >
           Create Your First Group
         </Text>
       </TouchableOpacity>
@@ -331,22 +351,24 @@ export function GroupsScreen() {
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <View
-          testID="groups-error-state"
-          style={styles.errorState}
-        >
+        <View testID='groups-error-state' style={styles.errorState}>
           <Text style={[styles.errorText, { color: theme.colors.error }]}>
             Error: {error}
           </Text>
           <TouchableOpacity
-            testID="retry-button"
-            style={[styles.retryButton, { backgroundColor: theme.colors.primary }]}
+            testID='retry-button'
+            style={[
+              styles.retryButton,
+              { backgroundColor: theme.colors.primary },
+            ]}
             onPress={() => {
               clearError();
               loadConversations();
             }}
           >
-            <Text style={[styles.retryText, { color: theme.colors.background }]}>
+            <Text
+              style={[styles.retryText, { color: theme.colors.background }]}
+            >
               Retry
             </Text>
           </TouchableOpacity>
@@ -367,17 +389,20 @@ export function GroupsScreen() {
           Groups
         </Text>
         <TouchableOpacity
-          testID="create-group-button"
-          style={[styles.createGroupButton, { backgroundColor: theme.colors.primary }]}
+          testID='create-group-button'
+          style={[
+            styles.createGroupButton,
+            { backgroundColor: theme.colors.primary },
+          ]}
           onPress={handleCreateGroup}
         >
-          <Ionicons name="add" size={20} color={theme.colors.background} />
+          <Ionicons name='add' size={20} color={theme.colors.background} />
         </TouchableOpacity>
       </View>
 
       {/* Groups List */}
       <FlatList
-        testID="groups-list"
+        testID='groups-list'
         data={groupConversations}
         keyExtractor={item => item.id}
         renderItem={renderGroupItem}
@@ -550,4 +575,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 12,
   },
-}); 
+});

@@ -40,10 +40,12 @@ export type AuthStackParamList = {
 };
 
 export type MainTabParamList = {
-  Chats: undefined | {
-    screen: keyof ChatStackParamList;
-    params?: ChatStackParamList[keyof ChatStackParamList];
-  };
+  Chats:
+    | undefined
+    | {
+        screen: keyof ChatStackParamList;
+        params?: ChatStackParamList[keyof ChatStackParamList];
+      };
   Camera: undefined;
   Friends: undefined;
   Stories: undefined;

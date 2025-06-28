@@ -4,6 +4,7 @@
  * Confirms that the upload worked correctly by displaying the uploaded file.
  */
 
+import { Video, ResizeMode } from 'expo-av';
 import {
   View,
   Text,
@@ -12,7 +13,6 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { Video, ResizeMode } from 'expo-av';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -22,24 +22,26 @@ interface UploadedMediaViewerProps {
   onClose: () => void;
 }
 
-export function UploadedMediaViewer({ downloadUrl, mediaType, onClose }: UploadedMediaViewerProps) {
+export function UploadedMediaViewer({
+  downloadUrl,
+  mediaType,
+  onClose,
+}: UploadedMediaViewerProps) {
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerText}>✅ Upload Confirmed</Text>
-        <Text style={styles.subHeaderText}>
-          Viewing from Firebase Storage
-        </Text>
+        <Text style={styles.subHeaderText}>Viewing from Firebase Storage</Text>
       </View>
 
       {/* Media Viewer */}
       <View style={styles.mediaContainer}>
         {mediaType === 'photo' ? (
-          <Image 
-            source={{ uri: downloadUrl }} 
+          <Image
+            source={{ uri: downloadUrl }}
             style={styles.mediaPreview}
-            resizeMode="contain"
+            resizeMode='contain'
           />
         ) : (
           <Video
@@ -55,17 +57,14 @@ export function UploadedMediaViewer({ downloadUrl, mediaType, onClose }: Uploade
       {/* URL Info */}
       <View style={styles.infoContainer}>
         <Text style={styles.infoLabel}>Firebase URL:</Text>
-        <Text style={styles.urlText} numberOfLines={2} ellipsizeMode="middle">
+        <Text style={styles.urlText} numberOfLines={2} ellipsizeMode='middle'>
           {downloadUrl}
         </Text>
       </View>
 
       {/* Controls */}
       <View style={styles.controls}>
-        <TouchableOpacity 
-          style={styles.closeButton} 
-          onPress={onClose}
-        >
+        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
           <Text style={styles.buttonText}>Take Another</Text>
         </TouchableOpacity>
       </View>
@@ -142,4 +141,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-}); 
+});

@@ -189,7 +189,7 @@ export interface CameraState {
 
   // UI state
   controlsVisible: boolean;
-  
+
   // Camera view visibility (for temporary hiding after preview)
   cameraViewVisible: boolean;
   cameraViewDelayTimeout: NodeJS.Timeout | null;
@@ -237,7 +237,7 @@ export interface CameraActions {
   // UI
   toggleControls: () => void;
   setControlsVisible: (visible: boolean) => void;
-  
+
   // Camera view visibility management
   hideCameraViewTemporarily: (delayMs?: number) => void;
   showCameraView: () => void;

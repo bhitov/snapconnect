@@ -4,6 +4,7 @@
  * group settings, and admin actions. Allows viewing and managing group details.
  */
 
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
@@ -13,16 +14,15 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import type { RouteProp, NavigationProp } from '@react-navigation/native';
 
-import { Screen } from '@/shared/components/layout/Screen';
-import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
-import { useTheme } from '@/shared/hooks/useTheme';
-import { useChatStore } from '@/features/chat/store/chatStore';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { useChatStore } from '@/features/chat/store/chatStore';
+import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
+import { Screen } from '@/shared/components/layout/Screen';
+import { useTheme } from '@/shared/hooks/useTheme';
 
 import type { GroupsStackParamList } from '@/shared/navigation/types';
+import type { RouteProp, NavigationProp } from '@react-navigation/native';
 
 type GroupInfoRouteProp = RouteProp<GroupsStackParamList, 'GroupInfo'>;
 type GroupInfoNavigationProp = NavigationProp<GroupsStackParamList>;
@@ -34,15 +34,15 @@ export function GroupInfoScreen() {
   const route = useRoute() as GroupInfoRouteProp;
   const navigation = useNavigation<GroupInfoNavigationProp>();
   const theme = useTheme();
-  
+
   const { groupId } = route.params;
-  
+
   // Auth state
   const currentUser = useAuthStore(state => state.user);
-  
+
   // Local state
   const [isLoading, setIsLoading] = useState(false);
-  
+
   /**
    * Handle manage members
    */
@@ -56,37 +56,40 @@ export function GroupInfoScreen() {
    * Handle leave group
    */
   const handleLeaveGroup = useCallback(() => {
-    Alert.alert(
-      'Leave Group',
-      'Are you sure you want to leave this group?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Leave', 
-          style: 'destructive',
-          onPress: () => {
-            // TODO: Implement leave group functionality
-            console.log('Leave group:', groupId);
-            navigation.goBack();
-          }
+    Alert.alert('Leave Group', 'Are you sure you want to leave this group?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Leave',
+        style: 'destructive',
+        onPress: () => {
+          // TODO: Implement leave group functionality
+          console.log('Leave group:', groupId);
+          navigation.goBack();
         },
-      ]
-    );
+      },
+    ]);
   }, [groupId, navigation]);
 
   return (
-    <Screen testID="group-info-screen">
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <Screen testID='group-info-screen'>
+      <View
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Group Header */}
-          <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
-            <ProfileAvatar 
-              size="large"
-            />
+          <View
+            style={[styles.header, { borderBottomColor: theme.colors.border }]}
+          >
+            <ProfileAvatar size='large' />
             <Text style={[styles.groupTitle, { color: theme.colors.text }]}>
               Group Name {/* TODO: Get from group data */}
             </Text>
-            <Text style={[styles.memberCount, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[
+                styles.memberCount,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
               3 members {/* TODO: Get actual member count */}
             </Text>
           </View>
@@ -94,40 +97,61 @@ export function GroupInfoScreen() {
           {/* Action Buttons */}
           <View style={styles.actions}>
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: theme.colors.primary }]}
+              style={[
+                styles.actionButton,
+                { backgroundColor: theme.colors.primary },
+              ]}
               onPress={handleManageMembers}
-              testID="manage-members-button"
+              testID='manage-members-button'
             >
-              <Text style={[styles.actionButtonText, { color: theme.colors.background }]}>
+              <Text
+                style={[
+                  styles.actionButtonText,
+                  { color: theme.colors.background },
+                ]}
+              >
                 Manage Members
               </Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
-              style={[styles.actionButton, styles.leaveButton, { borderColor: theme.colors.error }]}
+              style={[
+                styles.actionButton,
+                styles.leaveButton,
+                { borderColor: theme.colors.error },
+              ]}
               onPress={handleLeaveGroup}
-              testID="leave-group-button"
+              testID='leave-group-button'
             >
-              <Text style={[styles.actionButtonText, { color: theme.colors.error }]}>
+              <Text
+                style={[styles.actionButtonText, { color: theme.colors.error }]}
+              >
                 Leave Group
               </Text>
             </TouchableOpacity>
           </View>
 
           {/* Members Section */}
-          <View style={[styles.section, { borderTopColor: theme.colors.border }]}>
+          <View
+            style={[styles.section, { borderTopColor: theme.colors.border }]}
+          >
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
               Members
             </Text>
-            
+
             {/* TODO: Render actual members list */}
             <View style={styles.memberItem}>
-              <ProfileAvatar size="medium" />
+              <ProfileAvatar size='medium' />
               <View style={styles.memberInfo}>
                 <Text style={[styles.memberName, { color: theme.colors.text }]}>
                   You
                 </Text>
-                <Text style={[styles.memberRole, { color: theme.colors.textSecondary }]}>
+                <Text
+                  style={[
+                    styles.memberRole,
+                    { color: theme.colors.textSecondary },
+                  ]}
+                >
                   Admin
                 </Text>
               </View>
@@ -205,4 +229,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 2,
   },
-}); 
+});

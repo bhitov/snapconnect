@@ -4,12 +4,8 @@
  */
 
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+
 import { useTheme } from '@/shared/hooks/useTheme';
 
 interface LoveMapMessageProps {
@@ -22,15 +18,23 @@ export function LoveMapMessage({ text, onSendQuestion }: LoveMapMessageProps) {
   const [expandedQuestion, setExpandedQuestion] = useState<string | null>(null);
 
   // Extract question from text (look for "QUESTION: " prefix)
-  const extractQuestion = (text: string): { beforeQuestion: string; question: string; afterQuestion: string } | null => {
+  const extractQuestion = (
+    text: string
+  ): {
+    beforeQuestion: string;
+    question: string;
+    afterQuestion: string;
+  } | null => {
     // Updated regex to better handle numbered lists and ensure clean capture groups
-    const questionMatch = text.match(/(.*?)(?:\d+\.\s*)?QUESTION:\s*(.+?)(?:\n|$)(.*)/s);
+    const questionMatch = text.match(
+      /(.*?)(?:\d+\.\s*)?QUESTION:\s*(.+?)(?:\n|$)(.*)/s
+    );
     if (questionMatch) {
       // Clean up the beforeQuestion text to remove trailing numbers/periods
       let beforeText = questionMatch[1]?.trim() || '';
       // Remove trailing "2." or similar patterns
       beforeText = beforeText.replace(/\n?\d+\.\s*$/, '').trim();
-      
+
       return {
         beforeQuestion: beforeText,
         question: questionMatch[2]?.trim() || '',
@@ -51,22 +55,26 @@ export function LoveMapMessage({ text, onSendQuestion }: LoveMapMessageProps) {
     // No special question formatting needed, render as normal text
     return (
       <View>
-        <Text style={[styles.messageText, { color: '#2C3E50' }]}>
-          {text}
-        </Text>
+        <Text style={[styles.messageText, { color: '#2C3E50' }]}>{text}</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      {questionData.beforeQuestion && questionData.beforeQuestion.length > 0 && (
-        <Text style={[styles.messageText, { color: '#2C3E50' }]}>
-          {questionData.beforeQuestion || 'ABC'}
-        </Text>
-      )}
+      {questionData.beforeQuestion &&
+        questionData.beforeQuestion.length > 0 && (
+          <Text style={[styles.messageText, { color: '#2C3E50' }]}>
+            {questionData.beforeQuestion || 'ABC'}
+          </Text>
+        )}
 
-      <View style={[styles.questionContainer, { borderColor: theme.colors.primary }]}>
+      <View
+        style={[
+          styles.questionContainer,
+          { borderColor: theme.colors.primary },
+        ]}
+      >
         <Text style={[styles.questionText, { color: theme.colors.primary }]}>
           {questionData.question || 'DEF'}
         </Text>
@@ -75,45 +83,46 @@ export function LoveMapMessage({ text, onSendQuestion }: LoveMapMessageProps) {
           onPress={handleSendQuestion}
           activeOpacity={0.7}
         >
-          <Text style={[styles.sendButtonText, { color: theme.colors.background }]}>
+          <Text
+            style={[styles.sendButtonText, { color: theme.colors.background }]}
+          >
             Send Question
           </Text>
         </TouchableOpacity>
       </View>
-
     </View>
-  )
+  );
 
-//   return (
-//     <View style={styles.container}>
-//       {questionData.beforeQuestion && questionData.beforeQuestion.length > 0 && (
-//         <Text style={[styles.messageText, { color: '#2C3E50' }]}>
-//           {questionData.beforeQuestion || 'ABC'}
-//         </Text>
-//       )}
-// 
-//       <View style={[styles.questionContainer, { borderColor: theme.colors.primary }]}>
-//         <Text style={[styles.questionText, { color: theme.colors.primary }]}>
-//           {questionData.question || 'DEF'}
-//         </Text>
-//         <TouchableOpacity
-//           style={[styles.sendButton, { backgroundColor: theme.colors.primary }]}
-//           onPress={handleSendQuestion}
-//           activeOpacity={0.7}
-//         >
-//           <Text style={[styles.sendButtonText, { color: theme.colors.background }]}>
-//             Send Question
-//           </Text>
-//         </TouchableOpacity>
-//       </View>
-// 
-//       {questionData.afterQuestion && questionData.afterQuestion.length > 0 && (
-//         <Text style={[styles.messageText, { color: '#2C3E50', marginTop: 8 }]}>
-//           {questionData.afterQuestion || 'AHHH'}
-//         </Text>
-//       )}
-//     </View>
-//   );
+  //   return (
+  //     <View style={styles.container}>
+  //       {questionData.beforeQuestion && questionData.beforeQuestion.length > 0 && (
+  //         <Text style={[styles.messageText, { color: '#2C3E50' }]}>
+  //           {questionData.beforeQuestion || 'ABC'}
+  //         </Text>
+  //       )}
+  //
+  //       <View style={[styles.questionContainer, { borderColor: theme.colors.primary }]}>
+  //         <Text style={[styles.questionText, { color: theme.colors.primary }]}>
+  //           {questionData.question || 'DEF'}
+  //         </Text>
+  //         <TouchableOpacity
+  //           style={[styles.sendButton, { backgroundColor: theme.colors.primary }]}
+  //           onPress={handleSendQuestion}
+  //           activeOpacity={0.7}
+  //         >
+  //           <Text style={[styles.sendButtonText, { color: theme.colors.background }]}>
+  //             Send Question
+  //           </Text>
+  //         </TouchableOpacity>
+  //       </View>
+  //
+  //       {questionData.afterQuestion && questionData.afterQuestion.length > 0 && (
+  //         <Text style={[styles.messageText, { color: '#2C3E50', marginTop: 8 }]}>
+  //           {questionData.afterQuestion || 'AHHH'}
+  //         </Text>
+  //       )}
+  //     </View>
+  //   );
 }
 
 const styles = StyleSheet.create({

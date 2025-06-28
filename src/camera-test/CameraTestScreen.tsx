@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+
 import { CameraCapture } from './CameraCapture';
 import { MediaPreview } from './MediaPreview';
 import { UploadedMediaViewer } from './UploadedMediaViewer';
@@ -23,8 +24,12 @@ interface UploadedMedia {
 
 export default function CameraTestScreen() {
   const [currentScreen, setCurrentScreen] = useState<ScreenState>('camera');
-  const [capturedMedia, setCapturedMedia] = useState<CapturedMedia | null>(null);
-  const [uploadedMedia, setUploadedMedia] = useState<UploadedMedia | null>(null);
+  const [capturedMedia, setCapturedMedia] = useState<CapturedMedia | null>(
+    null
+  );
+  const [uploadedMedia, setUploadedMedia] = useState<UploadedMedia | null>(
+    null
+  );
 
   /**
    * Handle media captured from camera
@@ -68,28 +73,26 @@ export default function CameraTestScreen() {
   switch (currentScreen) {
     case 'camera':
       return <CameraCapture onMediaCaptured={handleMediaCaptured} />;
-      
+
     case 'preview':
       return capturedMedia ? (
-        <MediaPreview 
+        <MediaPreview
           media={capturedMedia}
           onBack={handleBackToCamera}
           onUploadComplete={handleUploadComplete}
         />
       ) : null;
-      
+
     case 'uploaded':
       return uploadedMedia ? (
-        <UploadedMediaViewer 
+        <UploadedMediaViewer
           downloadUrl={uploadedMedia.downloadUrl}
           mediaType={uploadedMedia.type}
           onClose={handleCloseUploadedViewer}
         />
       ) : null;
-      
+
     default:
       return <CameraCapture onMediaCaptured={handleMediaCaptured} />;
   }
 }
-
- 

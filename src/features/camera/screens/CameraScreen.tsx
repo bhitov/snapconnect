@@ -122,8 +122,6 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
     }, [requestPermissions, clearCameraViewDelay])
   );
 
-
-
   /**
    * Navigate to preview when media is captured
    */
@@ -236,7 +234,9 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
         />
       ) : (
         <View style={[styles.camera, styles.hiddenCameraView]}>
-          <Text style={[styles.hiddenCameraText, { color: theme.colors.white }]}>
+          <Text
+            style={[styles.hiddenCameraText, { color: theme.colors.white }]}
+          >
             Camera loading...
           </Text>
         </View>

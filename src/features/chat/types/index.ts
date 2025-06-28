@@ -129,11 +129,14 @@ export interface Group {
   name: string;
   createdBy: string;
   createdAt: number;
-  members: Record<string, {
-    role: 'admin' | 'member';
-    joinedAt: number;
-    addedBy: string;
-  }>;
+  members: Record<
+    string,
+    {
+      role: 'admin' | 'member';
+      joinedAt: number;
+      addedBy: string;
+    }
+  >;
   avatarUrl?: string;
 }
 
@@ -146,7 +149,7 @@ export interface Conversation {
   lastMessageId?: string;
   lastMessageAt?: number;
   lastMessageType?: MessageType;
-  unreadCount: number[];  // Array parallel to participants
+  unreadCount: number[]; // Array parallel to participants
   createdAt: number;
   updatedAt: number;
   // Group-specific fields
@@ -258,7 +261,11 @@ export interface ChatActions {
   createConversation: (otherUserId: string) => Promise<string>;
 
   // Groups
-  createGroup: (name: string, memberIds: string[], avatarUrl?: string) => Promise<string>;
+  createGroup: (
+    name: string,
+    memberIds: string[],
+    avatarUrl?: string
+  ) => Promise<string>;
   addUsersToGroup: (groupId: string, userIds: string[]) => Promise<void>;
   removeUserFromGroup: (groupId: string, userId: string) => Promise<void>;
   updateGroupTitle: (groupId: string, title: string) => Promise<void>;
@@ -299,8 +306,16 @@ export interface ChatActions {
 
   // Coach
   startCoachChat: (parentCid: string) => Promise<string>;
-  sendCoachMessage: (coachCid: string, parentCid: string, text: string) => Promise<void>;
-  analyzeChat: (coachCid: string, parentCid: string, messageCount?: number) => Promise<void>;
+  sendCoachMessage: (
+    coachCid: string,
+    parentCid: string,
+    text: string
+  ) => Promise<void>;
+  analyzeChat: (
+    coachCid: string,
+    parentCid: string,
+    messageCount?: number
+  ) => Promise<void>;
   analyzeRatio: (coachCid: string, parentCid: string) => Promise<void>;
   analyzeHorsemen: (coachCid: string, parentCid: string) => Promise<void>;
   generateLoveMap: (coachCid: string, parentCid: string) => Promise<void>;

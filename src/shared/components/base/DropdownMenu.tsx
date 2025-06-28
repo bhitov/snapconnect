@@ -12,6 +12,7 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
+
 import { useTheme } from '@/shared/hooks/useTheme';
 
 export interface DropdownMenuItem {
@@ -26,9 +27,18 @@ interface DropdownMenuProps {
   triggerComponent: React.ReactNode;
 }
 
-export function DropdownMenu({ title, items, triggerComponent }: DropdownMenuProps) {
+export function DropdownMenu({
+  title,
+  items,
+  triggerComponent,
+}: DropdownMenuProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [buttonLayout, setButtonLayout] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
   const buttonRef = useRef<View>(null);
   const theme = useTheme();
 
@@ -49,7 +59,7 @@ export function DropdownMenu({ title, items, triggerComponent }: DropdownMenuPro
   const screenWidth = Dimensions.get('window').width;
   const dropdownWidth = 200;
   const rightMargin = 16;
-  
+
   // Position dropdown to the right of the button, accounting for screen bounds
   const dropdownX = Math.min(
     buttonLayout.x + buttonLayout.width - dropdownWidth,
@@ -69,7 +79,7 @@ export function DropdownMenu({ title, items, triggerComponent }: DropdownMenuPro
       <Modal
         visible={isVisible}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => setIsVisible(false)}
       >
         <TouchableOpacity
@@ -88,12 +98,7 @@ export function DropdownMenu({ title, items, triggerComponent }: DropdownMenuPro
               },
             ]}
           >
-            <Text
-              style={[
-                styles.title,
-                { color: theme.colors.textSecondary },
-              ]}
-            >
+            <Text style={[styles.title, { color: theme.colors.textSecondary }]}>
               {title}
             </Text>
             {items.map((item, index) => (
@@ -109,12 +114,7 @@ export function DropdownMenu({ title, items, triggerComponent }: DropdownMenuPro
                 onPress={() => handleItemPress(item)}
                 activeOpacity={0.7}
               >
-                <Text
-                  style={[
-                    styles.itemText,
-                    { color: theme.colors.text },
-                  ]}
-                >
+                <Text style={[styles.itemText, { color: theme.colors.text }]}>
                   {item.title}
                 </Text>
               </TouchableOpacity>

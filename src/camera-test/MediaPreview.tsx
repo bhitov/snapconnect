@@ -4,6 +4,8 @@
  * Shows the captured photo/video and allows user to confirm upload.
  */
 
+import { Video, ResizeMode } from 'expo-av';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useState } from 'react';
 import {
   View,
@@ -15,8 +17,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { Video, ResizeMode } from 'expo-av';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+
 import { storage } from '../shared/services/firebase/config';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -27,7 +28,11 @@ interface MediaPreviewProps {
   onUploadComplete: (downloadUrl: string) => void;
 }
 
-export function MediaPreview({ media, onBack, onUploadComplete }: MediaPreviewProps) {
+export function MediaPreview({
+  media,
+  onBack,
+  onUploadComplete,
+}: MediaPreviewProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -38,28 +43,29 @@ export function MediaPreview({ media, onBack, onUploadComplete }: MediaPreviewPr
     try {
       setIsUploading(true);
       setUploadProgress(0);
-      
+
       // Fetch the file as blob
       const response = await fetch(media.uri);
       const blob = await response.blob();
-      
+
       // Create storage reference
       const timestamp = Date.now();
       const filename = `test-${media.type}-${timestamp}.${media.type === 'photo' ? 'jpg' : 'mp4'}`;
       const storageRef = ref(storage, `camera-test/${filename}`);
-      
+
       // Upload file
       const uploadTask = uploadBytesResumable(storageRef, blob);
-      
+
       return new Promise<string>((resolve, reject) => {
         uploadTask.on(
           'state_changed',
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          snapshot => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             setUploadProgress(Math.round(progress));
             console.log(`Upload is ${progress}% done`);
           },
-          (error) => {
+          error => {
             console.error('Upload error:', error);
             reject(error);
           },
@@ -101,10 +107,10 @@ export function MediaPreview({ media, onBack, onUploadComplete }: MediaPreviewPr
       {/* Media Preview */}
       <View style={styles.mediaContainer}>
         {media.type === 'photo' ? (
-          <Image 
-            source={{ uri: media.uri }} 
+          <Image
+            source={{ uri: media.uri }}
             style={styles.mediaPreview}
-            resizeMode="contain"
+            resizeMode='contain'
           />
         ) : (
           <Video
@@ -120,23 +126,27 @@ export function MediaPreview({ media, onBack, onUploadComplete }: MediaPreviewPr
       {/* Upload Progress */}
       {isUploading && (
         <View style={styles.uploadContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
+          <ActivityIndicator size='large' color='#007AFF' />
           <Text style={styles.uploadText}>Uploading... {uploadProgress}%</Text>
         </View>
       )}
 
       {/* Controls */}
       <View style={styles.controls}>
-        <TouchableOpacity 
-          style={[styles.button, styles.backButton]} 
+        <TouchableOpacity
+          style={[styles.button, styles.backButton]}
           onPress={onBack}
           disabled={isUploading}
         >
           <Text style={styles.buttonText}>Retake</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.button, styles.uploadButton, isUploading && styles.disabled]} 
+        <TouchableOpacity
+          style={[
+            styles.button,
+            styles.uploadButton,
+            isUploading && styles.disabled,
+          ]}
           onPress={handleUpload}
           disabled={isUploading}
         >
@@ -231,4 +241,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
   },
-}); 
+});

@@ -147,11 +147,7 @@ export const Button = memo<ButtonProps>(
 
     return (
       <TouchableOpacity
-        style={[
-          styles.container,
-          styles[variant],
-          disabled && styles.disabled,
-        ]}
+        style={[styles.container, styles[variant], disabled && styles.disabled]}
         onPress={handlePress}
         disabled={disabled || loading}
         activeOpacity={0.8}

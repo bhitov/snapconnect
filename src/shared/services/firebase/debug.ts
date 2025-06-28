@@ -6,8 +6,9 @@
 
 import { Platform } from 'react-native';
 
-import { auth, database, storage, functions } from './config';
 import { isDev } from '../../utils/isDev';
+
+import { auth, database, storage, functions } from './config';
 
 /**
  * Test Firebase services connectivity

@@ -4,20 +4,20 @@
  * Handles camera initialization, configuration, and provides camera ref.
  */
 
+import { useIsFocused } from '@react-navigation/native';
 import { CameraView as ExpoCamera, CameraType, FlashMode } from 'expo-camera';
 import { forwardRef, useState } from 'react';
 import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
-  type ViewStyle
+  type ViewStyle,
 } from 'react-native';
 
 // Store
 import { useCameraStore } from '../store/cameraStore';
 
 import type { CameraType as AppCameraType } from '../types';
-import { useIsFocused } from '@react-navigation/native';
 
 interface CameraViewProps {
   onTap?: () => void;

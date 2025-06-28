@@ -4,6 +4,8 @@
  * Admin can add/remove any member, regular members can only leave
  */
 
+import { useFocusEffect } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
@@ -16,18 +18,16 @@ import {
   Image,
   Modal,
 } from 'react-native';
-import { StackScreenProps } from '@react-navigation/stack';
-import { useFocusEffect } from '@react-navigation/native';
 
-import { Screen } from '@/shared/components/layout/Screen';
-import { useTheme } from '@/shared/hooks/useTheme';
+import { useAuthStore } from '@/features/auth/store/authStore';
 import { useChatStore } from '@/features/chat/store/chatStore';
 import { useFriendsStore } from '@/features/friends/store/friendsStore';
-import { useAuthStore } from '@/features/auth/store/authStore';
+import { Screen } from '@/shared/components/layout/Screen';
+import { useTheme } from '@/shared/hooks/useTheme';
 import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
-import type { GroupsStackParamList } from '@/shared/navigation/types';
 import type { FriendProfile } from '@/features/friends/types';
+import type { GroupsStackParamList } from '@/shared/navigation/types';
 
 type ManageGroupMembersScreenProps = StackScreenProps<
   GroupsStackParamList,
@@ -47,9 +47,17 @@ interface GroupMember {
 /**
  * Simple UserAvatar component for displaying other users' avatars
  */
-const UserAvatar = ({ photoURL, displayName, size = 40 }: { photoURL?: string | undefined; displayName: string; size?: number }) => {
+const UserAvatar = ({
+  photoURL,
+  displayName,
+  size = 40,
+}: {
+  photoURL?: string | undefined;
+  displayName: string;
+  size?: number;
+}) => {
   const theme = useTheme();
-  
+
   const avatarStyles = {
     width: size,
     height: size,
@@ -67,18 +75,13 @@ const UserAvatar = ({ photoURL, displayName, size = 40 }: { photoURL?: string | 
 
   if (photoURL) {
     return (
-      <Image
-        source={{ uri: resolveMediaUrl(photoURL) }}
-        style={avatarStyles}
-      />
+      <Image source={{ uri: resolveMediaUrl(photoURL) }} style={avatarStyles} />
     );
   }
 
   return (
     <View style={avatarStyles}>
-      <Text style={textStyles}>
-        {displayName.charAt(0).toUpperCase()}
-      </Text>
+      <Text style={textStyles}>{displayName.charAt(0).toUpperCase()}</Text>
     </View>
   );
 };
@@ -86,12 +89,12 @@ const UserAvatar = ({ photoURL, displayName, size = 40 }: { photoURL?: string | 
 /**
  * Confirmation Modal Component
  */
-const ConfirmationModal = ({ 
-  visible, 
-  user, 
-  isCurrentUser, 
-  onConfirm, 
-  onCancel 
+const ConfirmationModal = ({
+  visible,
+  user,
+  isCurrentUser,
+  onConfirm,
+  onCancel,
 }: {
   visible: boolean;
   user: GroupMember | null;
@@ -107,50 +110,59 @@ const ConfirmationModal = ({
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType='fade'
       onRequestClose={onCancel}
     >
-      <View style={{
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-      }}>
-        <View style={{
-          backgroundColor: theme.colors.surface,
-          borderRadius: 12,
-          padding: 24,
-          width: '100%',
-          maxWidth: 400,
-        }}>
-          <Text style={{
-            fontSize: 18,
-            fontWeight: '600' as const,
-            color: theme.colors.onSurface,
-            marginBottom: 12,
-            textAlign: 'center',
-          }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 20,
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: theme.colors.surface,
+            borderRadius: 12,
+            padding: 24,
+            width: '100%',
+            maxWidth: 400,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: '600' as const,
+              color: theme.colors.onSurface,
+              marginBottom: 12,
+              textAlign: 'center',
+            }}
+          >
             {isCurrentUser ? 'Leave Group' : 'Remove Member'}
           </Text>
-          
-          <Text style={{
-            fontSize: 16,
-            color: theme.colors.onSurface,
-            marginBottom: 24,
-            textAlign: 'center',
-          }}>
-            {isCurrentUser 
-              ? 'Are you sure you want to leave this group?' 
-              : `Remove ${user.displayName} from the group?`
-            }
+
+          <Text
+            style={{
+              fontSize: 16,
+              color: theme.colors.onSurface,
+              marginBottom: 24,
+              textAlign: 'center',
+            }}
+          >
+            {isCurrentUser
+              ? 'Are you sure you want to leave this group?'
+              : `Remove ${user.displayName} from the group?`}
           </Text>
 
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            gap: 12,
-          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              gap: 12,
+            }}
+          >
             <TouchableOpacity
               style={{
                 flex: 1,
@@ -163,11 +175,13 @@ const ConfirmationModal = ({
               }}
               onPress={onCancel}
             >
-              <Text style={{
-                color: theme.colors.onSurface,
-                fontWeight: '600' as const,
-                textAlign: 'center',
-              }}>
+              <Text
+                style={{
+                  color: theme.colors.onSurface,
+                  fontWeight: '600' as const,
+                  textAlign: 'center',
+                }}
+              >
                 Cancel
               </Text>
             </TouchableOpacity>
@@ -182,11 +196,13 @@ const ConfirmationModal = ({
               }}
               onPress={onConfirm}
             >
-              <Text style={{
-                color: theme.colors.onError,
-                fontWeight: '600' as const,
-                textAlign: 'center',
-              }}>
+              <Text
+                style={{
+                  color: theme.colors.onError,
+                  fontWeight: '600' as const,
+                  textAlign: 'center',
+                }}
+              >
                 {isCurrentUser ? 'Leave' : 'Remove'}
               </Text>
             </TouchableOpacity>
@@ -209,11 +225,13 @@ export function ManageGroupMembersScreen({
 
   // State
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
-  const [currentUserRole, setCurrentUserRole] = useState<'admin' | 'member'>('member');
+  const [currentUserRole, setCurrentUserRole] = useState<'admin' | 'member'>(
+    'member'
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
-  
+
   // Confirmation modal state
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [userToRemove, setUserToRemove] = useState<GroupMember | null>(null);
@@ -224,53 +242,59 @@ export function ManageGroupMembersScreen({
   const loadGroupData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const { chatService } = await import('@/features/chat/services/chatService');
-      
+      const { chatService } = await import(
+        '@/features/chat/services/chatService'
+      );
+
       const groupData = await chatService.getGroupData(groupId);
-      
+
       if (!groupData || !groupData.members) {
         console.error('Group data not found or missing members');
         return;
       }
 
       // Convert group members to our format and fetch user data
-      const memberPromises = Object.entries(groupData.members).map(async ([userId, memberInfo]: [string, any]) => {
-        try {
-          const userData = await chatService.getUserData(userId);
-          
-          return {
-            uid: userId,
-            displayName: userData?.displayName || userData?.username || 'Unknown User',
-            username: userData?.username || 'unknown',
-            photoURL: userData?.photoURL,
-            role: memberInfo.role,
-            joinedAt: memberInfo.joinedAt,
-            addedBy: memberInfo.addedBy,
-          } as GroupMember;
-        } catch (error) {
-          console.error('Failed to load user data for:', userId, error);
-          return {
-            uid: userId,
-            displayName: userId === currentUser?.uid ? 'You' : 'Unknown User',
-            username: 'unknown',
-            role: memberInfo.role,
-            joinedAt: memberInfo.joinedAt,
-            addedBy: memberInfo.addedBy,
-          } as GroupMember;
+      const memberPromises = Object.entries(groupData.members).map(
+        async ([userId, memberInfo]: [string, any]) => {
+          try {
+            const userData = await chatService.getUserData(userId);
+
+            return {
+              uid: userId,
+              displayName:
+                userData?.displayName || userData?.username || 'Unknown User',
+              username: userData?.username || 'unknown',
+              photoURL: userData?.photoURL,
+              role: memberInfo.role,
+              joinedAt: memberInfo.joinedAt,
+              addedBy: memberInfo.addedBy,
+            } as GroupMember;
+          } catch (error) {
+            console.error('Failed to load user data for:', userId, error);
+            return {
+              uid: userId,
+              displayName: userId === currentUser?.uid ? 'You' : 'Unknown User',
+              username: 'unknown',
+              role: memberInfo.role,
+              joinedAt: memberInfo.joinedAt,
+              addedBy: memberInfo.addedBy,
+            } as GroupMember;
+          }
         }
-      });
+      );
 
       const members = await Promise.all(memberPromises);
-      
+
       // Set current user role
-      const currentUserMember = members.find(member => member.uid === currentUser?.uid);
+      const currentUserMember = members.find(
+        member => member.uid === currentUser?.uid
+      );
       if (currentUserMember) {
         setCurrentUserRole(currentUserMember.role);
       }
-      
+
       setGroupMembers(members);
       console.log('✅ Loaded group members:', members.length);
-      
     } catch (error) {
       console.error('❌ Failed to load group data:', error);
       Alert.alert('Error', 'Failed to load group data. Please try again.');
@@ -297,9 +321,10 @@ export function ManageGroupMembersScreen({
   /**
    * Filter friends by search term
    */
-  const filteredFriends = availableFriends.filter(friend =>
-    friend.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    friend.username.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredFriends = availableFriends.filter(
+    friend =>
+      friend.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      friend.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   /**
@@ -325,7 +350,11 @@ export function ManageGroupMembersScreen({
    * Show confirmation modal for removing user
    */
   const showRemoveConfirmation = (member: GroupMember) => {
-    console.log('🔥 Showing remove confirmation for user:', member.uid, member.displayName);
+    console.log(
+      '🔥 Showing remove confirmation for user:',
+      member.uid,
+      member.displayName
+    );
     setUserToRemove(member);
     setShowConfirmModal(true);
   };
@@ -335,24 +364,33 @@ export function ManageGroupMembersScreen({
    */
   const handleConfirmRemoval = async () => {
     if (!userToRemove) return;
-    
-    console.log('🔥 ManageGroupMembers: Starting to remove user:', userToRemove.uid, 'from group:', groupId);
-    
+
+    console.log(
+      '🔥 ManageGroupMembers: Starting to remove user:',
+      userToRemove.uid,
+      'from group:',
+      groupId
+    );
+
     setShowConfirmModal(false);
-    
+
     try {
       setIsLoading(true);
       console.log('🔥 ManageGroupMembers: Calling removeUserFromGroup...');
-      
+
       await removeUserFromGroup(groupId, userToRemove.uid);
-      
-      console.log('🔥 ManageGroupMembers: Successfully removed user, reloading group data...');
+
+      console.log(
+        '🔥 ManageGroupMembers: Successfully removed user, reloading group data...'
+      );
       await loadGroupData();
-      
+
       console.log('🔥 ManageGroupMembers: Group data reloaded');
-      
+
       if (userToRemove.uid === currentUser?.uid) {
-        console.log('🔥 ManageGroupMembers: User removed themselves, navigating back');
+        console.log(
+          '🔥 ManageGroupMembers: User removed themselves, navigating back'
+        );
         navigation.goBack();
       }
     } catch (error) {
@@ -379,7 +417,9 @@ export function ManageGroupMembersScreen({
     const canRemove = currentUserRole === 'admin' || isCurrentUser;
 
     return (
-      <View style={[styles.memberItem, { borderBottomColor: theme.colors.border }]}>
+      <View
+        style={[styles.memberItem, { borderBottomColor: theme.colors.border }]}
+      >
         <UserAvatar
           photoURL={member.photoURL}
           displayName={member.displayName}
@@ -389,19 +429,27 @@ export function ManageGroupMembersScreen({
           <Text style={[styles.memberName, { color: theme.colors.text }]}>
             {member.displayName} {isCurrentUser && '(You)'}
           </Text>
-          <Text style={[styles.memberRole, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[styles.memberRole, { color: theme.colors.textSecondary }]}
+          >
             {member.role}
           </Text>
         </View>
         {canRemove && (
-                      <TouchableOpacity
-              style={[styles.removeButton, { borderColor: theme.colors.error }]}
-              onPress={() => {
-                console.log('🔥 Remove button pressed for user:', member.uid, member.displayName);
-                showRemoveConfirmation(member);
-              }}
+          <TouchableOpacity
+            style={[styles.removeButton, { borderColor: theme.colors.error }]}
+            onPress={() => {
+              console.log(
+                '🔥 Remove button pressed for user:',
+                member.uid,
+                member.displayName
+              );
+              showRemoveConfirmation(member);
+            }}
+          >
+            <Text
+              style={[styles.removeButtonText, { color: theme.colors.error }]}
             >
-            <Text style={[styles.removeButtonText, { color: theme.colors.error }]}>
               {isCurrentUser ? 'Leave' : 'Remove'}
             </Text>
           </TouchableOpacity>
@@ -417,7 +465,9 @@ export function ManageGroupMembersScreen({
     const isSelected = selectedFriends.includes(friend.uid);
 
     return (
-      <View style={[styles.friendItem, { borderBottomColor: theme.colors.border }]}>
+      <View
+        style={[styles.friendItem, { borderBottomColor: theme.colors.border }]}
+      >
         <UserAvatar
           photoURL={friend.photoURL}
           displayName={friend.displayName}
@@ -427,13 +477,18 @@ export function ManageGroupMembersScreen({
           <Text style={[styles.friendName, { color: theme.colors.text }]}>
             {friend.displayName}
           </Text>
-          <Text style={[styles.friendUsername, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[
+              styles.friendUsername,
+              { color: theme.colors.textSecondary },
+            ]}
+          >
             @{friend.username}
           </Text>
         </View>
         <Switch
           value={isSelected}
-          onValueChange={(value) => {
+          onValueChange={value => {
             if (value) {
               setSelectedFriends(prev => [...prev, friend.uid]);
             } else {
@@ -442,7 +497,7 @@ export function ManageGroupMembersScreen({
           }}
           trackColor={{
             false: theme.colors.border,
-            true: theme.colors.primary + '50',
+            true: `${theme.colors.primary}50`,
           }}
           thumbColor={isSelected ? theme.colors.primary : theme.colors.surface}
         />
@@ -452,10 +507,14 @@ export function ManageGroupMembersScreen({
 
   if (isLoading && groupMembers.length === 0) {
     return (
-      <Screen style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Screen
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={[styles.loadingText, { color: theme.colors.textSecondary }]}>
+          <ActivityIndicator size='large' color={theme.colors.primary} />
+          <Text
+            style={[styles.loadingText, { color: theme.colors.textSecondary }]}
+          >
             Loading group data...
           </Text>
         </View>
@@ -464,13 +523,19 @@ export function ManageGroupMembersScreen({
   }
 
   return (
-    <Screen style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <Screen
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={[styles.backButton, { color: theme.colors.primary }]}>← Back</Text>
+          <Text style={[styles.backButton, { color: theme.colors.primary }]}>
+            ← Back
+          </Text>
         </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.colors.text }]}>Manage Members</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>
+          Manage Members
+        </Text>
       </View>
 
       {/* Current Members Section */}
@@ -481,7 +546,7 @@ export function ManageGroupMembersScreen({
         <FlatList
           data={groupMembers}
           renderItem={renderMemberItem}
-          keyExtractor={(item) => item.uid}
+          keyExtractor={item => item.uid}
           showsVerticalScrollIndicator={false}
         />
       </View>
@@ -492,7 +557,7 @@ export function ManageGroupMembersScreen({
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
             Add Members
           </Text>
-          
+
           {/* Search Bar */}
           <TextInput
             style={[
@@ -503,7 +568,7 @@ export function ManageGroupMembersScreen({
                 color: theme.colors.text,
               },
             ]}
-            placeholder="Search friends to add..."
+            placeholder='Search friends to add...'
             placeholderTextColor={theme.colors.textSecondary}
             value={searchTerm}
             onChangeText={setSearchTerm}
@@ -513,7 +578,7 @@ export function ManageGroupMembersScreen({
           <FlatList
             data={filteredFriends}
             renderItem={renderFriendItem}
-            keyExtractor={(item) => item.uid}
+            keyExtractor={item => item.uid}
             showsVerticalScrollIndicator={false}
             style={styles.friendsList}
           />
@@ -521,12 +586,21 @@ export function ManageGroupMembersScreen({
           {/* Add Button */}
           {selectedFriends.length > 0 && (
             <TouchableOpacity
-              style={[styles.addButton, { backgroundColor: theme.colors.primary }]}
+              style={[
+                styles.addButton,
+                { backgroundColor: theme.colors.primary },
+              ]}
               onPress={handleAddFriends}
               disabled={isLoading}
             >
-              <Text style={[styles.addButtonText, { color: theme.colors.onPrimary }]}>
-                Add {selectedFriends.length} Friend{selectedFriends.length > 1 ? 's' : ''}
+              <Text
+                style={[
+                  styles.addButtonText,
+                  { color: theme.colors.onPrimary },
+                ]}
+              >
+                Add {selectedFriends.length} Friend
+                {selectedFriends.length > 1 ? 's' : ''}
               </Text>
             </TouchableOpacity>
           )}
@@ -641,4 +715,4 @@ const styles = {
     fontSize: 16,
     fontWeight: 'bold',
   },
-}; 
+};

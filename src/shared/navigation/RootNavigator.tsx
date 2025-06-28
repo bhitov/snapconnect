@@ -6,8 +6,8 @@
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { useEffect } from 'react';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 
 import { useAuthInitialization } from '../../features/auth/hooks/useAuthInitialization';
 import {

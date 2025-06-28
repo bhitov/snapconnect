@@ -17,12 +17,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useCameraStore } from '@/features/camera/store/cameraStore';
 import {
   useFriendsStore,
   useFriendsList,
 } from '@/features/friends/store/friendsStore';
 import { useStoriesStore } from '@/features/stories/store/storiesStore';
-import { useCameraStore } from '@/features/camera/store/cameraStore';
 import { useTheme } from '@/shared/hooks/useTheme';
 
 import {
@@ -258,7 +258,7 @@ export function RecipientSelectionScreen() {
   const handleBack = () => {
     // Hide camera view temporarily when going back
     hideCameraViewTemporarily();
-    
+
     navigation.goBack();
   };
 

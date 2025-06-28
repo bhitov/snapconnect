@@ -121,7 +121,7 @@ const initialState = {
 
   // UI state
   controlsVisible: true,
-  
+
   // Camera view visibility (for temporary hiding after preview)
   cameraViewVisible: true,
   cameraViewDelayTimeout: null,
@@ -653,16 +653,20 @@ export const useCameraStore = create<CameraStore>()(
 
       // Camera view visibility management
       hideCameraViewTemporarily: (delayMs = 200) => {
-        console.log('📷 CameraStore: Hiding camera view temporarily for', delayMs, 'ms');
+        console.log(
+          '📷 CameraStore: Hiding camera view temporarily for',
+          delayMs,
+          'ms'
+        );
 
         set(state => {
           // Clear any existing timeout
           if (state.cameraViewDelayTimeout) {
             clearTimeout(state.cameraViewDelayTimeout);
           }
-          
+
           state.cameraViewVisible = false;
-          
+
           // Store timeout ID for clearing later
           const timeoutId = setTimeout(() => {
             console.log('📷 CameraStore: Showing camera view after delay');
@@ -671,7 +675,7 @@ export const useCameraStore = create<CameraStore>()(
               currentState.cameraViewDelayTimeout = null;
             });
           }, delayMs);
-          
+
           state.cameraViewDelayTimeout = timeoutId as any;
         });
       },

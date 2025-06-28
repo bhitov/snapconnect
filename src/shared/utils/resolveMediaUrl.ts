@@ -5,6 +5,7 @@
  */
 
 import { Platform } from 'react-native';
+
 import { isDev } from './isDev';
 
 /**
