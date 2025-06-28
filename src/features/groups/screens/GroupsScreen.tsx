@@ -103,7 +103,7 @@ export function GroupsScreen() {
    * Load conversations on component mount
    */
   useEffect(() => {
-    loadConversations();
+    void loadConversations();
   }, []);
 
   /**
@@ -112,7 +112,7 @@ export function GroupsScreen() {
   useFocusEffect(
     useCallback(() => {
       // Force refresh conversations to ensure we see new groups
-      refreshConversations();
+      void refreshConversations();
     }, [refreshConversations])
   );
 
@@ -120,7 +120,7 @@ export function GroupsScreen() {
    * Handle refresh pull-to-refresh
    */
   const handleRefresh = useCallback(() => {
-    refreshConversations();
+    void refreshConversations();
   }, []);
 
   /**
@@ -366,7 +366,7 @@ export function GroupsScreen() {
             ]}
             onPress={() => {
               clearError();
-              loadConversations();
+              void loadConversations();
             }}
           >
             <Text

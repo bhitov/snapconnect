@@ -69,10 +69,12 @@ export function MediaPreview({
             console.error('Upload error:', error);
             reject(error);
           },
-          async () => {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            console.log('File available at:', downloadURL);
-            resolve(downloadURL);
+          () => {
+            void (async () => {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              console.log('File available at:', downloadURL);
+              resolve(downloadURL);
+            })();
           }
         );
       });
@@ -147,7 +149,7 @@ export function MediaPreview({
             styles.uploadButton,
             isUploading && styles.disabled,
           ]}
-          onPress={handleUpload}
+          onPress={() => void handleUpload()}
           disabled={isUploading}
         >
           <Text style={styles.buttonText}>

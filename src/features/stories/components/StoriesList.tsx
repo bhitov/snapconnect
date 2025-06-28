@@ -121,7 +121,7 @@ export function StoriesList({
       return renderAddStoryButton();
     }
 
-    return renderStoryItem({ item: item as StoryWithUser, index });
+    return renderStoryItem({ item, index });
   };
 
   /**
@@ -135,7 +135,7 @@ export function StoriesList({
       return 'add-story-button';
     }
 
-    return keyExtractor(item as StoryWithUser, index);
+    return keyExtractor(item, index);
   };
 
   return (

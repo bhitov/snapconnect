@@ -70,7 +70,7 @@ export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
       }
     };
 
-    fetchUserProfile();
+    void fetchUserProfile();
   }, [userId, isOwnProfile, currentUser]);
 
   const user = profileUser;

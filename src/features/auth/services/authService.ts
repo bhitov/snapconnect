@@ -230,34 +230,36 @@ class AuthService {
   onAuthStateChanged(callback: (user: User | null) => void) {
     console.log('👂 AuthService: Setting up auth state listener');
 
-    return onAuthStateChanged(auth, async firebaseUser => {
-      console.log(
-        '🔄 AuthService: Auth state changed, user:',
-        firebaseUser?.uid || 'null'
-      );
+    return onAuthStateChanged(auth, firebaseUser => {
+      void (async () => {
+        console.log(
+          '🔄 AuthService: Auth state changed, user:',
+          firebaseUser?.uid || 'null'
+        );
 
-      if (firebaseUser) {
-        try {
-          const userProfile = await this.getUserProfile(firebaseUser.uid);
+        if (firebaseUser) {
+          try {
+            const userProfile = await this.getUserProfile(firebaseUser.uid);
 
-          // If no user profile exists, create one automatically
-          if (!userProfile) {
-            throw new Error('User profile not found');
-            //             console.log('⚠️ AuthService: User profile not found in auth state change, creating automatically');
-            //             userProfile = await this.createDefaultUserProfile(firebaseUser);
+            // If no user profile exists, create one automatically
+            if (!userProfile) {
+              throw new Error('User profile not found');
+              //             console.log('⚠️ AuthService: User profile not found in auth state change, creating automatically');
+              //             userProfile = await this.createDefaultUserProfile(firebaseUser);
+            }
+
+            callback(userProfile);
+          } catch (error) {
+            console.error(
+              '❌ AuthService: Error getting/creating user profile:',
+              error
+            );
+            callback(null);
           }
-
-          callback(userProfile);
-        } catch (error) {
-          console.error(
-            '❌ AuthService: Error getting/creating user profile:',
-            error
-          );
+        } else {
           callback(null);
         }
-      } else {
-        callback(null);
-      }
+      })();
     });
   }
 

@@ -13,7 +13,7 @@ import { auth, database, storage, functions } from './config';
 /**
  * Test Firebase services connectivity
  */
-export async function testFirebaseConnectivity(): Promise<void> {
+export function testFirebaseConnectivity(): void {
   console.log('🔍 Testing Firebase connectivity...');
   console.log('🌐 Platform:', Platform.OS);
   console.log('🔧 Development mode:', isDev());
@@ -125,7 +125,7 @@ export async function runFirebaseDebug(): Promise<void> {
   printEmulatorInfo();
   console.log('\n');
 
-  await testFirebaseConnectivity();
+  testFirebaseConnectivity();
   console.log('\n');
 
   await checkNetworkConnectivity();

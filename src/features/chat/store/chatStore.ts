@@ -91,13 +91,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       //   conversations.length,
       //   'conversations'
       // );
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to load conversations:', error);
+    } catch (loadError) {
+      console.error('❌ ChatStore: Failed to load conversations:', loadError);
       set({
         conversationsLoading: false,
         conversationsError:
-          error instanceof Error
-            ? error.message
+          loadError instanceof Error
+            ? loadError.message
             : 'Failed to load conversations',
       });
     }
@@ -121,13 +121,16 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       //   conversations.length,
       //   'conversations'
       // );
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to refresh conversations:', error);
+    } catch (refreshError) {
+      console.error(
+        '❌ ChatStore: Failed to refresh conversations:',
+        refreshError
+      );
       set({
         isRefreshing: false,
         conversationsError:
-          error instanceof Error
-            ? error.message
+          refreshError instanceof Error
+            ? refreshError.message
             : 'Failed to refresh conversations',
       });
     }
@@ -150,8 +153,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       //   conversations.length,
       //   'conversations'
       // );
-    } catch (error) {
-      console.error('❌ ChatStore: Silent refresh failed:', error);
+    } catch (silentError) {
+      console.error('❌ ChatStore: Silent refresh failed:', silentError);
       // Don't set error state for silent refresh to avoid UI disruption
     }
   },
@@ -167,9 +170,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       console.log('✅ ChatStore: Created conversation:', conversationId);
       return conversationId;
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to create conversation:', error);
-      throw error;
+    } catch (createError) {
+      console.error(
+        '❌ ChatStore: Failed to create conversation:',
+        createError
+      );
+      throw createError;
     }
   },
 
@@ -191,12 +197,17 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       });
 
       console.log('✅ ChatStore: Loaded', messages.length, 'messages');
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to load messages:', error);
+    } catch (loadMessagesError) {
+      console.error(
+        '❌ ChatStore: Failed to load messages:',
+        loadMessagesError
+      );
       set({
         messagesLoading: false,
         messagesError:
-          error instanceof Error ? error.message : 'Failed to load messages',
+          loadMessagesError instanceof Error
+            ? loadMessagesError.message
+            : 'Failed to load messages',
       });
     }
   },
@@ -219,8 +230,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       //   messages.length,
       //   'messages'
       // );
-    } catch (error) {
-      console.error('❌ ChatStore: Silent load failed:', error);
+    } catch (silentLoadError) {
+      console.error('❌ ChatStore: Silent load failed:', silentLoadError);
       // Don't set error state for silent refresh to avoid UI disruption
     }
   },
@@ -235,15 +246,18 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().refreshConversations();
 
       console.log('✅ ChatStore: Text message sent successfully');
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to send text message:', error);
+    } catch (sendTextError) {
+      console.error(
+        '❌ ChatStore: Failed to send text message:',
+        sendTextError
+      );
       set({
         sendError:
-          error instanceof Error
-            ? error.message
+          sendTextError instanceof Error
+            ? sendTextError.message
             : 'Failed to send text message',
       });
-      throw error;
+      throw sendTextError;
     }
   },
 
@@ -277,13 +291,15 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().refreshConversations();
 
       console.log('✅ ChatStore: Snap sent successfully');
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to send snap:', error);
+    } catch (sendSnapError) {
+      console.error('❌ ChatStore: Failed to send snap:', sendSnapError);
       set({
         sendError:
-          error instanceof Error ? error.message : 'Failed to send snap',
+          sendSnapError instanceof Error
+            ? sendSnapError.message
+            : 'Failed to send snap',
       });
-      throw error;
+      throw sendSnapError;
     }
   },
 
@@ -307,9 +323,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().refreshConversations();
 
       console.log('✅ ChatStore: Message marked as viewed');
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to mark message as viewed:', error);
-      throw error;
+    } catch (viewError) {
+      console.error(
+        '❌ ChatStore: Failed to mark message as viewed:',
+        viewError
+      );
+      throw viewError;
     }
   },
 
@@ -337,12 +356,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().refreshConversations();
 
       console.log('✅ ChatStore: Message marked as delivered');
-    } catch (error) {
+    } catch (deliverError) {
       console.error(
         '❌ ChatStore: Failed to mark message as delivered:',
-        error
+        deliverError
       );
-      throw error;
+      throw deliverError;
     }
   },
 
@@ -362,12 +381,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().refreshConversations();
 
       console.log('✅ ChatStore: All messages marked as delivered');
-    } catch (error) {
+    } catch (markAllError) {
       console.error(
         '❌ ChatStore: Failed to mark all messages as delivered:',
-        error
+        markAllError
       );
-      throw error;
+      throw markAllError;
     }
   },
 
@@ -487,9 +506,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       console.log('✅ ChatStore: Created coach chat:', coachCid);
       return coachCid;
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to start coach chat:', error);
-      throw error;
+    } catch (coachStartError) {
+      console.error(
+        '❌ ChatStore: Failed to start coach chat:',
+        coachStartError
+      );
+      throw coachStartError;
     }
   },
 
@@ -507,15 +529,18 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().silentLoadMessages(coachCid);
 
       console.log('✅ ChatStore: Coach message sent successfully');
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to send coach message:', error);
+    } catch (coachMessageError) {
+      console.error(
+        '❌ ChatStore: Failed to send coach message:',
+        coachMessageError
+      );
       set({
         sendError:
-          error instanceof Error
-            ? error.message
+          coachMessageError instanceof Error
+            ? coachMessageError.message
             : 'Failed to send coach message',
       });
-      throw error;
+      throw coachMessageError;
     }
   },
 
@@ -537,9 +562,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().silentLoadMessages(coachCid);
 
       console.log('✅ ChatStore: Chat analysis completed');
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to analyze chat:', error);
-      throw error;
+    } catch (analyzeChatError) {
+      console.error('❌ ChatStore: Failed to analyze chat:', analyzeChatError);
+      throw analyzeChatError;
     }
   },
 
@@ -553,9 +578,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().silentLoadMessages(coachCid);
 
       console.log('✅ ChatStore: Ratio analysis completed');
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to analyze ratio:', error);
-      throw error;
+    } catch (ratioError) {
+      console.error('❌ ChatStore: Failed to analyze ratio:', ratioError);
+      throw ratioError;
     }
   },
 
@@ -569,9 +594,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().silentLoadMessages(coachCid);
 
       console.log('✅ ChatStore: Horsemen analysis completed');
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to analyze horsemen:', error);
-      throw error;
+    } catch (horsemenError) {
+      console.error('❌ ChatStore: Failed to analyze horsemen:', horsemenError);
+      throw horsemenError;
     }
   },
 
@@ -585,9 +610,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().silentLoadMessages(coachCid);
 
       console.log('✅ ChatStore: Love map generated');
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to generate love map:', error);
-      throw error;
+    } catch (loveMapError) {
+      console.error('❌ ChatStore: Failed to generate love map:', loveMapError);
+      throw loveMapError;
     }
   },
 
@@ -632,15 +657,15 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       console.log('✅ ChatStore: Created group:', conversationId);
       return conversationId;
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to create group:', error);
+    } catch (groupCreateError) {
+      console.error('❌ ChatStore: Failed to create group:', groupCreateError);
       set(state => ({
         groupCreationState: {
           ...state.groupCreationState,
           isCreating: false,
         },
       }));
-      throw error;
+      throw groupCreateError;
     }
   },
 
@@ -654,9 +679,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().loadConversations();
 
       console.log('✅ ChatStore: Added users to group successfully');
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to add users to group:', error);
-      throw error;
+    } catch (addUsersError) {
+      console.error(
+        '❌ ChatStore: Failed to add users to group:',
+        addUsersError
+      );
+      throw addUsersError;
     }
   },
 
@@ -670,18 +698,21 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       await get().loadConversations();
 
       console.log('✅ ChatStore: Removed user from group successfully');
-    } catch (error) {
-      console.error('❌ ChatStore: Failed to remove user from group:', error);
-      throw error;
+    } catch (removeUserError) {
+      console.error(
+        '❌ ChatStore: Failed to remove user from group:',
+        removeUserError
+      );
+      throw removeUserError;
     }
   },
 
-  updateGroupTitle: async (groupId: string, title: string) => {
+  updateGroupTitle: (groupId: string, title: string) => {
     console.log('👥 ChatStore: Updating group title:', groupId, title);
     // TODO: Implement in chatService
   },
 
-  leaveGroup: async (groupId: string) => {
+  leaveGroup: (groupId: string) => {
     console.log('👥 ChatStore: Leaving group:', groupId);
     // TODO: Implement in chatService
   },

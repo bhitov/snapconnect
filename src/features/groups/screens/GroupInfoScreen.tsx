@@ -31,7 +31,7 @@ type GroupInfoNavigationProp = NavigationProp<GroupsStackParamList>;
  * GroupInfoScreen - displays group information and member management
  */
 export function GroupInfoScreen() {
-  const route = useRoute() as GroupInfoRouteProp;
+  const route = useRoute<GroupInfoRouteProp>();
   const navigation = useNavigation<GroupInfoNavigationProp>();
   const theme = useTheme();
 

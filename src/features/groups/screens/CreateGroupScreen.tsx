@@ -76,7 +76,7 @@ export function CreateGroupScreen() {
    * Load friends on mount
    */
   useEffect(() => {
-    loadFriends();
+    void loadFriends();
   }, []);
 
   /**
@@ -140,8 +140,8 @@ export function CreateGroupScreen() {
 
       // Go back to the Groups screen to show the new group
       navigation.goBack();
-    } catch (error) {
-      console.error('Failed to create group:', error);
+    } catch (createError) {
+      console.error('Failed to create group:', createError);
       Alert.alert('Error', 'Failed to create group. Please try again.');
     }
   }, [groupCreationState, createGroup, navigation]);
@@ -308,7 +308,7 @@ export function CreateGroupScreen() {
                 : theme.colors.disabled,
             },
           ]}
-          onPress={handleCreateGroup}
+          onPress={() => void handleCreateGroup()}
           disabled={!canCreateGroup || isCreatingGroup}
         >
           {isCreatingGroup ? (

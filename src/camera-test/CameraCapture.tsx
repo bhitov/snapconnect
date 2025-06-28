@@ -62,7 +62,10 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
           Camera: {cameraPermission.granted ? '✅' : '❌'} | Microphone:{' '}
           {microphonePermission.granted ? '✅' : '❌'}
         </Text>
-        <TouchableOpacity style={styles.button} onPress={requestAllPermissions}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => void requestAllPermissions()}
+        >
           <Text style={styles.buttonText}>Grant Permissions</Text>
         </TouchableOpacity>
       </View>
@@ -207,13 +210,16 @@ export function CameraCapture({ onMediaCaptured }: CameraCaptureProps) {
           </TouchableOpacity>
 
           {mode === 'picture' ? (
-            <TouchableOpacity style={styles.captureButton} onPress={takePhoto}>
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={() => void takePhoto()}
+            >
               <Text style={styles.buttonText}>Take Photo</Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
               style={[styles.videoButton, isRecording && styles.recording]}
-              onPress={toggleVideoRecording}
+              onPress={() => void toggleVideoRecording()}
             >
               <Text style={styles.buttonText}>
                 {isRecording ? 'Stop' : 'Record'}

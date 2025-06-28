@@ -106,7 +106,7 @@ function ChatStackNavigator() {
             route.params?.otherUser?.username ||
             'Chat',
           headerBackTitleVisible: false,
-          headerLeft: () => <ChatHeaderBackButton navigation={navigation} />,
+          headerLeft: createChatHeaderLeft(navigation),
         })}
       />
     </ChatStack.Navigator>
@@ -287,6 +287,35 @@ function FriendsTabIcon({ color, size }: { color: string; size: number }) {
   );
 }
 
+// Tab icon components to avoid inline function definitions
+const ChatsTabIcon = ({ color, size }: { color: string; size: number }) => (
+  <Ionicons name='chatbubble' size={size} color={color} />
+);
+
+const CameraTabIcon = ({ color, size }: { color: string; size: number }) => (
+  <Ionicons name='camera' size={size} color={color} />
+);
+
+const GroupsTabIcon = ({ color, size }: { color: string; size: number }) => (
+  <Ionicons name='people' size={size} color={color} />
+);
+
+const StoriesTabIcon = ({ color, size }: { color: string; size: number }) => (
+  <Ionicons name='book' size={size} color={color} />
+);
+
+// Create a factory function to generate the header left component
+function createChatHeaderLeft(
+  navigation: NativeStackNavigationProp<
+    ChatStackParamList,
+    keyof ChatStackParamList
+  >
+) {
+  return function ChatHeaderLeftComponent() {
+    return <ChatHeaderBackButton navigation={navigation} />;
+  };
+}
+
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 /**
@@ -315,9 +344,7 @@ export function MainNavigator() {
         component={ChatStackNavigator}
         options={{
           tabBarLabel: 'Chats',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name='chatbubble' size={size} color={color} />
-          ),
+          tabBarIcon: ChatsTabIcon,
           tabBarButtonTestID: 'chats-tab-button',
         }}
       />
@@ -326,9 +353,7 @@ export function MainNavigator() {
         component={CameraScreen}
         options={{
           tabBarLabel: 'Camera',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name='camera' size={size} color={color} />
-          ),
+          tabBarIcon: CameraTabIcon,
           tabBarButtonTestID: 'camera-tab-button',
         }}
       />
@@ -337,9 +362,7 @@ export function MainNavigator() {
         component={FriendsStackNavigator}
         options={{
           tabBarLabel: 'Friends',
-          tabBarIcon: ({ color, size }) => (
-            <FriendsTabIcon color={color} size={size} />
-          ),
+          tabBarIcon: FriendsTabIcon,
           tabBarButtonTestID: 'friends-tab-button',
         }}
       />
@@ -348,9 +371,7 @@ export function MainNavigator() {
         component={GroupsStackNavigator}
         options={{
           tabBarLabel: 'Groups',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name='people' size={size} color={color} />
-          ),
+          tabBarIcon: GroupsTabIcon,
           tabBarButtonTestID: 'groups-tab-button',
         }}
       />
@@ -359,9 +380,7 @@ export function MainNavigator() {
         component={StoriesStackNavigator}
         options={{
           tabBarLabel: 'Stories',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name='book' size={size} color={color} />
-          ),
+          tabBarIcon: StoriesTabIcon,
           tabBarButtonTestID: 'stories-tab-button',
         }}
       />

@@ -214,7 +214,7 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
             {/* Login Button */}
             <View style={styles.loginButton}>
               <Button
-                onPress={handleSubmit(onSubmit)}
+                onPress={() => void handleSubmit(onSubmit)()}
                 loading={isLoading}
                 disabled={isLoading}
                 testID='login-button'

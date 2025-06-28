@@ -198,7 +198,7 @@ export function ProfileSettingsScreen({
       console.log(
         '🌐 ProfileSettings: Web platform detected, opening image picker directly'
       );
-      pickImage();
+      void pickImage();
       return;
     }
 
@@ -207,8 +207,8 @@ export function ProfileSettingsScreen({
       'Change Profile Picture',
       'Choose how you want to update your profile picture',
       [
-        { text: 'Camera', onPress: takePhoto },
-        { text: 'Photo Library', onPress: pickImage },
+        { text: 'Camera', onPress: () => void takePhoto() },
+        { text: 'Photo Library', onPress: () => void pickImage() },
         { text: 'Cancel', style: 'cancel' },
       ]
     );
@@ -662,7 +662,7 @@ export function ProfileSettingsScreen({
         {/* Buttons */}
         <View style={styles.buttonContainer}>
           <Button
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => void handleSubmit(onSubmit)()}
             loading={isLoading || uploadingImage}
             disabled={
               isLoading || uploadingImage || (!isDirty && !selectedImage)
@@ -714,7 +714,7 @@ export function ProfileSettingsScreen({
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.modalButton, styles.modalButtonDanger]}
-                  onPress={confirmLogout}
+                  onPress={() => void confirmLogout()}
                 >
                   <Text
                     style={[

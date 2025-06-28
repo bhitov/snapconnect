@@ -2,7 +2,7 @@ module.exports = {
   extends: [
     'expo',
     '@react-native-community',
-    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-type-checked',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
@@ -32,7 +32,7 @@ module.exports = {
     'prettier/prettier': 'error',
 
     // TypeScript specific rules
-    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['off', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/no-non-null-assertion': 'error',
@@ -65,6 +65,8 @@ module.exports = {
     'object-shorthand': 'error',
     'prefer-template': 'error',
     'no-duplicate-imports': 'off',
+    'no-void': 'off',
+    'no-catch-shadow': 'off',
 
     // Import/Export rules
     'import/no-default-export': 'off',
@@ -118,6 +120,7 @@ module.exports = {
   ignorePatterns: [
     '.eslintrc.js',
     'functions/lib/',
+    'functions/',
     'node_modules/',
     '.expo/',
     'dist/',

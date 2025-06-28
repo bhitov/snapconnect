@@ -320,7 +320,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
    */
   useFocusEffect(
     React.useCallback(() => {
-      loadStory();
+      void loadStory();
 
       return () => {
         // Cleanup timers on unfocus
@@ -340,7 +340,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
   React.useEffect(() => {
     if (story && !isLoading) {
       startProgress();
-      markAsViewed();
+      void markAsViewed();
     }
   }, [story, isLoading, currentPostIndex, startProgress, markAsViewed]);
 
@@ -359,7 +359,7 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
   React.useEffect(() => {
     if (error) {
       Alert.alert('Story Error', error, [
-        { text: 'Retry', onPress: loadStory },
+        { text: 'Retry', onPress: () => void loadStory() },
         { text: 'Close', onPress: handleClose, style: 'cancel' },
       ]);
     }
@@ -462,8 +462,11 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
           onLoad={() =>
             console.log('✅ ViewStoryScreen: Video loaded successfully')
           }
-          onError={error => {
-            console.error('❌ ViewStoryScreen: Video failed to load:', error);
+          onError={videoError => {
+            console.error(
+              '❌ ViewStoryScreen: Video failed to load:',
+              videoError
+            );
             setMediaLoadError(true);
           }}
         />
@@ -482,10 +485,10 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
           onLoad={() =>
             console.log('✅ ViewStoryScreen: Image loaded successfully')
           }
-          onError={error => {
+          onError={imageError => {
             console.error(
               '❌ ViewStoryScreen: Image failed to load:',
-              error.nativeEvent.error
+              imageError.nativeEvent.error
             );
             setMediaLoadError(true);
           }}

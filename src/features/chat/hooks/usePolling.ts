@@ -57,24 +57,26 @@ export function usePolling(
     // Call immediately if requested
     if (immediate) {
       try {
-        pollingFunctionRef.current();
+        void pollingFunctionRef.current();
       } catch (error) {
         console.error('❌ Polling: Immediate call failed:', error);
       }
     }
 
     // Set up interval
-    intervalRef.current = setInterval(async () => {
-      if (!isPollingRef.current) {
-        console.log('🔄 Polling: Stopped during interval, clearing');
-        return;
-      }
+    intervalRef.current = setInterval(() => {
+      void (async () => {
+        if (!isPollingRef.current) {
+          console.log('🔄 Polling: Stopped during interval, clearing');
+          return;
+        }
 
-      try {
-        await pollingFunctionRef.current();
-      } catch (error) {
-        console.error('❌ Polling: Interval call failed:', error);
-      }
+        try {
+          await pollingFunctionRef.current();
+        } catch (error) {
+          console.error('❌ Polling: Interval call failed:', error);
+        }
+      })();
     }, interval);
   }, [interval, immediate]);
 

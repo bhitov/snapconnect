@@ -58,8 +58,8 @@ export function StoriesScreen({ navigation }: StoriesScreenProps) {
       console.log(
         '📖 StoriesScreen: Screen focused, loading stories and my story'
       );
-      loadStories();
-      loadMyStory();
+      void loadStories();
+      void loadMyStory();
 
       return () => {
         console.log('📖 StoriesScreen: Screen unfocused');
@@ -157,7 +157,7 @@ export function StoriesScreen({ navigation }: StoriesScreenProps) {
           text: 'Retry',
           onPress: () => {
             handleErrorDismiss();
-            loadStories();
+            void loadStories();
           },
         },
         { text: 'Dismiss', onPress: handleErrorDismiss, style: 'cancel' },
@@ -235,7 +235,7 @@ export function StoriesScreen({ navigation }: StoriesScreenProps) {
           onStoryPress={handleStoryPress}
           onAddStoryPress={handleAddStory}
           refreshing={isLoading}
-          onRefresh={handleRefresh}
+          onRefresh={() => void handleRefresh()}
         />
 
         {/* Content area - could show featured stories or other content */}

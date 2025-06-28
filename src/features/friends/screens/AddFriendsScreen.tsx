@@ -70,7 +70,7 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
       // Debounce search
       const timeoutId = setTimeout(() => {
         if (text.trim()) {
-          searchUsers(text.trim());
+          void searchUsers(text.trim());
         } else {
           clearSearch();
         }
@@ -236,7 +236,7 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
               loading={isLoading}
               onPress={() => {
                 if (item.friendshipStatus === 'none') {
-                  handleSendFriendRequest(item.uid, item.username);
+                  void handleSendFriendRequest(item.uid, item.username);
                 } else if (item.friendshipStatus === 'request_received') {
                   // TODO: Handle accepting friend request
                   console.log('Accept friend request for:', item.username);
@@ -282,7 +282,7 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
             onPress={() => {
               clearError();
               if (searchQuery) {
-                searchUsers(searchQuery);
+                void searchUsers(searchQuery);
               }
             }}
           >
@@ -405,7 +405,7 @@ export function AddFriendsScreen({ navigation }: AddFriendsScreenProps) {
             refreshing={false}
             onRefresh={() => {
               if (searchQuery) {
-                searchUsers(searchQuery);
+                void searchUsers(searchQuery);
               }
             }}
             tintColor={theme.colors.primary}

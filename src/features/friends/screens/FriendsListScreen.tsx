@@ -69,10 +69,10 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
    * Load friends and friend requests on mount
    */
   useEffect(() => {
-    loadFriends();
+    void loadFriends();
     // Also load friend requests to ensure badge count is accurate
     const { loadFriendRequests } = useFriendsStore.getState();
-    loadFriendRequests();
+    void loadFriendRequests();
   }, [loadFriends]);
 
   /**
@@ -227,7 +227,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
                 styles.actionButton,
                 { backgroundColor: theme.colors.surface },
               ]}
-              onPress={() => handleOpenChat(item)}
+              onPress={() => void handleOpenChat(item)}
               testID={`chat-button-${item.username}`}
             >
               <Ionicons name='chatbubble' size={18} color={theme.colors.text} />
@@ -339,7 +339,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
-            onRefresh={refreshFriends}
+            onRefresh={() => void refreshFriends()}
             tintColor={theme.colors.primary}
           />
         }

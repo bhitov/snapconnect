@@ -99,7 +99,7 @@ export function SnapViewingScreen() {
       }
 
       // Type assertion since we've checked the type
-      const snapMessage = messageData as SnapMessage;
+      const snapMessage = messageData;
 
       // Convert SnapMessage to legacy Snap format for compatibility
       const snap: Snap = {
@@ -190,7 +190,7 @@ export function SnapViewingScreen() {
         setRemainingTime(remaining);
 
         if (remaining <= 0) {
-          handleSnapComplete();
+          void handleSnapComplete();
           return;
         }
       }
@@ -227,7 +227,7 @@ export function SnapViewingScreen() {
 
           // Pause video if it's a video snap
           if (snap?.mediaType === 'video' && videoRef.current) {
-            videoRef.current.pauseAsync();
+            void videoRef.current.pauseAsync();
           }
         }
       }
@@ -248,11 +248,11 @@ export function SnapViewingScreen() {
 
       // Resume video if it's a video snap
       if (snap?.mediaType === 'video' && videoRef.current) {
-        videoRef.current.playAsync();
+        void videoRef.current.playAsync();
       }
     } else if (pressDuration < 100) {
       // Quick tap - exit snap
-      handleSnapComplete();
+      void handleSnapComplete();
     }
   }, [isPaused, resumeViewingSnap, startTimer, snap, handleSnapComplete]);
 
@@ -260,7 +260,7 @@ export function SnapViewingScreen() {
    * Load snap on component mount
    */
   useEffect(() => {
-    loadSnap();
+    void loadSnap();
 
     return () => {
       stopTimer();

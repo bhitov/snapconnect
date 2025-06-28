@@ -160,7 +160,7 @@ export function ChatsScreen() {
    * Load conversations on component mount and focus
    */
   useEffect(() => {
-    loadConversations();
+    void loadConversations();
   }, []);
 
   /**
@@ -168,7 +168,7 @@ export function ChatsScreen() {
    */
   useFocusEffect(
     useCallback(() => {
-      refreshConversations();
+      void refreshConversations();
     }, [])
   );
 
@@ -176,7 +176,7 @@ export function ChatsScreen() {
    * Handle refresh pull-to-refresh
    */
   const handleRefresh = useCallback(() => {
-    refreshConversations();
+    void refreshConversations();
   }, []);
 
   /**
@@ -416,7 +416,7 @@ export function ChatsScreen() {
           style={[styles.retryButton, { borderColor: theme.colors.primary }]}
           onPress={() => {
             clearError();
-            loadConversations();
+            void loadConversations();
           }}
           activeOpacity={0.8}
         >

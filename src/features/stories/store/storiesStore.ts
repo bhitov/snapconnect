@@ -262,20 +262,20 @@ export const useStoriesStore = create<StoriesStore>()(
         const { currentPostIndex, posts } = state.viewingSession;
 
         if (currentPostIndex < posts.length - 1) {
-          set(state => {
-            if (state.viewingSession) {
-              state.viewingSession.currentPostIndex += 1;
-              state.viewingSession.startTime = Date.now();
-              state.viewingSession.remainingTime = 5000;
-              state.viewingSession.isPlaying = true;
-              state.viewingSession.isPaused = false;
+          set(currentState => {
+            if (currentState.viewingSession) {
+              currentState.viewingSession.currentPostIndex += 1;
+              currentState.viewingSession.startTime = Date.now();
+              currentState.viewingSession.remainingTime = 5000;
+              currentState.viewingSession.isPlaying = true;
+              currentState.viewingSession.isPaused = false;
             }
           });
 
           // Mark previous post as viewed
           const currentPost = posts[currentPostIndex];
           if (currentPost) {
-            get().markPostAsViewed(
+            void get().markPostAsViewed(
               state.viewingSession.storyId,
               currentPost.id
             );
@@ -284,7 +284,10 @@ export const useStoriesStore = create<StoriesStore>()(
           // End of story - mark last post as viewed and stop
           const lastPost = posts[currentPostIndex];
           if (lastPost) {
-            get().markPostAsViewed(state.viewingSession.storyId, lastPost.id);
+            void get().markPostAsViewed(
+              state.viewingSession.storyId,
+              lastPost.id
+            );
           }
           get().stopViewing();
         }

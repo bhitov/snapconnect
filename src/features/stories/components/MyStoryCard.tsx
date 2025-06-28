@@ -162,7 +162,7 @@ export function MyStoryCard({
       {/* Viewers Button */}
       <TouchableOpacity
         style={styles.viewersButton}
-        onPress={handleViewersPress}
+        onPress={() => void handleViewersPress()}
         activeOpacity={0.7}
       >
         <View style={styles.viewersInfo}>

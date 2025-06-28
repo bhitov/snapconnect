@@ -152,8 +152,8 @@ export function ProfileSetupScreen({ navigation: _ }: ProfileSetupScreenProps) {
       'Select Profile Picture',
       'Choose how you want to add your profile picture',
       [
-        { text: 'Camera', onPress: takePhoto },
-        { text: 'Photo Library', onPress: pickImage },
+        { text: 'Camera', onPress: () => void takePhoto() },
+        { text: 'Photo Library', onPress: () => void pickImage() },
         { text: 'Cancel', style: 'cancel' },
       ]
     );
@@ -220,7 +220,7 @@ export function ProfileSetupScreen({ navigation: _ }: ProfileSetupScreenProps) {
   /**
    * Skip profile setup
    */
-  const handleSkipSetup = useCallback(async () => {
+  const handleSkipSetup = useCallback(() => {
     if (!user?.uid) {
       Alert.alert('Error', 'User not found. Please try logging in again.');
       return;
@@ -233,26 +233,30 @@ export function ProfileSetupScreen({ navigation: _ }: ProfileSetupScreenProps) {
         { text: 'Go Back', style: 'cancel' },
         {
           text: 'Skip',
-          onPress: async () => {
-            try {
-              console.log('⏭️ ProfileSetup: Skipping profile setup');
+          onPress: () => {
+            void (async () => {
+              try {
+                console.log('⏭️ ProfileSetup: Skipping profile setup');
 
-              // Set minimal profile data to mark as "complete"
-              await completeProfileSetup(user.uid, {
-                displayName:
-                  user.username || (user.email?.split('@')[0] ?? 'User'),
-                bio: '',
-              });
+                // Set minimal profile data to mark as "complete"
+                await completeProfileSetup(user.uid, {
+                  displayName:
+                    user.username || (user.email?.split('@')[0] ?? 'User'),
+                  bio: '',
+                });
 
-              console.log(
-                '✅ ProfileSetup: Profile marked as complete (skipped)'
-              );
-            } catch (error) {
-              console.error('❌ ProfileSetup: Skip failed:', error);
-              Alert.alert('Error', 'Failed to skip setup. Please try again.', [
-                { text: 'OK' },
-              ]);
-            }
+                console.log(
+                  '✅ ProfileSetup: Profile marked as complete (skipped)'
+                );
+              } catch (skipError) {
+                console.error('❌ ProfileSetup: Skip failed:', skipError);
+                Alert.alert(
+                  'Error',
+                  'Failed to skip setup. Please try again.',
+                  [{ text: 'OK' }]
+                );
+              }
+            })();
           },
         },
       ]
@@ -511,7 +515,7 @@ export function ProfileSetupScreen({ navigation: _ }: ProfileSetupScreenProps) {
         {/* Buttons */}
         <View style={styles.buttonContainer}>
           <Button
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => void handleSubmit(onSubmit)()}
             loading={isLoading || uploadingImage}
             disabled={isLoading || uploadingImage}
             fullWidth

@@ -310,8 +310,8 @@ export function ManageGroupMembersScreen({
   // Load data on screen focus
   useFocusEffect(
     useCallback(() => {
-      loadGroupData();
-      loadFriends();
+      void loadGroupData();
+      void loadFriends();
     }, [loadGroupData, loadFriends])
   );
 
@@ -598,7 +598,7 @@ export function ManageGroupMembersScreen({
                 styles.addButton,
                 { backgroundColor: theme.colors.primary },
               ]}
-              onPress={handleAddFriends}
+              onPress={() => void handleAddFriends()}
               disabled={isLoading}
             >
               <Text

@@ -36,6 +36,7 @@ import type {
   ViewData,
   StoryViewer,
 } from '../types';
+import type { UserProfileData } from '@/features/auth/types/authTypes';
 import type { FriendProfile } from '@/features/friends/types';
 
 class StoriesService {
@@ -86,7 +87,7 @@ class StoriesService {
         };
       }
 
-      const userData = snapshot.val();
+      const userData = snapshot.val() as UserProfileData;
       console.log('✅ StoriesService: User data loaded:', userData.username);
 
       return {
@@ -238,7 +239,7 @@ class StoriesService {
       console.log('✅ StoriesService: Story created successfully');
     } catch (error) {
       console.error('❌ StoriesService: Failed to create story:', error);
-      throw this.handleError(error);
+      throw new Error(this.handleError(error).message);
     }
   }
 
@@ -323,7 +324,7 @@ class StoriesService {
       return stories;
     } catch (error) {
       console.error('❌ StoriesService: Failed to load friend stories:', error);
-      throw this.handleError(error);
+      throw new Error(this.handleError(error).message);
     }
   }
 
@@ -371,7 +372,7 @@ class StoriesService {
       return myStory;
     } catch (error) {
       console.error('❌ StoriesService: Failed to load my story:', error);
-      throw this.handleError(error);
+      throw new Error(this.handleError(error).message);
     }
   }
 
@@ -392,7 +393,7 @@ class StoriesService {
       console.log('✅ StoriesService: Story post deleted successfully');
     } catch (error) {
       console.error('❌ StoriesService: Failed to delete story post:', error);
-      throw this.handleError(error);
+      throw new Error(this.handleError(error).message);
     }
   }
 
@@ -411,7 +412,7 @@ class StoriesService {
       console.log('✅ StoriesService: Story deleted successfully');
     } catch (error) {
       console.error('❌ StoriesService: Failed to delete story:', error);
-      throw this.handleError(error);
+      throw new Error(this.handleError(error).message);
     }
   }
 
@@ -434,7 +435,7 @@ class StoriesService {
       console.log('✅ StoriesService: Post marked as viewed');
     } catch (error) {
       console.error('❌ StoriesService: Failed to mark post as viewed:', error);
-      throw this.handleError(error);
+      throw new Error(this.handleError(error).message);
     }
   }
 
@@ -537,7 +538,7 @@ class StoriesService {
       return sortedViewers;
     } catch (error) {
       console.error('❌ StoriesService: Failed to get story viewers:', error);
-      throw this.handleError(error);
+      throw new Error(this.handleError(error).message);
     }
   }
 }

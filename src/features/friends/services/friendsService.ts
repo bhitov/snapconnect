@@ -130,13 +130,11 @@ class FriendsService {
         return [];
       }
 
-      const users = snapshot.val();
+      const users = snapshot.val() as Record<string, User>;
       const results: FriendSearchResult[] = [];
 
       // Process each user and determine friendship status
-      for (const [userId, userData] of Object.entries(
-        users as Record<string, User>
-      )) {
+      for (const [userId, userData] of Object.entries(users)) {
         // Skip current user
         if (userId === currentUserId) continue;
 
@@ -156,7 +154,8 @@ class FriendsService {
       return results;
     } catch (error) {
       console.error('❌ FriendsService: Search failed:', error);
-      throw this.handleError(error);
+      const friendsError = this.handleError(error);
+      throw new Error(friendsError.message);
     }
   }
 
@@ -233,10 +232,8 @@ class FriendsService {
     const checkSnapshot = (snapshot: DataSnapshot, otherUserId: string) => {
       if (!snapshot.exists()) return false;
 
-      const friendships = snapshot.val();
-      return Object.values(
-        friendships as Record<string, FriendshipDocument>
-      ).some(
+      const friendships = snapshot.val() as Record<string, FriendshipDocument>;
+      return Object.values(friendships).some(
         friendship =>
           (friendship.user1Id === user1Id && friendship.user2Id === user2Id) ||
           (friendship.user1Id === user2Id && friendship.user2Id === user1Id)
@@ -266,10 +263,8 @@ class FriendsService {
 
     if (!snapshot.exists()) return false;
 
-    const requests = snapshot.val();
-    return Object.values(
-      requests as Record<string, FriendRequestDocument>
-    ).some(
+    const requests = snapshot.val() as Record<string, FriendRequestDocument>;
+    return Object.values(requests).some(
       request =>
         request.receiverId === receiverId && request.status === 'pending'
     );
@@ -289,10 +284,7 @@ class FriendsService {
 
       // Prevent sending request to self
       if (currentUserId === data.receiverId) {
-        throw {
-          type: 'cannot_add_self',
-          message: 'You cannot send a friend request to yourself.',
-        };
+        throw new Error('You cannot send a friend request to yourself.');
       }
 
       // Check if request already exists
@@ -301,10 +293,7 @@ class FriendsService {
         data.receiverId
       );
       if (requestExists) {
-        throw {
-          type: 'request_already_sent',
-          message: 'Friend request already sent to this user.',
-        };
+        throw new Error('Friend request already sent to this user.');
       }
 
       // Check if already friends
@@ -313,10 +302,7 @@ class FriendsService {
         data.receiverId
       );
       if (friendshipExists) {
-        throw {
-          type: 'already_friends',
-          message: 'You are already friends with this user.',
-        };
+        throw new Error('You are already friends with this user.');
       }
 
       // Get user data for both users
@@ -326,10 +312,7 @@ class FriendsService {
       ]);
 
       if (!receiverData) {
-        throw {
-          type: 'user_not_found',
-          message: 'User not found.',
-        };
+        throw new Error('User not found.');
       }
 
       // Create friend request - filter out undefined values for Firebase
@@ -359,7 +342,8 @@ class FriendsService {
       console.log('✅ FriendsService: Friend request sent successfully');
     } catch (error) {
       console.error('❌ FriendsService: Failed to send friend request:', error);
-      throw this.handleError(error);
+      const friendsError = this.handleError(error);
+      throw new Error(friendsError.message);
     }
   }
 
@@ -390,10 +374,7 @@ class FriendsService {
       const snapshot = await get(requestRef);
 
       if (!snapshot.exists()) {
-        throw {
-          type: 'request_not_found',
-          message: 'Friend request not found.',
-        };
+        throw new Error('Friend request not found.');
       }
 
       const requestData = snapshot.val() as FriendRequestDocument;
@@ -416,7 +397,8 @@ class FriendsService {
         '❌ FriendsService: Failed to respond to friend request:',
         error
       );
-      throw this.handleError(error);
+      const friendsError = this.handleError(error);
+      throw new Error(friendsError.message);
     }
   }
 
@@ -455,7 +437,8 @@ class FriendsService {
         '❌ FriendsService: Failed to cancel friend request:',
         error
       );
-      throw this.handleError(error);
+      const friendsError = this.handleError(error);
+      throw new Error(friendsError.message);
     }
   }
 
@@ -477,12 +460,10 @@ class FriendsService {
         return [];
       }
 
-      const friendships = snapshot.val();
+      const friendships = snapshot.val() as Record<string, FriendshipDocument>;
       const friends: FriendProfile[] = [];
 
-      for (const [friendshipId, friendship] of Object.entries(
-        friendships as Record<string, FriendshipDocument>
-      )) {
+      for (const [friendshipId, friendship] of Object.entries(friendships)) {
         let friendData: {
           username: string;
           displayName: string;
@@ -520,7 +501,8 @@ class FriendsService {
       return friends;
     } catch (error) {
       console.error('❌ FriendsService: Failed to load friends:', error);
-      throw this.handleError(error);
+      const friendsError = this.handleError(error);
+      throw new Error(friendsError.message);
     }
   }
 
@@ -544,13 +526,11 @@ class FriendsService {
         return { sent: [], received: [] };
       }
 
-      const requests = snapshot.val();
+      const requests = snapshot.val() as Record<string, FriendRequestDocument>;
       const sent: FriendRequest[] = [];
       const received: FriendRequest[] = [];
 
-      for (const [requestId, request] of Object.entries(
-        requests as Record<string, FriendRequestDocument>
-      )) {
+      for (const [requestId, request] of Object.entries(requests)) {
         const friendRequest: FriendRequest = {
           id: requestId,
           senderId: request.senderId,
@@ -597,7 +577,8 @@ class FriendsService {
         '❌ FriendsService: Failed to load friend requests:',
         error
       );
-      throw this.handleError(error);
+      const friendsError = this.handleError(error);
+      throw new Error(friendsError.message);
     }
   }
 
@@ -614,7 +595,8 @@ class FriendsService {
       console.log('✅ FriendsService: Friend removed successfully');
     } catch (error) {
       console.error('❌ FriendsService: Failed to remove friend:', error);
-      throw this.handleError(error);
+      const friendsError = this.handleError(error);
+      throw new Error(friendsError.message);
     }
   }
 
@@ -636,13 +618,11 @@ class FriendsService {
         return;
       }
 
-      const requests = snapshot.val();
+      const requests = snapshot.val() as Record<string, FriendRequestDocument>;
       const sent: FriendRequest[] = [];
       const received: FriendRequest[] = [];
 
-      for (const [requestId, request] of Object.entries(
-        requests as Record<string, FriendRequestDocument>
-      )) {
+      for (const [requestId, request] of Object.entries(requests)) {
         const friendRequest: FriendRequest = {
           id: requestId,
           senderId: request.senderId,
@@ -695,12 +675,10 @@ class FriendsService {
         return;
       }
 
-      const friendships = snapshot.val();
+      const friendships = snapshot.val() as Record<string, FriendshipDocument>;
       const friends: FriendProfile[] = [];
 
-      for (const [friendshipId, friendship] of Object.entries(
-        friendships as Record<string, FriendshipDocument>
-      )) {
+      for (const [friendshipId, friendship] of Object.entries(friendships)) {
         let friendData: {
           username: string;
           displayName: string;

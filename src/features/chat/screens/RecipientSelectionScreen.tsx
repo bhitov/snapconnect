@@ -115,7 +115,7 @@ export function RecipientSelectionScreen() {
    * Load friends on component mount
    */
   useEffect(() => {
-    loadFriends();
+    void loadFriends();
 
     // Clear recipients when entering screen
     return () => {
@@ -344,7 +344,7 @@ export function RecipientSelectionScreen() {
             borderColor: theme.colors.border,
           },
         ]}
-        onPress={() => handlePostStory(option.privacy)}
+        onPress={() => void handlePostStory(option.privacy)}
         activeOpacity={0.7}
         disabled={isLoading}
       >
@@ -438,7 +438,7 @@ export function RecipientSelectionScreen() {
         </Text>
 
         <TouchableOpacity
-          onPress={handleSendSnap}
+          onPress={() => void handleSendSnap()}
           style={[
             styles.sendButton,
             { backgroundColor: theme.colors.primary },

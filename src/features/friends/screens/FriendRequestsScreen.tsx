@@ -75,7 +75,7 @@ export function FriendRequestsScreen({
    * Load friend requests on mount
    */
   useEffect(() => {
-    loadFriendRequests();
+    void loadFriendRequests();
   }, [loadFriendRequests]);
 
   /**
@@ -121,7 +121,7 @@ export function FriendRequestsScreen({
   /**
    * Handle rejecting friend request
    */
-  const handleRejectRequest = async (request: FriendRequest) => {
+  const handleRejectRequest = (request: FriendRequest) => {
     console.log(
       '❌ FriendRequestsScreen: Rejecting friend request from:',
       request.senderUsername
@@ -135,37 +135,38 @@ export function FriendRequestsScreen({
         {
           text: 'Reject',
           style: 'destructive',
-          onPress: async () => {
-            setProcessingRequest(request.id);
+          onPress: () =>
+            void (async () => {
+              setProcessingRequest(request.id);
 
-            try {
-              await respondToFriendRequest({
-                requestId: request.id,
-                action: 'reject',
-              });
+              try {
+                await respondToFriendRequest({
+                  requestId: request.id,
+                  action: 'reject',
+                });
 
-              Alert.alert(
-                'Friend Request Rejected',
-                `Friend request from ${request.senderDisplayName} has been rejected.`,
-                [{ text: 'OK' }]
-              );
-            } catch (error) {
-              console.error(
-                '❌ FriendRequestsScreen: Failed to reject friend request:',
-                error
-              );
+                Alert.alert(
+                  'Friend Request Rejected',
+                  `Friend request from ${request.senderDisplayName} has been rejected.`,
+                  [{ text: 'OK' }]
+                );
+              } catch (error) {
+                console.error(
+                  '❌ FriendRequestsScreen: Failed to reject friend request:',
+                  error
+                );
 
-              Alert.alert(
-                'Failed to Reject Request',
-                error instanceof Error
-                  ? error.message
-                  : 'Unable to reject friend request. Please try again.',
-                [{ text: 'OK' }]
-              );
-            } finally {
-              setProcessingRequest(null);
-            }
-          },
+                Alert.alert(
+                  'Failed to Reject Request',
+                  error instanceof Error
+                    ? error.message
+                    : 'Unable to reject friend request. Please try again.',
+                  [{ text: 'OK' }]
+                );
+              } finally {
+                setProcessingRequest(null);
+              }
+            })(),
         },
       ]
     );
@@ -174,7 +175,7 @@ export function FriendRequestsScreen({
   /**
    * Handle canceling sent friend request
    */
-  const handleCancelRequest = async (request: FriendRequest) => {
+  const handleCancelRequest = (request: FriendRequest) => {
     console.log(
       '🗑️ FriendRequestsScreen: Canceling friend request to:',
       request.receiverUsername
@@ -188,34 +189,35 @@ export function FriendRequestsScreen({
         {
           text: 'Remove',
           style: 'destructive',
-          onPress: async () => {
-            setProcessingRequest(request.id);
+          onPress: () =>
+            void (async () => {
+              setProcessingRequest(request.id);
 
-            try {
-              await cancelFriendRequest(request.id);
+              try {
+                await cancelFriendRequest(request.id);
 
-              Alert.alert(
-                'Friend Request Canceled',
-                `Friend request to ${request.receiverDisplayName} has been canceled.`,
-                [{ text: 'OK' }]
-              );
-            } catch (error) {
-              console.error(
-                '❌ FriendRequestsScreen: Failed to cancel friend request:',
-                error
-              );
+                Alert.alert(
+                  'Friend Request Canceled',
+                  `Friend request to ${request.receiverDisplayName} has been canceled.`,
+                  [{ text: 'OK' }]
+                );
+              } catch (error) {
+                console.error(
+                  '❌ FriendRequestsScreen: Failed to cancel friend request:',
+                  error
+                );
 
-              Alert.alert(
-                'Failed to Cancel Request',
-                error instanceof Error
-                  ? error.message
-                  : 'Unable to cancel friend request. Please try again.',
-                [{ text: 'OK' }]
-              );
-            } finally {
-              setProcessingRequest(null);
-            }
-          },
+                Alert.alert(
+                  'Failed to Cancel Request',
+                  error instanceof Error
+                    ? error.message
+                    : 'Unable to cancel friend request. Please try again.',
+                  [{ text: 'OK' }]
+                );
+              } finally {
+                setProcessingRequest(null);
+              }
+            })(),
         },
       ]
     );
@@ -316,7 +318,7 @@ export function FriendRequestsScreen({
               size='small'
               disabled={isLoading}
               loading={isLoading}
-              onPress={() => handleAcceptRequest(item)}
+              onPress={() => void handleAcceptRequest(item)}
               testID={`accept-button-${item.senderUsername}`}
             >
               Accept
@@ -325,7 +327,7 @@ export function FriendRequestsScreen({
               variant='outline'
               size='small'
               disabled={isLoading}
-              onPress={() => handleRejectRequest(item)}
+              onPress={() => void handleRejectRequest(item)}
               testID={`reject-button-${item.senderUsername}`}
             >
               Reject
@@ -401,7 +403,7 @@ export function FriendRequestsScreen({
               size='small'
               disabled={isLoading}
               loading={isLoading}
-              onPress={() => handleCancelRequest(item)}
+              onPress={() => void handleCancelRequest(item)}
             >
               Cancel
             </Button>
@@ -531,8 +533,8 @@ export function FriendRequestsScreen({
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={() => {
-              refreshFriends();
-              loadFriendRequests();
+              void refreshFriends();
+              void loadFriendRequests();
             }}
             tintColor={theme.colors.primary}
           />

@@ -194,7 +194,8 @@ class ChatService {
       console.log('✅ ChatService: Text message sent successfully:', messageId);
     } catch (error) {
       console.error('❌ ChatService: Failed to send text message:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -227,7 +228,7 @@ class ChatService {
           onProgress(Math.min(90, Math.random() * 80 + 10));
         }, 100);
 
-        uploadTask.finally(() => {
+        void uploadTask.finally(() => {
           clearInterval(progressInterval);
           onProgress(100);
         });
@@ -240,7 +241,8 @@ class ChatService {
       return downloadURL;
     } catch (error) {
       console.error('❌ ChatService: Media upload failed:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -296,7 +298,7 @@ class ChatService {
       // 2. Create conversation shell
       const conversationData: ConversationDocument = {
         participants: allMembers,
-        unreadCount: Array(allMembers.length).fill(0),
+        unreadCount: Array(allMembers.length).fill(0) as number[],
         isGroup: true,
         groupId,
         title: name,
@@ -320,7 +322,8 @@ class ChatService {
       return conversationId;
     } catch (error) {
       console.error('❌ ChatService: Failed to create group:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -368,7 +371,8 @@ class ChatService {
       return conversationId;
     } catch (error) {
       console.error('❌ ChatService: Failed to create conversation:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -387,13 +391,16 @@ class ChatService {
         return null;
       }
 
-      const conversations = snapshot.val();
+      const conversations = snapshot.val() as Record<
+        string,
+        ConversationDocument
+      >;
 
       // Find conversation where both users are participants
       for (const [conversationId, conversation] of Object.entries(
         conversations
       )) {
-        const conv = conversation as ConversationDocument;
+        const conv = conversation;
         if (
           conv.participants.includes(user1Id) &&
           conv.participants.includes(user2Id)
@@ -506,7 +513,8 @@ class ChatService {
         status: 'error',
         error: error instanceof Error ? error.message : 'Failed to send snap',
       });
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -646,7 +654,8 @@ class ChatService {
       return allMessages;
     } catch (error) {
       console.error('❌ ChatService: Failed to load messages:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -683,7 +692,8 @@ class ChatService {
       return messages;
     } catch (error) {
       console.error('❌ ChatService: Failed to load text messages:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -720,7 +730,8 @@ class ChatService {
       return messages;
     } catch (error) {
       console.error('❌ ChatService: Failed to load snap messages:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -740,11 +751,14 @@ class ChatService {
         return [];
       }
 
-      const conversations = snapshot.val();
+      const conversations = snapshot.val() as Record<
+        string,
+        ConversationDocument
+      >;
       const result: ConversationWithUser[] = [];
 
       for (const [conversationId, conversation] of Object.entries(
-        conversations as Record<string, ConversationDocument>
+        conversations
       )) {
         // Check if current user is participant
         if (!conversation.participants.includes(currentUserId)) continue;
@@ -865,7 +879,8 @@ class ChatService {
       return result;
     } catch (error) {
       console.error('❌ ChatService: Failed to load conversations:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -906,12 +921,10 @@ class ChatService {
         return [];
       }
 
-      const snaps = snapshot.val();
+      const snaps = snapshot.val() as Record<string, SnapDocument>;
       const result: Snap[] = [];
 
-      for (const [snapId, snapData] of Object.entries(
-        snaps as Record<string, SnapDocument>
-      )) {
+      for (const [snapId, snapData] of Object.entries(snaps)) {
         // Check if snap belongs to this conversation
         const isRelevant =
           (snapData.senderId === currentUserId &&
@@ -936,7 +949,8 @@ class ChatService {
       return result;
     } catch (error) {
       console.error('❌ ChatService: Failed to load snaps:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -1065,7 +1079,8 @@ class ChatService {
         '❌ ChatService: Failed to mark message as delivered:',
         error
       );
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -1106,7 +1121,8 @@ class ChatService {
       throw new Error('Snap not found - only snaps can be marked as viewed');
     } catch (error) {
       console.error('❌ ChatService: Failed to mark snap as viewed:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -1189,13 +1205,11 @@ class ChatService {
       const snapsSnapshot = await get(snapsRef);
 
       if (snapsSnapshot.exists()) {
-        const snaps = snapsSnapshot.val();
+        const snaps = snapsSnapshot.val() as Record<string, SnapDocument>;
         const now = Date.now();
         const expiredSnaps: string[] = [];
 
-        for (const [snapId, snapData] of Object.entries(
-          snaps as Record<string, SnapDocument>
-        )) {
+        for (const [snapId, snapData] of Object.entries(snaps)) {
           // Only delete snaps that are truly expired (24 hours old)
           // Viewed snaps remain in chat history permanently but become unviewable
           if (snapData.expiresAt < now && snapData.status !== 'viewed') {
@@ -1349,7 +1363,8 @@ class ChatService {
         '❌ ChatService: Failed to mark all messages as delivered:',
         error
       );
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -1371,10 +1386,10 @@ class ChatService {
         throw new Error('Group not found');
       }
 
-      const groupData = groupSnapshot.val();
+      const groupData = groupSnapshot.val() as Group;
 
       // Check if current user is admin
-      if (groupData.members[currentUserId]?.role !== 'admin') {
+      if (groupData.members?.[currentUserId]?.role !== 'admin') {
         throw new Error('Only admins can add members');
       }
 
@@ -1386,11 +1401,14 @@ class ChatService {
       let conversationData: ConversationDocument | null = null;
 
       if (conversationsSnapshot.exists()) {
-        const conversations = conversationsSnapshot.val();
+        const conversations = conversationsSnapshot.val() as Record<
+          string,
+          ConversationDocument
+        >;
         for (const [id, conversation] of Object.entries(conversations)) {
-          if ((conversation as ConversationDocument).groupId === groupId) {
+          if (conversation.groupId === groupId) {
             conversationId = id;
-            conversationData = conversation as ConversationDocument;
+            conversationData = conversation;
             break;
           }
         }
@@ -1401,7 +1419,7 @@ class ChatService {
       }
 
       // Add new members to group metadata
-      const updatedMembers = { ...groupData.members };
+      const updatedMembers = { ...(groupData.members || {}) };
       userIds.forEach(userId => {
         if (!updatedMembers[userId]) {
           updatedMembers[userId] = {
@@ -1435,7 +1453,8 @@ class ChatService {
       console.log('✅ ChatService: Added users to group successfully');
     } catch (error) {
       console.error('❌ ChatService: Failed to add users to group:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -1457,11 +1476,11 @@ class ChatService {
         throw new Error('Group not found');
       }
 
-      const groupData = groupSnapshot.val();
+      const groupData = groupSnapshot.val() as Group;
 
       // Check permissions: admin can remove others, users can remove themselves
       const canRemove =
-        groupData.members[currentUserId]?.role === 'admin' ||
+        groupData.members?.[currentUserId]?.role === 'admin' ||
         currentUserId === userId;
       if (!canRemove) {
         throw new Error('Permission denied');
@@ -1475,11 +1494,14 @@ class ChatService {
       let conversationData: ConversationDocument | null = null;
 
       if (conversationsSnapshot.exists()) {
-        const conversations = conversationsSnapshot.val();
+        const conversations = conversationsSnapshot.val() as Record<
+          string,
+          ConversationDocument
+        >;
         for (const [id, conversation] of Object.entries(conversations)) {
-          if ((conversation as ConversationDocument).groupId === groupId) {
+          if (conversation.groupId === groupId) {
             conversationId = id;
-            conversationData = conversation as ConversationDocument;
+            conversationData = conversation;
             break;
           }
         }
@@ -1490,7 +1512,7 @@ class ChatService {
       }
 
       // Remove member from group metadata
-      const updatedMembers = { ...groupData.members };
+      const updatedMembers = { ...(groupData.members || {}) };
       delete updatedMembers[userId];
 
       // Update participants and unread counts arrays
@@ -1520,7 +1542,8 @@ class ChatService {
       console.log('✅ ChatService: Removed user from group successfully');
     } catch (error) {
       console.error('❌ ChatService: Failed to remove user from group:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 
@@ -1541,7 +1564,8 @@ class ChatService {
       return snapshot.val() as Group;
     } catch (error) {
       console.error('❌ ChatService: Failed to get group data:', error);
-      throw this.handleError(error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
     }
   }
 }

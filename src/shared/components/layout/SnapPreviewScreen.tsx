@@ -112,7 +112,7 @@ export function SnapPreviewScreen() {
 
     try {
       const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status !== 'granted') {
+      if (status !== MediaLibrary.PermissionStatus.GRANTED) {
         Alert.alert(
           'Permission Required',
           'Media library permission is required to save photos.',
@@ -363,7 +363,7 @@ export function SnapPreviewScreen() {
               styles.actionButton,
               { backgroundColor: theme.colors.white },
             ]}
-            onPress={saveToDevice}
+            onPress={() => void saveToDevice()}
           >
             <Text
               style={[styles.actionButtonText, { color: theme.colors.black }]}

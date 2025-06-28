@@ -341,7 +341,7 @@ export const useFriendsStore = create<FriendsStore>()(
     /**
      * Block user (placeholder)
      */
-    blockUser: async (userId: string) => {
+    blockUser: (userId: string) => {
       console.log('🚫 FriendsStore: Blocking user:', userId);
       // TODO: Implement user blocking functionality
       throw new Error('Block user functionality not implemented yet');
@@ -350,7 +350,7 @@ export const useFriendsStore = create<FriendsStore>()(
     /**
      * Unblock user (placeholder)
      */
-    unblockUser: async (userId: string) => {
+    unblockUser: (userId: string) => {
       console.log('✅ FriendsStore: Unblocking user:', userId);
       // TODO: Implement user unblocking functionality
       throw new Error('Unblock user functionality not implemented yet');

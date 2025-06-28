@@ -112,7 +112,7 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
         }
       };
 
-      initializeCamera();
+      void initializeCamera();
 
       return () => {
         console.log('📷 CameraScreen: Screen unfocused');
@@ -256,7 +256,7 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
               mode={mode}
               isRecording={recording.isRecording}
               recordingDuration={recording.duration}
-              onCapture={handleCapture}
+              onCapture={() => void handleCapture()}
             />
           </View>
         </View>

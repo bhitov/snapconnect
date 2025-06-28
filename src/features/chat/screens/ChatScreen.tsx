@@ -207,13 +207,13 @@ function MessageItem({
 
   const handleSnapPress = useCallback(() => {
     if (message.type === 'snap' && onSnapPress) {
-      onSnapPress(message as SnapMessage);
+      onSnapPress(message);
     }
   }, [message, onSnapPress]);
 
   const renderMessageContent = () => {
     if (message.type === 'text') {
-      const textMessage = message as TextMessage;
+      const textMessage = message;
 
       // Use special LoveMapMessage component for coach messages
       if (isCoachMessage && onSendLoveMapQuestion) {
@@ -240,7 +240,7 @@ function MessageItem({
         </Text>
       );
     } else {
-      const snapMessage = message as SnapMessage;
+      const snapMessage = message;
       return (
         <TouchableOpacity
           style={styles.snapContent}
@@ -399,7 +399,7 @@ function MessageItem({
  * Chat screen component
  */
 export function ChatScreen() {
-  const route = useRoute() as ChatScreenRouteProp;
+  const route = useRoute<ChatScreenRouteProp>();
   const navigation = useNavigation<ChatScreenNavigationProp>();
   const theme = useTheme();
 
@@ -459,8 +459,8 @@ export function ChatScreen() {
     // console.log('🔄 ChatScreen: Silent polling messages for updates');
     try {
       await silentLoadMessages(conversationId);
-    } catch (error) {
-      console.error('❌ ChatScreen: Silent message polling failed:', error);
+    } catch (pollError) {
+      console.error('❌ ChatScreen: Silent message polling failed:', pollError);
     }
   }, [silentLoadMessages, conversationId]);
 
@@ -485,8 +485,11 @@ export function ChatScreen() {
         await markAllMessagesAsDelivered(conversationId);
       };
 
-      loadAndMarkDelivered().catch(error => {
-        console.error('Failed to load messages or mark as delivered:', error);
+      void loadAndMarkDelivered().catch(loadError => {
+        console.error(
+          'Failed to load messages or mark as delivered:',
+          loadError
+        );
       });
     }, [conversationId, loadMessages, markAllMessagesAsDelivered])
   );
@@ -521,8 +524,12 @@ export function ChatScreen() {
               if (userData) {
                 membersData[senderId] = userData;
               }
-            } catch (error) {
-              console.error('Failed to fetch user data for:', senderId, error);
+            } catch (fetchError) {
+              console.error(
+                'Failed to fetch user data for:',
+                senderId,
+                fetchError
+              );
             }
           }
         }
@@ -532,7 +539,7 @@ export function ChatScreen() {
         }
       };
 
-      fetchGroupMembersData();
+      void fetchGroupMembersData();
     }
   }, [isGroup, messages]);
 
@@ -554,8 +561,8 @@ export function ChatScreen() {
         isCoach: true,
         parentCid: conversationId,
       });
-    } catch (error) {
-      console.error('❌ Failed to start coach chat:', error);
+    } catch (coachError) {
+      console.error('❌ Failed to start coach chat:', coachError);
     }
   }, [conversationId, coachChatId, startCoachChat, navigation]);
 
@@ -579,8 +586,8 @@ export function ChatScreen() {
             console.log('✅ Love map generated');
             break;
         }
-      } catch (error) {
-        console.error('❌ Failed to perform coach analysis:', error);
+      } catch (analysisError) {
+        console.error('❌ Failed to perform coach analysis:', analysisError);
       }
     },
     [conversationId, parentCid, analyzeRatio, analyzeHorsemen, generateLoveMap]
@@ -593,8 +600,8 @@ export function ChatScreen() {
     try {
       await analyzeChat(conversationId, parentCid || '', 30);
       console.log('✅ Chat analysis completed and posted to conversation');
-    } catch (error) {
-      console.error('❌ Failed to analyze chat:', error);
+    } catch (analyzeError) {
+      console.error('❌ Failed to analyze chat:', analyzeError);
     }
   }, [conversationId, parentCid, analyzeChat]);
 
@@ -733,7 +740,7 @@ export function ChatScreen() {
           // Show coach button for regular chats
           return (
             <TouchableOpacity
-              onPress={handleCoachPress}
+              onPress={() => void handleCoachPress()}
               style={{ marginRight: 16 }}
             >
               <Text style={{ fontSize: 24 }}>🎓</Text>
@@ -810,8 +817,8 @@ export function ChatScreen() {
 
       // Reload messages to show the new one
       await loadMessages(conversationId);
-    } catch (error) {
-      console.error('Failed to send message:', error);
+    } catch (sendError) {
+      console.error('Failed to send message:', sendError);
       Alert.alert('Error', 'Failed to send message. Please try again.');
     } finally {
       setIsSending(false);
@@ -886,18 +893,19 @@ export function ChatScreen() {
         });
 
         // Load messages and scroll to bottom after navigation
-        setTimeout(async () => {
-          await loadMessages(parentCid);
-          setTimeout(() => {
-            // With inverted list, offset 0 is the bottom
-            flatListRef.current?.scrollToOffset({
-              offset: 0,
-              animated: true,
-            });
-          }, 100);
+        setTimeout(() => {
+          void loadMessages(parentCid).then(() => {
+            setTimeout(() => {
+              // With inverted list, offset 0 is the bottom
+              flatListRef.current?.scrollToOffset({
+                offset: 0,
+                animated: true,
+              });
+            }, 100);
+          });
         }, 200);
-      } catch (error) {
-        console.error('❌ Failed to send love map question:', error);
+      } catch (loveMapError) {
+        console.error('❌ Failed to send love map question:', loveMapError);
         Alert.alert('Error', 'Failed to send question. Please try again.');
       }
     },
@@ -978,7 +986,8 @@ export function ChatScreen() {
           onSnapPress={handleSnapPress}
           isCoachChat={isCoach || false}
           {...(isCoach && {
-            onSendLoveMapQuestion: handleSendLoveMapQuestion,
+            onSendLoveMapQuestion: (question: string) =>
+              void handleSendLoveMapQuestion(question),
           })}
           currentUser={currentUser}
           {...(resolvedOtherUser && { otherUser: resolvedOtherUser })}
@@ -1030,7 +1039,7 @@ export function ChatScreen() {
               styles.retryButton,
               { backgroundColor: theme.colors.primary },
             ]}
-            onPress={() => loadMessages(conversationId)}
+            onPress={() => void loadMessages(conversationId)}
           >
             <Text
               style={[
@@ -1160,7 +1169,7 @@ export function ChatScreen() {
                     : theme.colors.textSecondary,
               },
             ]}
-            onPress={handleSendMessage}
+            onPress={() => void handleSendMessage()}
             disabled={!messageText.trim() || isSending}
             activeOpacity={0.7}
             testID='send-button'
@@ -1180,7 +1189,7 @@ export function ChatScreen() {
         <CoachModal
           visible={showCoachModal}
           onClose={() => setShowCoachModal(false)}
-          onOptionSelect={handleCoachAnalysis}
+          onOptionSelect={option => void handleCoachAnalysis(option)}
         />
 
         {/* Send Error */}

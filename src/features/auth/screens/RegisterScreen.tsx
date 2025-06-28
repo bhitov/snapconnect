@@ -316,7 +316,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
             {/* Register Button */}
             <View style={styles.registerButton}>
               <Button
-                onPress={handleSubmit(onSubmit)}
+                onPress={() => void handleSubmit(onSubmit)()}
                 loading={isLoading}
                 disabled={isLoading}
                 testID='register-button'

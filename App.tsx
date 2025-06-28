@@ -36,7 +36,7 @@ export default function App() {
   useEffect(() => {
     if (isDev()) {
       setTimeout(() => {
-        runFirebaseDebug();
+        void runFirebaseDebug();
       }, 2000); // Delay to let Firebase initialize
     }
   }, []);
