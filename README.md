@@ -2,6 +2,12 @@
 
 A relationship-focused messaging app that combines ephemeral snaps with persistent text messaging and AI-powered relationship coaching.
 
+## LOOM VIDEO IS INACCURATE - NOTE TO REVIEWERS
+
+The app does run on an android phone
+
+in my loom video I said the app wasn't able to run on an android phone but it started working a few minutes after I submitted. My firebase cloud functions said they had deployed successfully but I think they needed a few minutes to actually spin up. It should work on android now. Use the running the app on a real android device instructions
+
 ## Running the app on a real android devie
 
 install expo go on an android phone
