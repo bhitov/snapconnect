@@ -117,10 +117,13 @@ module.exports = {
   },
   ignorePatterns: [
     '.eslintrc.js',
+    'functions/lib/',
     'node_modules/',
     '.expo/',
     'dist/',
     'web-build/',
+    'datagen/',
+    'e2e/',
     '*.config.js',
     '*.config.ts',
   ],
