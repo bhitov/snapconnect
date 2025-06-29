@@ -238,3 +238,32 @@ export async function getConversationParticipants(
 
   return getUsersInfo(userIds);
 }
+
+/**
+ * Check if two users are partners
+ */
+export async function areUsersPartners(
+  user1Id: string,
+  user2Id: string
+): Promise<boolean> {
+  const [user1Snapshot, user2Snapshot] = await Promise.all([
+    db.ref(`users/${user1Id}`).get(),
+    db.ref(`users/${user2Id}`).get()
+  ]);
+
+  const user1Data = user1Snapshot.val();
+  const user2Data = user2Snapshot.val();
+
+  // Check if they are partners (each user's partnerId points to the other)
+  return user1Data?.partnerId === user2Id && user2Data?.partnerId === user1Id;
+}
+
+/**
+ * Get conversation details
+ */
+export async function getConversation(
+  conversationId: string
+): Promise<Conversation | null> {
+  const snapshot = await db.ref(`conversations/${conversationId}`).get();
+  return snapshot.exists() ? (snapshot.val() as Conversation) : null;
+}

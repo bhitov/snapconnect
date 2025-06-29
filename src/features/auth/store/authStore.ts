@@ -49,6 +49,7 @@ interface AuthState {
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
   setInitializing: (initializing: boolean) => void;
+  refreshUser: () => Promise<void>;
 
   // Computed
   isProfileComplete: () => boolean;
@@ -256,6 +257,22 @@ export const useAuthStore = create<AuthState>()(
           set(state => {
             state.isInitializing = initializing;
           });
+        },
+
+        refreshUser: async () => {
+          const currentUser = get().user;
+          if (!currentUser) return;
+
+          try {
+            const updatedUser = await authService.getCurrentUser();
+            if (updatedUser) {
+              set(state => {
+                state.user = updatedUser;
+              });
+            }
+          } catch (error) {
+            console.error('Failed to refresh user:', error);
+          }
         },
 
         // Computed

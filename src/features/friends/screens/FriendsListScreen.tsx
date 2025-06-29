@@ -6,6 +6,7 @@
 
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -23,6 +24,9 @@ import { Button } from '@/shared/components/base/Button';
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
+import { useAuthStore } from '@/features/auth/store/authStore';
+import { partnerService } from '@/features/partner/services/partnerService';
+import { PartnerRequest } from '@/features/partner/types/partnerTypes';
 
 import {
   useFriendsStore,
@@ -61,9 +65,42 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
   const friendsError = useFriendsError();
   const isRefreshing = useIsRefreshing();
   const pendingRequestsCount = usePendingRequestsCount();
+  const currentUser = useAuthStore(state => state.user);
+
+  // Local state
+  const [partnerRequests, setPartnerRequests] = React.useState<PartnerRequest[]>([]);
+  const [hasActivePartnerRequest, setHasActivePartnerRequest] = React.useState(false);
+  const [pendingPartnerRequestsCount, setPendingPartnerRequestsCount] = React.useState(0);
 
   // Store actions
   const { loadFriends, refreshFriends, clearError } = useFriendsStore();
+
+  /**
+   * Load partner requests
+   */
+  const loadPartnerRequests = React.useCallback(async () => {
+    if (!currentUser) return;
+    
+    try {
+      const requests = await partnerService.getPartnerRequests(currentUser.uid);
+      setPartnerRequests(requests);
+      
+      // Check if user has any active partner request (sent or received)
+      const hasActive = requests.some(
+        req => req.status === 'pending' && 
+        (req.senderId === currentUser.uid || req.receiverId === currentUser.uid)
+      );
+      setHasActivePartnerRequest(hasActive);
+      
+      // Count pending partner requests received by the user
+      const receivedPartnerRequests = requests.filter(
+        req => req.status === 'pending' && req.receiverId === currentUser.uid
+      );
+      setPendingPartnerRequestsCount(receivedPartnerRequests.length);
+    } catch (error) {
+      console.error('Failed to load partner requests:', error);
+    }
+  }, [currentUser]);
 
   /**
    * Load friends and friend requests on mount
@@ -73,7 +110,20 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
     // Also load friend requests to ensure badge count is accurate
     const { loadFriendRequests } = useFriendsStore.getState();
     void loadFriendRequests();
-  }, [loadFriends]);
+    void loadPartnerRequests();
+  }, [loadFriends, loadPartnerRequests]);
+
+  /**
+   * Reload partner requests when screen comes into focus
+   */
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('🔄 FriendsListScreen: Screen focused, reloading partner requests');
+      void loadPartnerRequests();
+      // Also refresh the user to ensure partnerId is up-to-date
+      void useAuthStore.getState().refreshUser();
+    }, [loadPartnerRequests])
+  );
 
   /**
    * Handle viewing friend profile
@@ -287,6 +337,15 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
           Add Friends
         </Button>
 
+        {!currentUser?.partnerId && !hasActivePartnerRequest && (
+          <Button
+            variant='outline'
+            onPress={() => navigation.navigate('AddPartner')}
+          >
+            Add Partner
+          </Button>
+        )}
+
         <TouchableOpacity
           style={[
             styles.requestsButton,
@@ -299,12 +358,12 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
           <Text style={[styles.requestsText, { color: theme.colors.text }]}>
             Requests
           </Text>
-          {pendingRequestsCount > 0 && (
+          {(pendingRequestsCount + pendingPartnerRequestsCount) > 0 && (
             <View
               style={[styles.badge, { backgroundColor: theme.colors.error }]}
             >
               <Text style={[styles.badgeText, { color: theme.colors.white }]}>
-                {pendingRequestsCount}
+                {pendingRequestsCount + pendingPartnerRequestsCount}
               </Text>
             </View>
           )}
@@ -339,7 +398,10 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
-            onRefresh={() => void refreshFriends()}
+            onRefresh={() => {
+              void refreshFriends();
+              void loadPartnerRequests();
+            }}
             tintColor={theme.colors.primary}
           />
         }

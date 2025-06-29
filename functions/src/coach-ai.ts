@@ -3,6 +3,14 @@ import type { TextMessage } from './db';
 import type { FetchedData } from './types';
 import type { ConversationStats } from './pinecone';
 
+
+
+export const INITIAL_MESSAGE =  {
+  romantic: `Hi! I'm your Gottman-trained relationship coach. I'm here to help you improve your relationship.`,
+  platonic: `Hi! I'm your Gottman-trained platonic-relationship coach. I'm here to help you improve your friendship.`,
+  group: `Hi! I'm your Gottman-trained group-conversation coach. I'm here to help you improve your group conversation.`,
+}
+
 // Base system messages for different relationship types
 const BASE_SYSTEM_MESSAGE = {
   romantic: `You are a Gottman-trained relationship coach providing personalized guidance to help someone improve their relationship. 

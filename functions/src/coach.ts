@@ -12,12 +12,13 @@ import {
   formatMessagesForContext,
   formatMessagesWithUserInfoForContext,
   getUserInfo,
+  areUsersPartners,
+  getConversation,
   type UserInfo,
   type TextMessage,
   type TextMessageWithUserInfo,
   type Conversation,
 } from './db';
-import { getDatabase } from 'firebase-admin/database';
 import {
   queryConversationMessages,
   analyzeConversationStats,
@@ -35,6 +36,7 @@ import {
   coachBidsAI,
   coachRuptureRepairAI,
   coachACRAI,
+  INITIAL_MESSAGE,
 } from './coach-ai';
 import type { FetchedData, RelationshipType } from './types';
 
@@ -101,6 +103,24 @@ interface CoachACRData {
   parentCid: string;
 }
 
+
+async function getRelationshipTypeFromParentCid(parentCid: string): Promise<RelationshipType> {
+  const conversation = await getConversation(parentCid);
+  const participants = conversation?.participants || [];
+  if (participants.length >= 3) {
+    return 'group' as const;
+  } else if (participants.length === 2) {
+    // Check if the two participants are partners
+    const [user1Id, user2Id] = participants;
+    
+    // Check if they are partners
+    const arePartners = await areUsersPartners(user1Id, user2Id);
+   return arePartners ? 'romantic' as const : 'platonic' as const;
+  } else {
+    throw new HttpsError('invalid-argument', 'Invalid conversation type');
+  }
+}
+
 /**
  * Fetch all required data for coach operations
  * Always fetches coach messages and last 100 parent messages
@@ -118,22 +138,9 @@ export async function fetchAllRequiredData(
     data.parentCid,
     100
   );
+
+  const relationshipType = await getRelationshipTypeFromParentCid(data.parentCid);
   
-  // Get conversation info to determine relationship type
-  const convSnapshot = await getDatabase().ref(`conversations/${data.parentCid}`).get();
-  const conversation = convSnapshot.val() as Conversation;
-  const participants = conversation?.participants || [];
-  
-  // Determine relationship type
-  let relationshipType: RelationshipType = 'platonic';
-  
-  if (participants.length >= 3) {
-    relationshipType = 'group';
-  } else if (participants.length === 2) {
-    // For now, assume all 2-person conversations are romantic
-    // Later we'll check user.partnerId when it's available
-    relationshipType = 'romantic';
-  }
   
   const result: FetchedData = { 
     ...data,
@@ -213,11 +220,10 @@ export const startCoachChat = onCall<StartCoachChatData>(async request => {
   const now = Date.now();
   await createCoachConversation(coachCid, uid, parentCid, now);
 
+  const relationshipType = await getRelationshipTypeFromParentCid(parentCid);
+
   // First "hello" from the coach
-  await sendCoachMessage(
-    coachCid,
-    "Hi! I'm your relationship coach. Ask me anything or choose an option from the menu. TEST"
-  );
+  await sendCoachMessage( coachCid, INITIAL_MESSAGE[relationshipType]);
 
   return { coachCid };
 });
@@ -282,10 +288,10 @@ export const coachAnalyze = onCall<CoachAnalyzeData>(async request => {
 // 4) coachRatio - Positive/Negative Ratio Analysis
 //--------------------------------------------------------------------------
 export const coachRatio = onCall<CoachRatioData>(async request => {
-  const { uid, coachCid, parentCid } = await validateCoachParams(request);
+  const data = await fetchAllRequiredData(request);
 
   // Query Pinecone for sentiment analysis
-  const res = await queryConversationMessages(parentCid, 100);
+  const res = await queryConversationMessages(data.parentCid, 100);
   const stats = analyzeConversationStats(res.matches);
 
   const total = stats.totalMessages;
@@ -296,7 +302,6 @@ export const coachRatio = onCall<CoachRatioData>(async request => {
   const neuPercent =
     total > 0 ? ((stats.neutral / total) * 100).toFixed(1) : '0';
 
-  const data = await validateCoachParams(request);
 
   const analysis = await coachRatioAI(data, {
     stats,
@@ -306,7 +311,7 @@ export const coachRatio = onCall<CoachRatioData>(async request => {
     neuPercent,
   });
 
-  await sendCoachMessage(coachCid, analysis);
+  await sendCoachMessage(data.coachCid, analysis);
   return { ok: true };
 });
 
@@ -314,11 +319,10 @@ export const coachRatio = onCall<CoachRatioData>(async request => {
 // 5) coachHorsemen - Four Horsemen Analysis
 //--------------------------------------------------------------------------
 export const coachHorsemen = onCall<CoachHorsemenData>(async request => {
-  const data = await validateCoachParams(request);
-  const { uid, coachCid, parentCid } = data;
+  const data = await fetchAllRequiredData(request);
 
   // Query Pinecone for horsemen analysis
-  const res = await queryConversationMessages(parentCid, 100);
+  const res = await queryConversationMessages(data.parentCid, 100);
   const stats = analyzeConversationStats(res.matches);
 
   const horsemanTotal =
@@ -336,7 +340,7 @@ export const coachHorsemen = onCall<CoachHorsemenData>(async request => {
     horsemanPercent,
   });
 
-  await sendCoachMessage(coachCid, analysis);
+  await sendCoachMessage(data.coachCid, analysis);
   return { ok: true };
 });
 

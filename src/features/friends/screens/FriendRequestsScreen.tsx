@@ -29,8 +29,12 @@ import {
   useRequestsLoading,
   useRequestsError,
   useIsRefreshing,
+  useFriendsList,
 } from '../store/friendsStore';
 import { FriendRequest } from '../types';
+import { partnerService } from '../../partner/services/partnerService';
+import { PartnerRequest } from '../../partner/types/partnerTypes';
+import { useAuthStore } from '../../auth/store/authStore';
 
 import type { FriendsStackParamList } from '@/shared/navigation/types';
 import type { StackNavigationProp } from '@react-navigation/stack';
@@ -39,14 +43,15 @@ interface FriendRequestsScreenProps {
   navigation: StackNavigationProp<FriendsStackParamList, 'FriendRequests'>;
 }
 
-type TabType = 'received' | 'sent';
+type TabType = 'received' | 'sent' | 'partner';
 
 /**
  * FriendRequests screen component
  */
 export function FriendRequestsScreen({
   navigation,
-}: FriendRequestsScreenProps) {
+  route,
+}: FriendRequestsScreenProps & { route: any }) {
   const theme = useTheme();
 
   // Store state
@@ -66,17 +71,35 @@ export function FriendRequestsScreen({
   } = useFriendsStore();
 
   // Local state
-  const [activeTab, setActiveTab] = useState<TabType>('received');
+  const [activeTab, setActiveTab] = useState<TabType>(route?.params?.initialTab || 'received');
   const [processingRequest, setProcessingRequest] = useState<string | null>(
     null
   );
+  const [partnerRequests, setPartnerRequests] = useState<PartnerRequest[]>([]);
+  
+  const currentUser = useAuthStore(state => state.user);
+  const friendsList = useFriendsList();
 
   /**
    * Load friend requests on mount
    */
   useEffect(() => {
     void loadFriendRequests();
+    void loadPartnerRequests();
   }, [loadFriendRequests]);
+  
+  /**
+   * Load partner requests
+   */
+  const loadPartnerRequests = async () => {
+    if (!currentUser) return;
+    try {
+      const requests = await partnerService.getPartnerRequests(currentUser.uid);
+      setPartnerRequests(requests);
+    } catch (error) {
+      console.error('Failed to load partner requests:', error);
+    }
+  };
 
   /**
    * Handle accepting friend request
@@ -414,25 +437,163 @@ export function FriendRequestsScreen({
   };
 
   /**
+   * Handle accepting partner request
+   */
+  const handleAcceptPartnerRequest = async (request: PartnerRequest) => {
+    if (!currentUser) return;
+    
+    setProcessingRequest(request.id);
+    try {
+      console.log('💜 Accepting partner request:', request.id);
+      await partnerService.acceptPartnerRequest(request.id, request.senderId, request.receiverId);
+      
+      // Reload partner requests immediately
+      await loadPartnerRequests();
+      
+      // Also reload friend requests to update the count
+      await loadFriendRequests();
+      
+      // Refresh the current user to get updated partnerId
+      await useAuthStore.getState().refreshUser();
+      
+      Alert.alert('Partnership Accepted', 'You are now partners!');
+      
+      // Navigate back to Friends screen after a small delay to ensure state updates
+      setTimeout(() => {
+        navigation.navigate('FriendsList');
+      }, 100);
+    } catch (error) {
+      console.error('Failed to accept partner request:', error);
+      Alert.alert('Error', 'Failed to accept partner request. Please try again.');
+    } finally {
+      setProcessingRequest(null);
+    }
+  };
+  
+  /**
+   * Handle rejecting partner request
+   */
+  const handleRejectPartnerRequest = async (request: PartnerRequest) => {
+    setProcessingRequest(request.id);
+    try {
+      await partnerService.rejectPartnerRequest(request.id);
+      await loadPartnerRequests();
+      Alert.alert('Partner Request Rejected', 'The partner request has been rejected.');
+    } catch (error) {
+      console.error('Failed to reject partner request:', error);
+      Alert.alert('Error', 'Failed to reject partner request. Please try again.');
+    } finally {
+      setProcessingRequest(null);
+    }
+  };
+
+  /**
+   * Render partner request item
+   */
+  const renderPartnerRequest = ({ item }: { item: PartnerRequest }) => {
+    const isLoading = processingRequest === item.id;
+    const isReceived = item.receiverId === currentUser?.uid;
+    
+    // Get user info from friends list
+    const otherUser = friendsList.find(f => 
+      f.uid === (isReceived ? item.senderId : item.receiverId)
+    );
+    
+    if (!otherUser) return null;
+    
+    return (
+      <TouchableOpacity
+        style={[styles.requestItem, { backgroundColor: theme.colors.surface }]}
+        onPress={() => handleViewProfile(otherUser.uid)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.requestContent}>
+          <View style={[styles.avatar, { backgroundColor: theme.colors.primary }]}>
+            {otherUser.photoURL ? (
+              <Image
+                source={{ uri: resolveMediaUrl(otherUser.photoURL) }}
+                style={styles.avatarImage}
+              />
+            ) : (
+              <Text style={[styles.avatarText, { color: theme.colors.background }]}>
+                {otherUser.displayName?.charAt(0)?.toUpperCase() || '?'}
+              </Text>
+            )}
+          </View>
+          
+          <View style={styles.requestInfo}>
+            <Text style={[styles.displayName, { color: theme.colors.text }]}>
+              {otherUser.displayName}
+            </Text>
+            <Text style={[styles.username, { color: theme.colors.textSecondary }]}>
+              @{otherUser.username}
+            </Text>
+            <Text style={[styles.timeAgo, { color: theme.colors.textSecondary }]}>
+              {isReceived ? 'Sent you a partner request' : 'Partner request sent'}
+            </Text>
+          </View>
+          
+          {isReceived ? (
+            <View style={styles.actionButtons}>
+              <Button
+                variant='primary'
+                size='small'
+                disabled={isLoading}
+                loading={isLoading}
+                onPress={() => void handleAcceptPartnerRequest(item)}
+              >
+                Accept
+              </Button>
+              <Button
+                variant='outline'
+                size='small'
+                disabled={isLoading}
+                onPress={() => void handleRejectPartnerRequest(item)}
+              >
+                Reject
+              </Button>
+            </View>
+          ) : (
+            <View style={styles.singleActionContainer}>
+              <Button
+                variant='outline'
+                size='small'
+                disabled={isLoading}
+                loading={isLoading}
+                onPress={() => void partnerService.cancelPartnerRequest(item.id)}
+              >
+                Cancel
+              </Button>
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  /**
    * Render empty state
    */
   const renderEmptyState = () => {
     const isReceived = activeTab === 'received';
+    const isPartner = activeTab === 'partner';
 
     return (
       <View style={styles.emptyContainer}>
         <Ionicons
-          name={isReceived ? 'mail-open' : 'mail'}
+          name={isPartner ? 'heart-outline' : isReceived ? 'mail-open' : 'mail'}
           size={48}
           color={theme.colors.textSecondary}
         />
         <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
-          {isReceived ? 'No friend requests' : 'No sent requests'}
+          {isPartner ? 'No partner requests' : isReceived ? 'No friend requests' : 'No sent requests'}
         </Text>
         <Text
           style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}
         >
-          {isReceived
+          {isPartner
+            ? 'Partner requests will appear here'
+            : isReceived
             ? 'When someone sends you a friend request, it will appear here'
             : 'Friend requests you send will appear here'}
         </Text>
@@ -441,7 +602,8 @@ export function FriendRequestsScreen({
   };
 
   const currentRequests =
-    activeTab === 'received' ? receivedRequests : sentRequests;
+    activeTab === 'received' ? receivedRequests : 
+    activeTab === 'sent' ? sentRequests : partnerRequests;
 
   return (
     <SafeAreaView
@@ -517,13 +679,37 @@ export function FriendRequestsScreen({
             Sent ({sentRequests.length})
           </Text>
         </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[
+            styles.tab,
+            activeTab === 'partner' && { backgroundColor: theme.colors.primary },
+          ]}
+          onPress={() => setActiveTab('partner')}
+        >
+          <Text
+            style={[
+              styles.tabText,
+              {
+                color:
+                  activeTab === 'partner'
+                    ? theme.colors.white
+                    : theme.colors.textSecondary,
+              },
+            ]}
+          >
+            Partner ({partnerRequests.length})
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* Requests list */}
       <FlatList
         data={currentRequests}
         renderItem={
-          activeTab === 'received' ? renderReceivedRequest : renderSentRequest
+          activeTab === 'received' ? renderReceivedRequest : 
+          activeTab === 'sent' ? renderSentRequest : 
+          renderPartnerRequest
         }
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}
@@ -535,6 +721,7 @@ export function FriendRequestsScreen({
             onRefresh={() => {
               void refreshFriends();
               void loadFriendRequests();
+              void loadPartnerRequests();
             }}
             tintColor={theme.colors.primary}
           />
@@ -627,6 +814,10 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
+  },
+  avatarText: {
+    fontSize: 20,
+    fontWeight: '600',
   },
   requestInfo: {
     flex: 1,

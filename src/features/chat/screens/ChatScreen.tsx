@@ -422,6 +422,16 @@ export function ChatScreen() {
   const messagesError = useMessagesError();
   const sendError = useSendError();
   const conversations = useConversations();
+  
+  // Check if this is a partner conversation
+  const isPartnerConversation = React.useMemo(() => {
+    if (isCoach && parentCid) {
+      // Find the parent conversation
+      const parentConv = conversations.find(c => c.id === parentCid);
+      return parentConv?.otherUser?.uid === currentUser?.partnerId;
+    }
+    return otherUser?.uid === currentUser?.partnerId;
+  }, [isCoach, parentCid, conversations, otherUser, currentUser]);
 
   // Chat actions
   const {
@@ -709,8 +719,8 @@ export function ChatScreen() {
         }),
       // Add Coach button for non-coach conversations, menu for coach chats
       headerRight: () => {
-        if (isCoach) {
-          // Show prompts button for coach chats
+        if (isCoach && isPartnerConversation) {
+          // Show prompts button only for partner coach chats
           return (
             <TouchableOpacity
               onPress={() => setShowCoachModal(true)}
@@ -736,7 +746,7 @@ export function ChatScreen() {
               </View>
             </TouchableOpacity>
           );
-        } else {
+        } else if (!isCoach) {
           // Show coach button for regular chats
           return (
             <TouchableOpacity
@@ -760,6 +770,7 @@ export function ChatScreen() {
     conversations,
     handleCoachPress,
     handleAnalyzeChat,
+    isPartnerConversation,
   ]);
 
   /**

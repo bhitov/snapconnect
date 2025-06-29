@@ -16,6 +16,7 @@ export interface User {
   createdAt: number;
   lastActive: number;
   profileSetupCompleted?: boolean;
+  partnerId?: string;
 }
 
 /**

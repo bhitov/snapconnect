@@ -20,6 +20,7 @@ import {
   FriendRequestsScreen,
   FriendsListScreen,
 } from '../../features/friends/screens';
+import { AddPartnerScreen } from '../../features/partner/screens/AddPartnerScreen';
 import { usePendingRequestsCount } from '../../features/friends/store/friendsStore';
 import { GroupsScreen, CreateGroupScreen } from '../../features/groups/screens';
 import { GroupInfoScreen } from '../../features/groups/screens/GroupInfoScreen';
@@ -129,6 +130,7 @@ function FriendsStackNavigator() {
         name='FriendRequests'
         component={FriendRequestsScreen}
       />
+      <FriendsStack.Screen name='AddPartner' component={AddPartnerScreen} />
       <FriendsStack.Screen name='Profile' component={ProfileScreen} />
     </FriendsStack.Navigator>
   );

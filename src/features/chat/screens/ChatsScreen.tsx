@@ -21,6 +21,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
+import { useAuthStore } from '@/features/auth/store/authStore';
 
 import { usePolling } from '../hooks';
 import {
@@ -119,6 +120,7 @@ function getSnapStatusText(
 export function ChatsScreen() {
   const navigation = useNavigation<ChatsScreenNavigationProp>();
   const theme = useTheme();
+  const currentUser = useAuthStore(state => state.user);
 
   // Store hooks
   const conversations = useConversations();
@@ -200,7 +202,7 @@ export function ChatsScreen() {
         });
       }
     },
-    [navigation]
+    [navigation, currentUser]
   );
 
   /**
@@ -212,6 +214,8 @@ export function ChatsScreen() {
       const lastMessage = conversation.lastMessage;
       const isGroup = conversation.isGroup;
       const hasCoachChat = !conversation.isCoach && conversation.coachChatId;
+      const isPartner = !isGroup && !conversation.isCoach && 
+        conversation.otherUser?.uid === currentUser?.partnerId;
 
       // Determine display name and avatar text
       const displayName = isGroup
@@ -237,6 +241,7 @@ export function ChatsScreen() {
             styles.conversationItem,
             { backgroundColor: theme.colors.background },
             hasUnread && { backgroundColor: `${theme.colors.primary}10` },
+            isPartner && { backgroundColor: `${theme.colors.error}05` },
           ]}
           onPress={() => handleConversationPress(conversation)}
           activeOpacity={0.7}
@@ -271,15 +276,20 @@ export function ChatsScreen() {
           {/* Conversation Info */}
           <View style={styles.conversationInfo}>
             <View style={styles.conversationHeader}>
-              <Text
-                style={[
-                  styles.userName,
-                  { color: theme.colors.text },
-                  hasUnread && { fontWeight: '600' },
-                ]}
-              >
-                {displayName}
-              </Text>
+              <View style={styles.nameContainer}>
+                <Text
+                  style={[
+                    styles.userName,
+                    { color: theme.colors.text },
+                    hasUnread && { fontWeight: '600' },
+                  ]}
+                >
+                  {displayName}
+                </Text>
+                {isPartner && (
+                  <Text style={styles.partnerIcon}>❤️</Text>
+                )}
+              </View>
 
               {lastMessage && (
                 <Text
@@ -583,6 +593,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 4,
+  },
+  nameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  partnerIcon: {
+    fontSize: 14,
   },
   userName: {
     fontSize: 16,
