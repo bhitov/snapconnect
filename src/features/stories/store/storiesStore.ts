@@ -18,7 +18,6 @@ import type {
   StoryCreationData,
   StoryUploadProgress,
   StoryViewingSession,
-  StoryViewer,
   StoryError,
 } from '../types';
 

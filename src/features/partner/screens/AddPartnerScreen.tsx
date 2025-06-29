@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,16 +11,18 @@ import {
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/shared/hooks/useTheme';
+
+import { useAuthStore } from '@/features/auth/store/authStore';
 import { useFriendsList } from '@/features/friends/store/friendsStore';
 import { FriendProfile } from '@/features/friends/types';
+import { useTheme } from '@/shared/hooks/useTheme';
 import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
+
 import { partnerService } from '../services/partnerService';
-import { useAuthStore } from '@/features/auth/store/authStore';
 import { PartnerRequest } from '../types/partnerTypes';
-import type { StackNavigationProp } from '@react-navigation/stack';
+
 import type { FriendsStackParamList } from '@/shared/navigation/types';
+import type { StackNavigationProp } from '@react-navigation/stack';
 
 interface AddPartnerScreenProps {
   navigation: StackNavigationProp<FriendsStackParamList, 'AddPartner'>;
@@ -38,11 +41,7 @@ export function AddPartnerScreen({ navigation }: AddPartnerScreenProps) {
     []
   );
 
-  useEffect(() => {
-    loadExistingRequests();
-  }, []);
-
-  const loadExistingRequests = async () => {
+  const loadExistingRequests = useCallback(async () => {
     if (!currentUser) return;
     try {
       const requests = await partnerService.getPartnerRequests(currentUser.uid);
@@ -50,7 +49,11 @@ export function AddPartnerScreen({ navigation }: AddPartnerScreenProps) {
     } catch (error) {
       console.error('Failed to load partner requests:', error);
     }
-  };
+  }, [currentUser]);
+
+  useEffect(() => {
+    void loadExistingRequests();
+  }, [loadExistingRequests]);
 
   const handleSelectFriend = (friend: FriendProfile) => {
     if (currentUser?.partnerId) {
@@ -276,7 +279,7 @@ export function AddPartnerScreen({ navigation }: AddPartnerScreenProps) {
                   styles.confirmButton,
                   { backgroundColor: theme.colors.primary },
                 ]}
-                onPress={handleConfirm}
+                onPress={() => void handleConfirm()}
                 disabled={loading}
               >
                 <Text

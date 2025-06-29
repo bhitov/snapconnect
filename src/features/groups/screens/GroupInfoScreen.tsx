@@ -5,7 +5,7 @@
  */
 
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,6 @@ import {
 } from 'react-native';
 
 import { useAuthStore } from '@/features/auth/store/authStore';
-import { useChatStore } from '@/features/chat/store/chatStore';
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { Screen } from '@/shared/components/layout/Screen';
 import { useTheme } from '@/shared/hooks/useTheme';

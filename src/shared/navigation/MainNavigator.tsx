@@ -20,11 +20,11 @@ import {
   FriendRequestsScreen,
   FriendsListScreen,
 } from '../../features/friends/screens';
-import { AddPartnerScreen } from '../../features/partner/screens/AddPartnerScreen';
 import { usePendingRequestsCount } from '../../features/friends/store/friendsStore';
 import { GroupsScreen, CreateGroupScreen } from '../../features/groups/screens';
 import { GroupInfoScreen } from '../../features/groups/screens/GroupInfoScreen';
 import { ManageGroupMembersScreen } from '../../features/groups/screens/ManageGroupMembersScreen';
+import { AddPartnerScreen } from '../../features/partner/screens/AddPartnerScreen';
 import { StoriesScreen } from '../../features/stories/screens/StoriesScreen';
 import { ViewStoryScreen } from '../../features/stories/screens/ViewStoryScreen';
 import { useTheme } from '../hooks/useTheme';

@@ -5,7 +5,7 @@
  */
 
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -22,6 +22,9 @@ import { Button } from '@/shared/components/base/Button';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
+import { useAuthStore } from '../../auth/store/authStore';
+import { partnerService } from '../../partner/services/partnerService';
+import { PartnerRequest } from '../../partner/types/partnerTypes';
 import {
   useFriendsStore,
   useSentRequests,
@@ -32,15 +35,14 @@ import {
   useFriendsList,
 } from '../store/friendsStore';
 import { FriendRequest } from '../types';
-import { partnerService } from '../../partner/services/partnerService';
-import { PartnerRequest } from '../../partner/types/partnerTypes';
-import { useAuthStore } from '../../auth/store/authStore';
 
 import type { FriendsStackParamList } from '@/shared/navigation/types';
 import type { StackNavigationProp } from '@react-navigation/stack';
+import type { RouteProp } from '@react-navigation/native';
 
 interface FriendRequestsScreenProps {
   navigation: StackNavigationProp<FriendsStackParamList, 'FriendRequests'>;
+  route: RouteProp<FriendsStackParamList, 'FriendRequests'>;
 }
 
 type TabType = 'received' | 'sent' | 'partner';
@@ -51,7 +53,7 @@ type TabType = 'received' | 'sent' | 'partner';
 export function FriendRequestsScreen({
   navigation,
   route,
-}: FriendRequestsScreenProps & { route: any }) {
+}: FriendRequestsScreenProps) {
   const theme = useTheme();
 
   // Store state
@@ -83,17 +85,9 @@ export function FriendRequestsScreen({
   const friendsList = useFriendsList();
 
   /**
-   * Load friend requests on mount
-   */
-  useEffect(() => {
-    void loadFriendRequests();
-    void loadPartnerRequests();
-  }, [loadFriendRequests]);
-
-  /**
    * Load partner requests
    */
-  const loadPartnerRequests = async () => {
+  const loadPartnerRequests = useCallback(async () => {
     if (!currentUser) return;
     try {
       const requests = await partnerService.getPartnerRequests(currentUser.uid);
@@ -101,7 +95,15 @@ export function FriendRequestsScreen({
     } catch (error) {
       console.error('Failed to load partner requests:', error);
     }
-  };
+  }, [currentUser]);
+
+  /**
+   * Load friend requests on mount
+   */
+  useEffect(() => {
+    void loadFriendRequests();
+    void loadPartnerRequests();
+  }, [loadFriendRequests, loadPartnerRequests]);
 
   /**
    * Handle accepting friend request
@@ -747,7 +749,7 @@ export function FriendRequestsScreen({
             ? renderReceivedRequest
             : activeTab === 'sent'
               ? renderSentRequest
-              : renderPartnerRequest
+              : (renderPartnerRequest as any)
         }
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}

@@ -20,7 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { resolveMediaUrl } from '../../../shared/utils/resolveMediaUrl';
 import { chatService } from '../../chat/services/chatService';
-import { useAuthStore, useAuthUser } from '../store/authStore';
+import { useAuthUser } from '../store/authStore';
 
 import type { RootStackParamList } from '../../../shared/navigation/types';
 import type { User } from '../types/authTypes';

@@ -1,4 +1,3 @@
-import { database as db } from '../../../shared/services/firebase/config';
 import {
   ref,
   push,
@@ -8,8 +7,9 @@ import {
   query,
   orderByChild,
   equalTo,
-  serverTimestamp,
 } from 'firebase/database';
+
+import { database as db } from '../../../shared/services/firebase/config';
 import { PartnerRequest } from '../types/partnerTypes';
 
 export const partnerService = {
@@ -27,7 +27,7 @@ export const partnerService = {
     const newRequestRef = push(ref(db, 'partnerRequests'));
     await set(newRequestRef, { ...requestData, id: newRequestRef.key });
 
-    return newRequestRef.key!;
+    return newRequestRef.key;
   },
 
   async getPartnerRequests(userId: string): Promise<PartnerRequest[]> {
@@ -50,14 +50,18 @@ export const partnerService = {
     const requests: PartnerRequest[] = [];
 
     if (sentSnapshot.exists()) {
-      Object.values(sentSnapshot.val()).forEach(request => {
-        requests.push(request as PartnerRequest);
+      Object.values(
+        sentSnapshot.val() as Record<string, PartnerRequest>
+      ).forEach(request => {
+        requests.push(request);
       });
     }
 
     if (receivedSnapshot.exists()) {
-      Object.values(receivedSnapshot.val()).forEach(request => {
-        requests.push(request as PartnerRequest);
+      Object.values(
+        receivedSnapshot.val() as Record<string, PartnerRequest>
+      ).forEach(request => {
+        requests.push(request);
       });
     }
 
@@ -69,7 +73,7 @@ export const partnerService = {
     senderId: string,
     receiverId: string
   ): Promise<void> {
-    const updates: Record<string, any> = {
+    const updates: Record<string, string | null> = {
       [`partnerRequests/${requestId}/status`]: 'accepted',
       [`users/${senderId}/partnerId`]: receiverId,
       [`users/${receiverId}/partnerId`]: senderId,
@@ -91,7 +95,7 @@ export const partnerService = {
   },
 
   async breakPartnership(user1Id: string, user2Id: string): Promise<void> {
-    const updates: Record<string, any> = {
+    const updates: Record<string, string | null> = {
       [`users/${user1Id}/partnerId`]: null,
       [`users/${user2Id}/partnerId`]: null,
     };

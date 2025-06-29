@@ -4,8 +4,10 @@
  * Provides Firebase services with proper environment handling.
  */
 
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth, connectAuthEmulator } from 'firebase/auth';
+import { Auth, connectAuthEmulator } from 'firebase/auth';
+import * as firebaseAuth from 'firebase/auth';
 import {
   getDatabase,
   Database,
@@ -50,8 +52,6 @@ let database: Database;
 let storage: FirebaseStorage;
 let functions: Functions;
 
-import * as firebaseAuth from 'firebase/auth';
-
 const { initializeAuth } = firebaseAuth;
 type XX = typeof firebaseAuth & {
   getReactNativePersistence: (
@@ -64,7 +64,6 @@ const getReactNativePersistence: (
   .getReactNativePersistence as unknown as (
   storage: firebaseAuth.ReactNativeAsyncStorage
 ) => firebaseAuth.Persistence;
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 /**
  * Initialize Firebase services

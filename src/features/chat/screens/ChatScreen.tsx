@@ -45,12 +45,7 @@ import {
   useConversations,
 } from '../store/chatStore';
 
-import type {
-  Message,
-  TextMessage,
-  SnapMessage,
-  ChatScreenProps,
-} from '../types';
+import type { Message, SnapMessage, ChatScreenProps } from '../types';
 import type { User } from '@/features/auth/types/authTypes';
 import type {
   ChatStackParamList,
@@ -484,7 +479,7 @@ export function ChatScreen() {
   const [resolvedOtherUser, setResolvedOtherUser] = useState(otherUser);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const flatListRef = useRef<FlatList>(null);
-  const analysisTimeoutRef = useRef<NodeJS.Timeout>();
+  const analysisTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messageCountRef = useRef<number>(messages.length);
 
   /**
@@ -631,7 +626,7 @@ export function ChatScreen() {
         // Set 10 second timeout
         analysisTimeoutRef.current = setTimeout(() => {
           setIsAnalyzing(false);
-        }, 10000);
+        }, 10000) as unknown as NodeJS.Timeout;
 
         switch (option) {
           case 'ratio':

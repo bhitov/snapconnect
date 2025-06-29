@@ -11,8 +11,6 @@ import { friendsService } from '../services/friendsService';
 import {
   FriendsStore,
   FriendProfile,
-  FriendRequest,
-  FriendSearchResult,
   SendFriendRequestData,
   FriendRequestResponse,
 } from '../types';

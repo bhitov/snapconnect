@@ -11,7 +11,6 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   updateProfile,
-  User as FirebaseUser,
 } from 'firebase/auth';
 import { ref, set, get, update } from 'firebase/database';
 import {

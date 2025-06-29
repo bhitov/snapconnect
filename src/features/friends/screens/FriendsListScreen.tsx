@@ -5,8 +5,8 @@
  */
 
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,14 +19,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAuthStore } from '@/features/auth/store/authStore';
 import { useChatStore } from '@/features/chat/store/chatStore';
+import { partnerService } from '@/features/partner/services/partnerService';
+import { PartnerRequest } from '@/features/partner/types/partnerTypes';
 import { Button } from '@/shared/components/base/Button';
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
-import { useAuthStore } from '@/features/auth/store/authStore';
-import { partnerService } from '@/features/partner/services/partnerService';
-import { PartnerRequest } from '@/features/partner/types/partnerTypes';
 
 import {
   useFriendsStore,

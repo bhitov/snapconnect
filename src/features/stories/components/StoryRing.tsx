@@ -6,14 +6,7 @@
 
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Image,
-  Text,
-  StyleSheet,
-  ViewStyle,
-} from 'react-native';
+import { View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
 
 // Removed linear gradient dependency
 

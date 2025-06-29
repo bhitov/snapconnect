@@ -4,22 +4,12 @@
  */
 
 import { getAuth } from 'firebase/auth';
-import {
-  getDatabase,
-  ref,
-  set,
-  get,
-  update,
-  remove,
-  onValue,
-  off,
-} from 'firebase/database';
+import { getDatabase, ref, set, get, remove } from 'firebase/database';
 import {
   getStorage,
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
-  deleteObject,
 } from 'firebase/storage';
 
 import { friendsService } from '@/features/friends/services/friendsService';

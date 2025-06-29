@@ -26,7 +26,7 @@ import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 import { chatService } from '../services/chatService';
 import { useChatStore, useViewingSession } from '../store/chatStore';
 
-import type { Snap, SnapMessage } from '../types';
+import type { Snap } from '../types';
 import type { RootStackParamList } from '@/shared/navigation/types';
 import type { RouteProp } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';

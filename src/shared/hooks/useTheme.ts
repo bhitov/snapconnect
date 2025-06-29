@@ -4,9 +4,7 @@
  * Provides easy access to colors, typography, spacing, and theme state.
  */
 
-import { useColorScheme } from 'react-native';
-
-import { lightTheme, darkTheme, type AppTheme } from '../theme';
+import { darkTheme, type AppTheme } from '../theme';
 
 /**
  * Hook for accessing the current theme

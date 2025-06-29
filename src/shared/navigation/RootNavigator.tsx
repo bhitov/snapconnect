@@ -21,7 +21,6 @@ import {
 import { RecipientSelectionScreen } from '../../features/chat/screens/RecipientSelectionScreen';
 import { SnapViewingScreen } from '../../features/chat/screens/SnapViewingScreen';
 import { SnapPreviewScreen } from '../components/layout/SnapPreviewScreen';
-import { ViewSnapScreen } from '../components/layout/ViewSnapScreen';
 import { useTheme } from '../hooks/useTheme';
 
 import { AuthNavigator } from './AuthNavigator';

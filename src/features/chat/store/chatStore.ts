@@ -28,16 +28,10 @@ import {
 import type {
   ChatStore,
   ChatState,
-  ConversationWithUser,
-  Message,
-  TextMessage,
   SnapMessage,
   TextMessageCreationData,
   SnapCreationData,
-  SnapUploadProgress,
   SnapViewingSession,
-  // Legacy types for backward compatibility
-  Snap,
 } from '../types';
 
 /**
@@ -882,12 +876,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
   },
 
-  updateGroupTitle: (groupId: string, title: string) => {
+  updateGroupTitle: async (groupId: string, title: string) => {
     console.log('👥 ChatStore: Updating group title:', groupId, title);
     // TODO: Implement in chatService
   },
 
-  leaveGroup: (groupId: string) => {
+  leaveGroup: async (groupId: string) => {
     console.log('👥 ChatStore: Leaving group:', groupId);
     // TODO: Implement in chatService
   },

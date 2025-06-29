@@ -13,15 +13,14 @@ import {
   TouchableOpacity,
   RefreshControl,
   StyleSheet,
-  Alert,
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAuthStore } from '@/features/auth/store/authStore';
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
-import { useAuthStore } from '@/features/auth/store/authStore';
 
 import { usePolling } from '../hooks';
 import {
@@ -202,7 +201,7 @@ export function ChatsScreen() {
         });
       }
     },
-    [navigation, currentUser]
+    [navigation]
   );
 
   /**
@@ -380,7 +379,7 @@ export function ChatsScreen() {
         </TouchableOpacity>
       );
     },
-    [theme, handleConversationPress, navigation]
+    [theme, handleConversationPress, navigation, currentUser?.partnerId]
   );
 
   /**

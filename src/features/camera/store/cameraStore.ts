@@ -137,7 +137,7 @@ export const useCameraStore = create<CameraStore>()(
       ...initialState,
 
       // Permissions
-      requestPermissions: () => {
+      requestPermissions: async () => {
         console.log('📋 CameraStore: Requesting permissions');
 
         set(state => {
@@ -177,7 +177,7 @@ export const useCameraStore = create<CameraStore>()(
         }
       },
 
-      checkPermissions: () => {
+      checkPermissions: async () => {
         console.log('🔍 CameraStore: Checking permissions');
 
         // This will be implemented in the camera service
@@ -283,7 +283,9 @@ export const useCameraStore = create<CameraStore>()(
         }
       },
 
-      startVideoRecording: (cameraRef?: React.RefObject<CameraView | null>) => {
+      startVideoRecording: async (
+        cameraRef?: React.RefObject<CameraView | null>
+      ) => {
         console.log('🎥 CameraStore: Starting video recording');
 
         set(state => {

@@ -8,10 +8,8 @@ import { getAuth } from 'firebase/auth';
 import {
   getDatabase,
   ref,
-  push,
   set,
   get,
-  update,
   remove,
   query,
   orderByChild,
@@ -28,7 +26,6 @@ import { generateId } from '@/shared/utils/idGenerator';
 
 import {
   FriendRequest,
-  Friendship,
   FriendProfile,
   FriendSearchResult,
   FriendRequestDocument,

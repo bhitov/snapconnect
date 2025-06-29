@@ -33,12 +33,7 @@ import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 import { StoryProgressBar } from '../components/StoryProgressBar';
 import { useStoriesStore } from '../store/storiesStore';
 
-import type {
-  ViewStoryScreenProps,
-  Story,
-  StoryWithUser,
-  StoryPost,
-} from '../types';
+import type { ViewStoryScreenProps, StoryWithUser, StoryPost } from '../types';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 

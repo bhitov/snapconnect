@@ -9,7 +9,6 @@ import { getAuth } from 'firebase/auth';
 import {
   getDatabase,
   ref,
-  push,
   set,
   get,
   update,
@@ -18,15 +17,12 @@ import {
   equalTo,
   onValue,
   off,
-  orderByKey,
-  limitToLast,
 } from 'firebase/database';
 import {
   getStorage,
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
-  deleteObject,
 } from 'firebase/storage';
 
 import { generateId } from '@/shared/utils/idGenerator';
@@ -39,11 +35,9 @@ import type {
   SnapCreationData,
   TextMessageDocument,
   SnapDocument,
-  Conversation,
   ConversationDocument,
   ConversationWithUser,
   ChatError,
-  ChatErrorType,
   SnapUploadProgress,
   MessageType,
   MessageStatus,
@@ -1590,7 +1584,7 @@ class ChatService {
         return 0;
       }
 
-      return Object.keys(snapshot.val()).length;
+      return Object.keys(snapshot.val() as Record<string, unknown>).length;
     } catch (error) {
       console.error('❌ ChatService: Failed to get message count:', error);
       return 0;

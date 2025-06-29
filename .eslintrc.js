@@ -12,6 +12,7 @@ module.exports = {
     'react-native',
     'react-hooks',
     'prettier',
+    'unused-imports',
   ],
   parserOptions: {
     ecmaFeatures: {
@@ -33,6 +34,17 @@ module.exports = {
 
     // TypeScript specific rules
     '@typescript-eslint/no-unused-vars': ['off', { argsIgnorePattern: '^_' }],
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'off',
+      {
+        vars: 'all',
+        varsIgnorePattern: '^_',
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+      },
+    ],
+
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/no-non-null-assertion': 'error',
@@ -131,5 +143,6 @@ module.exports = {
     'e2e/',
     '*.config.js',
     '*.config.ts',
+    'tmp/',
   ],
 };

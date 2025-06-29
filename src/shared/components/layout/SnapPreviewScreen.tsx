@@ -7,7 +7,6 @@
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Video, ResizeMode } from 'expo-av';
-import * as ImageManipulator from 'expo-image-manipulator';
 import * as MediaLibrary from 'expo-media-library';
 import { useState, useCallback } from 'react';
 import {
@@ -22,7 +21,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated from 'react-native-reanimated';
 
 import { useCameraStore } from '../../../features/camera/store/cameraStore';
 import { useTheme } from '../../hooks/useTheme';
