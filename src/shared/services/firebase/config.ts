@@ -50,13 +50,25 @@ let database: Database;
 let storage: FirebaseStorage;
 let functions: Functions;
 
+import * as firebaseAuth from 'firebase/auth';
+
+const { initializeAuth } = firebaseAuth;
+type XX = typeof firebaseAuth & {
+  getReactNativePersistence: (storage: firebaseAuth.ReactNativeAsyncStorage) => firebaseAuth.Persistence;
+}
+const getReactNativePersistence: (storage: firebaseAuth.ReactNativeAsyncStorage) => firebaseAuth.Persistence = (firebaseAuth as unknown as XX).getReactNativePersistence as unknown as (storage: firebaseAuth.ReactNativeAsyncStorage) => firebaseAuth.Persistence;
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+
 /**
  * Initialize Firebase services
  */
 function initializeFirebase(): void {
   try {
     app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
+    // auth = getAuth(app);
+    auth = initializeAuth(app, {
+      persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+    });
     database = getDatabase(app);
     storage = getStorage(app);
     functions = getFunctions(app);

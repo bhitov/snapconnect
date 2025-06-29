@@ -84,8 +84,8 @@ export function SnapPreviewScreen() {
       id: generateId(),
       text: newTextInput.trim(),
       x: 0.5, // Center horizontally
-      y: 0.5, // Center vertically
-      fontSize: 24,
+      y: 0.85, // Bottom position like in snap viewing
+      fontSize: 18,
       color: '#FFFFFF',
       scale: 1,
       rotation: 0,
@@ -167,31 +167,9 @@ export function SnapPreviewScreen() {
     if (!textOverlay) return null;
 
     return (
-      <Animated.View
-        style={[
-          styles.textOverlay,
-          {
-            left: textOverlay.x * SCREEN_WIDTH - 50,
-            top: textOverlay.y * SCREEN_HEIGHT - 25,
-            transform: [
-              { scale: textOverlay.scale },
-              { rotate: `${textOverlay.rotation}deg` },
-            ],
-          },
-        ]}
-      >
-        <Text
-          style={[
-            styles.overlayText,
-            {
-              fontSize: textOverlay.fontSize,
-              color: textOverlay.color,
-            },
-          ]}
-        >
-          {textOverlay.text}
-        </Text>
-      </Animated.View>
+      <View style={styles.textOverlayContainer}>
+        <Text style={styles.textOverlay}>{textOverlay.text}</Text>
+      </View>
     );
   }, [textOverlay]);
 
@@ -254,6 +232,8 @@ export function SnapPreviewScreen() {
                         backgroundColor: theme.colors.white,
                         flex: 1,
                         marginRight: 10,
+                        borderWidth: 2,
+                        borderColor: theme.colors.white,
                       },
                     ]}
                     onPress={() => {
@@ -273,14 +253,19 @@ export function SnapPreviewScreen() {
                   <TouchableOpacity
                     style={[
                       styles.textButton,
-                      { backgroundColor: theme.colors.gray4, flex: 1 },
+                      { 
+                        backgroundColor: 'transparent', 
+                        flex: 1,
+                        borderWidth: 2,
+                        borderColor: theme.colors.white,
+                      },
                     ]}
                     onPress={removeTextOverlay}
                   >
                     <Text
                       style={[
                         styles.textButtonText,
-                        { color: theme.colors.black },
+                        { color: theme.colors.white },
                       ]}
                     >
                       Remove
@@ -347,12 +332,16 @@ export function SnapPreviewScreen() {
           <TouchableOpacity
             style={[
               styles.actionButton,
-              { backgroundColor: theme.colors.white },
+              { 
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                borderColor: theme.colors.white,
+              },
             ]}
             onPress={handleRetake}
           >
             <Text
-              style={[styles.actionButtonText, { color: theme.colors.black }]}
+              style={[styles.actionButtonText, { color: theme.colors.white }]}
             >
               Go back
             </Text>
@@ -361,7 +350,11 @@ export function SnapPreviewScreen() {
           <TouchableOpacity
             style={[
               styles.actionButton,
-              { backgroundColor: theme.colors.white },
+              { 
+                backgroundColor: theme.colors.white,
+                borderWidth: 2,
+                borderColor: theme.colors.white,
+              },
             ]}
             onPress={() => void saveToDevice()}
           >
@@ -375,7 +368,11 @@ export function SnapPreviewScreen() {
           <TouchableOpacity
             style={[
               styles.actionButton,
-              { backgroundColor: theme.colors.primary },
+              { 
+                backgroundColor: theme.colors.primary,
+                borderWidth: 2,
+                borderColor: theme.colors.primary,
+              },
             ]}
             onPress={handleSend}
           >
@@ -407,22 +404,26 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 
-  textOverlay: {
+  textOverlayContainer: {
     position: 'absolute',
-    padding: 8,
-    borderRadius: 4,
-    minWidth: 100,
-    minHeight: 50,
-    justifyContent: 'center',
+    bottom: 180,
+    left: 0,
+    right: 0,
     alignItems: 'center',
   },
 
-  overlayText: {
-    fontWeight: 'bold',
+  textOverlay: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '600',
     textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
     textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+    textShadowRadius: 3,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    width: '100%',
   },
 
   controlsContainer: {

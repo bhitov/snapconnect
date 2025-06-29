@@ -167,6 +167,29 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
     }
   }, [storyId, userId]);
 
+  // Progress tracking
+  const progressStartTime = React.useRef(Date.now());
+  const [progressValue, setProgressValue] = React.useState(0);
+
+  /**
+   * Go to next post
+   */
+  const goToNextPost = React.useCallback(() => {
+    if (!story) return;
+
+    console.log('⏭️ ViewStoryScreen: Going to next post');
+
+    if (currentPostIndex < story.posts.length - 1) {
+      setCurrentPostIndex(prev => prev + 1);
+      setProgressValue(0);
+      setMediaLoadError(false); // Reset media error for new post
+    } else {
+      // End of story, close viewer
+      console.log('✅ ViewStoryScreen: End of story reached');
+      navigation.goBack();
+    }
+  }, [story, currentPostIndex, navigation]);
+
   /**
    * Start progress animation for current post
    */
@@ -211,29 +234,6 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
     progressStartTime.current = Date.now();
     requestAnimationFrame(updateProgress);
   }, [story, isPlaying, currentPostIndex, progress, goToNextPost]);
-
-  // Progress tracking
-  const progressStartTime = React.useRef(Date.now());
-  const [progressValue, setProgressValue] = React.useState(0);
-
-  /**
-   * Go to next post
-   */
-  const goToNextPost = React.useCallback(() => {
-    if (!story) return;
-
-    console.log('⏭️ ViewStoryScreen: Going to next post');
-
-    if (currentPostIndex < story.posts.length - 1) {
-      setCurrentPostIndex(prev => prev + 1);
-      setProgressValue(0);
-      setMediaLoadError(false); // Reset media error for new post
-    } else {
-      // End of story, close viewer
-      console.log('✅ ViewStoryScreen: End of story reached');
-      navigation.goBack();
-    }
-  }, [story, currentPostIndex, navigation]);
 
   /**
    * Go to previous post
