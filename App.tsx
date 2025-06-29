@@ -11,17 +11,44 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import CameraTestScreen from './src/camera-test/CameraTestScreen';
+import {
+  ModalProvider,
+  useModal,
+  patchAlert,
+} from './src/shared/components/modal';
+import { setGlobalShow } from './src/shared/components/modal/ModalContext';
 import { useIsDarkMode } from './src/shared/hooks/useTheme';
 import { RootNavigator } from './src/shared/navigation/RootNavigator';
 import { runFirebaseDebug } from './src/shared/services/firebase/debug';
 import { isDev } from './src/shared/utils/isDev';
 
 /**
+ * App content component that sets up the modal system
+ */
+function AppContent() {
+  const isDark = useIsDarkMode();
+  const { show } = useModal();
+
+  // Set up the monkey patch once the modal provider is mounted
+  useEffect(() => {
+    console.log('🔧 Setting up Alert.alert monkey patch');
+    setGlobalShow(show);
+    patchAlert();
+  }, [show]);
+
+  return (
+    <>
+      <RootNavigator />
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+    </>
+  );
+}
+
+/**
  * Main application component
  * Shows camera test screen if EXPO_PUBLIC_CAMERA_TEST environment variable is set
  */
 export default function App() {
-  const isDark = useIsDarkMode();
   const isCameraTest = process.env.EXPO_PUBLIC_CAMERA_TEST === 'true';
 
   if (isCameraTest) {
@@ -51,11 +78,12 @@ export default function App() {
     );
   }
 
-  // Show normal app
+  // Show normal app with modal provider
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <RootNavigator />
-      <StatusBar style={isDark ? 'light' : 'dark'} />
+      <ModalProvider>
+        <AppContent />
+      </ModalProvider>
     </GestureHandlerRootView>
   );
 }
