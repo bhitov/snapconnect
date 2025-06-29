@@ -761,6 +761,7 @@ export function ChatScreen() {
               style={{
                 fontSize: 17,
                 color: theme.colors.primary || '#FFFC00',
+                marginRight: 20,
               }}
             >
               Chats
@@ -807,6 +808,7 @@ export function ChatScreen() {
                 style={{
                   fontSize: 17,
                   color: theme.colors.primary || '#FFFC00',
+                  marginRight: 20,
                 }}
               >
                 Chat
@@ -837,8 +839,9 @@ export function ChatScreen() {
                 style={{
                   backgroundColor: theme.colors.primary,
                   paddingHorizontal: 12,
-                  paddingVertical: 6,
+                  paddingVertical: 8,
                   borderRadius: 6,
+                  minWidth: 90,
                 }}
               >
                 <Text
@@ -846,7 +849,9 @@ export function ChatScreen() {
                     color: theme.colors.background,
                     fontSize: 14,
                     fontWeight: '600',
+                    textAlign: 'center',
                   }}
+                  numberOfLines={1}
                 >
                   AI Analysis
                 </Text>

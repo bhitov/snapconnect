@@ -598,6 +598,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    flex: 1,
   },
   partnerIcon: {
     fontSize: 14,
@@ -605,10 +606,10 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 16,
     fontWeight: '500',
-    flex: 1,
   },
   timestamp: {
     fontSize: 12,
+    marginLeft: 8,
   },
   conversationMeta: {
     flexDirection: 'row',
