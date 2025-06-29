@@ -248,7 +248,7 @@ export async function areUsersPartners(
 ): Promise<boolean> {
   const [user1Snapshot, user2Snapshot] = await Promise.all([
     db.ref(`users/${user1Id}`).get(),
-    db.ref(`users/${user2Id}`).get()
+    db.ref(`users/${user2Id}`).get(),
   ]);
 
   const user1Data = user1Snapshot.val();

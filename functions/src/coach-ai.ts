@@ -7,52 +7,51 @@ export const CHAT_TYPE = {
   romantic: 'partner',
   platonic: 'friend',
   group: 'group',
-}
+};
 
-
-export const INITIAL_MESSAGE =  {
+export const INITIAL_MESSAGE = {
   romantic: `Hi! I'm your Gottman-trained relationship coach. I'm here to help you improve your relationship.`,
   platonic: `Hi! I'm your Gottman-trained platonic-relationship coach. I'm here to help you improve your friendship.`,
   group: `Hi! I'm your Gottman-trained group-conversation coach. I'm here to help you improve your group conversation.`,
-}
+};
 
 // Base system messages for different relationship types
 const BASE_SYSTEM_MESSAGE = {
   romantic: `You are a Gottman-trained relationship coach providing personalized guidance to help someone improve their relationship. 
 You are analyzing their conversation with their partner and offering advice based on Gottman Method principles.`,
-  
+
   platonic: `You are a platonic-relationship coach who helps users deepen healthy friendships.
 • Ground advice in: Active-Constructive Responding (ACR), Self-Determination Theory (SDT), the "friendship floors" of Gottman's Sound Relationship House, and Positive Psychology (PERMA).
 • Never frame guidance romantically or sexually.`,
-  
+
   group: `You are a personal group-conversation coach who helps THIS user contribute productively, inclusively, and confidently inside a live group chat.
-• Source your guidance from: Psychological Safety (Project Aristotle), Tuckman's 5 stages, Lencioni's 5 Dysfunctions, Liberating Structures, and the ORID question model.`
+• Source your guidance from: Psychological Safety (Project Aristotle), Tuckman's 5 stages, Lencioni's 5 Dysfunctions, Liberating Structures, and the ORID question model.`,
 };
 
 // Additional context for specific analysis types
 // Topic vibe check topics - broad conversation themes
 export const TOPIC_VIBE_TOPICS = [
-  "hobbies and interests",
-  "future plans and dreams",
-  "memories and nostalgia",
-  "entertainment and media",
-  "food and cooking",
-  "travel and adventures",
-  "home and living space",
-  "friends and social life",
-  "personal growth and learning",
-  "technology and gadgets",
-  "sports and fitness",
-  "music and arts",
-  "nature and outdoors",
-  "pets and animals",
-  "weekend activities",
-  "celebrations and holidays",
-  "achievements and successes",
-  "creative projects",
-  "favorite places",
-  "shared experiences",
-  "games and fun"
+  'hobbies and interests',
+  'future plans and dreams',
+  'memories and nostalgia',
+  'entertainment and media',
+  'food and cooking',
+  'travel and adventures',
+  'home and living space',
+  'friends and social life',
+  'personal growth and learning',
+  'technology and gadgets',
+  'sports and fitness',
+  'music and arts',
+  'nature and outdoors',
+  'pets and animals',
+  'weekend activities',
+  'celebrations and holidays',
+  'achievements and successes',
+  'creative projects',
+  'favorite places',
+  'shared experiences',
+  'games and fun',
 ];
 
 export const GOTTMAN_CONTEXT = {
@@ -134,8 +133,10 @@ export async function callCoachAI(
         ` with their ${CHAT_TYPE[options.relationshipType]}. (this may not be their full conversation):\n${parentLines}\n\n`
       : '';
 
-  const baseMessage = BASE_SYSTEM_MESSAGE[options.relationshipType] || BASE_SYSTEM_MESSAGE.romantic;
-  
+  const baseMessage =
+    BASE_SYSTEM_MESSAGE[options.relationshipType] ||
+    BASE_SYSTEM_MESSAGE.romantic;
+
   const content =
     baseMessage +
     `
@@ -424,7 +425,7 @@ export async function coachSharedInterestsAI(
   }
 ): Promise<string> {
   const { topInterests, interestScores } = analysis;
-  
+
   const context = `I've analyzed your conversation history and identified your shared interests based on what you both talk about.`;
 
   return callCoachAI(
@@ -454,7 +455,7 @@ export async function coachTopicChampionAI(
   }
 ): Promise<string> {
   const { topicChampions } = analysis;
-  
+
   const context = `I've analyzed who brings up different topics in your group chat to understand each member's interests and contributions.`;
 
   return callCoachAI(
@@ -557,12 +558,12 @@ export async function aiTopicVibeCheck(
 ): Promise<string> {
   const chatType = data.relationshipType;
   const systemMessage = BASE_SYSTEM_MESSAGE[chatType];
-  
+
   // Select a random topic from the top half
   const sortedTopics = [...topicScores].sort((a, b) => b.score - a.score);
   const topHalf = sortedTopics.slice(0, Math.ceil(sortedTopics.length / 2));
   const selectedTopic = topHalf[Math.floor(Math.random() * topHalf.length)];
-  
+
   const userMessage = `Explain to the user that an analysis of messsage sentiment in this conversation shows that the topic ${selectedTopic.topic} tends to lean positive.
 
 Then, please craft a brief message about this finding:
@@ -571,10 +572,10 @@ Then, please craft a brief message about this finding:
 
 Keep response under 100 words.`;
 
-  return callCoachAI(
-    systemMessage,
-    userMessage,
-    { ...data, temperature: 0.7, coachMessages: undefined, parentMessages: undefined }
-  );
+  return callCoachAI(systemMessage, userMessage, {
+    ...data,
+    temperature: 0.7,
+    coachMessages: undefined,
+    parentMessages: undefined,
+  });
 }
-

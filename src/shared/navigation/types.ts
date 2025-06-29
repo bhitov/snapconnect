@@ -76,9 +76,11 @@ export type ChatStackParamList = {
 export type FriendsStackParamList = {
   FriendsList: undefined;
   AddFriends: undefined;
-  FriendRequests: {
-    initialTab?: 'received' | 'sent' | 'partner';
-  } | undefined;
+  FriendRequests:
+    | {
+        initialTab?: 'received' | 'sent' | 'partner';
+      }
+    | undefined;
   AddPartner: undefined;
   Profile: {
     userId?: string;

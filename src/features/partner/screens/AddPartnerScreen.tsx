@@ -29,10 +29,14 @@ export function AddPartnerScreen({ navigation }: AddPartnerScreenProps) {
   const theme = useTheme();
   const friends = useFriendsList();
   const currentUser = useAuthStore(state => state.user);
-  const [selectedFriend, setSelectedFriend] = useState<FriendProfile | null>(null);
+  const [selectedFriend, setSelectedFriend] = useState<FriendProfile | null>(
+    null
+  );
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [existingRequests, setExistingRequests] = useState<PartnerRequest[]>([]);
+  const [existingRequests, setExistingRequests] = useState<PartnerRequest[]>(
+    []
+  );
 
   useEffect(() => {
     loadExistingRequests();
@@ -50,30 +54,42 @@ export function AddPartnerScreen({ navigation }: AddPartnerScreenProps) {
 
   const handleSelectFriend = (friend: FriendProfile) => {
     if (currentUser?.partnerId) {
-      Alert.alert('Already Partnered', 'You already have a partner. Break up first to add a new partner.');
+      Alert.alert(
+        'Already Partnered',
+        'You already have a partner. Break up first to add a new partner.'
+      );
       return;
     }
 
     // Check if there's already a pending request with this specific friend
     const hasRequestWithFriend = existingRequests.some(
-      req => req.status === 'pending' && 
-      ((req.senderId === currentUser?.uid && req.receiverId === friend.uid) ||
-       (req.receiverId === currentUser?.uid && req.senderId === friend.uid))
+      req =>
+        req.status === 'pending' &&
+        ((req.senderId === currentUser?.uid && req.receiverId === friend.uid) ||
+          (req.receiverId === currentUser?.uid && req.senderId === friend.uid))
     );
 
     if (hasRequestWithFriend) {
-      Alert.alert('Request Exists', `You already have a pending partner request with ${friend.displayName}.`);
+      Alert.alert(
+        'Request Exists',
+        `You already have a pending partner request with ${friend.displayName}.`
+      );
       return;
     }
 
     // Check if user has any other active partner request
     const hasOtherActiveRequest = existingRequests.some(
-      req => req.status === 'pending' && 
-      (req.senderId === currentUser?.uid || req.receiverId === currentUser?.uid)
+      req =>
+        req.status === 'pending' &&
+        (req.senderId === currentUser?.uid ||
+          req.receiverId === currentUser?.uid)
     );
 
     if (hasOtherActiveRequest) {
-      Alert.alert('Pending Request', 'You have a pending partner request with someone else. Please wait for it to be resolved.');
+      Alert.alert(
+        'Pending Request',
+        'You have a pending partner request with someone else. Please wait for it to be resolved.'
+      );
       return;
     }
 
@@ -86,11 +102,14 @@ export function AddPartnerScreen({ navigation }: AddPartnerScreenProps) {
 
     setLoading(true);
     try {
-      await partnerService.sendPartnerRequest(currentUser.uid, selectedFriend.uid);
-      
+      await partnerService.sendPartnerRequest(
+        currentUser.uid,
+        selectedFriend.uid
+      );
+
       // Navigate to Friend Requests screen with Partner tab
       navigation.navigate('FriendRequests', { initialTab: 'partner' });
-      
+
       // Show success message
       Alert.alert(
         'Request Sent',
@@ -107,8 +126,9 @@ export function AddPartnerScreen({ navigation }: AddPartnerScreenProps) {
 
   const renderFriend = ({ item }: { item: FriendProfile }) => {
     const isPending = existingRequests.some(
-      req => req.status === 'pending' && 
-      (req.receiverId === item.uid || req.senderId === item.uid)
+      req =>
+        req.status === 'pending' &&
+        (req.receiverId === item.uid || req.senderId === item.uid)
     );
 
     return (
@@ -119,14 +139,18 @@ export function AddPartnerScreen({ navigation }: AddPartnerScreenProps) {
         activeOpacity={0.7}
       >
         <View style={styles.friendContent}>
-          <View style={[styles.avatar, { backgroundColor: theme.colors.primary }]}>
+          <View
+            style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
+          >
             {item.photoURL ? (
               <Image
                 source={{ uri: resolveMediaUrl(item.photoURL) }}
                 style={styles.avatarImage}
               />
             ) : (
-              <Text style={[styles.avatarText, { color: theme.colors.background }]}>
+              <Text
+                style={[styles.avatarText, { color: theme.colors.background }]}
+              >
                 {item.displayName?.charAt(0)?.toUpperCase() || '?'}
               </Text>
             )}
@@ -136,20 +160,24 @@ export function AddPartnerScreen({ navigation }: AddPartnerScreenProps) {
             <Text style={[styles.displayName, { color: theme.colors.text }]}>
               {item.displayName}
             </Text>
-            <Text style={[styles.username, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[styles.username, { color: theme.colors.textSecondary }]}
+            >
               @{item.username}
             </Text>
             {isPending && (
-              <Text style={[styles.pendingText, { color: theme.colors.warning }]}>
+              <Text
+                style={[styles.pendingText, { color: theme.colors.warning }]}
+              >
                 Request pending
               </Text>
             )}
           </View>
 
-          <Ionicons 
-            name="chevron-forward" 
-            size={20} 
-            color={isPending ? theme.colors.textSecondary : theme.colors.text} 
+          <Ionicons
+            name='chevron-forward'
+            size={20}
+            color={isPending ? theme.colors.textSecondary : theme.colors.text}
           />
         </View>
       </TouchableOpacity>
@@ -158,21 +186,30 @@ export function AddPartnerScreen({ navigation }: AddPartnerScreenProps) {
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="heart-outline" size={48} color={theme.colors.textSecondary} />
+      <Ionicons
+        name='heart-outline'
+        size={48}
+        color={theme.colors.textSecondary}
+      />
       <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
         No friends yet
       </Text>
-      <Text style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}>
-        You need to add someone as a friend first before making them your partner
+      <Text
+        style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}
+      >
+        You need to add someone as a friend first before making them your
+        partner
       </Text>
     </View>
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name='arrow-back' size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
           Add Partner
@@ -192,36 +229,62 @@ export function AddPartnerScreen({ navigation }: AddPartnerScreenProps) {
       <Modal
         visible={showConfirmModal}
         transparent
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => setShowConfirmModal(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: theme.colors.surface }]}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: theme.colors.surface },
+            ]}
+          >
             <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
               Confirm Partnership
             </Text>
-            <Text style={[styles.modalText, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[styles.modalText, { color: theme.colors.textSecondary }]}
+            >
               Are you in a relationship with {selectedFriend?.displayName}?
             </Text>
-            <Text style={[styles.modalSubtext, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[
+                styles.modalSubtext,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
               (They will have to confirm)
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: theme.colors.background }]}
+                style={[
+                  styles.modalButton,
+                  { backgroundColor: theme.colors.background },
+                ]}
                 onPress={() => setShowConfirmModal(false)}
                 disabled={loading}
               >
-                <Text style={[styles.modalButtonText, { color: theme.colors.text }]}>
+                <Text
+                  style={[styles.modalButtonText, { color: theme.colors.text }]}
+                >
                   Cancel
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalButton, styles.confirmButton, { backgroundColor: theme.colors.primary }]}
+                style={[
+                  styles.modalButton,
+                  styles.confirmButton,
+                  { backgroundColor: theme.colors.primary },
+                ]}
                 onPress={handleConfirm}
                 disabled={loading}
               >
-                <Text style={[styles.modalButtonText, { color: theme.colors.white }]}>
+                <Text
+                  style={[
+                    styles.modalButtonText,
+                    { color: theme.colors.white },
+                  ]}
+                >
                   {loading ? 'Sending...' : 'Send Request'}
                 </Text>
               </TouchableOpacity>

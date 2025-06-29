@@ -1,13 +1,11 @@
 /******************************************************************
  * BACK-FILL  •  firebase-admin v13.4.0 · Pinecone Node-SDK v6.x
  *****************************************************************/
-import { randomUUID } from 'crypto';
-
-import { Pinecone } from '@pinecone-database/pinecone';
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getDatabase } from 'firebase-admin/database';
+import { Pinecone } from '@pinecone-database/pinecone';
 import OpenAI from 'openai';
-
+import { randomUUID } from 'crypto';
 import { db } from './admin';
 import { config } from './config';
 import { index } from './pinecone';
@@ -119,78 +117,102 @@ async function classify(
   const convSnap = await rtdb.ref('conversations').get();
   if (!convSnap.exists()) return console.log('No conversations.');
 
-  for (const [cid] of Object.entries(
+  // Get only the first conversation
+  const conversations = Object.entries(
     convSnap.val() as Record<string, unknown>
-  )) {
-    console.log(`\n📞 Processing conversation: ${cid}`);
+  );
+  if (conversations.length === 0) return console.log('No conversations found.');
 
-    const msgSnap = await rtdb
-      .ref('textMessages')
-      .orderByChild('conversationId')
-      .equalTo(cid)
-      .get();
-    if (!msgSnap.exists()) {
-      console.log(`📞 No messages found for conversation: ${cid}`);
-      continue;
-    }
+  const firstConversation = conversations[0]!; // We know it exists due to length check
+  const cid = firstConversation[0];
+  console.log(
+    `\n📞 Processing ONLY first conversation: ${cid} (limiting to first 10 messages)`
+  );
 
-    const rows = Object.entries(
-      msgSnap.val() as Record<
-        string,
-        { text: string; senderId?: string; createdAt?: number }
-      >
-    );
-    const texts = rows.map(([, m]) => m.text);
-    console.log(`📞 Found ${texts.length} messages in conversation ${cid}`);
-
-    /* ---- 3·A  EMBEDDINGS  (batches ≤ 2 048) ---- */
-    const vectors: number[][] = [];
-    for (let i = 0; i < texts.length; i += EMB_BATCH) {
-      const batchEmbeddings = await embed(texts.slice(i, i + EMB_BATCH));
-      vectors.push(...batchEmbeddings);
-    }
-
-    /* ---- 3·B  CLASSIFY (micro-batched 10) ---- */
-    console.log(`🏷️  Starting classification for ${texts.length} messages`);
-    const labels: { sentiment: string; horseman: string }[] = [];
-    for (let i = 0; i < texts.length; i += CLS_BATCH) {
-      const batch = texts.slice(i, i + CLS_BATCH);
-      console.log(
-        `🏷️  Processing batch ${Math.floor(i / CLS_BATCH) + 1} (messages ${i + 1}-${Math.min(i + CLS_BATCH, texts.length)})`
-      );
-      const batchLabels = await classify(batch);
-      console.log(
-        `🏷️  Got ${batchLabels.length} labels from batch, total labels so far: ${labels.length + batchLabels.length}`
-      );
-      labels.push(...batchLabels);
-    }
-    console.log(`🏷️  Classification complete. Total labels: ${labels.length}`);
-
-    /* ---- 3·C  UPSERT  ---- */
-    const upserts = rows.map(([mid, m], i) => ({
-      id: mid,
-      values: vectors[i] || [],
-      metadata: {
-        conversationId: cid,
-        ...(m.senderId && { senderId: m.senderId }),
-        ...(m.createdAt && { createdAt: m.createdAt }),
-        text: m.text,
-        sentiment: labels[i]?.sentiment || 'neu',
-        horseman: labels[i]?.horseman || 'none',
-      },
-    }));
-
-    console.log(
-      `📌 Upserting ${upserts.length} vectors in batches of ${UPSERT_BATCH}`
-    );
-    for (let i = 0; i < upserts.length; i += UPSERT_BATCH) {
-      const batch = upserts.slice(i, i + UPSERT_BATCH);
-      console.log(
-        `📌 Upserting batch ${Math.floor(i / UPSERT_BATCH) + 1} (${batch.length} vectors)`
-      );
-      await index.upsert(batch);
-    }
-    console.log(`✅  ${cid}: ${upserts.length} messages upserted`);
+  const msgSnap = await rtdb
+    .ref('textMessages')
+    .orderByChild('conversationId')
+    .equalTo(cid)
+    .get();
+  if (!msgSnap.exists()) {
+    console.log(`📞 No messages found for conversation: ${cid}`);
+    return;
   }
+
+  const allRows = Object.entries(msgSnap.val() as Record<string, any>);
+  // Sort by createdAt to get chronological order, then take first 10
+  const sortedRows = allRows.sort(([, a], [, b]) => a.createdAt - b.createdAt);
+  const rows = sortedRows.slice(0, 10);
+  console.log('row[0]', rows[0]);
+  const texts = rows.map(([, m]) => m.text);
+  console.log(
+    `📞 Found ${allRows.length} total messages, processing first ${rows.length} messages in conversation ${cid}`
+  );
+
+  /* ---- 3·A  EMBEDDINGS  (batches ≤ 2 048) ---- */
+  const vectors: number[][] = [];
+  for (let i = 0; i < texts.length; i += EMB_BATCH) {
+    const batchEmbeddings = await embed(texts.slice(i, i + EMB_BATCH));
+    vectors.push(...batchEmbeddings);
+  }
+
+  /* ---- 3·B  CLASSIFY (micro-batched 10) ---- */
+  console.log(`🏷️  Starting classification for ${texts.length} messages`);
+  const labels: { sentiment: string; horseman: string }[] = [];
+  for (let i = 0; i < texts.length; i += CLS_BATCH) {
+    const batch = texts.slice(i, i + CLS_BATCH);
+    console.log(
+      `🏷️  Processing batch ${Math.floor(i / CLS_BATCH) + 1} (messages ${i + 1}-${Math.min(i + CLS_BATCH, texts.length)})`
+    );
+    const batchLabels = await classify(batch);
+    console.log('batchLabels');
+    console.log(batchLabels);
+    console.log(
+      `🏷️  Got ${batchLabels.length} labels from batch, total labels so far: ${labels.length + batchLabels.length}`
+    );
+    labels.push(...batchLabels);
+  }
+  console.log(`🏷️  Classification complete. Total labels: ${labels.length}`);
+
+  console.log('labels');
+  console.log(labels);
+  console.log('logging rows and labels');
+  rows.forEach((row, i) => {
+    console.log(row[1].text);
+    console.log(labels[i]);
+    console.log(i);
+  });
+
+  /* ---- 3·C  UPSERT  ---- */
+  const upserts = rows.map(([mid, m], i) => ({
+    id: mid,
+    values: vectors[i] || [],
+    metadata: {
+      conversationId: cid,
+      senderId: m.senderId,
+      createdAt: m.createdAt,
+      text: m.text,
+      sentiment: labels[i]?.sentiment || 'neu',
+      horseman: labels[i]?.horseman || 'none',
+    },
+  }));
+
+  console.log('logging upserts');
+  upserts.forEach(upsert => {
+    console.log(upsert.metadata.sentiment);
+  });
+
+  console.log(
+    `📌 Upserting ${upserts.length} vectors in batches of ${UPSERT_BATCH}`
+  );
+  for (let i = 0; i < upserts.length; i += UPSERT_BATCH) {
+    const batch = upserts.slice(i, i + UPSERT_BATCH);
+    console.log(
+      `📌 Upserting batch ${Math.floor(i / UPSERT_BATCH) + 1} (${batch.length} vectors)`
+    );
+    await index.upsert(batch);
+  }
+  console.log(`✅  ${cid}: ${upserts.length} messages upserted`);
+
   console.log('🏁  Back-fill complete.');
 })();

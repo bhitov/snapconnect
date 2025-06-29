@@ -214,7 +214,9 @@ export function ChatsScreen() {
       const lastMessage = conversation.lastMessage;
       const isGroup = conversation.isGroup;
       const hasCoachChat = !conversation.isCoach && conversation.coachChatId;
-      const isPartner = !isGroup && !conversation.isCoach && 
+      const isPartner =
+        !isGroup &&
+        !conversation.isCoach &&
         conversation.otherUser?.uid === currentUser?.partnerId;
 
       // Determine display name and avatar text
@@ -286,9 +288,7 @@ export function ChatsScreen() {
                 >
                   {displayName}
                 </Text>
-                {isPartner && (
-                  <Text style={styles.partnerIcon}>❤️</Text>
-                )}
+                {isPartner && <Text style={styles.partnerIcon}>❤️</Text>}
               </View>
 
               {lastMessage && (

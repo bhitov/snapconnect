@@ -36,7 +36,7 @@ async function testAllCoachFunctions() {
       data: mockData.HIGH_CONFLICT_ROMANTIC,
     } as const,
   ] as const;
-  
+
   // Additional scenarios for specific tests
   const platonicScenarios = [
     {
@@ -44,7 +44,7 @@ async function testAllCoachFunctions() {
       data: mockData.PLATONIC_FRIENDSHIP,
     } as const,
   ];
-  
+
   const groupScenarios = [
     {
       name: 'Group conversation',
@@ -183,8 +183,10 @@ async function testAllCoachFunctions() {
 
   // Test 8: coachACRAI (for platonic relationships)
   if (TEST_CONFIG.coachACRAI) {
-    console.log('=== TEST 8: coachACRAI (Active-Constructive Responding) ===\n');
-    
+    console.log(
+      '=== TEST 8: coachACRAI (Active-Constructive Responding) ===\n'
+    );
+
     // Test with platonic scenarios
     for (const scenario of platonicScenarios) {
       console.log(`Testing ${scenario.name}:`);
@@ -192,7 +194,7 @@ async function testAllCoachFunctions() {
       console.log('Response:', result);
       console.log('\n---\n');
     }
-    
+
     // Also test with romantic scenarios to see how it handles them
     console.log('Testing ACR on romantic scenario for comparison:');
     const result = await coachACRAI(scenarios[0].data.data);

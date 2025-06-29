@@ -68,9 +68,13 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
   const currentUser = useAuthStore(state => state.user);
 
   // Local state
-  const [partnerRequests, setPartnerRequests] = React.useState<PartnerRequest[]>([]);
-  const [hasActivePartnerRequest, setHasActivePartnerRequest] = React.useState(false);
-  const [pendingPartnerRequestsCount, setPendingPartnerRequestsCount] = React.useState(0);
+  const [partnerRequests, setPartnerRequests] = React.useState<
+    PartnerRequest[]
+  >([]);
+  const [hasActivePartnerRequest, setHasActivePartnerRequest] =
+    React.useState(false);
+  const [pendingPartnerRequestsCount, setPendingPartnerRequestsCount] =
+    React.useState(0);
 
   // Store actions
   const { loadFriends, refreshFriends, clearError } = useFriendsStore();
@@ -80,18 +84,20 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
    */
   const loadPartnerRequests = React.useCallback(async () => {
     if (!currentUser) return;
-    
+
     try {
       const requests = await partnerService.getPartnerRequests(currentUser.uid);
       setPartnerRequests(requests);
-      
+
       // Check if user has any active partner request (sent or received)
       const hasActive = requests.some(
-        req => req.status === 'pending' && 
-        (req.senderId === currentUser.uid || req.receiverId === currentUser.uid)
+        req =>
+          req.status === 'pending' &&
+          (req.senderId === currentUser.uid ||
+            req.receiverId === currentUser.uid)
       );
       setHasActivePartnerRequest(hasActive);
-      
+
       // Count pending partner requests received by the user
       const receivedPartnerRequests = requests.filter(
         req => req.status === 'pending' && req.receiverId === currentUser.uid
@@ -118,7 +124,9 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
    */
   useFocusEffect(
     React.useCallback(() => {
-      console.log('🔄 FriendsListScreen: Screen focused, reloading partner requests');
+      console.log(
+        '🔄 FriendsListScreen: Screen focused, reloading partner requests'
+      );
       void loadPartnerRequests();
       // Also refresh the user to ensure partnerId is up-to-date
       void useAuthStore.getState().refreshUser();
@@ -358,7 +366,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
           <Text style={[styles.requestsText, { color: theme.colors.text }]}>
             Requests
           </Text>
-          {(pendingRequestsCount + pendingPartnerRequestsCount) > 0 && (
+          {pendingRequestsCount + pendingPartnerRequestsCount > 0 && (
             <View
               style={[styles.badge, { backgroundColor: theme.colors.error }]}
             >

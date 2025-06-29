@@ -71,12 +71,14 @@ export function FriendRequestsScreen({
   } = useFriendsStore();
 
   // Local state
-  const [activeTab, setActiveTab] = useState<TabType>(route?.params?.initialTab || 'received');
+  const [activeTab, setActiveTab] = useState<TabType>(
+    route?.params?.initialTab || 'received'
+  );
   const [processingRequest, setProcessingRequest] = useState<string | null>(
     null
   );
   const [partnerRequests, setPartnerRequests] = useState<PartnerRequest[]>([]);
-  
+
   const currentUser = useAuthStore(state => state.user);
   const friendsList = useFriendsList();
 
@@ -87,7 +89,7 @@ export function FriendRequestsScreen({
     void loadFriendRequests();
     void loadPartnerRequests();
   }, [loadFriendRequests]);
-  
+
   /**
    * Load partner requests
    */
@@ -441,35 +443,42 @@ export function FriendRequestsScreen({
    */
   const handleAcceptPartnerRequest = async (request: PartnerRequest) => {
     if (!currentUser) return;
-    
+
     setProcessingRequest(request.id);
     try {
       console.log('💜 Accepting partner request:', request.id);
-      await partnerService.acceptPartnerRequest(request.id, request.senderId, request.receiverId);
-      
+      await partnerService.acceptPartnerRequest(
+        request.id,
+        request.senderId,
+        request.receiverId
+      );
+
       // Reload partner requests immediately
       await loadPartnerRequests();
-      
+
       // Also reload friend requests to update the count
       await loadFriendRequests();
-      
+
       // Refresh the current user to get updated partnerId
       await useAuthStore.getState().refreshUser();
-      
+
       Alert.alert('Partnership Accepted', 'You are now partners!');
-      
+
       // Navigate back to Friends screen after a small delay to ensure state updates
       setTimeout(() => {
         navigation.navigate('FriendsList');
       }, 100);
     } catch (error) {
       console.error('Failed to accept partner request:', error);
-      Alert.alert('Error', 'Failed to accept partner request. Please try again.');
+      Alert.alert(
+        'Error',
+        'Failed to accept partner request. Please try again.'
+      );
     } finally {
       setProcessingRequest(null);
     }
   };
-  
+
   /**
    * Handle rejecting partner request
    */
@@ -478,10 +487,16 @@ export function FriendRequestsScreen({
     try {
       await partnerService.rejectPartnerRequest(request.id);
       await loadPartnerRequests();
-      Alert.alert('Partner Request Rejected', 'The partner request has been rejected.');
+      Alert.alert(
+        'Partner Request Rejected',
+        'The partner request has been rejected.'
+      );
     } catch (error) {
       console.error('Failed to reject partner request:', error);
-      Alert.alert('Error', 'Failed to reject partner request. Please try again.');
+      Alert.alert(
+        'Error',
+        'Failed to reject partner request. Please try again.'
+      );
     } finally {
       setProcessingRequest(null);
     }
@@ -493,14 +508,14 @@ export function FriendRequestsScreen({
   const renderPartnerRequest = ({ item }: { item: PartnerRequest }) => {
     const isLoading = processingRequest === item.id;
     const isReceived = item.receiverId === currentUser?.uid;
-    
+
     // Get user info from friends list
-    const otherUser = friendsList.find(f => 
-      f.uid === (isReceived ? item.senderId : item.receiverId)
+    const otherUser = friendsList.find(
+      f => f.uid === (isReceived ? item.senderId : item.receiverId)
     );
-    
+
     if (!otherUser) return null;
-    
+
     return (
       <TouchableOpacity
         style={[styles.requestItem, { backgroundColor: theme.colors.surface }]}
@@ -508,31 +523,41 @@ export function FriendRequestsScreen({
         activeOpacity={0.7}
       >
         <View style={styles.requestContent}>
-          <View style={[styles.avatar, { backgroundColor: theme.colors.primary }]}>
+          <View
+            style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
+          >
             {otherUser.photoURL ? (
               <Image
                 source={{ uri: resolveMediaUrl(otherUser.photoURL) }}
                 style={styles.avatarImage}
               />
             ) : (
-              <Text style={[styles.avatarText, { color: theme.colors.background }]}>
+              <Text
+                style={[styles.avatarText, { color: theme.colors.background }]}
+              >
                 {otherUser.displayName?.charAt(0)?.toUpperCase() || '?'}
               </Text>
             )}
           </View>
-          
+
           <View style={styles.requestInfo}>
             <Text style={[styles.displayName, { color: theme.colors.text }]}>
               {otherUser.displayName}
             </Text>
-            <Text style={[styles.username, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[styles.username, { color: theme.colors.textSecondary }]}
+            >
               @{otherUser.username}
             </Text>
-            <Text style={[styles.timeAgo, { color: theme.colors.textSecondary }]}>
-              {isReceived ? 'Sent you a partner request' : 'Partner request sent'}
+            <Text
+              style={[styles.timeAgo, { color: theme.colors.textSecondary }]}
+            >
+              {isReceived
+                ? 'Sent you a partner request'
+                : 'Partner request sent'}
             </Text>
           </View>
-          
+
           {isReceived ? (
             <View style={styles.actionButtons}>
               <Button
@@ -560,7 +585,9 @@ export function FriendRequestsScreen({
                 size='small'
                 disabled={isLoading}
                 loading={isLoading}
-                onPress={() => void partnerService.cancelPartnerRequest(item.id)}
+                onPress={() =>
+                  void partnerService.cancelPartnerRequest(item.id)
+                }
               >
                 Cancel
               </Button>
@@ -586,7 +613,11 @@ export function FriendRequestsScreen({
           color={theme.colors.textSecondary}
         />
         <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
-          {isPartner ? 'No partner requests' : isReceived ? 'No friend requests' : 'No sent requests'}
+          {isPartner
+            ? 'No partner requests'
+            : isReceived
+              ? 'No friend requests'
+              : 'No sent requests'}
         </Text>
         <Text
           style={[styles.emptySubtext, { color: theme.colors.textSecondary }]}
@@ -594,16 +625,19 @@ export function FriendRequestsScreen({
           {isPartner
             ? 'Partner requests will appear here'
             : isReceived
-            ? 'When someone sends you a friend request, it will appear here'
-            : 'Friend requests you send will appear here'}
+              ? 'When someone sends you a friend request, it will appear here'
+              : 'Friend requests you send will appear here'}
         </Text>
       </View>
     );
   };
 
   const currentRequests =
-    activeTab === 'received' ? receivedRequests : 
-    activeTab === 'sent' ? sentRequests : partnerRequests;
+    activeTab === 'received'
+      ? receivedRequests
+      : activeTab === 'sent'
+        ? sentRequests
+        : partnerRequests;
 
   return (
     <SafeAreaView
@@ -679,11 +713,13 @@ export function FriendRequestsScreen({
             Sent ({sentRequests.length})
           </Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           style={[
             styles.tab,
-            activeTab === 'partner' && { backgroundColor: theme.colors.primary },
+            activeTab === 'partner' && {
+              backgroundColor: theme.colors.primary,
+            },
           ]}
           onPress={() => setActiveTab('partner')}
         >
@@ -707,9 +743,11 @@ export function FriendRequestsScreen({
       <FlatList
         data={currentRequests}
         renderItem={
-          activeTab === 'received' ? renderReceivedRequest : 
-          activeTab === 'sent' ? renderSentRequest : 
-          renderPartnerRequest
+          activeTab === 'received'
+            ? renderReceivedRequest
+            : activeTab === 'sent'
+              ? renderSentRequest
+              : renderPartnerRequest
         }
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}

@@ -146,8 +146,9 @@ interface CoachGroupEnergyData {
   parentCid: string;
 }
 
-
-async function getRelationshipTypeFromParentCid(parentCid: string): Promise<RelationshipType> {
+async function getRelationshipTypeFromParentCid(
+  parentCid: string
+): Promise<RelationshipType> {
   const conversation = await getConversation(parentCid);
   const participants = conversation?.participants || [];
   if (participants.length >= 3) {
@@ -155,10 +156,10 @@ async function getRelationshipTypeFromParentCid(parentCid: string): Promise<Rela
   } else if (participants.length === 2) {
     // Check if the two participants are partners
     const [user1Id, user2Id] = participants;
-    
+
     // Check if they are partners
     const arePartners = await areUsersPartners(user1Id, user2Id);
-   return arePartners ? 'romantic' as const : 'platonic' as const;
+    return arePartners ? ('romantic' as const) : ('platonic' as const);
   } else {
     throw new HttpsError('invalid-argument', 'Invalid conversation type');
   }
@@ -172,7 +173,7 @@ export async function fetchAllRequiredData(
   request: CallableRequest<{ coachCid?: string; parentCid?: string }>
 ): Promise<FetchedData> {
   const data = await validateCoachParams(request);
-  
+
   // Always fetch coach messages
   const coachMessages = await getAllMessages(data.coachCid);
 
@@ -182,14 +183,15 @@ export async function fetchAllRequiredData(
     100
   );
 
-  const relationshipType = await getRelationshipTypeFromParentCid(data.parentCid);
-  
-  
-  const result: FetchedData = { 
+  const relationshipType = await getRelationshipTypeFromParentCid(
+    data.parentCid
+  );
+
+  const result: FetchedData = {
     ...data,
     relationshipType,
     coachMessages,
-    parentMessages
+    parentMessages,
   };
 
   return result;
@@ -266,7 +268,7 @@ export const startCoachChat = onCall<StartCoachChatData>(async request => {
   const relationshipType = await getRelationshipTypeFromParentCid(parentCid);
 
   // First "hello" from the coach
-  await sendCoachMessage( coachCid, INITIAL_MESSAGE[relationshipType]);
+  await sendCoachMessage(coachCid, INITIAL_MESSAGE[relationshipType]);
 
   return { coachCid };
 });
@@ -344,7 +346,6 @@ export const coachRatio = onCall<CoachRatioData>(async request => {
     total > 0 ? ((stats.negative / total) * 100).toFixed(1) : '0';
   const neuPercent =
     total > 0 ? ((stats.neutral / total) * 100).toFixed(1) : '0';
-
 
   const analysis = await coachRatioAI(data, {
     stats,
@@ -617,7 +618,10 @@ export const coachTopicChampion = onCall<CoachTopicChampionData>(
       let bestTopic = '';
 
       topicEmbeddings.forEach(({ text: topic, embedding }) => {
-        const similarity = cosineSimilarity(msgEmbedding[0].embedding, embedding);
+        const similarity = cosineSimilarity(
+          msgEmbedding[0].embedding,
+          embedding
+        );
         if (similarity > maxSimilarity && similarity > 0.75) {
           maxSimilarity = similarity;
           bestTopic = topic;
@@ -683,7 +687,8 @@ export const coachFriendshipCheckin = onCall<CoachFriendshipCheckinData>(
     }
 
     const avgResponseTime =
-      responseTimes.reduce((sum, t) => sum + t, 0) / (responseTimes.length || 1);
+      responseTimes.reduce((sum, t) => sum + t, 0) /
+      (responseTimes.length || 1);
 
     const stats = {
       recentMessageCount: recentMessages.length,
@@ -691,7 +696,8 @@ export const coachFriendshipCheckin = onCall<CoachFriendshipCheckinData>(
       avgRecentLength,
       avgOlderLength,
       avgResponseTime,
-      messageLengthChange: ((avgRecentLength - avgOlderLength) / avgOlderLength) * 100,
+      messageLengthChange:
+        ((avgRecentLength - avgOlderLength) / avgOlderLength) * 100,
     };
 
     console.log('📊 Friendship Stats:', stats);
@@ -723,7 +729,8 @@ export const coachGroupEnergy = onCall<CoachGroupEnergyData>(async request => {
   const weekMessages = messages.filter(m => m.createdAt > oneWeekAgo);
 
   // Count emoji usage
-  const emojiRegex = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]/gu;
+  const emojiRegex =
+    /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]/gu;
   const todayEmojis = todayMessages.reduce(
     (count, m) => count + (m.text?.match(emojiRegex)?.length || 0),
     0
@@ -767,7 +774,8 @@ export const coachGroupEnergy = onCall<CoachGroupEnergyData>(async request => {
   energyScore += participationRate * 15;
 
   // Response time bonus (quick responses = higher energy)
-  if (avgTodayResponseTime < 5 * 60 * 1000) energyScore += 10; // <5 min
+  if (avgTodayResponseTime < 5 * 60 * 1000)
+    energyScore += 10; // <5 min
   else if (avgTodayResponseTime < 30 * 60 * 1000) energyScore += 5; // <30 min
 
   // Cap at 100
@@ -797,39 +805,40 @@ interface CoachTopicVibeCheckData {
   parentCid: string;
 }
 
-export const coachTopicVibeCheck = onCall<CoachTopicVibeCheckData>(async request => {
-  const { coachCid, parentCid } = request.data;
-  
-  if (!request.auth) {
-    throw new HttpsError('unauthenticated', 'Must be authenticated');
+export const coachTopicVibeCheck = onCall<CoachTopicVibeCheckData>(
+  async request => {
+    const { coachCid, parentCid } = request.data;
+
+    if (!request.auth) {
+      throw new HttpsError('unauthenticated', 'Must be authenticated');
+    }
+
+    const fetchedData = await fetchAllRequiredData(request);
+
+    if (!fetchedData) {
+      throw new HttpsError('not-found', 'Required data not found');
+    }
+
+    // Generate embeddings for all topics
+    const embeddings = await generateEmbeddings(TOPIC_VIBE_TOPICS);
+    const topicEmbeddings = embeddings.map(({ text, embedding }) => ({
+      topic: text,
+      embedding,
+    }));
+
+    // Get sentiment scores for each topic
+    const topicScores = await Promise.all(
+      topicEmbeddings.map(async ({ topic, embedding }) => {
+        const sentiment = await getTopicSentiment(embedding, parentCid);
+        return {
+          topic,
+          score: sentiment.avg,
+        };
+      })
+    );
+
+    const response = await aiTopicVibeCheck(fetchedData, topicScores);
+    await sendCoachMessage(coachCid, response);
+    return { ok: true };
   }
-
-  const fetchedData = await fetchAllRequiredData(request);
-
-  if (!fetchedData) {
-    throw new HttpsError('not-found', 'Required data not found');
-  }
-
-  // Generate embeddings for all topics
-  const embeddings = await generateEmbeddings(TOPIC_VIBE_TOPICS);
-  const topicEmbeddings = embeddings.map(({ text, embedding }) => ({
-    topic: text,
-    embedding
-  }));
-
-  // Get sentiment scores for each topic
-  const topicScores = await Promise.all(
-    topicEmbeddings.map(async ({ topic, embedding }) => {
-      const sentiment = await getTopicSentiment(embedding, parentCid);
-      return {
-        topic,
-        score: sentiment.avg
-      };
-    })
-  );
-
-
-  const response = await aiTopicVibeCheck(fetchedData, topicScores);
-  await sendCoachMessage(coachCid, response);
-  return { ok: true };
-});
+);

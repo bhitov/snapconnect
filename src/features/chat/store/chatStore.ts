@@ -625,7 +625,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   analyzeBids: async (coachCid: string, parentCid: string) => {
-    console.log('💬 ChatStore: Analyzing emotional bids:', { coachCid, parentCid });
+    console.log('💬 ChatStore: Analyzing emotional bids:', {
+      coachCid,
+      parentCid,
+    });
 
     try {
       await analyzeBids(coachCid, parentCid);
@@ -641,7 +644,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   analyzeRuptureRepair: async (coachCid: string, parentCid: string) => {
-    console.log('🔧 ChatStore: Analyzing rupture and repair:', { coachCid, parentCid });
+    console.log('🔧 ChatStore: Analyzing rupture and repair:', {
+      coachCid,
+      parentCid,
+    });
 
     try {
       await analyzeRuptureRepair(coachCid, parentCid);
@@ -651,7 +657,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       console.log('✅ ChatStore: Rupture and repair analysis completed');
     } catch (ruptureError) {
-      console.error('❌ ChatStore: Failed to analyze rupture and repair:', ruptureError);
+      console.error(
+        '❌ ChatStore: Failed to analyze rupture and repair:',
+        ruptureError
+      );
       throw ruptureError;
     }
   },
@@ -673,7 +682,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   analyzeSharedInterests: async (coachCid: string, parentCid: string) => {
-    console.log('🎯 ChatStore: Analyzing shared interests:', { coachCid, parentCid });
+    console.log('🎯 ChatStore: Analyzing shared interests:', {
+      coachCid,
+      parentCid,
+    });
 
     try {
       await analyzeSharedInterests(coachCid, parentCid);
@@ -683,13 +695,19 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       console.log('✅ ChatStore: Shared interests analysis completed');
     } catch (sharedInterestsError) {
-      console.error('❌ ChatStore: Failed to analyze shared interests:', sharedInterestsError);
+      console.error(
+        '❌ ChatStore: Failed to analyze shared interests:',
+        sharedInterestsError
+      );
       throw sharedInterestsError;
     }
   },
 
   analyzeTopicChampion: async (coachCid: string, parentCid: string) => {
-    console.log('👑 ChatStore: Analyzing topic champions:', { coachCid, parentCid });
+    console.log('👑 ChatStore: Analyzing topic champions:', {
+      coachCid,
+      parentCid,
+    });
 
     try {
       await analyzeTopicChampion(coachCid, parentCid);
@@ -699,13 +717,19 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       console.log('✅ ChatStore: Topic champion analysis completed');
     } catch (topicChampionError) {
-      console.error('❌ ChatStore: Failed to analyze topic champions:', topicChampionError);
+      console.error(
+        '❌ ChatStore: Failed to analyze topic champions:',
+        topicChampionError
+      );
       throw topicChampionError;
     }
   },
 
   generateFriendshipCheckin: async (coachCid: string, parentCid: string) => {
-    console.log('📦 ChatStore: Generating friendship check-in:', { coachCid, parentCid });
+    console.log('📦 ChatStore: Generating friendship check-in:', {
+      coachCid,
+      parentCid,
+    });
 
     try {
       await generateFriendshipCheckin(coachCid, parentCid);
@@ -715,13 +739,19 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       console.log('✅ ChatStore: Friendship check-in generated');
     } catch (checkinError) {
-      console.error('❌ ChatStore: Failed to generate friendship check-in:', checkinError);
+      console.error(
+        '❌ ChatStore: Failed to generate friendship check-in:',
+        checkinError
+      );
       throw checkinError;
     }
   },
 
   analyzeGroupEnergy: async (coachCid: string, parentCid: string) => {
-    console.log('⚡ ChatStore: Analyzing group energy:', { coachCid, parentCid });
+    console.log('⚡ ChatStore: Analyzing group energy:', {
+      coachCid,
+      parentCid,
+    });
 
     try {
       await analyzeGroupEnergy(coachCid, parentCid);
@@ -731,13 +761,19 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       console.log('✅ ChatStore: Group energy analysis completed');
     } catch (groupEnergyError) {
-      console.error('❌ ChatStore: Failed to analyze group energy:', groupEnergyError);
+      console.error(
+        '❌ ChatStore: Failed to analyze group energy:',
+        groupEnergyError
+      );
       throw groupEnergyError;
     }
   },
 
   analyzeTopicVibeCheck: async (coachCid: string, parentCid: string) => {
-    console.log('🌟 ChatStore: Analyzing topic vibes:', { coachCid, parentCid });
+    console.log('🌟 ChatStore: Analyzing topic vibes:', {
+      coachCid,
+      parentCid,
+    });
 
     try {
       await analyzeTopicVibeCheck(coachCid, parentCid);
@@ -747,7 +783,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       console.log('✅ ChatStore: Topic vibe check completed');
     } catch (topicVibeError) {
-      console.error('❌ ChatStore: Failed to analyze topic vibes:', topicVibeError);
+      console.error(
+        '❌ ChatStore: Failed to analyze topic vibes:',
+        topicVibeError
+      );
       throw topicVibeError;
     }
   },

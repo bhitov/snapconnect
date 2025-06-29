@@ -11,7 +11,20 @@ import { useTheme } from '@/shared/hooks/useTheme';
 interface CoachModalProps {
   visible: boolean;
   onClose: () => void;
-  onOptionSelect: (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr' | 'sharedinterests' | 'topicchampion' | 'friendshipcheckin' | 'groupenergy' | 'topicvibecheck') => void;
+  onOptionSelect: (
+    option:
+      | 'ratio'
+      | 'horsemen'
+      | 'lovemap'
+      | 'bids'
+      | 'rupturerepair'
+      | 'acr'
+      | 'sharedinterests'
+      | 'topicchampion'
+      | 'friendshipcheckin'
+      | 'groupenergy'
+      | 'topicvibecheck'
+  ) => void;
   isRomantic?: boolean;
   isPlatonic?: boolean;
   isGroup?: boolean;
@@ -27,7 +40,20 @@ export function CoachModal({
 }: CoachModalProps) {
   const theme = useTheme();
 
-  const handleOptionPress = (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr' | 'sharedinterests' | 'topicchampion' | 'friendshipcheckin' | 'groupenergy' | 'topicvibecheck') => {
+  const handleOptionPress = (
+    option:
+      | 'ratio'
+      | 'horsemen'
+      | 'lovemap'
+      | 'bids'
+      | 'rupturerepair'
+      | 'acr'
+      | 'sharedinterests'
+      | 'topicchampion'
+      | 'friendshipcheckin'
+      | 'groupenergy'
+      | 'topicvibecheck'
+  ) => {
     onOptionSelect(option);
     onClose();
   };
@@ -342,18 +368,27 @@ export function CoachModal({
                 {isRomantic && (
                   <>
                     <TouchableOpacity
-                      style={[styles.option, { borderColor: theme.colors.border }]}
+                      style={[
+                        styles.option,
+                        { borderColor: theme.colors.border },
+                      ]}
                       onPress={() => handleOptionPress('bids')}
                       activeOpacity={0.7}
                     >
                       <Text
-                        style={[styles.optionIcon, { color: theme.colors.primary }]}
+                        style={[
+                          styles.optionIcon,
+                          { color: theme.colors.primary },
+                        ]}
                       >
                         💬
                       </Text>
                       <View style={styles.optionContent}>
                         <Text
-                          style={[styles.optionTitle, { color: theme.colors.text }]}
+                          style={[
+                            styles.optionTitle,
+                            { color: theme.colors.text },
+                          ]}
                         >
                           Emotional Bids
                         </Text>
@@ -369,18 +404,27 @@ export function CoachModal({
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                      style={[styles.option, { borderColor: theme.colors.border }]}
+                      style={[
+                        styles.option,
+                        { borderColor: theme.colors.border },
+                      ]}
                       onPress={() => handleOptionPress('rupturerepair')}
                       activeOpacity={0.7}
                     >
                       <Text
-                        style={[styles.optionIcon, { color: theme.colors.primary }]}
+                        style={[
+                          styles.optionIcon,
+                          { color: theme.colors.primary },
+                        ]}
                       >
                         🔧
                       </Text>
                       <View style={styles.optionContent}>
                         <Text
-                          style={[styles.optionTitle, { color: theme.colors.text }]}
+                          style={[
+                            styles.optionTitle,
+                            { color: theme.colors.text },
+                          ]}
                         >
                           Rupture & Repair
                         </Text>

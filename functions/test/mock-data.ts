@@ -492,7 +492,7 @@ const mockData = {
       },
     },
   } as const,
-  
+
   PLATONIC_FRIENDSHIP: {
     data: {
       uid: 'test-user-5',
@@ -584,7 +584,7 @@ const mockData = {
       },
     },
   } as const,
-  
+
   GROUP_CONVERSATION: {
     data: {
       uid: 'test-user-6',

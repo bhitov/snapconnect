@@ -422,7 +422,7 @@ export function ChatScreen() {
   const messagesError = useMessagesError();
   const sendError = useSendError();
   const conversations = useConversations();
-  
+
   // Check if this is a partner conversation
   const isPartnerConversation = React.useMemo(() => {
     if (isCoach && parentCid) {
@@ -598,7 +598,19 @@ export function ChatScreen() {
    * Handle coach analysis option selection
    */
   const handleCoachAnalysis = useCallback(
-    async (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr' | 'sharedinterests' | 'topicchampion' | 'friendshipcheckin' | 'groupenergy') => {
+    async (
+      option:
+        | 'ratio'
+        | 'horsemen'
+        | 'lovemap'
+        | 'bids'
+        | 'rupturerepair'
+        | 'acr'
+        | 'sharedinterests'
+        | 'topicchampion'
+        | 'friendshipcheckin'
+        | 'groupenergy'
+    ) => {
       try {
         switch (option) {
           case 'ratio':
@@ -650,7 +662,21 @@ export function ChatScreen() {
         console.error('❌ Failed to perform coach analysis:', analysisError);
       }
     },
-    [conversationId, parentCid, analyzeRatio, analyzeHorsemen, generateLoveMap, analyzeBids, analyzeRuptureRepair, analyzeACR, analyzeSharedInterests, analyzeTopicChampion, generateFriendshipCheckin, analyzeGroupEnergy, analyzeTopicVibeCheck]
+    [
+      conversationId,
+      parentCid,
+      analyzeRatio,
+      analyzeHorsemen,
+      generateLoveMap,
+      analyzeBids,
+      analyzeRuptureRepair,
+      analyzeACR,
+      analyzeSharedInterests,
+      analyzeTopicChampion,
+      generateFriendshipCheckin,
+      analyzeGroupEnergy,
+      analyzeTopicVibeCheck,
+    ]
   );
 
   /**

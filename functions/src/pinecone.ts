@@ -46,17 +46,20 @@ export async function getTopicSentiment(
   conversationId: string,
   topK = 30,
   similarityFloor = 0.3
-): Promise<{ avg: number; n: number; positives: number; negatives: number; }> {
+): Promise<{ avg: number; n: number; positives: number; negatives: number }> {
   const r = await index.query({
     vector: topicEmbedding,
     topK,
     includeMetadata: true,
-    filter: { 
-      conversationId: conversationId
-    }
+    filter: {
+      conversationId: conversationId,
+    },
   });
 
-  let wSum = 0, wTot = 0, pos = 0, neg = 0;
+  let wSum = 0,
+    wTot = 0,
+    pos = 0,
+    neg = 0;
   for (const m of r.matches) {
     // Only process matches above similarity threshold
     if (m.score && m.score >= similarityFloor) {
@@ -64,7 +67,7 @@ export async function getTopicSentiment(
       // or as a number
       let sentimentScore = 0;
       const sentimentValue = m.metadata?.sentiment;
-      
+
       if (typeof sentimentValue === 'string') {
         if (sentimentValue === 'positive') sentimentScore = 1;
         else if (sentimentValue === 'negative') sentimentScore = -1;
@@ -72,12 +75,12 @@ export async function getTopicSentiment(
       } else if (typeof sentimentValue === 'number') {
         sentimentScore = sentimentValue;
       }
-      
+
       const w = m.score;
       wSum += sentimentScore * w;
       wTot += w;
-      
-      if (sentimentScore > 0.3) pos++; 
+
+      if (sentimentScore > 0.3) pos++;
       else if (sentimentScore < -0.3) neg++;
     }
   }
@@ -86,7 +89,7 @@ export async function getTopicSentiment(
     avg: wTot ? wSum / wTot : 0,
     n: r.matches.filter(m => m.score && m.score >= similarityFloor).length,
     positives: pos,
-    negatives: neg
+    negatives: neg,
   };
 }
 /**
