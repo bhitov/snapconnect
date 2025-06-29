@@ -145,7 +145,7 @@ async function testAllCoachFunctions() {
     console.log('=== TEST 6: coachBidsAI ===\n');
     for (const scenario of scenarios) {
       console.log(`Testing ${scenario.name}:`);
-      
+
       const result = await coachBidsAI(scenario.data.data);
       console.log('Response:', result);
       console.log('\n---\n');
@@ -157,7 +157,7 @@ async function testAllCoachFunctions() {
     console.log('=== TEST 7: coachRuptureRepairAI ===\n');
     for (const scenario of scenarios) {
       console.log(`Testing ${scenario.name}:`);
-      
+
       const result = await coachRuptureRepairAI(scenario.data.data);
       console.log('Response:', result);
       console.log('\n---\n');

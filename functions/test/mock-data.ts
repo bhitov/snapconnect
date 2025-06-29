@@ -107,7 +107,7 @@ const mockData = {
         {
           id: '7',
           senderId: 'test-user-partner-1',
-          text: "Can we cuddle on the couch tonight and watch that movie you mentioned?",
+          text: 'Can we cuddle on the couch tonight and watch that movie you mentioned?',
           createdAt: Date.now() - 900,
           conversationId: 'parent-456',
           senderInfo: { displayName: 'Sarah Johnson', username: 'sarahj' },

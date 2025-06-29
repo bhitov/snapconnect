@@ -392,16 +392,18 @@ export const coachBids = onCall<CoachBidsData>(async request => {
 //--------------------------------------------------------------------------
 // 8) coachRuptureRepair - Rupture and Repair Analysis
 //--------------------------------------------------------------------------
-export const coachRuptureRepair = onCall<CoachRuptureRepairData>(async request => {
-  const data = await validateCoachParams(request);
-  const { coachCid } = data;
+export const coachRuptureRepair = onCall<CoachRuptureRepairData>(
+  async request => {
+    const data = await validateCoachParams(request);
+    const { coachCid } = data;
 
-  // Fetch conversation data
-  const fetchedData = await fetchAllRequiredData(request);
+    // Fetch conversation data
+    const fetchedData = await fetchAllRequiredData(request);
 
-  // Let the AI analyze the conversation for ruptures and repairs
-  const analysis = await coachRuptureRepairAI(fetchedData);
+    // Let the AI analyze the conversation for ruptures and repairs
+    const analysis = await coachRuptureRepairAI(fetchedData);
 
-  await sendCoachMessage(coachCid, analysis);
-  return { ok: true };
-});
+    await sendCoachMessage(coachCid, analysis);
+    return { ok: true };
+  }
+);

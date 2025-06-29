@@ -93,8 +93,8 @@ export async function callCoachAI(
 
     ${systemMessage}
 
-    you are acting as a coach and therapist to ${options.displayName}, to whom you are talking. `
-    +`address them directly not in the third person.  
+    you are acting as a coach and therapist to ${options.displayName}, to whom you are talking. ` +
+    `address them directly not in the third person.  
 
     ${parentConvoHistory}`;
 
@@ -279,9 +279,7 @@ Keep total response under 220 words.`,
  * Analyze emotional bids in conversation
  * Pure function for testing - no database calls
  */
-export async function coachBidsAI(
-  data: FetchedData
-): Promise<string> {
+export async function coachBidsAI(data: FetchedData): Promise<string> {
   return callCoachAI(
     `**GOTTMAN CONTEXT:** ${GOTTMAN_CONTEXT.emotionalBids}`,
     `
@@ -303,9 +301,7 @@ Keep total response under 250 words.`,
  * Analyze ruptures and provide repair guidance
  * Pure function for testing - no database calls
  */
-export async function coachRuptureRepairAI(
-  data: FetchedData
-): Promise<string> {
+export async function coachRuptureRepairAI(data: FetchedData): Promise<string> {
   return callCoachAI(
     `**GOTTMAN CONTEXT:** ${GOTTMAN_CONTEXT.ruptureRepair}`,
     `
