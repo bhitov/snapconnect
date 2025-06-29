@@ -319,6 +319,14 @@ export interface ChatActions {
   analyzeRatio: (coachCid: string, parentCid: string) => Promise<void>;
   analyzeHorsemen: (coachCid: string, parentCid: string) => Promise<void>;
   generateLoveMap: (coachCid: string, parentCid: string) => Promise<void>;
+  analyzeBids: (coachCid: string, parentCid: string) => Promise<void>;
+  analyzeRuptureRepair: (coachCid: string, parentCid: string) => Promise<void>;
+  analyzeACR: (coachCid: string, parentCid: string) => Promise<void>;
+  analyzeSharedInterests: (coachCid: string, parentCid: string) => Promise<void>;
+  analyzeTopicChampion: (coachCid: string, parentCid: string) => Promise<void>;
+  generateFriendshipCheckin: (coachCid: string, parentCid: string) => Promise<void>;
+  analyzeGroupEnergy: (coachCid: string, parentCid: string) => Promise<void>;
+  analyzeTopicVibeCheck: (coachCid: string, parentCid: string) => Promise<void>;
 }
 
 /**

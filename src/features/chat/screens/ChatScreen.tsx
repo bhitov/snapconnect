@@ -443,6 +443,9 @@ export function ChatScreen() {
     return false;
   }, [isCoach, parentCid, conversations]);
 
+  // Get parent conversation message count
+  const [parentMessageCount, setParentMessageCount] = useState(0);
+
   // Chat actions
   const {
     loadMessages,
@@ -610,6 +613,7 @@ export function ChatScreen() {
         | 'topicchampion'
         | 'friendshipcheckin'
         | 'groupenergy'
+        | 'topicvibecheck'
     ) => {
       try {
         switch (option) {
@@ -799,7 +803,15 @@ export function ChatScreen() {
           // Show prompts button for all coach chats
           return (
             <TouchableOpacity
-              onPress={() => setShowCoachModal(true)}
+              onPress={async () => {
+                // Fetch parent message count when opening the modal
+                if (parentCid) {
+                  const count =
+                    await chatService.getConversationMessageCount(parentCid);
+                  setParentMessageCount(count);
+                }
+                setShowCoachModal(true);
+              }}
               style={{ marginRight: 16 }}
             >
               <View
@@ -833,6 +845,7 @@ export function ChatScreen() {
             </TouchableOpacity>
           );
         }
+        return null;
       },
     });
   }, [
@@ -1280,6 +1293,7 @@ export function ChatScreen() {
           isRomantic={isPartnerConversation}
           isPlatonic={!isPartnerConversation && !(isGroup || isParentGroup)}
           isGroup={isGroup || isParentGroup}
+          messageCount={parentMessageCount}
         />
 
         {/* Send Error */}

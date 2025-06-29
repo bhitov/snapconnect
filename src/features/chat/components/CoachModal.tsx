@@ -28,6 +28,7 @@ interface CoachModalProps {
   isRomantic?: boolean;
   isPlatonic?: boolean;
   isGroup?: boolean;
+  messageCount?: number;
 }
 
 export function CoachModal({
@@ -37,6 +38,7 @@ export function CoachModal({
   isRomantic = false,
   isPlatonic = false,
   isGroup = false,
+  messageCount = 0,
 }: CoachModalProps) {
   const theme = useTheme();
 
@@ -87,12 +89,19 @@ export function CoachModal({
 
           <View style={styles.options}>
             {isPlatonic ? (
-              // Platonic relationships show ACR, shared interests, and friendship check-in
+              // Platonic relationships show only ACR and Topic Vibe Check
               <>
                 <TouchableOpacity
-                  style={[styles.option, { borderColor: theme.colors.border }]}
-                  onPress={() => handleOptionPress('acr')}
-                  activeOpacity={0.7}
+                  style={[
+                    styles.option,
+                    {
+                      borderColor: theme.colors.border,
+                      opacity: messageCount >= 20 ? 1 : 0.5,
+                    },
+                  ]}
+                  onPress={() => messageCount >= 20 && handleOptionPress('acr')}
+                  activeOpacity={messageCount >= 20 ? 0.7 : 1}
+                  disabled={messageCount < 20}
                 >
                   <Text
                     style={[styles.optionIcon, { color: theme.colors.primary }]}
@@ -113,13 +122,79 @@ export function CoachModal({
                     >
                       Analyze how you respond to each other's good news
                     </Text>
+                    {messageCount < 20 && (
+                      <Text
+                        style={[
+                          styles.optionRequirement,
+                          { color: theme.colors.error },
+                        ]}
+                      >
+                        Requires 20 messages (currently {messageCount})
+                      </Text>
+                    )}
                   </View>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[styles.option, { borderColor: theme.colors.border }]}
-                  onPress={() => handleOptionPress('sharedinterests')}
-                  activeOpacity={0.7}
+                  style={[
+                    styles.option,
+                    {
+                      borderColor: theme.colors.border,
+                      opacity: messageCount >= 50 ? 1 : 0.5,
+                    },
+                  ]}
+                  onPress={() =>
+                    messageCount >= 50 && handleOptionPress('topicvibecheck')
+                  }
+                  activeOpacity={messageCount >= 50 ? 0.7 : 1}
+                  disabled={messageCount < 50}
+                >
+                  <Text
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
+                  >
+                    🌟
+                  </Text>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Topic Vibe Check
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Discover which topics bring positive energy to your chats
+                    </Text>
+                    {messageCount < 50 && (
+                      <Text
+                        style={[
+                          styles.optionRequirement,
+                          { color: theme.colors.error },
+                        ]}
+                      >
+                        Requires 50 messages (currently {messageCount})
+                      </Text>
+                    )}
+                  </View>
+                </TouchableOpacity>
+              </>
+            ) : isGroup ? (
+              // Group conversations show only ACR and Topic Vibe Check
+              <>
+                <TouchableOpacity
+                  style={[
+                    styles.option,
+                    {
+                      borderColor: theme.colors.border,
+                      opacity: messageCount >= 20 ? 1 : 0.5,
+                    },
+                  ]}
+                  onPress={() => messageCount >= 20 && handleOptionPress('acr')}
+                  activeOpacity={messageCount >= 20 ? 0.7 : 1}
+                  disabled={messageCount < 20}
                 >
                   <Text
                     style={[styles.optionIcon, { color: theme.colors.primary }]}
@@ -130,7 +205,7 @@ export function CoachModal({
                     <Text
                       style={[styles.optionTitle, { color: theme.colors.text }]}
                     >
-                      Shared Interests Discovery
+                      Active-Constructive Responding
                     </Text>
                     <Text
                       style={[
@@ -138,42 +213,35 @@ export function CoachModal({
                         { color: theme.colors.textSecondary },
                       ]}
                     >
-                      Find common interests and activity suggestions
+                      Analyze how group members respond to each other's good
+                      news
                     </Text>
+                    {messageCount < 20 && (
+                      <Text
+                        style={[
+                          styles.optionRequirement,
+                          { color: theme.colors.error },
+                        ]}
+                      >
+                        Requires 20 messages (currently {messageCount})
+                      </Text>
+                    )}
                   </View>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[styles.option, { borderColor: theme.colors.border }]}
-                  onPress={() => handleOptionPress('friendshipcheckin')}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    style={[styles.optionIcon, { color: theme.colors.primary }]}
-                  >
-                    📦
-                  </Text>
-                  <View style={styles.optionContent}>
-                    <Text
-                      style={[styles.optionTitle, { color: theme.colors.text }]}
-                    >
-                      Friendship Check-in
-                    </Text>
-                    <Text
-                      style={[
-                        styles.optionDescription,
-                        { color: theme.colors.textSecondary },
-                      ]}
-                    >
-                      Get personalized check-in questions based on patterns
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.option, { borderColor: theme.colors.border }]}
-                  onPress={() => handleOptionPress('topicvibecheck')}
-                  activeOpacity={0.7}
+                  style={[
+                    styles.option,
+                    {
+                      borderColor: theme.colors.border,
+                      opacity: messageCount >= 50 ? 1 : 0.5,
+                    },
+                  ]}
+                  onPress={() =>
+                    messageCount >= 50 && handleOptionPress('topicvibecheck')
+                  }
+                  activeOpacity={messageCount >= 50 ? 0.7 : 1}
+                  disabled={messageCount < 50}
                 >
                   <Text
                     style={[styles.optionIcon, { color: theme.colors.primary }]}
@@ -192,92 +260,18 @@ export function CoachModal({
                         { color: theme.colors.textSecondary },
                       ]}
                     >
-                      Discover which topics bring positive energy to your chats
+                      Discover which topics bring positive energy to your group
                     </Text>
-                  </View>
-                </TouchableOpacity>
-              </>
-            ) : isGroup ? (
-              // Group conversations show topic champion and group energy
-              <>
-                <TouchableOpacity
-                  style={[styles.option, { borderColor: theme.colors.border }]}
-                  onPress={() => handleOptionPress('topicchampion')}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    style={[styles.optionIcon, { color: theme.colors.primary }]}
-                  >
-                    👑
-                  </Text>
-                  <View style={styles.optionContent}>
-                    <Text
-                      style={[styles.optionTitle, { color: theme.colors.text }]}
-                    >
-                      Topic Champions
-                    </Text>
-                    <Text
-                      style={[
-                        styles.optionDescription,
-                        { color: theme.colors.textSecondary },
-                      ]}
-                    >
-                      Discover who brings up different topics in your group
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.option, { borderColor: theme.colors.border }]}
-                  onPress={() => handleOptionPress('groupenergy')}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    style={[styles.optionIcon, { color: theme.colors.primary }]}
-                  >
-                    ⚡
-                  </Text>
-                  <View style={styles.optionContent}>
-                    <Text
-                      style={[styles.optionTitle, { color: theme.colors.text }]}
-                    >
-                      Group Energy Tracker
-                    </Text>
-                    <Text
-                      style={[
-                        styles.optionDescription,
-                        { color: theme.colors.textSecondary },
-                      ]}
-                    >
-                      Check your group's current energy level and engagement
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.option, { borderColor: theme.colors.border }]}
-                  onPress={() => handleOptionPress('topicvibecheck')}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    style={[styles.optionIcon, { color: theme.colors.primary }]}
-                  >
-                    🌟
-                  </Text>
-                  <View style={styles.optionContent}>
-                    <Text
-                      style={[styles.optionTitle, { color: theme.colors.text }]}
-                    >
-                      Topic Vibe Check
-                    </Text>
-                    <Text
-                      style={[
-                        styles.optionDescription,
-                        { color: theme.colors.textSecondary },
-                      ]}
-                    >
-                      Discover which topics bring positive energy to your chats
-                    </Text>
+                    {messageCount < 50 && (
+                      <Text
+                        style={[
+                          styles.optionRequirement,
+                          { color: theme.colors.error },
+                        ]}
+                      >
+                        Requires 50 messages (currently {messageCount})
+                      </Text>
+                    )}
                   </View>
                 </TouchableOpacity>
               </>
@@ -540,5 +534,10 @@ const styles = StyleSheet.create({
   optionDescription: {
     fontSize: 14,
     lineHeight: 18,
+  },
+  optionRequirement: {
+    fontSize: 12,
+    marginTop: 4,
+    fontStyle: 'italic',
   },
 });

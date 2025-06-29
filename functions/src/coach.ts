@@ -491,10 +491,20 @@ export const coachRuptureRepair = onCall<CoachRuptureRepairData>(
 //--------------------------------------------------------------------------
 export const coachACR = onCall<CoachACRData>(async request => {
   const data = await validateCoachParams(request);
-  const { coachCid } = data;
+  const { coachCid, parentCid } = data;
 
   // Fetch conversation data
   const fetchedData = await fetchAllRequiredData(request);
+
+  // Check message count requirement
+  const messageCount = fetchedData.parentMessages.length;
+  if (messageCount < 20) {
+    await sendCoachMessage(
+      coachCid, 
+      `I need at least 20 messages to analyze Active-Constructive Responding patterns. You currently have ${messageCount} messages. Keep chatting and try again later!`
+    );
+    return { ok: true };
+  }
 
   // Let the AI analyze the conversation for ACR patterns
   const analysis = await coachACRAI(fetchedData);
@@ -819,6 +829,16 @@ export const coachTopicVibeCheck = onCall<CoachTopicVibeCheckData>(
       throw new HttpsError('not-found', 'Required data not found');
     }
 
+    // Check message count requirement
+    const messageCount = fetchedData.parentMessages.length;
+    if (messageCount < 50) {
+      await sendCoachMessage(
+        coachCid, 
+        `I need at least 50 messages to analyze topic vibes effectively. You currently have ${messageCount} messages. Keep chatting and try again later!`
+      );
+      return { ok: true };
+    }
+
     // Generate embeddings for all topics
     const embeddings = await generateEmbeddings(TOPIC_VIBE_TOPICS);
     const topicEmbeddings = embeddings.map(({ text, embedding }) => ({
@@ -836,8 +856,16 @@ export const coachTopicVibeCheck = onCall<CoachTopicVibeCheckData>(
         };
       })
     );
+    
+    // Filter out topics with no data
+    const validTopics = topicScores.filter(t => t.score !== 0);
+    
+    if (validTopics.length === 0) {
+      await sendCoachMessage(coachCid, "I need more conversation history to analyze your topic vibes. Keep chatting and try again later!");
+      return { ok: true };
+    }
 
-    const response = await aiTopicVibeCheck(fetchedData, topicScores);
+    const response = await aiTopicVibeCheck(fetchedData, validTopics);
     await sendCoachMessage(coachCid, response);
     return { ok: true };
   }

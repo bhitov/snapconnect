@@ -1568,6 +1568,31 @@ class ChatService {
       throw new Error(chatError.message);
     }
   }
+
+  /**
+   * Get message count for a conversation
+   */
+  async getConversationMessageCount(conversationId: string): Promise<number> {
+    try {
+      const messagesRef = ref(this.database, 'textMessages');
+      const messagesQuery = query(
+        messagesRef,
+        orderByChild('conversationId'),
+        equalTo(conversationId)
+      );
+      
+      const snapshot = await get(messagesQuery);
+      
+      if (!snapshot.exists()) {
+        return 0;
+      }
+      
+      return Object.keys(snapshot.val()).length;
+    } catch (error) {
+      console.error('❌ ChatService: Failed to get message count:', error);
+      return 0;
+    }
+  }
 }
 
 // Export singleton instance
