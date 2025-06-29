@@ -30,6 +30,8 @@ import {
   coachRatioAI,
   coachHorsemenAI,
   coachLoveMapAI,
+  coachBidsAI,
+  coachRuptureRepairAI,
 } from './coach-ai';
 import type { FetchedData } from './types';
 
@@ -77,6 +79,16 @@ interface CoachHorsemenData {
 }
 
 interface CoachLoveMapData {
+  coachCid: string;
+  parentCid: string;
+}
+
+interface CoachBidsData {
+  coachCid: string;
+  parentCid: string;
+}
+
+interface CoachRuptureRepairData {
   coachCid: string;
   parentCid: string;
 }
@@ -357,5 +369,39 @@ export const coachLoveMap = onCall<CoachLoveMapData>(async request => {
   });
 
   await sendCoachMessage(coachCid, response);
+  return { ok: true };
+});
+
+//--------------------------------------------------------------------------
+// 7) coachBids - Emotional Bids Analysis
+//--------------------------------------------------------------------------
+export const coachBids = onCall<CoachBidsData>(async request => {
+  const data = await validateCoachParams(request);
+  const { coachCid } = data;
+
+  // Fetch conversation data
+  const fetchedData = await fetchAllRequiredData(request);
+
+  // Let the AI analyze the conversation for bids
+  const analysis = await coachBidsAI(fetchedData);
+
+  await sendCoachMessage(coachCid, analysis);
+  return { ok: true };
+});
+
+//--------------------------------------------------------------------------
+// 8) coachRuptureRepair - Rupture and Repair Analysis
+//--------------------------------------------------------------------------
+export const coachRuptureRepair = onCall<CoachRuptureRepairData>(async request => {
+  const data = await validateCoachParams(request);
+  const { coachCid } = data;
+
+  // Fetch conversation data
+  const fetchedData = await fetchAllRequiredData(request);
+
+  // Let the AI analyze the conversation for ruptures and repairs
+  const analysis = await coachRuptureRepairAI(fetchedData);
+
+  await sendCoachMessage(coachCid, analysis);
   return { ok: true };
 });

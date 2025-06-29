@@ -29,6 +29,18 @@ and learning self-soothing techniques to prevent stonewalling.`,
 about your partner's life - their hopes, dreams, fears, stresses, and joys. 
 Having a detailed Love Map of your partner's inner world helps you both handle stressful events and conflict better. 
 You can build your Love Map by asking open-ended questions and staying curious about your partner's evolving inner world.`,
+
+  emotionalBids: `Dr. John Gottman's research on emotional bids shows that partners make countless attempts to connect throughout the day - 
+these "bids" can be as simple as "Look at that bird" or as direct as "I need a hug." How partners respond to these bids is crucial: 
+they can "turn toward" (acknowledge and engage), "turn away" (ignore or miss), or "turn against" (reject or respond negatively). 
+Couples who turn toward each other's bids 86% of the time stay married, while those who only do so 33% of the time divorce. 
+Building awareness of these micro-moments of connection opportunity is essential for relationship health.`,
+
+  ruptureRepair: `Dr. John Gottman's concept of rupture and repair recognizes that all couples experience relationship injuries or "ruptures" - 
+moments when trust is broken or partners hurt each other. What matters most is not avoiding ruptures but learning to repair them effectively. 
+Successful repair attempts include: taking responsibility, offering sincere apologies, validating your partner's feelings, 
+and committing to behavior change. The ability to repair after conflict is one of the strongest predictors of relationship longevity. 
+Failed repairs often involve defensiveness, minimizing the hurt, or rushing to "move on" without addressing the underlying issue.`,
 };
 
 interface CallCoachAIOptions extends FetchedData {
@@ -81,7 +93,8 @@ export async function callCoachAI(
 
     ${systemMessage}
 
-    you are acting as a coach and therapist to ${options.displayName}, to whom you are talking
+    you are acting as a coach and therapist to ${options.displayName}, to whom you are talking. `
+    +`address them directly not in the third person.  
 
     ${parentConvoHistory}`;
 
@@ -259,5 +272,63 @@ Keep total response under 220 words.`,
       parentMessages: undefined,
       coachMessages: undefined,
     }
+  );
+}
+
+/**
+ * Analyze emotional bids in conversation
+ * Pure function for testing - no database calls
+ */
+export async function coachBidsAI(
+  data: FetchedData
+): Promise<string> {
+  return callCoachAI(
+    `**GOTTMAN CONTEXT:** ${GOTTMAN_CONTEXT.emotionalBids}`,
+    `
+First, give a very short explanation of emotional bids. 1 or 2 short sentences.
+
+Then, analyze the conversation history for emotional bids - attempts by either partner to connect. Look for:
+- Questions, requests, or statements seeking attention/connection
+- How the partner responded (turned toward, turned away, or turned against)
+- Patterns of connection or disconnection
+
+Provide specific examples from the conversation if you find any bids. If no clear bids are detected, provide general guidance on recognizing and making bids for connection.
+
+Keep total response under 250 words.`,
+    { ...data, temperature: 0.4, coachMessages: undefined }
+  );
+}
+
+/**
+ * Analyze ruptures and provide repair guidance
+ * Pure function for testing - no database calls
+ */
+export async function coachRuptureRepairAI(
+  data: FetchedData
+): Promise<string> {
+  return callCoachAI(
+    `**GOTTMAN CONTEXT:** ${GOTTMAN_CONTEXT.ruptureRepair}`,
+    `
+First, give a very short explanation of the rupture and repair concept. 1 or 2 short sentences.
+
+Then, analyze the conversation history for ruptures (conflicts, hurtful exchanges, breaks in connection). Look for:
+- Instances of criticism, contempt, defensiveness, or stonewalling
+- Moments where trust was broken or partners hurt each other
+- Any repair attempts that were made
+- Whether repairs were successful or failed
+
+If you find moderate to sever conflicts that didn't go well, provide a specific repair playbook:
+1. What rupture occurred (be specific about the hurt)
+2. Steps for effective repair (tailored to this situation)
+3. What to say/do to rebuild trust
+4. How to prevent similar ruptures
+
+if there was a minor conflict that went decently well, you can mention what went well. don't be nitpicky.
+don't pretend that something went poorly just because we are focusing on conflicts
+
+If no recent conflicts are detected, or all conflicts were minor and went great, offer a complimentary message.
+
+Keep total response under 200 words.`,
+    { ...data, temperature: 0.4, coachMessages: undefined }
   );
 }

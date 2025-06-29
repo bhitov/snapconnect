@@ -18,6 +18,8 @@ import {
   coachRatio,
   coachHorsemen,
   coachLoveMap,
+  coachBids,
+  coachRuptureRepair,
 } from './coach';
 
 import { coachAnalyzeAI } from './coach-ai';
@@ -30,5 +32,7 @@ export {
   coachRatio,
   coachHorsemen,
   coachLoveMap,
+  coachBids,
+  coachRuptureRepair,
   coachAnalyzeAI,
 };
