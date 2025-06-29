@@ -14,6 +14,7 @@ import {
   Alert,
   ActivityIndicator,
   StyleSheet,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -24,6 +25,7 @@ import {
 } from '@/features/friends/store/friendsStore';
 import { useStoriesStore } from '@/features/stories/store/storiesStore';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
 import {
   useChatStore,
@@ -280,14 +282,23 @@ export function RecipientSelectionScreen() {
         activeOpacity={0.7}
       >
         <View style={styles.friendInfo}>
-          <View
-            style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
-          >
-            <Text
-              style={[styles.avatarText, { color: theme.colors.background }]}
-            >
-              {friend.displayName.charAt(0).toUpperCase()}
-            </Text>
+          <View style={styles.avatarContainer}>
+            {friend.photoURL ? (
+              <Image
+                source={{ uri: resolveMediaUrl(friend.photoURL) }}
+                style={[styles.avatar, { backgroundColor: theme.colors.surface }]}
+              />
+            ) : (
+              <View
+                style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
+              >
+                <Text
+                  style={[styles.avatarText, { color: theme.colors.background }]}
+                >
+                  {friend.displayName.charAt(0).toUpperCase()}
+                </Text>
+              </View>
+            )}
           </View>
 
           <View style={styles.friendDetails}>
@@ -617,13 +628,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
+  avatarContainer: {
+    marginRight: 12,
+  },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
   },
   avatarText: {
     fontSize: 16,

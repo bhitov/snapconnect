@@ -17,9 +17,11 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
+  Image,
 } from 'react-native';
 
 import { useTheme } from '@/shared/hooks/useTheme';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
 import {
   useChatStore,
@@ -179,19 +181,13 @@ export function CreateGroupScreen() {
           {/* Friend Avatar */}
           <View style={styles.avatarContainer}>
             {friend.photoURL ? (
-              <View
+              <Image
+                source={{ uri: resolveMediaUrl(friend.photoURL) }}
                 style={[
                   styles.avatar,
                   { backgroundColor: theme.colors.surface },
                 ]}
-              >
-                {/* TODO: Add proper image component when available */}
-                <Ionicons
-                  name='person'
-                  size={20}
-                  color={theme.colors.textSecondary}
-                />
-              </View>
+              />
             ) : (
               <View
                 style={[

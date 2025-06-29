@@ -397,13 +397,16 @@ class ChatService {
       >;
 
       // Find conversation where both users are participants
+      // IMPORTANT: Only find 1-on-1 conversations, not group conversations
       for (const [conversationId, conversation] of Object.entries(
         conversations
       )) {
         const conv = conversation;
         if (
           conv.participants.includes(user1Id) &&
-          conv.participants.includes(user2Id)
+          conv.participants.includes(user2Id) &&
+          conv.participants.length === 2 && // Ensure it's a 1-on-1 conversation
+          !conv.isGroup // Explicitly check it's not a group
         ) {
           return conversationId;
         }
