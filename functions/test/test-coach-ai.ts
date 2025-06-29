@@ -6,6 +6,7 @@ import {
   coachLoveMapAI,
   coachBidsAI,
   coachRuptureRepairAI,
+  coachACRAI,
 } from '../src/coach-ai';
 import { mockData } from './mock-data';
 
@@ -18,6 +19,7 @@ const TEST_CONFIG = {
   coachLoveMapAI: false,
   coachBidsAI: true,
   coachRuptureRepairAI: true,
+  coachACRAI: true,
 };
 
 async function testAllCoachFunctions() {
@@ -34,6 +36,21 @@ async function testAllCoachFunctions() {
       data: mockData.HIGH_CONFLICT_ROMANTIC,
     } as const,
   ] as const;
+  
+  // Additional scenarios for specific tests
+  const platonicScenarios = [
+    {
+      name: 'Platonic friendship',
+      data: mockData.PLATONIC_FRIENDSHIP,
+    } as const,
+  ];
+  
+  const groupScenarios = [
+    {
+      name: 'Group conversation',
+      data: mockData.GROUP_CONVERSATION,
+    } as const,
+  ];
 
   // Test 1: coachAnalyzeAI
   if (TEST_CONFIG.coachAnalyzeAI) {
@@ -162,6 +179,25 @@ async function testAllCoachFunctions() {
       console.log('Response:', result);
       console.log('\n---\n');
     }
+  }
+
+  // Test 8: coachACRAI (for platonic relationships)
+  if (TEST_CONFIG.coachACRAI) {
+    console.log('=== TEST 8: coachACRAI (Active-Constructive Responding) ===\n');
+    
+    // Test with platonic scenarios
+    for (const scenario of platonicScenarios) {
+      console.log(`Testing ${scenario.name}:`);
+      const result = await coachACRAI(scenario.data.data);
+      console.log('Response:', result);
+      console.log('\n---\n');
+    }
+    
+    // Also test with romantic scenarios to see how it handles them
+    console.log('Testing ACR on romantic scenario for comparison:');
+    const result = await coachACRAI(scenarios[0].data.data);
+    console.log('Response:', result);
+    console.log('\n---\n');
   }
 
   console.log('✅ All tests complete!');

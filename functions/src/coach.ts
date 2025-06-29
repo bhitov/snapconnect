@@ -15,7 +15,9 @@ import {
   type UserInfo,
   type TextMessage,
   type TextMessageWithUserInfo,
+  type Conversation,
 } from './db';
+import { getDatabase } from 'firebase-admin/database';
 import {
   queryConversationMessages,
   analyzeConversationStats,
@@ -32,8 +34,9 @@ import {
   coachLoveMapAI,
   coachBidsAI,
   coachRuptureRepairAI,
+  coachACRAI,
 } from './coach-ai';
-import type { FetchedData } from './types';
+import type { FetchedData, RelationshipType } from './types';
 
 const RECENT_PARENT = 50; // last 50 msgs
 
@@ -93,6 +96,11 @@ interface CoachRuptureRepairData {
   parentCid: string;
 }
 
+interface CoachACRData {
+  coachCid: string;
+  parentCid: string;
+}
+
 /**
  * Fetch all required data for coach operations
  * Always fetches coach messages and last 100 parent messages
@@ -101,16 +109,38 @@ export async function fetchAllRequiredData(
   request: CallableRequest<{ coachCid?: string; parentCid?: string }>
 ): Promise<FetchedData> {
   const data = await validateCoachParams(request);
-  const result: FetchedData = { ...data };
-
+  
   // Always fetch coach messages
-  result.coachMessages = await getAllMessages(data.coachCid);
+  const coachMessages = await getAllMessages(data.coachCid);
 
   // Always fetch last 100 parent messages with user info
-  result.parentMessages = await getRecentMessagesWithUserInfo(
+  const parentMessages = await getRecentMessagesWithUserInfo(
     data.parentCid,
     100
   );
+  
+  // Get conversation info to determine relationship type
+  const convSnapshot = await getDatabase().ref(`conversations/${data.parentCid}`).get();
+  const conversation = convSnapshot.val() as Conversation;
+  const participants = conversation?.participants || [];
+  
+  // Determine relationship type
+  let relationshipType: RelationshipType = 'platonic';
+  
+  if (participants.length >= 3) {
+    relationshipType = 'group';
+  } else if (participants.length === 2) {
+    // For now, assume all 2-person conversations are romantic
+    // Later we'll check user.partnerId when it's available
+    relationshipType = 'romantic';
+  }
+  
+  const result: FetchedData = { 
+    ...data,
+    relationshipType,
+    coachMessages,
+    parentMessages
+  };
 
   return result;
 }
@@ -407,3 +437,20 @@ export const coachRuptureRepair = onCall<CoachRuptureRepairData>(
     return { ok: true };
   }
 );
+
+//--------------------------------------------------------------------------
+// 9) coachACR - Active-Constructive Responding Analysis (Platonic)
+//--------------------------------------------------------------------------
+export const coachACR = onCall<CoachACRData>(async request => {
+  const data = await validateCoachParams(request);
+  const { coachCid } = data;
+
+  // Fetch conversation data
+  const fetchedData = await fetchAllRequiredData(request);
+
+  // Let the AI analyze the conversation for ACR patterns
+  const analysis = await coachACRAI(fetchedData);
+
+  await sendCoachMessage(coachCid, analysis);
+  return { ok: true };
+});

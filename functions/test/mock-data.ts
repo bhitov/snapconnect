@@ -18,6 +18,7 @@ const mockData = {
       parentCid: 'parent-456',
       displayName: 'Alex Johnson',
       username: 'alexj',
+      relationshipType: 'romantic' as const,
       coachMessages: [
         {
           id: 'c1',
@@ -146,6 +147,7 @@ const mockData = {
       parentCid: 'parent-012',
       displayName: 'Sam Miller',
       username: 'smiller',
+      relationshipType: 'romantic' as const,
       parentMessages: [
         {
           id: '1',
@@ -221,6 +223,7 @@ const mockData = {
       parentCid: 'parent-678',
       displayName: 'Taylor Brown',
       username: 'tbrown',
+      relationshipType: 'romantic' as const,
       coachMessages: [
         {
           id: 'c1',
@@ -413,6 +416,7 @@ const mockData = {
       parentCid: 'parent-234',
       displayName: 'Casey Davis',
       username: 'cdavis',
+      relationshipType: 'romantic' as const,
       parentMessages: [
         {
           id: '1',
@@ -485,6 +489,183 @@ const mockData = {
         negative: 3,
         neutral: 17,
         totalMessages: 50,
+      },
+    },
+  } as const,
+  
+  PLATONIC_FRIENDSHIP: {
+    data: {
+      uid: 'test-user-5',
+      coachCid: 'coach-567',
+      parentCid: 'parent-890',
+      displayName: 'Jamie Chen',
+      username: 'jchen',
+      relationshipType: 'platonic' as const,
+      coachMessages: [
+        {
+          id: 'c1',
+          senderId: 'coach',
+          text: "Hi! I'm your friendship coach. I'm here to help you build stronger, more meaningful friendships.",
+          createdAt: Date.now() - 50000,
+          conversationId: 'coach-567',
+        },
+        {
+          id: 'c2',
+          senderId: 'test-user-5',
+          text: "I'd like to be a better friend. Sometimes I don't know how to respond when friends share good news",
+          createdAt: Date.now() - 45000,
+          conversationId: 'coach-567',
+        },
+      ] as TextMessage[],
+      parentMessages: [
+        {
+          id: '1',
+          senderId: 'test-user-5',
+          text: 'Hey Pat! How did your job interview go?',
+          createdAt: Date.now() - 6000,
+          conversationId: 'parent-890',
+          senderInfo: { displayName: 'Jamie Chen', username: 'jchen' },
+        },
+        {
+          id: '2',
+          senderId: 'test-user-friend-1',
+          text: "I GOT THE JOB!!! I'm so excited!!!",
+          createdAt: Date.now() - 5000,
+          conversationId: 'parent-890',
+          senderInfo: { displayName: 'Pat Martinez', username: 'pmartinez' },
+        },
+        {
+          id: '3',
+          senderId: 'test-user-5',
+          text: 'Oh nice',
+          createdAt: Date.now() - 4000,
+          conversationId: 'parent-890',
+          senderInfo: { displayName: 'Jamie Chen', username: 'jchen' },
+        },
+        {
+          id: '4',
+          senderId: 'test-user-friend-1',
+          text: 'Yeah... thanks',
+          createdAt: Date.now() - 3000,
+          conversationId: 'parent-890',
+          senderInfo: { displayName: 'Pat Martinez', username: 'pmartinez' },
+        },
+        {
+          id: '5',
+          senderId: 'test-user-5',
+          text: 'When do you start?',
+          createdAt: Date.now() - 2000,
+          conversationId: 'parent-890',
+          senderInfo: { displayName: 'Jamie Chen', username: 'jchen' },
+        },
+        {
+          id: '6',
+          senderId: 'test-user-friend-1',
+          text: 'Next month. I guess I should start preparing',
+          createdAt: Date.now() - 1000,
+          conversationId: 'parent-890',
+          senderInfo: { displayName: 'Pat Martinez', username: 'pmartinez' },
+        },
+      ] as TextMessageWithUserInfo[],
+    },
+    context: {
+      stats: {
+        ratio: '8.0',
+        horsemen: {
+          criticism: 0,
+          contempt: 0,
+          defensiveness: 0,
+          stonewalling: 0,
+        },
+        positive: 16,
+        negative: 2,
+        neutral: 12,
+        totalMessages: 30,
+      },
+    },
+  } as const,
+  
+  GROUP_CONVERSATION: {
+    data: {
+      uid: 'test-user-6',
+      coachCid: 'coach-890',
+      parentCid: 'parent-123',
+      displayName: 'Kim Lee',
+      username: 'klee',
+      relationshipType: 'group' as const,
+      coachMessages: [
+        {
+          id: 'c1',
+          senderId: 'coach',
+          text: "Hi! I'm your group conversation coach. I'll help you contribute more effectively in group chats.",
+          createdAt: Date.now() - 50000,
+          conversationId: 'coach-890',
+        },
+      ] as TextMessage[],
+      parentMessages: [
+        {
+          id: '1',
+          senderId: 'test-user-group-1',
+          text: 'Team, we need to decide on the project direction for next quarter',
+          createdAt: Date.now() - 6000,
+          conversationId: 'parent-123',
+          senderInfo: { displayName: 'Alex Rivera', username: 'arivera' },
+        },
+        {
+          id: '2',
+          senderId: 'test-user-group-2',
+          text: 'I think we should focus on mobile features',
+          createdAt: Date.now() - 5000,
+          conversationId: 'parent-123',
+          senderInfo: { displayName: 'Jordan Smith', username: 'jsmith' },
+        },
+        {
+          id: '3',
+          senderId: 'test-user-group-3',
+          text: 'But our desktop users are our main revenue source',
+          createdAt: Date.now() - 4000,
+          conversationId: 'parent-123',
+          senderInfo: { displayName: 'Sam Taylor', username: 'staylor' },
+        },
+        {
+          id: '4',
+          senderId: 'test-user-6',
+          text: 'What if we did both but prioritized based on user data?',
+          createdAt: Date.now() - 3000,
+          conversationId: 'parent-123',
+          senderInfo: { displayName: 'Kim Lee', username: 'klee' },
+        },
+        {
+          id: '5',
+          senderId: 'test-user-group-2',
+          text: "That's actually a good compromise",
+          createdAt: Date.now() - 2000,
+          conversationId: 'parent-123',
+          senderInfo: { displayName: 'Jordan Smith', username: 'jsmith' },
+        },
+        {
+          id: '6',
+          senderId: 'test-user-group-1',
+          text: 'I agree. Kim, can you pull together some user analytics for our next meeting?',
+          createdAt: Date.now() - 1000,
+          conversationId: 'parent-123',
+          senderInfo: { displayName: 'Alex Rivera', username: 'arivera' },
+        },
+      ] as TextMessageWithUserInfo[],
+    },
+    context: {
+      stats: {
+        ratio: '12.0',
+        horsemen: {
+          criticism: 0,
+          contempt: 0,
+          defensiveness: 1,
+          stonewalling: 0,
+        },
+        positive: 24,
+        negative: 2,
+        neutral: 14,
+        totalMessages: 40,
       },
     },
   } as const,

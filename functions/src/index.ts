@@ -20,6 +20,7 @@ import {
   coachLoveMap,
   coachBids,
   coachRuptureRepair,
+  coachACR,
 } from './coach';
 
 import { coachAnalyzeAI } from './coach-ai';
@@ -34,5 +35,6 @@ export {
   coachLoveMap,
   coachBids,
   coachRuptureRepair,
+  coachACR,
   coachAnalyzeAI,
 };

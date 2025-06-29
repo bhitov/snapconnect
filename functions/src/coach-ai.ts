@@ -3,9 +3,18 @@ import type { TextMessage } from './db';
 import type { FetchedData } from './types';
 import type { ConversationStats } from './pinecone';
 
-// Base system message for all coach interactions
-const BASE_SYSTEM_MESSAGE = `You are a Gottman-trained relationship coach providing personalized guidance to help someone improve their relationship. 
-You are analyzing their conversation with their partner and offering advice based on Gottman Method principles.`;
+// Base system messages for different relationship types
+const BASE_SYSTEM_MESSAGE = {
+  romantic: `You are a Gottman-trained relationship coach providing personalized guidance to help someone improve their relationship. 
+You are analyzing their conversation with their partner and offering advice based on Gottman Method principles.`,
+  
+  platonic: `You are a platonic-relationship coach who helps users deepen healthy friendships.
+• Ground advice in: Active-Constructive Responding (ACR), Self-Determination Theory (SDT), the "friendship floors" of Gottman's Sound Relationship House, and Positive Psychology (PERMA).
+• Never frame guidance romantically or sexually.`,
+  
+  group: `You are a personal group-conversation coach who helps THIS user contribute productively, inclusively, and confidently inside a live group chat.
+• Source your guidance from: Psychological Safety (Project Aristotle), Tuckman's 5 stages, Lencioni's 5 Dysfunctions, Liberating Structures, and the ORID question model.`
+};
 
 // Additional context for specific analysis types
 export const GOTTMAN_CONTEXT = {
@@ -87,8 +96,10 @@ export async function callCoachAI(
         ` with their partner. (this may not be their full conversation):\n${parentLines}\n\n`
       : '';
 
+  const baseMessage = BASE_SYSTEM_MESSAGE[options.relationshipType] || BASE_SYSTEM_MESSAGE.romantic;
+  
   const content =
-    BASE_SYSTEM_MESSAGE +
+    baseMessage +
     `
 
     ${systemMessage}
@@ -323,6 +334,39 @@ if there was a minor conflict that went decently well, you can mention what went
 don't pretend that something went poorly just because we are focusing on conflicts
 
 If no recent conflicts are detected, or all conflicts were minor and went great, offer a complimentary message.
+
+Keep total response under 200 words.`,
+    { ...data, temperature: 0.4, coachMessages: undefined }
+  );
+}
+
+/**
+ * Analyze Active-Constructive Responding in platonic conversations
+ * Pure function for testing - no database calls
+ */
+export async function coachACRAI(data: FetchedData): Promise<string> {
+  const acrContext = `Active-Constructive Responding (ACR) is a gold-standard skill for celebrating good news in friendships. 
+When someone shares positive news, there are four response styles:
+1. Active-Constructive: Enthusiastic, supportive, asking questions
+2. Passive-Constructive: Understated support ("That's nice")
+3. Active-Destructive: Finding problems ("But what about...")
+4. Passive-Destructive: Ignoring or hijacking ("That reminds me of when I...")
+
+ACR predicts friendship satisfaction and strengthens bonds.`;
+
+  return callCoachAI(
+    `**ACR CONTEXT:** ${acrContext}`,
+    `
+First, briefly explain what Active-Constructive Responding means for friendships. 1-2 sentences.
+
+Then, analyze the conversation for instances where someone shared good news or positive experiences. Look for:
+- What good news was shared
+- How the other person responded
+- Which response style was used (Active-Constructive, Passive-Constructive, Active-Destructive, or Passive-Destructive)
+
+Provide specific examples and coaching on how to respond more actively and constructively to strengthen the friendship.
+
+If no good news sharing was found, provide general guidance on using ACR in friendships.
 
 Keep total response under 200 words.`,
     { ...data, temperature: 0.4, coachMessages: undefined }
