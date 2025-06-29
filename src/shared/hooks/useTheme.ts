@@ -10,7 +10,7 @@ import { lightTheme, darkTheme, type AppTheme } from '../theme';
 
 /**
  * Hook for accessing the current theme
- * Automatically switches between light and dark theme based on system preference
+ * Currently defaults to dark theme mode
  *
  * @returns {AppTheme} Current theme object with colors, typography, spacing, etc.
  *
@@ -31,10 +31,12 @@ import { lightTheme, darkTheme, type AppTheme } from '../theme';
  * ```
  */
 export function useTheme(): AppTheme {
-  const colorScheme = useColorScheme();
-
-  // Return dark theme if system preference is dark, otherwise light theme
-  return colorScheme === 'dark' ? darkTheme : lightTheme;
+  // Always return dark theme as default
+  // Comment out the system preference detection for now
+  // const colorScheme = useColorScheme();
+  // return colorScheme === 'dark' ? darkTheme : lightTheme;
+  
+  return darkTheme;
 }
 
 /**
@@ -49,8 +51,8 @@ export function useTheme(): AppTheme {
  * ```
  */
 export function useIsDarkMode(): boolean {
-  const theme = useTheme();
-  return theme.isDark;
+  // Always return true since we're defaulting to dark mode
+  return true;
 }
 
 /**
