@@ -15,6 +15,9 @@ import {
   analyzeRatio,
   analyzeHorsemen,
   generateLoveMap,
+  analyzeBids,
+  analyzeRuptureRepair,
+  analyzeACR,
 } from '../services/coachService';
 
 import type {
@@ -613,6 +616,54 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     } catch (loveMapError) {
       console.error('❌ ChatStore: Failed to generate love map:', loveMapError);
       throw loveMapError;
+    }
+  },
+
+  analyzeBids: async (coachCid: string, parentCid: string) => {
+    console.log('💬 ChatStore: Analyzing emotional bids:', { coachCid, parentCid });
+
+    try {
+      await analyzeBids(coachCid, parentCid);
+
+      // Reload messages to show the analysis
+      await get().silentLoadMessages(coachCid);
+
+      console.log('✅ ChatStore: Bids analysis completed');
+    } catch (bidsError) {
+      console.error('❌ ChatStore: Failed to analyze bids:', bidsError);
+      throw bidsError;
+    }
+  },
+
+  analyzeRuptureRepair: async (coachCid: string, parentCid: string) => {
+    console.log('🔧 ChatStore: Analyzing rupture and repair:', { coachCid, parentCid });
+
+    try {
+      await analyzeRuptureRepair(coachCid, parentCid);
+
+      // Reload messages to show the analysis
+      await get().silentLoadMessages(coachCid);
+
+      console.log('✅ ChatStore: Rupture and repair analysis completed');
+    } catch (ruptureError) {
+      console.error('❌ ChatStore: Failed to analyze rupture and repair:', ruptureError);
+      throw ruptureError;
+    }
+  },
+
+  analyzeACR: async (coachCid: string, parentCid: string) => {
+    console.log('🎯 ChatStore: Analyzing ACR:', { coachCid, parentCid });
+
+    try {
+      await analyzeACR(coachCid, parentCid);
+
+      // Reload messages to show the analysis
+      await get().silentLoadMessages(coachCid);
+
+      console.log('✅ ChatStore: ACR analysis completed');
+    } catch (acrError) {
+      console.error('❌ ChatStore: Failed to analyze ACR:', acrError);
+      throw acrError;
     }
   },
 

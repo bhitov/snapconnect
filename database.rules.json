@@ -11,6 +11,9 @@
     "friendRequests": {
       ".indexOn": ["senderId", "receiverId", "status", "createdAt"]
     },
+    "partnerRequests": {
+      ".indexOn": ["senderId", "receiverId", "status", "createdAt"]
+    },
     "textMessages": {
       ".indexOn": ["conversationId", "senderId", "recipientId", "createdAt"]
     },

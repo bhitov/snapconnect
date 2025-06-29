@@ -11,17 +11,21 @@ import { useTheme } from '@/shared/hooks/useTheme';
 interface CoachModalProps {
   visible: boolean;
   onClose: () => void;
-  onOptionSelect: (option: 'ratio' | 'horsemen' | 'lovemap') => void;
+  onOptionSelect: (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr') => void;
+  isRomantic?: boolean;
+  isPlatonic?: boolean;
 }
 
 export function CoachModal({
   visible,
   onClose,
   onOptionSelect,
+  isRomantic = false,
+  isPlatonic = false,
 }: CoachModalProps) {
   const theme = useTheme();
 
-  const handleOptionPress = (option: 'ratio' | 'horsemen' | 'lovemap') => {
+  const handleOptionPress = (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr') => {
     onOptionSelect(option);
     onClose();
   };
@@ -54,86 +58,177 @@ export function CoachModal({
           </View>
 
           <View style={styles.options}>
-            <TouchableOpacity
-              style={[styles.option, { borderColor: theme.colors.border }]}
-              onPress={() => handleOptionPress('ratio')}
-              activeOpacity={0.7}
-            >
-              <Text
-                style={[styles.optionIcon, { color: theme.colors.primary }]}
+            {isPlatonic ? (
+              // Platonic relationships only show ACR
+              <TouchableOpacity
+                style={[styles.option, { borderColor: theme.colors.border }]}
+                onPress={() => handleOptionPress('acr')}
+                activeOpacity={0.7}
               >
-                📊
-              </Text>
-              <View style={styles.optionContent}>
                 <Text
-                  style={[styles.optionTitle, { color: theme.colors.text }]}
+                  style={[styles.optionIcon, { color: theme.colors.primary }]}
                 >
-                  Positive/Negative Ratio
+                  🎯
                 </Text>
-                <Text
-                  style={[
-                    styles.optionDescription,
-                    { color: theme.colors.textSecondary },
-                  ]}
+                <View style={styles.optionContent}>
+                  <Text
+                    style={[styles.optionTitle, { color: theme.colors.text }]}
+                  >
+                    Active-Constructive Responding
+                  </Text>
+                  <Text
+                    style={[
+                      styles.optionDescription,
+                      { color: theme.colors.textSecondary },
+                    ]}
+                  >
+                    Analyze how you respond to each other's good news
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ) : (
+              // Romantic relationships show all options
+              <>
+                <TouchableOpacity
+                  style={[styles.option, { borderColor: theme.colors.border }]}
+                  onPress={() => handleOptionPress('ratio')}
+                  activeOpacity={0.7}
                 >
-                  Analyze the balance of positive vs negative interactions
-                </Text>
-              </View>
-            </TouchableOpacity>
+                  <Text
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
+                  >
+                    📊
+                  </Text>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Positive/Negative Ratio
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Analyze the balance of positive vs negative interactions
+                    </Text>
+                  </View>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.option, { borderColor: theme.colors.border }]}
-              onPress={() => handleOptionPress('horsemen')}
-              activeOpacity={0.7}
-            >
-              <Text
-                style={[styles.optionIcon, { color: theme.colors.primary }]}
-              >
-                ⚠️
-              </Text>
-              <View style={styles.optionContent}>
-                <Text
-                  style={[styles.optionTitle, { color: theme.colors.text }]}
+                <TouchableOpacity
+                  style={[styles.option, { borderColor: theme.colors.border }]}
+                  onPress={() => handleOptionPress('horsemen')}
+                  activeOpacity={0.7}
                 >
-                  Four Horsemen Analysis
-                </Text>
-                <Text
-                  style={[
-                    styles.optionDescription,
-                    { color: theme.colors.textSecondary },
-                  ]}
-                >
-                  Identify criticism, contempt, and defensiveness patterns
-                </Text>
-              </View>
-            </TouchableOpacity>
+                  <Text
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
+                  >
+                    ⚠️
+                  </Text>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Four Horsemen Analysis
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Identify criticism, contempt, and defensiveness patterns
+                    </Text>
+                  </View>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.option, { borderColor: theme.colors.border }]}
-              onPress={() => handleOptionPress('lovemap')}
-              activeOpacity={0.7}
-            >
-              <Text
-                style={[styles.optionIcon, { color: theme.colors.primary }]}
-              >
-                💕
-              </Text>
-              <View style={styles.optionContent}>
-                <Text
-                  style={[styles.optionTitle, { color: theme.colors.text }]}
+                <TouchableOpacity
+                  style={[styles.option, { borderColor: theme.colors.border }]}
+                  onPress={() => handleOptionPress('lovemap')}
+                  activeOpacity={0.7}
                 >
-                  Love Map Questions
-                </Text>
-                <Text
-                  style={[
-                    styles.optionDescription,
-                    { color: theme.colors.textSecondary },
-                  ]}
-                >
-                  Discover topics to deepen your connection
-                </Text>
-              </View>
-            </TouchableOpacity>
+                  <Text
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
+                  >
+                    💕
+                  </Text>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Love Map Questions
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Discover topics to deepen your connection
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                {isRomantic && (
+                  <>
+                    <TouchableOpacity
+                      style={[styles.option, { borderColor: theme.colors.border }]}
+                      onPress={() => handleOptionPress('bids')}
+                      activeOpacity={0.7}
+                    >
+                      <Text
+                        style={[styles.optionIcon, { color: theme.colors.primary }]}
+                      >
+                        💬
+                      </Text>
+                      <View style={styles.optionContent}>
+                        <Text
+                          style={[styles.optionTitle, { color: theme.colors.text }]}
+                        >
+                          Emotional Bids
+                        </Text>
+                        <Text
+                          style={[
+                            styles.optionDescription,
+                            { color: theme.colors.textSecondary },
+                          ]}
+                        >
+                          Analyze how you turn toward or away from each other
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[styles.option, { borderColor: theme.colors.border }]}
+                      onPress={() => handleOptionPress('rupturerepair')}
+                      activeOpacity={0.7}
+                    >
+                      <Text
+                        style={[styles.optionIcon, { color: theme.colors.primary }]}
+                      >
+                        🔧
+                      </Text>
+                      <View style={styles.optionContent}>
+                        <Text
+                          style={[styles.optionTitle, { color: theme.colors.text }]}
+                        >
+                          Rupture & Repair
+                        </Text>
+                        <Text
+                          style={[
+                            styles.optionDescription,
+                            { color: theme.colors.textSecondary },
+                          ]}
+                        >
+                          Identify conflicts and successful repair attempts
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </>
+            )}
           </View>
         </View>
       </View>

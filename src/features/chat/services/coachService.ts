@@ -141,3 +141,69 @@ export async function generateLoveMap(
     throw new Error('Failed to generate love map');
   }
 }
+
+/**
+ * Request Emotional Bids analysis (romantic relationships)
+ * @param coachCid - The coach chat conversation ID
+ * @param parentCid - The parent conversation ID
+ */
+export async function analyzeBids(
+  coachCid: string,
+  parentCid: string
+): Promise<void> {
+  try {
+    const coachBidsFn = httpsCallable<
+      { coachCid: string; parentCid: string },
+      void
+    >(functions, 'coachBids');
+
+    await coachBidsFn({ coachCid, parentCid });
+  } catch (error) {
+    console.error('Failed to analyze bids:', error);
+    throw new Error('Failed to analyze bids');
+  }
+}
+
+/**
+ * Request Rupture and Repair analysis (romantic relationships)
+ * @param coachCid - The coach chat conversation ID
+ * @param parentCid - The parent conversation ID
+ */
+export async function analyzeRuptureRepair(
+  coachCid: string,
+  parentCid: string
+): Promise<void> {
+  try {
+    const coachRuptureRepairFn = httpsCallable<
+      { coachCid: string; parentCid: string },
+      void
+    >(functions, 'coachRuptureRepair');
+
+    await coachRuptureRepairFn({ coachCid, parentCid });
+  } catch (error) {
+    console.error('Failed to analyze rupture and repair:', error);
+    throw new Error('Failed to analyze rupture and repair');
+  }
+}
+
+/**
+ * Request Active-Constructive Responding analysis (platonic relationships)
+ * @param coachCid - The coach chat conversation ID
+ * @param parentCid - The parent conversation ID
+ */
+export async function analyzeACR(
+  coachCid: string,
+  parentCid: string
+): Promise<void> {
+  try {
+    const coachACRFn = httpsCallable<
+      { coachCid: string; parentCid: string },
+      void
+    >(functions, 'coachACR');
+
+    await coachACRFn({ coachCid, parentCid });
+  } catch (error) {
+    console.error('Failed to analyze ACR:', error);
+    throw new Error('Failed to analyze ACR');
+  }
+}

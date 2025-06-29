@@ -448,6 +448,9 @@ export function ChatScreen() {
     analyzeRatio,
     analyzeHorsemen,
     generateLoveMap,
+    analyzeBids,
+    analyzeRuptureRepair,
+    analyzeACR,
   } = useChatStore();
 
   // Local state
@@ -580,7 +583,7 @@ export function ChatScreen() {
    * Handle coach analysis option selection
    */
   const handleCoachAnalysis = useCallback(
-    async (option: 'ratio' | 'horsemen' | 'lovemap') => {
+    async (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr') => {
       try {
         switch (option) {
           case 'ratio':
@@ -595,12 +598,24 @@ export function ChatScreen() {
             await generateLoveMap(conversationId, parentCid || '');
             console.log('✅ Love map generated');
             break;
+          case 'bids':
+            await analyzeBids(conversationId, parentCid || '');
+            console.log('✅ Bids analysis completed');
+            break;
+          case 'rupturerepair':
+            await analyzeRuptureRepair(conversationId, parentCid || '');
+            console.log('✅ Rupture and repair analysis completed');
+            break;
+          case 'acr':
+            await analyzeACR(conversationId, parentCid || '');
+            console.log('✅ ACR analysis completed');
+            break;
         }
       } catch (analysisError) {
         console.error('❌ Failed to perform coach analysis:', analysisError);
       }
     },
-    [conversationId, parentCid, analyzeRatio, analyzeHorsemen, generateLoveMap]
+    [conversationId, parentCid, analyzeRatio, analyzeHorsemen, generateLoveMap, analyzeBids, analyzeRuptureRepair, analyzeACR]
   );
 
   /**
@@ -719,8 +734,8 @@ export function ChatScreen() {
         }),
       // Add Coach button for non-coach conversations, menu for coach chats
       headerRight: () => {
-        if (isCoach && isPartnerConversation) {
-          // Show prompts button only for partner coach chats
+        if (isCoach && (isPartnerConversation || (!isPartnerConversation && !isGroup))) {
+          // Show prompts button for partner coach chats and platonic coach chats
           return (
             <TouchableOpacity
               onPress={() => setShowCoachModal(true)}
@@ -1201,6 +1216,8 @@ export function ChatScreen() {
           visible={showCoachModal}
           onClose={() => setShowCoachModal(false)}
           onOptionSelect={option => void handleCoachAnalysis(option)}
+          isRomantic={isPartnerConversation}
+          isPlatonic={!isPartnerConversation && !isGroup}
         />
 
         {/* Send Error */}
