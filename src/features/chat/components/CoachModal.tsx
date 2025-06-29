@@ -11,9 +11,10 @@ import { useTheme } from '@/shared/hooks/useTheme';
 interface CoachModalProps {
   visible: boolean;
   onClose: () => void;
-  onOptionSelect: (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr') => void;
+  onOptionSelect: (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr' | 'sharedinterests' | 'topicchampion' | 'friendshipcheckin' | 'groupenergy') => void;
   isRomantic?: boolean;
   isPlatonic?: boolean;
+  isGroup?: boolean;
 }
 
 export function CoachModal({
@@ -22,10 +23,11 @@ export function CoachModal({
   onOptionSelect,
   isRomantic = false,
   isPlatonic = false,
+  isGroup = false,
 }: CoachModalProps) {
   const theme = useTheme();
 
-  const handleOptionPress = (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr') => {
+  const handleOptionPress = (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr' | 'sharedinterests' | 'topicchampion' | 'friendshipcheckin' | 'groupenergy') => {
     onOptionSelect(option);
     onClose();
   };
@@ -59,33 +61,146 @@ export function CoachModal({
 
           <View style={styles.options}>
             {isPlatonic ? (
-              // Platonic relationships only show ACR
-              <TouchableOpacity
-                style={[styles.option, { borderColor: theme.colors.border }]}
-                onPress={() => handleOptionPress('acr')}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[styles.optionIcon, { color: theme.colors.primary }]}
+              // Platonic relationships show ACR, shared interests, and friendship check-in
+              <>
+                <TouchableOpacity
+                  style={[styles.option, { borderColor: theme.colors.border }]}
+                  onPress={() => handleOptionPress('acr')}
+                  activeOpacity={0.7}
                 >
-                  🎯
-                </Text>
-                <View style={styles.optionContent}>
                   <Text
-                    style={[styles.optionTitle, { color: theme.colors.text }]}
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
                   >
-                    Active-Constructive Responding
+                    🎯
                   </Text>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Active-Constructive Responding
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Analyze how you respond to each other's good news
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.option, { borderColor: theme.colors.border }]}
+                  onPress={() => handleOptionPress('sharedinterests')}
+                  activeOpacity={0.7}
+                >
                   <Text
-                    style={[
-                      styles.optionDescription,
-                      { color: theme.colors.textSecondary },
-                    ]}
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
                   >
-                    Analyze how you respond to each other's good news
+                    🎯
                   </Text>
-                </View>
-              </TouchableOpacity>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Shared Interests Discovery
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Find common interests and activity suggestions
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.option, { borderColor: theme.colors.border }]}
+                  onPress={() => handleOptionPress('friendshipcheckin')}
+                  activeOpacity={0.7}
+                >
+                  <Text
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
+                  >
+                    📦
+                  </Text>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Friendship Check-in
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Get personalized check-in questions based on patterns
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </>
+            ) : isGroup ? (
+              // Group conversations show topic champion and group energy
+              <>
+                <TouchableOpacity
+                  style={[styles.option, { borderColor: theme.colors.border }]}
+                  onPress={() => handleOptionPress('topicchampion')}
+                  activeOpacity={0.7}
+                >
+                  <Text
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
+                  >
+                    👑
+                  </Text>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Topic Champions
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Discover who brings up different topics in your group
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.option, { borderColor: theme.colors.border }]}
+                  onPress={() => handleOptionPress('groupenergy')}
+                  activeOpacity={0.7}
+                >
+                  <Text
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
+                  >
+                    ⚡
+                  </Text>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Group Energy Tracker
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Check your group's current energy level and engagement
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </>
             ) : (
               // Romantic relationships show all options
               <>

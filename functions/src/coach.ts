@@ -36,6 +36,10 @@ import {
   coachBidsAI,
   coachRuptureRepairAI,
   coachACRAI,
+  coachSharedInterestsAI,
+  coachTopicChampionAI,
+  coachFriendshipCheckinAI,
+  coachGroupEnergyAI,
   INITIAL_MESSAGE,
 } from './coach-ai';
 import type { FetchedData, RelationshipType } from './types';
@@ -54,6 +58,22 @@ const LOVE_MAP_TOPICS = [
   'hobbies and interests',
   'future plans together',
   'personal growth goals',
+];
+
+// Interest categories for platonic shared interests analysis
+const INTEREST_CATEGORIES = [
+  'sports and fitness activities',
+  'movies and TV shows',
+  'music and concerts',
+  'books and reading',
+  'video games and gaming',
+  'cooking and restaurants',
+  'travel and adventures',
+  'art and creativity',
+  'technology and gadgets',
+  'outdoor activities and nature',
+  'board games and puzzles',
+  'volunteering and social causes',
 ];
 
 // Define interfaces for request data
@@ -99,6 +119,26 @@ interface CoachRuptureRepairData {
 }
 
 interface CoachACRData {
+  coachCid: string;
+  parentCid: string;
+}
+
+interface CoachSharedInterestsData {
+  coachCid: string;
+  parentCid: string;
+}
+
+interface CoachTopicChampionData {
+  coachCid: string;
+  parentCid: string;
+}
+
+interface CoachFriendshipCheckinData {
+  coachCid: string;
+  parentCid: string;
+}
+
+interface CoachGroupEnergyData {
   coachCid: string;
   parentCid: string;
 }
@@ -456,5 +496,294 @@ export const coachACR = onCall<CoachACRData>(async request => {
   const analysis = await coachACRAI(fetchedData);
 
   await sendCoachMessage(coachCid, analysis);
+  return { ok: true };
+});
+
+//--------------------------------------------------------------------------
+// 10) coachSharedInterests - Shared Interests Discovery (Platonic, RAG)
+//--------------------------------------------------------------------------
+export const coachSharedInterests = onCall<CoachSharedInterestsData>(
+  async request => {
+    const data = await validateCoachParams(request);
+    const { coachCid, parentCid } = data;
+
+    // Fetch conversation data
+    const fetchedData = await fetchAllRequiredData(request);
+
+    // Query Pinecone for conversation history
+    const res = await queryConversationMessages(parentCid, 100);
+
+    // Generate embeddings for interest categories
+    const interestEmbeddings = await generateEmbeddings(INTEREST_CATEGORIES);
+    const interestEmbeddingsMap = interestEmbeddings.map(
+      ({ text, embedding }) => ({
+        category: text,
+        embedding,
+      })
+    );
+
+    // Calculate similarity scores for each interest category
+    const interestScores: { [key: string]: number } = {};
+
+    interestEmbeddingsMap.forEach(({ category, embedding: catEmbedding }) => {
+      let totalSimilarity = 0;
+      let messageCount = 0;
+
+      res.matches.forEach(match => {
+        if (match.values && match.values.length === DIM) {
+          const similarity = cosineSimilarity(catEmbedding, match.values);
+          // Only count messages with reasonable similarity
+          if (similarity > 0.7) {
+            totalSimilarity += similarity;
+            messageCount++;
+          }
+        }
+      });
+
+      // Store both count and average similarity
+      interestScores[category] = messageCount;
+    });
+
+    console.log('🎯 Shared Interest Scores:', interestScores);
+
+    // Get top 5 shared interests
+    const topInterests = Object.entries(interestScores)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([category, _]) => category);
+
+    const response = await coachSharedInterestsAI(fetchedData, {
+      topInterests,
+      interestScores,
+    });
+
+    await sendCoachMessage(coachCid, response);
+    return { ok: true };
+  }
+);
+
+//--------------------------------------------------------------------------
+// 11) coachTopicChampion - Topic Champion Identifier (Group, RAG)
+//--------------------------------------------------------------------------
+export const coachTopicChampion = onCall<CoachTopicChampionData>(
+  async request => {
+    const data = await validateCoachParams(request);
+    const { coachCid, parentCid } = data;
+
+    // Fetch conversation data
+    const fetchedData = await fetchAllRequiredData(request);
+
+    // Query all messages with user info
+    const allMessages = await getAllMessagesWithUserInfo(parentCid);
+
+    // Common topic categories to analyze
+    const TOPIC_CATEGORIES = [
+      'planning and organizing',
+      'jokes and humor',
+      'personal problems and support',
+      'work and career',
+      'entertainment and media',
+      'food and dining',
+      'sports and fitness',
+      'technology and gadgets',
+    ];
+
+    // Generate embeddings for topics
+    const topicEmbeddings = await generateEmbeddings(TOPIC_CATEGORIES);
+
+    // Track who brings up each topic most
+    const topicChampions: {
+      [topic: string]: { [userId: string]: number };
+    } = {};
+
+    // Initialize topic champions
+    TOPIC_CATEGORIES.forEach(topic => {
+      topicChampions[topic] = {};
+    });
+
+    // Analyze each message
+    for (const msg of allMessages) {
+      if (msg.type !== 'text' || !msg.text) continue;
+
+      // Generate embedding for this message
+      const msgEmbedding = await generateEmbeddings([msg.text]);
+      if (!msgEmbedding[0]) continue;
+
+      // Find which topic this message is most similar to
+      let maxSimilarity = 0;
+      let bestTopic = '';
+
+      topicEmbeddings.forEach(({ text: topic, embedding }) => {
+        const similarity = cosineSimilarity(msgEmbedding[0].embedding, embedding);
+        if (similarity > maxSimilarity && similarity > 0.75) {
+          maxSimilarity = similarity;
+          bestTopic = topic;
+        }
+      });
+
+      // Credit the user for this topic
+      if (bestTopic && msg.senderId) {
+        const userName = msg.senderInfo?.displayName || msg.senderId;
+        topicChampions[bestTopic][userName] =
+          (topicChampions[bestTopic][userName] || 0) + 1;
+      }
+    }
+
+    console.log('👑 Topic Champions:', topicChampions);
+
+    const response = await coachTopicChampionAI(fetchedData, {
+      topicChampions,
+    });
+
+    await sendCoachMessage(coachCid, response);
+    return { ok: true };
+  }
+);
+
+//--------------------------------------------------------------------------
+// 12) coachFriendshipCheckin - Friendship Check-in Generator (Platonic)
+//--------------------------------------------------------------------------
+export const coachFriendshipCheckin = onCall<CoachFriendshipCheckinData>(
+  async request => {
+    const data = await validateCoachParams(request);
+    const { coachCid } = data;
+
+    // Fetch conversation data
+    const fetchedData = await fetchAllRequiredData(request);
+
+    // Analyze message patterns
+    const messages = fetchedData.parentMessages;
+    const now = Date.now();
+    const oneWeekAgo = now - 7 * 24 * 60 * 60 * 1000;
+    const oneMonthAgo = now - 30 * 24 * 60 * 60 * 1000;
+
+    // Calculate recent vs older message stats
+    const recentMessages = messages.filter(m => m.createdAt > oneWeekAgo);
+    const olderMessages = messages.filter(
+      m => m.createdAt <= oneWeekAgo && m.createdAt > oneMonthAgo
+    );
+
+    // Calculate average message length
+    const avgRecentLength =
+      recentMessages.reduce((sum, m) => sum + (m.text?.length || 0), 0) /
+      (recentMessages.length || 1);
+    const avgOlderLength =
+      olderMessages.reduce((sum, m) => sum + (m.text?.length || 0), 0) /
+      (olderMessages.length || 1);
+
+    // Calculate response times
+    const responseTimes: number[] = [];
+    for (let i = 1; i < messages.length; i++) {
+      if (messages[i].senderId !== messages[i - 1].senderId) {
+        responseTimes.push(messages[i].createdAt - messages[i - 1].createdAt);
+      }
+    }
+
+    const avgResponseTime =
+      responseTimes.reduce((sum, t) => sum + t, 0) / (responseTimes.length || 1);
+
+    const stats = {
+      recentMessageCount: recentMessages.length,
+      olderMessageCount: olderMessages.length,
+      avgRecentLength,
+      avgOlderLength,
+      avgResponseTime,
+      messageLengthChange: ((avgRecentLength - avgOlderLength) / avgOlderLength) * 100,
+    };
+
+    console.log('📊 Friendship Stats:', stats);
+
+    const response = await coachFriendshipCheckinAI(fetchedData, stats);
+
+    await sendCoachMessage(coachCid, response);
+    return { ok: true };
+  }
+);
+
+//--------------------------------------------------------------------------
+// 13) coachGroupEnergy - Group Energy Tracker (Group)
+//--------------------------------------------------------------------------
+export const coachGroupEnergy = onCall<CoachGroupEnergyData>(async request => {
+  const data = await validateCoachParams(request);
+  const { coachCid } = data;
+
+  // Fetch conversation data
+  const fetchedData = await fetchAllRequiredData(request);
+
+  const messages = fetchedData.parentMessages;
+  const now = Date.now();
+  const oneDayAgo = now - 24 * 60 * 60 * 1000;
+  const oneWeekAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+  // Get messages from different time periods
+  const todayMessages = messages.filter(m => m.createdAt > oneDayAgo);
+  const weekMessages = messages.filter(m => m.createdAt > oneWeekAgo);
+
+  // Count emoji usage
+  const emojiRegex = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]/gu;
+  const todayEmojis = todayMessages.reduce(
+    (count, m) => count + (m.text?.match(emojiRegex)?.length || 0),
+    0
+  );
+  const weekEmojis = weekMessages.reduce(
+    (count, m) => count + (m.text?.match(emojiRegex)?.length || 0),
+    0
+  );
+
+  // Calculate unique participants
+  const todayParticipants = new Set(todayMessages.map(m => m.senderId)).size;
+  const weekParticipants = new Set(weekMessages.map(m => m.senderId)).size;
+
+  // Calculate average response time today
+  const todayResponseTimes: number[] = [];
+  for (let i = 1; i < todayMessages.length; i++) {
+    if (todayMessages[i].senderId !== todayMessages[i - 1].senderId) {
+      todayResponseTimes.push(
+        todayMessages[i].createdAt - todayMessages[i - 1].createdAt
+      );
+    }
+  }
+
+  const avgTodayResponseTime =
+    todayResponseTimes.reduce((sum, t) => sum + t, 0) /
+    (todayResponseTimes.length || 1);
+
+  // Calculate energy score (0-100)
+  let energyScore = 50; // Base score
+
+  // Message frequency (up to +20)
+  if (todayMessages.length > 20) energyScore += 20;
+  else energyScore += todayMessages.length;
+
+  // Emoji usage (up to +15)
+  if (todayEmojis > 10) energyScore += 15;
+  else energyScore += todayEmojis * 1.5;
+
+  // Participation (up to +15)
+  const participationRate = todayParticipants / weekParticipants;
+  energyScore += participationRate * 15;
+
+  // Response time bonus (quick responses = higher energy)
+  if (avgTodayResponseTime < 5 * 60 * 1000) energyScore += 10; // <5 min
+  else if (avgTodayResponseTime < 30 * 60 * 1000) energyScore += 5; // <30 min
+
+  // Cap at 100
+  energyScore = Math.min(100, Math.round(energyScore));
+
+  const stats = {
+    energyScore,
+    todayMessages: todayMessages.length,
+    weekMessages: weekMessages.length,
+    todayEmojis,
+    todayParticipants,
+    weekParticipants,
+    avgResponseTimeMinutes: Math.round(avgTodayResponseTime / (60 * 1000)),
+  };
+
+  console.log('⚡ Group Energy Stats:', stats);
+
+  const response = await coachGroupEnergyAI(fetchedData, stats);
+
+  await sendCoachMessage(coachCid, response);
   return { ok: true };
 });

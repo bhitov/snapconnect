@@ -207,3 +207,91 @@ export async function analyzeACR(
     throw new Error('Failed to analyze ACR');
   }
 }
+
+/**
+ * Request Shared Interests Discovery (platonic relationships, RAG)
+ * @param coachCid - The coach chat conversation ID
+ * @param parentCid - The parent conversation ID
+ */
+export async function analyzeSharedInterests(
+  coachCid: string,
+  parentCid: string
+): Promise<void> {
+  try {
+    const coachSharedInterestsFn = httpsCallable<
+      { coachCid: string; parentCid: string },
+      void
+    >(functions, 'coachSharedInterests');
+
+    await coachSharedInterestsFn({ coachCid, parentCid });
+  } catch (error) {
+    console.error('Failed to analyze shared interests:', error);
+    throw new Error('Failed to analyze shared interests');
+  }
+}
+
+/**
+ * Request Topic Champion analysis (group conversations, RAG)
+ * @param coachCid - The coach chat conversation ID
+ * @param parentCid - The parent conversation ID
+ */
+export async function analyzeTopicChampion(
+  coachCid: string,
+  parentCid: string
+): Promise<void> {
+  try {
+    const coachTopicChampionFn = httpsCallable<
+      { coachCid: string; parentCid: string },
+      void
+    >(functions, 'coachTopicChampion');
+
+    await coachTopicChampionFn({ coachCid, parentCid });
+  } catch (error) {
+    console.error('Failed to analyze topic champions:', error);
+    throw new Error('Failed to analyze topic champions');
+  }
+}
+
+/**
+ * Request Friendship Check-in (platonic relationships)
+ * @param coachCid - The coach chat conversation ID
+ * @param parentCid - The parent conversation ID
+ */
+export async function generateFriendshipCheckin(
+  coachCid: string,
+  parentCid: string
+): Promise<void> {
+  try {
+    const coachFriendshipCheckinFn = httpsCallable<
+      { coachCid: string; parentCid: string },
+      void
+    >(functions, 'coachFriendshipCheckin');
+
+    await coachFriendshipCheckinFn({ coachCid, parentCid });
+  } catch (error) {
+    console.error('Failed to generate friendship check-in:', error);
+    throw new Error('Failed to generate friendship check-in');
+  }
+}
+
+/**
+ * Request Group Energy analysis (group conversations)
+ * @param coachCid - The coach chat conversation ID
+ * @param parentCid - The parent conversation ID
+ */
+export async function analyzeGroupEnergy(
+  coachCid: string,
+  parentCid: string
+): Promise<void> {
+  try {
+    const coachGroupEnergyFn = httpsCallable<
+      { coachCid: string; parentCid: string },
+      void
+    >(functions, 'coachGroupEnergy');
+
+    await coachGroupEnergyFn({ coachCid, parentCid });
+  } catch (error) {
+    console.error('Failed to analyze group energy:', error);
+    throw new Error('Failed to analyze group energy');
+  }
+}

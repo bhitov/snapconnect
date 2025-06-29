@@ -451,6 +451,10 @@ export function ChatScreen() {
     analyzeBids,
     analyzeRuptureRepair,
     analyzeACR,
+    analyzeSharedInterests,
+    analyzeTopicChampion,
+    generateFriendshipCheckin,
+    analyzeGroupEnergy,
   } = useChatStore();
 
   // Local state
@@ -583,7 +587,7 @@ export function ChatScreen() {
    * Handle coach analysis option selection
    */
   const handleCoachAnalysis = useCallback(
-    async (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr') => {
+    async (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr' | 'sharedinterests' | 'topicchampion' | 'friendshipcheckin' | 'groupenergy') => {
       try {
         switch (option) {
           case 'ratio':
@@ -610,12 +614,28 @@ export function ChatScreen() {
             await analyzeACR(conversationId, parentCid || '');
             console.log('✅ ACR analysis completed');
             break;
+          case 'sharedinterests':
+            await analyzeSharedInterests(conversationId, parentCid || '');
+            console.log('✅ Shared interests analysis completed');
+            break;
+          case 'topicchampion':
+            await analyzeTopicChampion(conversationId, parentCid || '');
+            console.log('✅ Topic champion analysis completed');
+            break;
+          case 'friendshipcheckin':
+            await generateFriendshipCheckin(conversationId, parentCid || '');
+            console.log('✅ Friendship check-in generated');
+            break;
+          case 'groupenergy':
+            await analyzeGroupEnergy(conversationId, parentCid || '');
+            console.log('✅ Group energy analysis completed');
+            break;
         }
       } catch (analysisError) {
         console.error('❌ Failed to perform coach analysis:', analysisError);
       }
     },
-    [conversationId, parentCid, analyzeRatio, analyzeHorsemen, generateLoveMap, analyzeBids, analyzeRuptureRepair, analyzeACR]
+    [conversationId, parentCid, analyzeRatio, analyzeHorsemen, generateLoveMap, analyzeBids, analyzeRuptureRepair, analyzeACR, analyzeSharedInterests, analyzeTopicChampion, generateFriendshipCheckin, analyzeGroupEnergy]
   );
 
   /**
@@ -734,8 +754,8 @@ export function ChatScreen() {
         }),
       // Add Coach button for non-coach conversations, menu for coach chats
       headerRight: () => {
-        if (isCoach && (isPartnerConversation || (!isPartnerConversation && !isGroup))) {
-          // Show prompts button for partner coach chats and platonic coach chats
+        if (isCoach) {
+          // Show prompts button for all coach chats
           return (
             <TouchableOpacity
               onPress={() => setShowCoachModal(true)}
@@ -1218,6 +1238,7 @@ export function ChatScreen() {
           onOptionSelect={option => void handleCoachAnalysis(option)}
           isRomantic={isPartnerConversation}
           isPlatonic={!isPartnerConversation && !isGroup}
+          isGroup={isGroup || false}
         />
 
         {/* Send Error */}

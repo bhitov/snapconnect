@@ -380,3 +380,140 @@ Keep total response under 200 words.`,
     { ...data, temperature: 0.4, coachMessages: undefined }
   );
 }
+
+/**
+ * Analyze shared interests in platonic conversations (RAG)
+ * Pure function for testing - no database calls
+ */
+export async function coachSharedInterestsAI(
+  data: FetchedData,
+  analysis: {
+    topInterests: string[];
+    interestScores: { [key: string]: number };
+  }
+): Promise<string> {
+  const { topInterests, interestScores } = analysis;
+  
+  const context = `I've analyzed your conversation history and identified your shared interests based on what you both talk about.`;
+
+  return callCoachAI(
+    `**ANALYSIS CONTEXT:** ${context}\n\nTop shared interests: ${topInterests.join(', ')}\n\nInterest mention counts: ${JSON.stringify(interestScores)}`,
+    `
+Analyze the shared interests between these friends. Your response should:
+
+1. Highlight the top 2-3 shared interests you've discovered
+2. Suggest a specific activity for each interest that they could do together
+3. Identify 1-2 interests they haven't explored together yet (low scores) that might be worth trying
+
+Be specific and actionable. For example, instead of "you both like movies", say "You both frequently discuss sci-fi movies - consider having a monthly sci-fi movie night."
+
+Keep response under 150 words and make it friendly and encouraging.`,
+    { ...data, temperature: 0.5, coachMessages: undefined }
+  );
+}
+
+/**
+ * Identify topic champions in group conversations (RAG)
+ * Pure function for testing - no database calls
+ */
+export async function coachTopicChampionAI(
+  data: FetchedData,
+  analysis: {
+    topicChampions: { [topic: string]: { [userId: string]: number } };
+  }
+): Promise<string> {
+  const { topicChampions } = analysis;
+  
+  const context = `I've analyzed who brings up different topics in your group chat to understand each member's interests and contributions.`;
+
+  return callCoachAI(
+    `**ANALYSIS CONTEXT:** ${context}\n\nTopic champions data: ${JSON.stringify(topicChampions)}`,
+    `
+Analyze the topic champions in this group. Your response should:
+
+1. Identify 2-3 members and their signature topics (who talks most about what)
+2. Highlight any interesting patterns (e.g., one person always organizes, another brings humor)
+3. Suggest how the group can leverage each person's interests/expertise better
+4. Note if anyone seems less engaged with a suggestion to include them
+
+Use actual names from the data. Be positive but honest about group dynamics.
+
+Keep response under 200 words.`,
+    { ...data, temperature: 0.4, coachMessages: undefined }
+  );
+}
+
+/**
+ * Generate friendship check-in based on communication patterns
+ * Pure function for testing - no database calls
+ */
+export async function coachFriendshipCheckinAI(
+  data: FetchedData,
+  stats: {
+    recentMessageCount: number;
+    olderMessageCount: number;
+    avgRecentLength: number;
+    avgOlderLength: number;
+    avgResponseTime: number;
+    messageLengthChange: number;
+  }
+): Promise<string> {
+  const context = `I've analyzed your recent communication patterns compared to earlier conversations to generate a personalized check-in.`;
+
+  return callCoachAI(
+    `**ANALYSIS CONTEXT:** ${context}\n\nCommunication stats:\n- Recent messages (last week): ${stats.recentMessageCount}\n- Older messages (previous 3 weeks): ${stats.olderMessageCount}\n- Average message length change: ${stats.messageLengthChange.toFixed(1)}%\n- Average response time: ${Math.round(stats.avgResponseTime / 60000)} minutes`,
+    `
+Generate a friendship check-in based on these communication patterns:
+
+1. Note any significant changes (frequency, length, response time)
+2. If messages are getting shorter or less frequent, gently explore why
+3. If patterns are positive, celebrate that
+4. Ask 1-2 specific check-in questions based on what you observe
+
+Be warm, not judgmental. Focus on strengthening the friendship.
+
+Examples of good check-in questions:
+- "I noticed our chats have been briefer lately. Everything okay with your schedule?"
+- "We've been chatting more than ever\! What's been energizing you lately?"
+
+Keep response under 150 words.`,
+    { ...data, temperature: 0.6, coachMessages: undefined }
+  );
+}
+
+/**
+ * Track and analyze group energy levels
+ * Pure function for testing - no database calls
+ */
+export async function coachGroupEnergyAI(
+  data: FetchedData,
+  stats: {
+    energyScore: number;
+    todayMessages: number;
+    weekMessages: number;
+    todayEmojis: number;
+    todayParticipants: number;
+    weekParticipants: number;
+    avgResponseTimeMinutes: number;
+  }
+): Promise<string> {
+  const context = `I've calculated your group's current energy level based on activity, engagement, and interaction patterns.`;
+
+  return callCoachAI(
+    `**ANALYSIS CONTEXT:** ${context}\n\nGroup Energy Stats:\n- Energy Score: ${stats.energyScore}/100\n- Messages today: ${stats.todayMessages}\n- Active members today: ${stats.todayParticipants}/${stats.weekParticipants}\n- Emoji usage today: ${stats.todayEmojis}\n- Avg response time: ${stats.avgResponseTimeMinutes} min`,
+    `
+Analyze the group's energy level and provide guidance:
+
+1. Interpret the energy score (${stats.energyScore}/100) - what does it mean?
+2. Identify what's driving the current energy (high/low participation, quick/slow responses, emoji usage)
+3. If energy is low (<50), suggest 2-3 specific ways to boost it
+4. If energy is high (>70), note what's working well
+5. Give one actionable suggestion for the user to help improve/maintain group energy
+
+Be encouraging and specific. Focus on practical actions.
+
+Keep response under 150 words.`,
+    { ...data, temperature: 0.5, coachMessages: undefined }
+  );
+}
+EOF < /dev/null

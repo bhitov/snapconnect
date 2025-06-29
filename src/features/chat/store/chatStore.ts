@@ -18,6 +18,10 @@ import {
   analyzeBids,
   analyzeRuptureRepair,
   analyzeACR,
+  analyzeSharedInterests,
+  analyzeTopicChampion,
+  generateFriendshipCheckin,
+  analyzeGroupEnergy,
 } from '../services/coachService';
 
 import type {
@@ -664,6 +668,70 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     } catch (acrError) {
       console.error('❌ ChatStore: Failed to analyze ACR:', acrError);
       throw acrError;
+    }
+  },
+
+  analyzeSharedInterests: async (coachCid: string, parentCid: string) => {
+    console.log('🎯 ChatStore: Analyzing shared interests:', { coachCid, parentCid });
+
+    try {
+      await analyzeSharedInterests(coachCid, parentCid);
+
+      // Reload messages to show the analysis
+      await get().silentLoadMessages(coachCid);
+
+      console.log('✅ ChatStore: Shared interests analysis completed');
+    } catch (sharedInterestsError) {
+      console.error('❌ ChatStore: Failed to analyze shared interests:', sharedInterestsError);
+      throw sharedInterestsError;
+    }
+  },
+
+  analyzeTopicChampion: async (coachCid: string, parentCid: string) => {
+    console.log('👑 ChatStore: Analyzing topic champions:', { coachCid, parentCid });
+
+    try {
+      await analyzeTopicChampion(coachCid, parentCid);
+
+      // Reload messages to show the analysis
+      await get().silentLoadMessages(coachCid);
+
+      console.log('✅ ChatStore: Topic champion analysis completed');
+    } catch (topicChampionError) {
+      console.error('❌ ChatStore: Failed to analyze topic champions:', topicChampionError);
+      throw topicChampionError;
+    }
+  },
+
+  generateFriendshipCheckin: async (coachCid: string, parentCid: string) => {
+    console.log('📦 ChatStore: Generating friendship check-in:', { coachCid, parentCid });
+
+    try {
+      await generateFriendshipCheckin(coachCid, parentCid);
+
+      // Reload messages to show the check-in
+      await get().silentLoadMessages(coachCid);
+
+      console.log('✅ ChatStore: Friendship check-in generated');
+    } catch (checkinError) {
+      console.error('❌ ChatStore: Failed to generate friendship check-in:', checkinError);
+      throw checkinError;
+    }
+  },
+
+  analyzeGroupEnergy: async (coachCid: string, parentCid: string) => {
+    console.log('⚡ ChatStore: Analyzing group energy:', { coachCid, parentCid });
+
+    try {
+      await analyzeGroupEnergy(coachCid, parentCid);
+
+      // Reload messages to show the analysis
+      await get().silentLoadMessages(coachCid);
+
+      console.log('✅ ChatStore: Group energy analysis completed');
+    } catch (groupEnergyError) {
+      console.error('❌ ChatStore: Failed to analyze group energy:', groupEnergyError);
+      throw groupEnergyError;
     }
   },
 
