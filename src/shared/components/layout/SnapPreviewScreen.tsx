@@ -253,8 +253,8 @@ export function SnapPreviewScreen() {
                   <TouchableOpacity
                     style={[
                       styles.textButton,
-                      { 
-                        backgroundColor: 'transparent', 
+                      {
+                        backgroundColor: 'transparent',
                         flex: 1,
                         borderWidth: 2,
                         borderColor: theme.colors.white,
@@ -332,7 +332,7 @@ export function SnapPreviewScreen() {
           <TouchableOpacity
             style={[
               styles.actionButton,
-              { 
+              {
                 backgroundColor: 'transparent',
                 borderWidth: 2,
                 borderColor: theme.colors.white,
@@ -350,7 +350,7 @@ export function SnapPreviewScreen() {
           <TouchableOpacity
             style={[
               styles.actionButton,
-              { 
+              {
                 backgroundColor: theme.colors.white,
                 borderWidth: 2,
                 borderColor: theme.colors.white,
@@ -368,7 +368,7 @@ export function SnapPreviewScreen() {
           <TouchableOpacity
             style={[
               styles.actionButton,
-              { 
+              {
                 backgroundColor: theme.colors.primary,
                 borderWidth: 2,
                 borderColor: theme.colors.primary,

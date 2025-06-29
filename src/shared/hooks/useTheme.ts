@@ -35,7 +35,7 @@ export function useTheme(): AppTheme {
   // Comment out the system preference detection for now
   // const colorScheme = useColorScheme();
   // return colorScheme === 'dark' ? darkTheme : lightTheme;
-  
+
   return darkTheme;
 }
 

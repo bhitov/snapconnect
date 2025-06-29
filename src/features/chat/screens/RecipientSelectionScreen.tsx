@@ -286,14 +286,23 @@ export function RecipientSelectionScreen() {
             {friend.photoURL ? (
               <Image
                 source={{ uri: resolveMediaUrl(friend.photoURL) }}
-                style={[styles.avatar, { backgroundColor: theme.colors.surface }]}
+                style={[
+                  styles.avatar,
+                  { backgroundColor: theme.colors.surface },
+                ]}
               />
             ) : (
               <View
-                style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
+                style={[
+                  styles.avatar,
+                  { backgroundColor: theme.colors.primary },
+                ]}
               >
                 <Text
-                  style={[styles.avatarText, { color: theme.colors.background }]}
+                  style={[
+                    styles.avatarText,
+                    { color: theme.colors.background },
+                  ]}
                 >
                   {friend.displayName.charAt(0).toUpperCase()}
                 </Text>

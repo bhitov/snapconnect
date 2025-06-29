@@ -54,9 +54,16 @@ import * as firebaseAuth from 'firebase/auth';
 
 const { initializeAuth } = firebaseAuth;
 type XX = typeof firebaseAuth & {
-  getReactNativePersistence: (storage: firebaseAuth.ReactNativeAsyncStorage) => firebaseAuth.Persistence;
-}
-const getReactNativePersistence: (storage: firebaseAuth.ReactNativeAsyncStorage) => firebaseAuth.Persistence = (firebaseAuth as unknown as XX).getReactNativePersistence as unknown as (storage: firebaseAuth.ReactNativeAsyncStorage) => firebaseAuth.Persistence;
+  getReactNativePersistence: (
+    storage: firebaseAuth.ReactNativeAsyncStorage
+  ) => firebaseAuth.Persistence;
+};
+const getReactNativePersistence: (
+  storage: firebaseAuth.ReactNativeAsyncStorage
+) => firebaseAuth.Persistence = (firebaseAuth as unknown as XX)
+  .getReactNativePersistence as unknown as (
+  storage: firebaseAuth.ReactNativeAsyncStorage
+) => firebaseAuth.Persistence;
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 /**
@@ -67,7 +74,7 @@ function initializeFirebase(): void {
     app = initializeApp(firebaseConfig);
     // auth = getAuth(app);
     auth = initializeAuth(app, {
-      persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+      persistence: getReactNativePersistence(ReactNativeAsyncStorage),
     });
     database = getDatabase(app);
     storage = getStorage(app);

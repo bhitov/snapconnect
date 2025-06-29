@@ -125,7 +125,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
   useFocusEffect(
     React.useCallback(() => {
       console.log(
-         '🔄 FriendsListScreen: Screen focused, reloading partner requests'
+        '🔄 FriendsListScreen: Screen focused, reloading partner requests'
       );
       void loadPartnerRequests();
       // Also refresh the user to ensure partnerId is up-to-date

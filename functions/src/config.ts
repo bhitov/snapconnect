@@ -1,4 +1,3 @@
-
 /**
  * Centralized configuration for datagen scripts
  * Loads environment variables from datagen/.env.local
