@@ -43,6 +43,7 @@ import {
   useMessagesError,
   useSendError,
   useConversations,
+  useGroupParticipantData,
 } from '../store/chatStore';
 
 import type { Message, SnapMessage, ChatScreenProps } from '../types';
@@ -418,6 +419,7 @@ export function ChatScreen() {
   const messagesError = useMessagesError();
   const sendError = useSendError();
   const conversations = useConversations();
+  const groupParticipantData = useGroupParticipantData();
 
   // Check if this is a partner conversation
   const isPartnerConversation = React.useMemo(() => {
@@ -446,6 +448,7 @@ export function ChatScreen() {
   const {
     loadMessages,
     silentLoadMessages,
+    loadGroupParticipantData,
     sendTextMessage,
     markMessageAsViewed,
     markAllMessagesAsDelivered,
@@ -473,9 +476,6 @@ export function ChatScreen() {
   const [showCoachModal, setShowCoachModal] = useState(false);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [groupMembersData, setGroupMembersData] = useState<
-    Record<string, User>
-  >({});
   const [resolvedOtherUser, setResolvedOtherUser] = useState(otherUser);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const flatListRef = useRef<FlatList>(null);
@@ -513,6 +513,11 @@ export function ChatScreen() {
         // Mark all unread messages as delivered when chat is opened
         // This will set the unread count to zero for this user
         await markAllMessagesAsDelivered(conversationId);
+
+        // Load group participant data if this is a group chat
+        if (isGroup) {
+          await loadGroupParticipantData(conversationId);
+        }
       };
 
       void loadAndMarkDelivered().catch(loadError => {
@@ -521,7 +526,13 @@ export function ChatScreen() {
           loadError
         );
       });
-    }, [conversationId, loadMessages, markAllMessagesAsDelivered])
+    }, [
+      conversationId,
+      loadMessages,
+      markAllMessagesAsDelivered,
+      isGroup,
+      loadGroupParticipantData,
+    ])
   );
 
   /**
@@ -537,41 +548,6 @@ export function ChatScreen() {
       }
     }
   }, [conversationId, isGroup, isCoach, resolvedOtherUser, conversations]);
-
-  /**
-   * Fetch group members data when in a group chat
-   */
-  useEffect(() => {
-    if (isGroup && messages.length > 0) {
-      const fetchGroupMembersData = async () => {
-        const uniqueSenderIds = [...new Set(messages.map(m => m.senderId))];
-        const membersData: Record<string, User> = {};
-
-        for (const senderId of uniqueSenderIds) {
-          if (!groupMembersData[senderId]) {
-            try {
-              const userData = await chatService.getUserData(senderId);
-              if (userData) {
-                membersData[senderId] = userData;
-              }
-            } catch (fetchError) {
-              console.error(
-                'Failed to fetch user data for:',
-                senderId,
-                fetchError
-              );
-            }
-          }
-        }
-
-        if (Object.keys(membersData).length > 0) {
-          setGroupMembersData(prev => ({ ...prev, ...membersData }));
-        }
-      };
-
-      void fetchGroupMembersData();
-    }
-  }, [isGroup, messages, groupMembersData]);
 
   /**
    * Handle coach button press
@@ -1135,8 +1111,8 @@ export function ChatScreen() {
           {...(typeof isGroup === 'boolean' && { isGroup })}
           {...(isGroup &&
             !isFromCurrentUser &&
-            groupMembersData[item.senderId] && {
-              senderData: groupMembersData[item.senderId],
+            groupParticipantData[item.senderId] && {
+              senderData: groupParticipantData[item.senderId],
             })}
         />
       );
@@ -1148,7 +1124,7 @@ export function ChatScreen() {
       isCoach,
       handleSendLoveMapQuestion,
       isGroup,
-      groupMembersData,
+      groupParticipantData,
     ]
   );
 

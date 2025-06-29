@@ -49,6 +49,9 @@ const initialState: ChatState = {
   messagesLoading: false,
   messagesError: null,
 
+  // Group participant data
+  groupParticipantData: {},
+
   // Message sending
   sendingMessages: [], // For now, only snaps have upload progress
   sendError: null,
@@ -235,6 +238,34 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     } catch (silentLoadError) {
       console.error('❌ ChatStore: Silent load failed:', silentLoadError);
       // Don't set error state for silent refresh to avoid UI disruption
+    }
+  },
+
+  loadGroupParticipantData: async (conversationId: string) => {
+    console.log(
+      '👥 ChatStore: Loading group participant data for:',
+      conversationId
+    );
+
+    try {
+      const participantData =
+        await chatService.getGroupParticipantData(conversationId);
+
+      set({
+        groupParticipantData: participantData,
+      });
+
+      console.log(
+        '✅ ChatStore: Loaded participant data for',
+        Object.keys(participantData).length,
+        'users'
+      );
+    } catch (error) {
+      console.error(
+        '❌ ChatStore: Failed to load group participant data:',
+        error
+      );
+      // Don't throw error to avoid disrupting chat experience
     }
   },
 
@@ -882,10 +913,21 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     // TODO: Implement in chatService
   },
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   leaveGroup: async (groupId: string) => {
     console.log('👥 ChatStore: Leaving group:', groupId);
-    // TODO: Implement in chatService
+
+    try {
+      await chatService.leaveGroup(groupId);
+
+      // Refresh conversations to reflect the change
+      const { loadConversations } = get();
+      await loadConversations();
+
+      console.log('✅ ChatStore: Successfully left group');
+    } catch (error) {
+      console.error('❌ ChatStore: Failed to leave group:', error);
+      throw error;
+    }
   },
 
   // Group creation UI
@@ -987,3 +1029,5 @@ export const useGroupMembers = () =>
   useChatStore(state => state.groupCreationState.selectedMembers);
 export const useIsCreatingGroup = () =>
   useChatStore(state => state.groupCreationState.isCreating);
+export const useGroupParticipantData = () =>
+  useChatStore(state => state.groupParticipantData);

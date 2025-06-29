@@ -150,14 +150,12 @@ async function getRelationshipTypeFromParentCid(
   parentCid: string
 ): Promise<RelationshipType> {
   const conversation = await getConversation(parentCid);
-  const participants = conversation?.participants || [];
-  if (participants.length >= 3) {
+  if (conversation?.isGroup) {
     return 'group' as const;
-  } else if (participants.length === 2) {
-    // Check if the two participants are partners
+  } 
+  const participants = conversation?.participants || [];
+  if (participants.length >= 2) {
     const [user1Id, user2Id] = participants;
-
-    // Check if they are partners
     const arePartners = await areUsersPartners(user1Id, user2Id);
     return arePartners ? ('romantic' as const) : ('platonic' as const);
   } else {

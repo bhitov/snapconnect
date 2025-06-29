@@ -14,6 +14,8 @@ export interface TextMessage {
 export interface Conversation {
   participants: string[];
   isCoach?: boolean;
+  isGroup?: boolean;
+  groupId?: string;
   parentCid?: string;
   createdAt: number;
   coachChatId?: string;

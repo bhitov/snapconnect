@@ -5,6 +5,8 @@
  * Supports hybrid messaging with both ephemeral snaps and persistent text messages.
  */
 
+import type { User } from '@/features/auth/types/authTypes';
+
 /**
  * Message type - either text or snap
  */
@@ -231,6 +233,9 @@ export interface ChatState {
   messagesLoading: boolean;
   messagesError: string | null;
 
+  // Group participant data (includes historical message senders)
+  groupParticipantData: Record<string, User>;
+
   // Message sending
   sendingMessages: SnapUploadProgress[]; // For now, only snaps have upload progress
   sendError: string | null;
@@ -274,6 +279,7 @@ export interface ChatActions {
   // Messages
   loadMessages: (conversationId: string) => Promise<void>;
   silentLoadMessages: (conversationId: string) => Promise<void>;
+  loadGroupParticipantData: (conversationId: string) => Promise<void>;
   sendTextMessage: (data: TextMessageCreationData) => Promise<void>;
   sendSnap: (data: SnapCreationData) => Promise<void>;
   markMessageAsViewed: (messageId: string) => Promise<void>;

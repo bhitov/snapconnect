@@ -16,6 +16,7 @@ import {
   StyleSheet,
   SafeAreaView,
   Image,
+  Alert,
 } from 'react-native';
 
 // Note: Using Image instead of ProfileAvatar since that's for current user
@@ -97,6 +98,7 @@ export function GroupsScreen() {
     refreshConversations,
     silentRefreshConversations,
     clearError,
+    leaveGroup,
   } = useChatStore();
 
   /**
@@ -172,6 +174,46 @@ export function GroupsScreen() {
   }, [navigation]);
 
   /**
+   * Handle leave group with confirmation
+   */
+  const handleLeaveGroup = useCallback(
+    (conversation: ConversationWithUser) => {
+      if (!conversation.groupId) return;
+
+      Alert.alert(
+        'Leave Group',
+        `Are you sure you want to leave "${conversation.title || 'this group'}"?`,
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Leave',
+            style: 'destructive',
+            onPress: () => {
+              void (async () => {
+                try {
+                  if (conversation.groupId) {
+                    await leaveGroup(conversation.groupId);
+                    // Navigation will be handled by the store refresh
+                  }
+                } catch (error) {
+                  Alert.alert(
+                    'Error',
+                    'Failed to leave group. Please try again.'
+                  );
+                }
+              })();
+            },
+          },
+        ]
+      );
+    },
+    [leaveGroup]
+  );
+
+  /**
    * Render group item
    */
   const renderGroupItem = useCallback(
@@ -187,6 +229,7 @@ export function GroupsScreen() {
             { backgroundColor: theme.colors.background },
           ]}
           onPress={() => handleGroupPress(conversation)}
+          onLongPress={() => handleLeaveGroup(conversation)}
           activeOpacity={0.7}
         >
           {/* Group Avatar */}
@@ -307,7 +350,7 @@ export function GroupsScreen() {
         </TouchableOpacity>
       );
     },
-    [theme, handleGroupPress, handleChatPress]
+    [theme, handleGroupPress, handleChatPress, handleLeaveGroup]
   );
 
   /**

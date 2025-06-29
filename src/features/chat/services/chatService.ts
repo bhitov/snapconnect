@@ -961,6 +961,63 @@ class ChatService {
   }
 
   /**
+   * Get all unique participant IDs from a conversation (including historical senders)
+   */
+  async getAllParticipantIds(conversationId: string): Promise<string[]> {
+    try {
+      const uniqueUserIds = new Set<string>();
+
+      // Get all messages for this conversation
+      const messages = await this.getMessages(conversationId);
+
+      // Collect all sender IDs
+      messages.forEach(message => {
+        uniqueUserIds.add(message.senderId);
+      });
+
+      return Array.from(uniqueUserIds);
+    } catch (error) {
+      console.error(
+        '❌ ChatService: Failed to get all participant IDs:',
+        error
+      );
+      return [];
+    }
+  }
+
+  /**
+   * Get participant data for a group conversation including historical senders
+   */
+  async getGroupParticipantData(
+    conversationId: string
+  ): Promise<Record<string, User>> {
+    try {
+      const participantData: Record<string, User> = {};
+
+      // Get all unique user IDs from messages
+      const allParticipantIds = await this.getAllParticipantIds(conversationId);
+
+      // Fetch user data for each participant
+      await Promise.all(
+        allParticipantIds.map(async userId => {
+          const userData = await this.getUserData(userId);
+          if (userData) {
+            participantData[userId] = userData;
+          }
+        })
+      );
+
+      return participantData;
+    } catch (error) {
+      console.error(
+        '❌ ChatService: Failed to get group participant data:',
+        error
+      );
+      return {};
+    }
+  }
+
+  /**
    * Get message data by ID (public method for viewing)
    */
   async getMessage(messageId: string): Promise<Message | null> {
@@ -1539,6 +1596,74 @@ class ChatService {
       console.log('✅ ChatService: Removed user from group successfully');
     } catch (error) {
       console.error('❌ ChatService: Failed to remove user from group:', error);
+      const chatError = this.handleError(error);
+      throw new Error(chatError.message);
+    }
+  }
+
+  /**
+   * Leave a group - removes user from group or destroys group if admin
+   */
+  async leaveGroup(groupId: string): Promise<void> {
+    console.log('👥 ChatService: Leaving group:', groupId);
+
+    try {
+      const currentUserId = this.getCurrentUserId();
+
+      // Get group data to check if user is admin
+      const groupRef = ref(this.database, `groups/${groupId}`);
+      const groupSnapshot = await get(groupRef);
+
+      if (!groupSnapshot.exists()) {
+        throw new Error('Group not found');
+      }
+
+      const groupData = groupSnapshot.val() as Group;
+
+      // Check if current user is the admin (creator)
+      const isAdmin = groupData.createdBy === currentUserId;
+
+      if (isAdmin) {
+        // Admin leaving - destroy the entire group and its conversations
+        console.log('👥 ChatService: Admin leaving, destroying group');
+
+        // Find and delete all conversations with this groupId
+        const conversationsRef = ref(this.database, 'conversations');
+        const conversationsSnapshot = await get(conversationsRef);
+
+        const updates: Record<string, null> = {};
+
+        if (conversationsSnapshot.exists()) {
+          const conversations = conversationsSnapshot.val() as Record<
+            string,
+            ConversationDocument
+          >;
+
+          // Find all conversations for this group and mark for deletion
+          for (const [convId, conversation] of Object.entries(conversations)) {
+            if (conversation.groupId === groupId) {
+              updates[`conversations/${convId}`] = null;
+
+              // Also delete all messages in this conversation
+              updates[`messages/${convId}`] = null;
+            }
+          }
+        }
+
+        // Delete the group itself
+        updates[`groups/${groupId}`] = null;
+
+        // Apply all deletions atomically
+        await update(ref(this.database), updates);
+
+        console.log('✅ ChatService: Group destroyed successfully');
+      } else {
+        // Regular member leaving - just remove them from the group
+        console.log('👥 ChatService: Member leaving group');
+        await this.removeUserFromGroup(groupId, currentUserId);
+      }
+    } catch (error) {
+      console.error('❌ ChatService: Failed to leave group:', error);
       const chatError = this.handleError(error);
       throw new Error(chatError.message);
     }

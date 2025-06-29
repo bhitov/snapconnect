@@ -536,14 +536,22 @@ export function ManageGroupMembersScreen({
     >
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={[styles.backButton, { color: theme.colors.primary }]}>
-            ← Back
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButtonTouchable}
+          >
+            <Text style={[styles.backButton, { color: theme.colors.primary }]}>
+              ← Back
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.headerCenter}>
+          <Text style={[styles.title, { color: theme.colors.text }]}>
+            Manage Members
           </Text>
-        </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.colors.text }]}>
-          Manage Members
-        </Text>
+        </View>
+        <View style={styles.headerRight} />
       </View>
 
       {/* Current Members Section */}
@@ -636,17 +644,31 @@ const styles = {
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
     paddingVertical: 20,
+    paddingHorizontal: 20,
+  },
+  headerLeft: {
+    flex: 1,
+    alignItems: 'flex-start' as const,
+  },
+  headerCenter: {
+    flex: 2,
+    alignItems: 'center' as const,
+  },
+  headerRight: {
+    flex: 1,
+  },
+  backButtonTouchable: {
+    padding: 10,
+    marginLeft: -10,
   },
   backButton: {
     fontSize: 16,
     fontWeight: '600' as const,
   },
   title: {
-    flex: 1,
-    textAlign: 'center' as const,
     fontSize: 18,
     fontWeight: 'bold' as const,
-    marginLeft: -50, // Compensate for back button
+    textAlign: 'center' as const,
   },
   section: {
     marginBottom: 30,
