@@ -20,6 +20,7 @@ import {
 } from 'react-native';
 
 // Note: Using Image instead of ProfileAvatar since that's for current user
+import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { useTheme } from '@/shared/hooks/useTheme';
 
 import {
@@ -96,7 +97,7 @@ export function GroupsScreen() {
   const {
     loadConversations,
     refreshConversations,
-    silentRefreshConversations,
+    // silentRefreshConversations,
     clearError,
     leaveGroup,
   } = useChatStore();
@@ -113,6 +114,7 @@ export function GroupsScreen() {
    */
   useFocusEffect(
     useCallback(() => {
+      console.log('🔄 GroupsScreen: Screen focused, refreshing conversations');
       // Force refresh conversations to ensure we see new groups
       void refreshConversations();
     }, [refreshConversations])
@@ -284,7 +286,7 @@ export function GroupsScreen() {
                 testID={`group-title-${conversation.id}`}
                 style={[
                   styles.conversationName,
-                  { color: theme.colors.textPrimary },
+                  { color: theme.colors.text },
                   hasUnread && styles.unreadText,
                 ]}
                 numberOfLines={1}
@@ -356,44 +358,56 @@ export function GroupsScreen() {
   /**
    * Render empty state
    */
-  const renderEmptyState = () => (
-    <View
-      testID='groups-empty-state'
-      style={[styles.emptyState, { backgroundColor: theme.colors.background }]}
-    >
-      <Ionicons
-        name='people-outline'
-        size={64}
-        color={theme.colors.textSecondary}
-        style={styles.emptyIcon}
-      />
-      <Text style={[styles.emptyTitle, { color: theme.colors.textPrimary }]}>
-        No Groups Yet
-      </Text>
-      <Text
-        style={[styles.emptySubtitle, { color: theme.colors.textSecondary }]}
+  const renderEmptyState = useCallback(
+    () => (
+      <View
+        testID='groups-empty-state'
+        style={[
+          styles.emptyState,
+          { backgroundColor: theme.colors.background },
+        ]}
       >
-        Create a group to chat with multiple friends at once
-      </Text>
-      <TouchableOpacity
-        testID='create-first-group-button'
-        style={[styles.createButton, { backgroundColor: theme.colors.primary }]}
-        onPress={handleCreateGroup}
-      >
-        <Text
-          style={[styles.createButtonText, { color: theme.colors.background }]}
-        >
-          Create Your First Group
+        <Ionicons
+          name='people-outline'
+          size={64}
+          color={theme.colors.textSecondary}
+          style={styles.emptyIcon}
+        />
+        <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>
+          No Groups Yet
         </Text>
-      </TouchableOpacity>
-    </View>
+        <Text
+          style={[styles.emptySubtitle, { color: theme.colors.textSecondary }]}
+        >
+          Create a group to chat with multiple friends at once
+        </Text>
+        <TouchableOpacity
+          testID='create-first-group-button'
+          style={[
+            styles.createButton,
+            { backgroundColor: theme.colors.primary },
+          ]}
+          onPress={handleCreateGroup}
+        >
+          <Text
+            style={[
+              styles.createButtonText,
+              { color: theme.colors.background },
+            ]}
+          >
+            Create Your First Group
+          </Text>
+        </TouchableOpacity>
+      </View>
+    ),
+    [theme, handleCreateGroup]
   );
 
   /**
    * Render error state
    */
-  if (error) {
-    return (
+  const renderErrorState = useCallback(
+    () => (
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
@@ -420,50 +434,66 @@ export function GroupsScreen() {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-    );
-  }
+    ),
+    [theme, error, clearError, loadConversations]
+  );
 
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       {/* Header */}
-      <View
-        style={[styles.header, { backgroundColor: theme.colors.background }]}
-      >
-        <Text style={[styles.headerTitle, { color: theme.colors.textPrimary }]}>
+      <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
+        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
           Groups
         </Text>
+        <ProfileAvatar size='medium' />
+      </View>
+
+      {/* Create Group Button */}
+      <View style={styles.headerActions}>
         <TouchableOpacity
           testID='create-group-button'
           style={[
-            styles.createGroupButton,
+            styles.createGroupButtonFull,
             { backgroundColor: theme.colors.primary },
           ]}
           onPress={handleCreateGroup}
         >
           <Ionicons name='add' size={20} color={theme.colors.background} />
+          <Text
+            style={[
+              styles.createGroupButtonText,
+              { color: theme.colors.background },
+            ]}
+          >
+            Create New Group
+          </Text>
         </TouchableOpacity>
       </View>
 
       {/* Groups List */}
-      <FlatList
-        testID='groups-list'
-        data={groupConversations}
-        keyExtractor={item => item.id}
-        renderItem={renderGroupItem}
-        ListEmptyComponent={!isLoading ? renderEmptyState : null}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            colors={theme.colors.primary ? [theme.colors.primary] : undefined}
-            tintColor={theme.colors.primary}
-          />
-        }
-        style={styles.list}
-        contentContainerStyle={styles.listContent}
-      />
+      {error ? (
+        renderErrorState()
+      ) : (
+        <FlatList
+          testID='groups-list'
+          data={groupConversations}
+          keyExtractor={item => item.id}
+          renderItem={renderGroupItem}
+          ListEmptyComponent={!isLoading ? renderEmptyState : null}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              colors={theme.colors.primary ? [theme.colors.primary] : undefined}
+              tintColor={theme.colors.primary}
+            />
+          }
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -479,14 +509,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.1)',
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontWeight: '700',
+    flex: 1,
+  },
+  headerActions: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   createGroupButton: {
     width: 36,
@@ -494,6 +528,19 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  createGroupButtonFull: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    gap: 8,
+  },
+  createGroupButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   list: {
     flex: 1,

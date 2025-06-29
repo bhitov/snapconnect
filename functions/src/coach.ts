@@ -1,33 +1,7 @@
 import { randomUUID } from 'crypto';
+
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 
-import {
-  getCoachChatId,
-  createCoachConversation,
-  saveTextMessage,
-  getRecentMessages,
-  getAllMessages,
-  getRecentMessagesWithUserInfo,
-  getAllMessagesWithUserInfo,
-  formatMessagesForContext,
-  formatMessagesWithUserInfoForContext,
-  getUserInfo,
-  areUsersPartners,
-  getConversation,
-  type UserInfo,
-  type TextMessage,
-  type TextMessageWithUserInfo,
-  type Conversation,
-} from './db';
-import {
-  queryConversationMessages,
-  analyzeConversationStats,
-  formatPineconeMessages,
-  DIM,
-  getTopicSentiment,
-} from './pinecone';
-import type { CallableRequest } from 'firebase-functions/v2/https';
-import { generateEmbeddings, cosineSimilarity } from './openai';
 import {
   coachAnalyzeAI,
   coachReplyAI,
@@ -45,7 +19,27 @@ import {
   INITIAL_MESSAGE,
   TOPIC_VIBE_TOPICS,
 } from './coach-ai';
+import {
+  getCoachChatId,
+  createCoachConversation,
+  saveTextMessage,
+  getAllMessages,
+  getRecentMessagesWithUserInfo,
+  getAllMessagesWithUserInfo,
+  getUserInfo,
+  areUsersPartners,
+  getConversation,
+} from './db';
+import { generateEmbeddings, cosineSimilarity } from './openai';
+import {
+  queryConversationMessages,
+  analyzeConversationStats,
+  DIM,
+  getTopicSentiment,
+} from './pinecone';
+
 import type { FetchedData, RelationshipType } from './types';
+import type { CallableRequest } from 'firebase-functions/v2/https';
 
 const RECENT_PARENT = 50; // last 50 msgs
 
@@ -152,7 +146,7 @@ async function getRelationshipTypeFromParentCid(
   const conversation = await getConversation(parentCid);
   if (conversation?.isGroup) {
     return 'group' as const;
-  } 
+  }
   const participants = conversation?.participants || [];
   if (participants.length >= 2) {
     const [user1Id, user2Id] = participants;
@@ -855,18 +849,7 @@ export const coachTopicVibeCheck = onCall<CoachTopicVibeCheckData>(
       })
     );
 
-    // Filter out topics with no data
-    const validTopics = topicScores.filter(t => t.score !== 0);
-
-    if (validTopics.length === 0) {
-      await sendCoachMessage(
-        coachCid,
-        'I need more conversation history to analyze your topic vibes. Keep chatting and try again later!'
-      );
-      return { ok: true };
-    }
-
-    const response = await aiTopicVibeCheck(fetchedData, validTopics);
+    const response = await aiTopicVibeCheck(fetchedData, topicScores);
     await sendCoachMessage(coachCid, response);
     return { ok: true };
   }

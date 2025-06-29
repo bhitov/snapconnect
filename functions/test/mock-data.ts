@@ -1,6 +1,6 @@
 import type { TextMessage, TextMessageWithUserInfo } from '../src/db';
-import type { FetchedData } from '../src/types';
 import type { ConversationStats } from '../src/pinecone';
+import type { FetchedData } from '../src/types';
 
 interface MockScenario {
   data: FetchedData;

@@ -67,15 +67,9 @@ const DURATION_OPTIONS: SnapDuration[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const STORY_OPTIONS = [
   {
     privacy: 'friends' as StoryPrivacy,
-    title: 'My Story (Friends)',
+    title: 'My Story',
     description: 'Share with all your friends',
     icon: '👥',
-  },
-  {
-    privacy: 'all' as StoryPrivacy,
-    title: 'My Story (Public)',
-    description: 'Share with everyone',
-    icon: '🌎',
   },
 ];
 

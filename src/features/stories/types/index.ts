@@ -15,7 +15,7 @@ import type { StackNavigationProp } from '@react-navigation/stack';
 /**
  * Story privacy levels
  */
-export type StoryPrivacy = 'all' | 'friends' | 'custom';
+export type StoryPrivacy = 'friends' | 'custom';
 
 /**
  * Media types for story posts

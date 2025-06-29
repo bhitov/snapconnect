@@ -1,5 +1,6 @@
-import OpenAI from 'openai';
 import { HttpsError } from 'firebase-functions/v2/https';
+import OpenAI from 'openai';
+
 import { config } from './config';
 
 // Initialize OpenAI client
@@ -9,7 +10,7 @@ export const openai = new OpenAI({ apiKey: config.OPENAI_API_KEY });
  * Call OpenAI with consistent logging and error handling
  */
 export async function callOpenAI(
-  messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
+  messages: { role: 'system' | 'user' | 'assistant'; content: string }[],
   options: {
     model?: string;
     temperature?: number;
@@ -81,7 +82,7 @@ export async function generateEmbedding(
 export async function generateEmbeddings(
   texts: string[],
   model: string = 'text-embedding-3-small'
-): Promise<Array<{ text: string; embedding: number[] }>> {
+): Promise<{ text: string; embedding: number[] }[]> {
   try {
     const embeddings = await Promise.all(
       texts.map(async text => {

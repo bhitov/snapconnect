@@ -1,7 +1,8 @@
 import { Pinecone } from '@pinecone-database/pinecone';
-import type { QueryResponse } from '@pinecone-database/pinecone';
 
 import { config } from './config';
+
+import type { QueryResponse } from '@pinecone-database/pinecone';
 
 // Initialize Pinecone
 const pineconeApiKey = config.PINECONE_API_KEY;
@@ -54,7 +55,7 @@ export async function getTopicSentiment(
     topK,
     includeMetadata: true,
     filter: {
-      conversationId: conversationId,
+      conversationId,
     },
   });
 

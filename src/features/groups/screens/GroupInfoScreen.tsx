@@ -4,7 +4,11 @@
  * group settings, and admin actions. Allows viewing and managing group details.
  */
 
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+} from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import {
   View,
@@ -13,18 +17,75 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
+import { Image } from 'react-native';
 
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { useChatStore } from '@/features/chat/store/chatStore';
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { Screen } from '@/shared/components/layout/Screen';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
 
+import type { Group } from '@/features/chat/types';
 import type { GroupsStackParamList } from '@/shared/navigation/types';
 import type { RouteProp, NavigationProp } from '@react-navigation/native';
 
 type GroupInfoRouteProp = RouteProp<GroupsStackParamList, 'GroupInfo'>;
 type GroupInfoNavigationProp = NavigationProp<GroupsStackParamList>;
+
+interface GroupMember {
+  uid: string;
+  displayName: string;
+  username: string;
+  photoURL?: string;
+  role: 'admin' | 'member';
+  joinedAt: number;
+  addedBy: string;
+}
+
+/**
+ * Simple UserAvatar component for displaying other users' avatars
+ */
+const UserAvatar = ({
+  photoURL,
+  displayName,
+  size = 40,
+}: {
+  photoURL?: string;
+  displayName: string;
+  size?: number;
+}) => {
+  const theme = useTheme();
+
+  const avatarStyles = {
+    width: size,
+    height: size,
+    borderRadius: size / 2,
+    backgroundColor: theme.colors.primary,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+  };
+
+  const textStyles = {
+    color: theme.colors.onPrimary,
+    fontSize: size * 0.4,
+    fontWeight: '600' as const,
+  };
+
+  if (photoURL) {
+    return (
+      <Image source={{ uri: resolveMediaUrl(photoURL) }} style={avatarStyles} />
+    );
+  }
+
+  return (
+    <View style={avatarStyles}>
+      <Text style={textStyles}>{displayName.charAt(0).toUpperCase()}</Text>
+    </View>
+  );
+};
 
 /**
  * GroupInfoScreen - displays group information and member management
@@ -38,9 +99,15 @@ export function GroupInfoScreen() {
 
   // Auth state
   const currentUser = useAuthStore(state => state.user);
+  const { leaveGroup } = useChatStore();
 
   // Local state
   const [isLoading, setIsLoading] = useState(false);
+  const [groupData, setGroupData] = useState<Group | null>(null);
+  const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
+  const [currentUserRole, setCurrentUserRole] = useState<'admin' | 'member'>(
+    'member'
+  );
 
   /**
    * Handle manage members
@@ -52,22 +119,133 @@ export function GroupInfoScreen() {
   }, [groupId, navigation]);
 
   /**
+   * Load group data from Firebase
+   */
+  const loadGroupData = useCallback(async () => {
+    if (!currentUser?.uid) return;
+
+    setIsLoading(true);
+    try {
+      const { chatService } = await import(
+        '@/features/chat/services/chatService'
+      );
+
+      // Load group data
+      const group = await chatService.getGroupData(groupId);
+      if (!group || !group.members) {
+        console.error('Group data not found');
+        return;
+      }
+
+      setGroupData(group);
+
+      // Load member data
+      const memberPromises = Object.entries(group.members).map(
+        async ([userId, memberInfo]: [
+          string,
+          { role: 'admin' | 'member'; joinedAt: number; addedBy: string },
+        ]) => {
+          try {
+            const userData = await chatService.getUserData(userId);
+            return {
+              uid: userId,
+              displayName:
+                userData?.displayName || userData?.username || 'Unknown User',
+              username: userData?.username || 'unknown',
+              photoURL: userData?.photoURL,
+              role: memberInfo.role,
+              joinedAt: memberInfo.joinedAt,
+              addedBy: memberInfo.addedBy,
+            } as GroupMember;
+          } catch (error) {
+            console.error('Failed to load user data for:', userId);
+            return {
+              uid: userId,
+              displayName: 'Unknown User',
+              username: 'unknown',
+              role: memberInfo.role,
+              joinedAt: memberInfo.joinedAt,
+              addedBy: memberInfo.addedBy,
+            } as GroupMember;
+          }
+        }
+      );
+
+      const members = await Promise.all(memberPromises);
+      setGroupMembers(members);
+
+      // Set current user role
+      const currentUserMember = members.find(m => m.uid === currentUser.uid);
+      if (currentUserMember) {
+        setCurrentUserRole(currentUserMember.role);
+      }
+    } catch (error) {
+      console.error('Failed to load group data:', error);
+      Alert.alert('Error', 'Failed to load group information');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [groupId, currentUser?.uid]);
+
+  // Load data on screen focus
+  useFocusEffect(
+    useCallback(() => {
+      void loadGroupData();
+    }, [loadGroupData])
+  );
+
+  /**
    * Handle leave group
    */
   const handleLeaveGroup = useCallback(() => {
-    Alert.alert('Leave Group', 'Are you sure you want to leave this group?', [
+    const isAdmin = currentUserRole === 'admin';
+    const message = isAdmin
+      ? 'As the admin, leaving will delete this group for all members. Are you sure?'
+      : 'Are you sure you want to leave this group?';
+
+    Alert.alert('Leave Group', message, [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Leave',
         style: 'destructive',
         onPress: () => {
-          // TODO: Implement leave group functionality
-          console.log('Leave group:', groupId);
-          navigation.goBack();
+          void (async () => {
+            try {
+              setIsLoading(true);
+              await leaveGroup(groupId);
+              navigation.goBack();
+            } catch (error) {
+              console.error('Failed to leave group:', error);
+              Alert.alert('Error', 'Failed to leave group. Please try again.');
+            } finally {
+              setIsLoading(false);
+            }
+          })();
         },
       },
     ]);
-  }, [groupId, navigation]);
+  }, [groupId, navigation, leaveGroup, currentUserRole]);
+
+  if (isLoading && !groupData) {
+    return (
+      <Screen testID='group-info-screen'>
+        <View
+          style={[
+            styles.container,
+            styles.loadingContainer,
+            { backgroundColor: theme.colors.background },
+          ]}
+        >
+          <ActivityIndicator size='large' color={theme.colors.primary} />
+          <Text
+            style={[styles.loadingText, { color: theme.colors.textSecondary }]}
+          >
+            Loading group info...
+          </Text>
+        </View>
+      </Screen>
+    );
+  }
 
   return (
     <Screen testID='group-info-screen'>
@@ -81,7 +259,7 @@ export function GroupInfoScreen() {
           >
             <ProfileAvatar size='large' />
             <Text style={[styles.groupTitle, { color: theme.colors.text }]}>
-              Group Name {/* TODO: Get from group data */}
+              {groupData?.name || 'Group'}
             </Text>
             <Text
               style={[
@@ -89,7 +267,7 @@ export function GroupInfoScreen() {
                 { color: theme.colors.textSecondary },
               ]}
             >
-              3 members {/* TODO: Get actual member count */}
+              {groupMembers.length} member{groupMembers.length !== 1 ? 's' : ''}
             </Text>
           </View>
 
@@ -125,7 +303,7 @@ export function GroupInfoScreen() {
               <Text
                 style={[styles.actionButtonText, { color: theme.colors.error }]}
               >
-                Leave Group
+                {isLoading ? 'Leaving...' : 'Leave Group'}
               </Text>
             </TouchableOpacity>
           </View>
@@ -138,23 +316,33 @@ export function GroupInfoScreen() {
               Members
             </Text>
 
-            {/* TODO: Render actual members list */}
-            <View style={styles.memberItem}>
-              <ProfileAvatar size='medium' />
-              <View style={styles.memberInfo}>
-                <Text style={[styles.memberName, { color: theme.colors.text }]}>
-                  You
-                </Text>
-                <Text
-                  style={[
-                    styles.memberRole,
-                    { color: theme.colors.textSecondary },
-                  ]}
-                >
-                  Admin
-                </Text>
-              </View>
-            </View>
+            {groupMembers.map(member => {
+              const isCurrentUser = member.uid === currentUser?.uid;
+              return (
+                <View key={member.uid} style={styles.memberItem}>
+                  <UserAvatar
+                    {...(member.photoURL && { photoURL: member.photoURL })}
+                    displayName={member.displayName}
+                    size={40}
+                  />
+                  <View style={styles.memberInfo}>
+                    <Text
+                      style={[styles.memberName, { color: theme.colors.text }]}
+                    >
+                      {member.displayName} {isCurrentUser && '(You)'}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.memberRole,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      {member.role === 'admin' ? 'Admin' : 'Member'}
+                    </Text>
+                  </View>
+                </View>
+              );
+            })}
           </View>
         </ScrollView>
       </View>
@@ -165,6 +353,14 @@ export function GroupInfoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
   },
   header: {
     alignItems: 'center',

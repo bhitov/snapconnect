@@ -1,5 +1,7 @@
 import { randomUUID } from 'crypto';
+
 import { getDatabase } from 'firebase-admin/database';
+
 import type { Database } from 'firebase-admin/database';
 
 // Type definitions

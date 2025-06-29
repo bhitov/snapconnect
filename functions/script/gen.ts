@@ -3,19 +3,13 @@
  * Run with: npm run script:gen
  */
 
-import { applicationDefault, initializeApp } from 'firebase-admin/app';
-import { getDatabase } from 'firebase-admin/database';
 import { randomUUID } from 'crypto';
-import * as admin from 'firebase-admin';
-import * as dotenv from 'dotenv';
 import * as path from 'path';
 
-dotenv.config({ path: path.join(__dirname, '../../.env.local') });
-export const app = initializeApp({
-  credential: applicationDefault(),
-  databaseURL: 'http://localhost:9000?ns=snapconnect-d75c6-default-rtdb',
-  projectId: 'snapconnect-d75c6',
-});
+import * as dotenv from 'dotenv';
+import * as admin from 'firebase-admin';
+import { applicationDefault, initializeApp } from 'firebase-admin/app';
+import { getDatabase } from 'firebase-admin/database';
 
 import {
   healthyPlatonicMessages,
@@ -23,8 +17,13 @@ import {
   groupMessages,
   MessageData,
 } from './gen-data';
-import { database } from 'firebase-admin';
-import { connectDatabaseEmulator } from 'firebase/database';
+
+dotenv.config({ path: path.join(__dirname, '../../.env.local') });
+export const app = initializeApp({
+  credential: applicationDefault(),
+  databaseURL: 'http://localhost:9000?ns=snapconnect-d75c6-default-rtdb',
+  projectId: 'snapconnect-d75c6',
+});
 
 // Initialize Firebase Admin
 if (!admin.apps.length) {

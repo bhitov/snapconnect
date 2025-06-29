@@ -1,8 +1,4 @@
-import { initializeApp } from 'firebase-admin/app';
-
-// Load environment variables from root project directory
-
-initializeApp(); // auto-detects emulator or prod
+import { initializeApp } from 'firebase-admin/app'; // auto-detects emulator or prod
 
 // Import and re-export coach functions
 import {
@@ -21,8 +17,12 @@ import {
   coachGroupEnergy,
   coachTopicVibeCheck,
 } from './coach';
-import { onTextMessageCreatedRTDB } from './ingestMessage';
 import { coachAnalyzeAI } from './coach-ai';
+import { onTextMessageCreatedRTDB } from './ingestMessage';
+
+// Load environment variables from root project directory
+
+initializeApp();
 
 // Re-export coach functions
 export {

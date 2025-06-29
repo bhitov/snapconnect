@@ -1,7 +1,7 @@
 import { callOpenAI } from './openai';
-import type { TextMessage } from './db';
-import type { FetchedData } from './types';
+
 import type { ConversationStats } from './pinecone';
+import type { FetchedData } from './types';
 
 export const CHAT_TYPE = {
   romantic: 'partner',
@@ -109,10 +109,10 @@ export async function callCoachAI(
     temperature = 0.5,
   } = options;
 
-  const messages: Array<{
+  const messages: {
     role: 'system' | 'user' | 'assistant';
     content: string;
-  }> = [];
+  }[] = [];
   // const parentConvoHistory =  their partner. Keep in mind that this may not be the full conversation:\n${parentLines}\n\n${userMessage}`;
   const parentLines = parentMessages
     .map(m => {
@@ -138,8 +138,7 @@ export async function callCoachAI(
     BASE_SYSTEM_MESSAGE.romantic;
 
   const content =
-    baseMessage +
-    `
+    `${baseMessage}
 
     ${systemMessage}
 
@@ -162,7 +161,7 @@ export async function callCoachAI(
   });
 
   // Build final user message with parent chat context if provided
-  let finalUserMessage = userMessage;
+  const finalUserMessage = userMessage;
   //   if (parentMessages.length > 0) {
   //     const parentLines = parentMessages
   //       .map(m => {
@@ -554,7 +553,7 @@ Keep response under 150 words.`,
  */
 export async function aiTopicVibeCheck(
   data: FetchedData,
-  topicScores: Array<{ topic: string; score: number }>
+  topicScores: { topic: string; score: number }[]
 ): Promise<string> {
   const chatType = data.relationshipType;
   const systemMessage = BASE_SYSTEM_MESSAGE[chatType];

@@ -274,7 +274,7 @@ class StoriesService {
             post =>
               post.status === 'active' &&
               post.expiresAt > Date.now() &&
-              (post.privacy === 'all' || post.privacy === 'friends')
+              post.privacy === 'friends'
           )
           .sort((a, b) => a.timestamp - b.timestamp);
 
