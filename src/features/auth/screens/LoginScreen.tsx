@@ -121,9 +121,9 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
         >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>SnapConnect</Text>
+            <Text style={styles.title}>BondSnap</Text>
             <Text style={styles.subtitle}>
-              Connect with friends through snaps
+              AI and Snaps to help you bond
             </Text>
           </View>
 

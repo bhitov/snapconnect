@@ -6,7 +6,8 @@
 
 import { useFocusEffect } from '@react-navigation/native';
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, Alert, Text } from 'react-native';
+import { View, StyleSheet, Alert, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';
 import { Screen } from '@/shared/components/layout/Screen';

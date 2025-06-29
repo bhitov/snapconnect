@@ -13,7 +13,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#FFFC00"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.snapconnect.app",
@@ -23,7 +25,10 @@
         "NSMicrophoneUsageDescription": "SnapConnect needs microphone access to record audio for video snaps.",
         "NSPhotoLibraryUsageDescription": "SnapConnect needs photo library access to save and share photos.",
         "NSPhotoLibraryAddUsageDescription": "SnapConnect needs permission to save photos to your photo library.",
-        "UIBackgroundModes": ["background-fetch", "background-processing"]
+        "UIBackgroundModes": [
+          "background-fetch",
+          "background-processing"
+        ]
       },
       "requireFullScreen": true
     },
@@ -35,12 +40,12 @@
       "package": "com.snapconnect.app",
       "versionCode": 1,
       "permissions": [
-        "CAMERA",
-        "RECORD_AUDIO",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE",
-        "VIBRATE",
-        "SYSTEM_ALERT_WINDOW"
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.VIBRATE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
       ]
     },
     "web": {
@@ -71,9 +76,8 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/notification-icon.png",
-          "color": "#FFFC00",
-          "sounds": ["./assets/notification-sound.wav"]
+          "icon": "./assets/icon.png",
+          "color": "#FFFC00"
         }
       ]
     ],
@@ -85,8 +89,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "your-eas-project-id"
+        "projectId": "6d8c33e9-bab3-4d4c-9579-dcc47c85115c"
       }
-    }
+    },
+    "owner": "bhitov89"
   }
 }

@@ -14,10 +14,10 @@ import {
   TouchableOpacity,
   RefreshControl,
   StyleSheet,
-  SafeAreaView,
   Image,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Note: Using Image instead of ProfileAvatar since that's for current user
 import { ProfileAvatar } from '@/shared/components/base/ProfileAvatar';

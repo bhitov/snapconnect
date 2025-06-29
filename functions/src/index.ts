@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase-admin/app'; // auto-detects emulator or prod
+initializeApp();
 
 // Import and re-export coach functions
 import {
@@ -22,7 +23,6 @@ import { onTextMessageCreatedRTDB } from './ingestMessage';
 
 // Load environment variables from root project directory
 
-initializeApp();
 
 // Re-export coach functions
 export {

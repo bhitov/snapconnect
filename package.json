@@ -8,8 +8,8 @@
     "start:tunnel": "expo start --tunnel",
     "camera-test": "EXPO_PUBLIC_CAMERA_TEST=true EXPO_PUBLIC_PROD_TEST=true expo start --tunnel --clear",
     "start:firebase": "EXPO_PUBLIC_PROD_TEST=true expo start --tunnel --clear",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "BROWSER=none expo start --web",
     "build": "eas build",
     "submit": "eas submit",
@@ -42,15 +42,15 @@
     "@react-navigation/stack": "^7.4.2",
     "@typescript-eslint/eslint-plugin": "^8.35.0",
     "@typescript-eslint/parser": "^8.35.0",
-    "expo": "~53.0.12",
+    "expo": "53.0.13",
     "expo-av": "~15.1.6",
-    "expo-camera": "~16.1.8",
+    "expo-camera": "~16.1.9",
     "expo-constants": "~17.1.6",
     "expo-image-manipulator": "^13.1.7",
     "expo-image-picker": "~16.1.4",
     "expo-media-library": "~17.1.7",
     "expo-notifications": "~0.31.3",
-    "expo-router": "~5.1.0",
+    "expo-router": "~5.1.1",
     "expo-splash-screen": "~0.30.9",
     "expo-status-bar": "~2.2.3",
     "expo-system-ui": "~5.0.9",
@@ -105,5 +105,15 @@
       "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
     ]
   },
-  "private": true
+  "private": true,
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": [
+          "immer"
+        ],
+        "listUnknownPackages": false
+      }
+    }
+  }
 }

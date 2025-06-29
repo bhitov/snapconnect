@@ -13,12 +13,12 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   TextInput,
   ActivityIndicator,
   Alert,
   Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/shared/hooks/useTheme';
 import { resolveMediaUrl } from '@/shared/utils/resolveMediaUrl';
