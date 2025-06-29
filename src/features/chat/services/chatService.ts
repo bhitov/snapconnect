@@ -1580,13 +1580,13 @@ class ChatService {
         orderByChild('conversationId'),
         equalTo(conversationId)
       );
-      
+
       const snapshot = await get(messagesQuery);
-      
+
       if (!snapshot.exists()) {
         return 0;
       }
-      
+
       return Object.keys(snapshot.val()).length;
     } catch (error) {
       console.error('❌ ChatService: Failed to get message count:', error);

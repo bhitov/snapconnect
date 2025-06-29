@@ -500,7 +500,7 @@ export const coachACR = onCall<CoachACRData>(async request => {
   const messageCount = fetchedData.parentMessages.length;
   if (messageCount < 20) {
     await sendCoachMessage(
-      coachCid, 
+      coachCid,
       `I need at least 20 messages to analyze Active-Constructive Responding patterns. You currently have ${messageCount} messages. Keep chatting and try again later!`
     );
     return { ok: true };
@@ -833,7 +833,7 @@ export const coachTopicVibeCheck = onCall<CoachTopicVibeCheckData>(
     const messageCount = fetchedData.parentMessages.length;
     if (messageCount < 50) {
       await sendCoachMessage(
-        coachCid, 
+        coachCid,
         `I need at least 50 messages to analyze topic vibes effectively. You currently have ${messageCount} messages. Keep chatting and try again later!`
       );
       return { ok: true };
@@ -856,12 +856,15 @@ export const coachTopicVibeCheck = onCall<CoachTopicVibeCheckData>(
         };
       })
     );
-    
+
     // Filter out topics with no data
     const validTopics = topicScores.filter(t => t.score !== 0);
-    
+
     if (validTopics.length === 0) {
-      await sendCoachMessage(coachCid, "I need more conversation history to analyze your topic vibes. Keep chatting and try again later!");
+      await sendCoachMessage(
+        coachCid,
+        'I need more conversation history to analyze your topic vibes. Keep chatting and try again later!'
+      );
       return { ok: true };
     }
 

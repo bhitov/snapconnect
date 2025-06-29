@@ -22,6 +22,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  ActivityIndicator,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
@@ -481,7 +482,10 @@ export function ChatScreen() {
     Record<string, User>
   >({});
   const [resolvedOtherUser, setResolvedOtherUser] = useState(otherUser);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+  const analysisTimeoutRef = useRef<NodeJS.Timeout>();
+  const messageCountRef = useRef<number>(messages.length);
 
   /**
    * Polling function for messages - only refreshes when data changes (no loading animations)
@@ -616,6 +620,19 @@ export function ChatScreen() {
         | 'topicvibecheck'
     ) => {
       try {
+        // Set loading state
+        setIsAnalyzing(true);
+
+        // Clear any existing timeout
+        if (analysisTimeoutRef.current) {
+          clearTimeout(analysisTimeoutRef.current);
+        }
+
+        // Set 10 second timeout
+        analysisTimeoutRef.current = setTimeout(() => {
+          setIsAnalyzing(false);
+        }, 10000);
+
         switch (option) {
           case 'ratio':
             await analyzeRatio(conversationId, parentCid || '');
@@ -803,14 +820,16 @@ export function ChatScreen() {
           // Show prompts button for all coach chats
           return (
             <TouchableOpacity
-              onPress={async () => {
+              onPress={() => {
                 // Fetch parent message count when opening the modal
-                if (parentCid) {
-                  const count =
-                    await chatService.getConversationMessageCount(parentCid);
-                  setParentMessageCount(count);
-                }
-                setShowCoachModal(true);
+                void (async () => {
+                  if (parentCid) {
+                    const count =
+                      await chatService.getConversationMessageCount(parentCid);
+                    setParentMessageCount(count);
+                  }
+                  setShowCoachModal(true);
+                })();
               }}
               style={{ marginRight: 16 }}
             >
@@ -829,7 +848,7 @@ export function ChatScreen() {
                     fontWeight: '600',
                   }}
                 >
-                  Prompts
+                  AI Analysis
                 </Text>
               </View>
             </TouchableOpacity>
@@ -880,6 +899,24 @@ export function ChatScreen() {
       setIsInitialLoad(false);
     }
   }, [messages.length, isInitialLoad]);
+
+  /**
+   * Detect new coach messages and clear loading state
+   */
+  useEffect(() => {
+    if (isCoach && messages.length > messageCountRef.current) {
+      // New message arrived
+      const lastMessage = messages[0]; // Messages are inverted
+      if (lastMessage?.senderId === 'coach') {
+        // Coach message arrived, clear loading state
+        setIsAnalyzing(false);
+        if (analysisTimeoutRef.current) {
+          clearTimeout(analysisTimeoutRef.current);
+        }
+      }
+    }
+    messageCountRef.current = messages.length;
+  }, [messages, isCoach]);
 
   /**
    * Handle sending text message
@@ -1067,6 +1104,10 @@ export function ChatScreen() {
     return () => {
       clearError();
       clearSendError();
+      // Clear analysis timeout
+      if (analysisTimeoutRef.current) {
+        clearTimeout(analysisTimeoutRef.current);
+      }
     };
   }, [clearError, clearSendError]);
 
@@ -1213,6 +1254,26 @@ export function ChatScreen() {
               ↓
             </Text>
           </TouchableOpacity>
+        )}
+
+        {/* Loading Indicator for AI Analysis */}
+        {isAnalyzing && isCoach && (
+          <View
+            style={[
+              styles.analyzingContainer,
+              { backgroundColor: theme.colors.surface },
+            ]}
+          >
+            <ActivityIndicator size='small' color={theme.colors.primary} />
+            <Text
+              style={[
+                styles.analyzingText,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
+              Analyzing conversation...
+            </Text>
+          </View>
         )}
 
         {/* Input Area */}
@@ -1452,6 +1513,16 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     padding: 16,
     gap: 12,
+  },
+  analyzingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    gap: 8,
+  },
+  analyzingText: {
+    fontSize: 14,
   },
   cameraButton: {
     width: 40,
