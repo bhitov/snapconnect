@@ -104,7 +104,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
       );
       setPendingPartnerRequestsCount(receivedPartnerRequests.length);
     } catch (error) {
-      console.error('Failed to load partner requests:', error);
+      // console.error('Failed to load partner requests:', error);
     }
   }, [currentUser]);
 
@@ -125,11 +125,11 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
   useFocusEffect(
     React.useCallback(() => {
       console.log(
-        '🔄 FriendsListScreen: Screen focused, reloading partner requests'
+         '🔄 FriendsListScreen: Screen focused, reloading partner requests'
       );
       void loadPartnerRequests();
       // Also refresh the user to ensure partnerId is up-to-date
-      void useAuthStore.getState().refreshUser();
+      // void useAuthStore.getState().refreshUser();
     }, [loadPartnerRequests])
   );
 
@@ -137,10 +137,10 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
    * Handle viewing friend profile
    */
   const handleViewProfile = (friend: FriendProfile) => {
-    console.log(
-      '👤 FriendsListScreen: Viewing profile for friend:',
-      friend.username
-    );
+    // console.log(
+    //   '👤 FriendsListScreen: Viewing profile for friend:',
+    //   friend.username
+    // );
     navigation.navigate('Profile', { userId: friend.uid });
   };
 
@@ -148,10 +148,10 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
    * Handle starting chat with friend (snap)
    */
   const handleStartChat = (friend: FriendProfile) => {
-    console.log(
-      '📸 FriendsListScreen: Starting snap with friend:',
-      friend.username
-    );
+    // console.log(
+    //   '📸 FriendsListScreen: Starting snap with friend:',
+    //   friend.username
+    // );
     // Navigate to Camera tab to send a snap to this friend
     navigation.navigate('Camera');
     // TODO: Pre-select this friend as recipient when sending snap
@@ -161,10 +161,10 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
    * Handle opening text chat with a friend
    */
   const handleOpenChat = async (friend: FriendProfile) => {
-    console.log(
-      '💬 FriendsListScreen: Opening chat with friend:',
-      friend.username
-    );
+    // console.log(
+    //   '💬 FriendsListScreen: Opening chat with friend:',
+    //   friend.username
+    // );
 
     try {
       // Create or get conversation
@@ -185,7 +185,7 @@ export function FriendsListScreen({ navigation }: FriendsListScreenProps) {
         },
       });
     } catch (error) {
-      console.error('❌ FriendsListScreen: Failed to open chat:', error);
+      // console.error('❌ FriendsListScreen: Failed to open chat:', error);
       Alert.alert('Error', 'Failed to open chat. Please try again.');
     }
   };

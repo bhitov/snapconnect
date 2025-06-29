@@ -54,7 +54,7 @@ export const useFriendsStore = create<FriendsStore>()(
      * Load friends list
      */
     loadFriends: async () => {
-      console.log('👥 FriendsStore: Loading friends list');
+      // console.log('👥 FriendsStore: Loading friends list');
 
       set({ friendsLoading: true, friendsError: null });
 
@@ -67,12 +67,12 @@ export const useFriendsStore = create<FriendsStore>()(
           friendsError: null,
         });
 
-        console.log(
-          '✅ FriendsStore: Friends loaded successfully:',
-          friends.length
-        );
+        // console.log(
+        //   '✅ FriendsStore: Friends loaded successfully:',
+        //   friends.length
+        // );
       } catch (error) {
-        console.error('❌ FriendsStore: Failed to load friends:', error);
+        // console.error('❌ FriendsStore: Failed to load friends:', error);
 
         set({
           friendsLoading: false,
@@ -86,7 +86,7 @@ export const useFriendsStore = create<FriendsStore>()(
      * Refresh friends list
      */
     refreshFriends: async () => {
-      console.log('🔄 FriendsStore: Refreshing friends list');
+      // console.log('🔄 FriendsStore: Refreshing friends list');
 
       set({ isRefreshing: true });
 
@@ -99,9 +99,9 @@ export const useFriendsStore = create<FriendsStore>()(
           friendsError: null,
         });
 
-        console.log('✅ FriendsStore: Friends refreshed successfully');
+        // console.log('✅ FriendsStore: Friends refreshed successfully');
       } catch (error) {
-        console.error('❌ FriendsStore: Failed to refresh friends:', error);
+        // console.error('❌ FriendsStore: Failed to refresh friends:', error);
 
         set({
           isRefreshing: false,
@@ -117,7 +117,7 @@ export const useFriendsStore = create<FriendsStore>()(
      * Load friend requests
      */
     loadFriendRequests: async () => {
-      console.log('📨 FriendsStore: Loading friend requests');
+      // console.log('📨 FriendsStore: Loading friend requests');
 
       set({ requestsLoading: true, requestsError: null });
 
@@ -131,12 +131,12 @@ export const useFriendsStore = create<FriendsStore>()(
           requestsError: null,
         });
 
-        console.log('✅ FriendsStore: Friend requests loaded successfully');
+        // console.log('✅ FriendsStore: Friend requests loaded successfully');
       } catch (error) {
-        console.error(
-          '❌ FriendsStore: Failed to load friend requests:',
-          error
-        );
+        // console.error(
+        //   '❌ FriendsStore: Failed to load friend requests:',
+        //   error
+        // );
 
         set({
           requestsLoading: false,
@@ -152,10 +152,10 @@ export const useFriendsStore = create<FriendsStore>()(
      * Send friend request
      */
     sendFriendRequest: async (data: SendFriendRequestData) => {
-      console.log(
-        '📤 FriendsStore: Sending friend request to:',
-        data.receiverId
-      );
+      // console.log(
+      //   '📤 FriendsStore: Sending friend request to:',
+      //   data.receiverId
+      // );
 
       try {
         await friendsService.sendFriendRequest(data);
@@ -173,9 +173,9 @@ export const useFriendsStore = create<FriendsStore>()(
 
         set({ searchResults: updatedResults });
 
-        console.log('✅ FriendsStore: Friend request sent successfully');
+        // console.log('✅ FriendsStore: Friend request sent successfully');
       } catch (error) {
-        console.error('❌ FriendsStore: Failed to send friend request:', error);
+        // console.error('❌ FriendsStore: Failed to send friend request:', error);
 
         set({
           requestsError:
@@ -192,10 +192,10 @@ export const useFriendsStore = create<FriendsStore>()(
      * Respond to friend request (accept/reject)
      */
     respondToFriendRequest: async (response: FriendRequestResponse) => {
-      console.log(
-        '📨 FriendsStore: Responding to friend request:',
-        response.action
-      );
+      // console.log(
+      //   '📨 FriendsStore: Responding to friend request:',
+      //   response.action
+      // );
 
       try {
         await friendsService.respondToFriendRequest(response);
@@ -203,14 +203,14 @@ export const useFriendsStore = create<FriendsStore>()(
         // Reload both friend requests and friends list
         await Promise.all([get().loadFriendRequests(), get().loadFriends()]);
 
-        console.log(
-          '✅ FriendsStore: Friend request response sent successfully'
-        );
+        // console.log(
+        //   '✅ FriendsStore: Friend request response sent successfully'
+        // );
       } catch (error) {
-        console.error(
-          '❌ FriendsStore: Failed to respond to friend request:',
-          error
-        );
+        // console.error(
+        //   '❌ FriendsStore: Failed to respond to friend request:',
+        //   error
+        // );
 
         set({
           requestsError:
@@ -227,7 +227,7 @@ export const useFriendsStore = create<FriendsStore>()(
      * Cancel friend request
      */
     cancelFriendRequest: async (requestId: string) => {
-      console.log('❌ FriendsStore: Canceling friend request:', requestId);
+      // console.log('❌ FriendsStore: Canceling friend request:', requestId);
 
       try {
         await friendsService.cancelFriendRequest(requestId);
@@ -235,12 +235,12 @@ export const useFriendsStore = create<FriendsStore>()(
         // Reload friend requests to get updated state
         await get().loadFriendRequests();
 
-        console.log('✅ FriendsStore: Friend request canceled successfully');
+        // console.log('✅ FriendsStore: Friend request canceled successfully');
       } catch (error) {
-        console.error(
-          '❌ FriendsStore: Failed to cancel friend request:',
-          error
-        );
+        // console.error(
+        //   '❌ FriendsStore: Failed to cancel friend request:',
+        //   error
+        // );
 
         set({
           requestsError:
@@ -257,7 +257,7 @@ export const useFriendsStore = create<FriendsStore>()(
      * Search users
      */
     searchUsers: async (query: string) => {
-      console.log('🔍 FriendsStore: Searching users with query:', query);
+      // console.log('🔍 FriendsStore: Searching users with query:', query);
 
       // Don't search for empty queries
       if (!query.trim()) {
@@ -284,13 +284,13 @@ export const useFriendsStore = create<FriendsStore>()(
           searchError: null,
         });
 
-        console.log(
-          '✅ FriendsStore: Search completed with',
-          results.length,
-          'results'
-        );
+        // console.log(
+        //   '✅ FriendsStore: Search completed with',
+        //   results.length,
+        //   'results'
+        // );
       } catch (error) {
-        console.error('❌ FriendsStore: Search failed:', error);
+        // console.error('❌ FriendsStore: Search failed:', error);
 
         set({
           searchLoading: false,
@@ -304,7 +304,7 @@ export const useFriendsStore = create<FriendsStore>()(
      * Clear search results
      */
     clearSearch: () => {
-      console.log('🧹 FriendsStore: Clearing search results');
+      // console.log('🧹 FriendsStore: Clearing search results');
 
       set({
         searchResults: [],
@@ -317,7 +317,7 @@ export const useFriendsStore = create<FriendsStore>()(
      * Remove friend
      */
     removeFriend: async (friendshipId: string) => {
-      console.log('💔 FriendsStore: Removing friend:', friendshipId);
+      // console.log('💔 FriendsStore: Removing friend:', friendshipId);
 
       try {
         await friendsService.removeFriend(friendshipId);
@@ -325,9 +325,9 @@ export const useFriendsStore = create<FriendsStore>()(
         // Reload friends list to get updated state
         await get().loadFriends();
 
-        console.log('✅ FriendsStore: Friend removed successfully');
+        // console.log('✅ FriendsStore: Friend removed successfully');
       } catch (error) {
-        console.error('❌ FriendsStore: Failed to remove friend:', error);
+        // console.error('❌ FriendsStore: Failed to remove friend:', error);
 
         set({
           friendsError:
@@ -342,7 +342,7 @@ export const useFriendsStore = create<FriendsStore>()(
      * Block user (placeholder)
      */
     blockUser: (userId: string) => {
-      console.log('🚫 FriendsStore: Blocking user:', userId);
+      // console.log('🚫 FriendsStore: Blocking user:', userId);
       // TODO: Implement user blocking functionality
       throw new Error('Block user functionality not implemented yet');
     },
@@ -351,7 +351,7 @@ export const useFriendsStore = create<FriendsStore>()(
      * Unblock user (placeholder)
      */
     unblockUser: (userId: string) => {
-      console.log('✅ FriendsStore: Unblocking user:', userId);
+      // console.log('✅ FriendsStore: Unblocking user:', userId);
       // TODO: Implement user unblocking functionality
       throw new Error('Unblock user functionality not implemented yet');
     },
@@ -360,10 +360,10 @@ export const useFriendsStore = create<FriendsStore>()(
      * Set selected friend
      */
     setSelectedFriend: (friend: FriendProfile | null) => {
-      console.log(
-        '👤 FriendsStore: Setting selected friend:',
-        friend?.username || 'none'
-      );
+      // console.log(
+      //   '👤 FriendsStore: Setting selected friend:',
+      //   friend?.username || 'none'
+      // );
 
       set({ selectedFriend: friend });
     },
@@ -372,7 +372,7 @@ export const useFriendsStore = create<FriendsStore>()(
      * Clear error states
      */
     clearError: () => {
-      console.log('🧹 FriendsStore: Clearing errors');
+      // console.log('🧹 FriendsStore: Clearing errors');
 
       set({
         friendsError: null,

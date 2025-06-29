@@ -47,14 +47,14 @@ export function RootNavigator() {
   const isAuthenticated = useIsAuthenticated();
   const { isProfileComplete } = useAuthStore();
 
-  console.log(
-    '🔄 RootNavigator: Rendering - isInitializing:',
-    isInitializing,
-    'isAuthenticated:',
-    isAuthenticated,
-    'isProfileComplete:',
-    isProfileComplete()
-  );
+  // console.log(
+  //   '🔄 RootNavigator: Rendering - isInitializing:',
+  //   isInitializing,
+  //   'isAuthenticated:',
+  //   isAuthenticated,
+  //   'isProfileComplete:',
+  //   isProfileComplete()
+  // );
 
   // Expose navigation ref to window for E2E testing - must be before any conditional returns
   useEffect(() => {

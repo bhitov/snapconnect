@@ -64,7 +64,7 @@ class FriendsService {
    * Handle Firebase errors with user-friendly messages
    */
   private handleError(error: unknown): FriendsError {
-    console.error('❌ FriendsService: Error:', error);
+    // console.error('❌ FriendsService: Error:', error);
 
     if (error instanceof Error) {
       const firebaseError = error as FirebaseError;
@@ -107,7 +107,7 @@ class FriendsService {
    * Search users by username
    */
   async searchUsers(searchQuery: string): Promise<FriendSearchResult[]> {
-    console.log('🔍 FriendsService: Searching users with query:', searchQuery);
+    // console.log('🔍 FriendsService: Searching users with query:', searchQuery);
 
     try {
       const currentUserId = this.getCurrentUserId();
@@ -126,7 +126,7 @@ class FriendsService {
       const snapshot = await get(usersQuery);
 
       if (!snapshot.exists()) {
-        console.log('🔍 FriendsService: No users found');
+        // console.log('🔍 FriendsService: No users found');
         return [];
       }
 
@@ -150,10 +150,10 @@ class FriendsService {
         });
       }
 
-      console.log('✅ FriendsService: Found', results.length, 'users');
+      // console.log('✅ FriendsService: Found', results.length, 'users');
       return results;
     } catch (error) {
-      console.error('❌ FriendsService: Search failed:', error);
+      // console.error('❌ FriendsService: Search failed:', error);
       const friendsError = this.handleError(error);
       throw new Error(friendsError.message);
     }
@@ -194,10 +194,10 @@ class FriendsService {
 
       return 'none';
     } catch (error) {
-      console.error(
-        '❌ FriendsService: Failed to get friendship status:',
-        error
-      );
+      // console.error(
+      //   '❌ FriendsService: Failed to get friendship status:',
+      //   error
+      // );
       return 'none';
     }
   }
@@ -274,10 +274,10 @@ class FriendsService {
    * Send friend request
    */
   async sendFriendRequest(data: SendFriendRequestData): Promise<void> {
-    console.log(
-      '📤 FriendsService: Sending friend request to:',
-      data.receiverId
-    );
+    // console.log(
+    //   '📤 FriendsService: Sending friend request to:',
+    //   data.receiverId
+    // );
 
     try {
       const currentUserId = this.getCurrentUserId();
@@ -339,9 +339,9 @@ class FriendsService {
       const requestRef = ref(this.database, `friendRequests/${requestId}`);
       await set(requestRef, requestData);
 
-      console.log('✅ FriendsService: Friend request sent successfully');
+      // console.log('✅ FriendsService: Friend request sent successfully');
     } catch (error) {
-      console.error('❌ FriendsService: Failed to send friend request:', error);
+      // console.error('❌ FriendsService: Failed to send friend request:', error);
       const friendsError = this.handleError(error);
       throw new Error(friendsError.message);
     }
@@ -360,11 +360,11 @@ class FriendsService {
    * Respond to friend request (accept/reject)
    */
   async respondToFriendRequest(response: FriendRequestResponse): Promise<void> {
-    console.log(
-      '📨 FriendsService: Responding to friend request:',
-      response.requestId,
-      response.action
-    );
+    // console.log(
+    //   '📨 FriendsService: Responding to friend request:',
+    //   response.requestId,
+    //   response.action
+    // );
 
     try {
       const requestRef = ref(
@@ -387,16 +387,16 @@ class FriendsService {
       // Remove the friend request (whether accepted or rejected)
       await remove(requestRef);
 
-      console.log(
-        '✅ FriendsService: Friend request',
-        response.action,
-        'successfully'
-      );
+      // console.log(
+      //   '✅ FriendsService: Friend request',
+      //   response.action,
+      //   'successfully'
+      // );
     } catch (error) {
-      console.error(
-        '❌ FriendsService: Failed to respond to friend request:',
-        error
-      );
+      // console.error(
+      //   '❌ FriendsService: Failed to respond to friend request:',
+      //   error
+      // );
       const friendsError = this.handleError(error);
       throw new Error(friendsError.message);
     }
@@ -425,18 +425,18 @@ class FriendsService {
    * Cancel friend request
    */
   async cancelFriendRequest(requestId: string): Promise<void> {
-    console.log('❌ FriendsService: Canceling friend request:', requestId);
+    // console.log('❌ FriendsService: Canceling friend request:', requestId);
 
     try {
       const requestRef = ref(this.database, `friendRequests/${requestId}`);
       await remove(requestRef);
 
-      console.log('✅ FriendsService: Friend request canceled successfully');
+      // console.log('✅ FriendsService: Friend request canceled successfully');
     } catch (error) {
-      console.error(
-        '❌ FriendsService: Failed to cancel friend request:',
-        error
-      );
+      // console.error(
+      //   '❌ FriendsService: Failed to cancel friend request:',
+      //   error
+      // );
       const friendsError = this.handleError(error);
       throw new Error(friendsError.message);
     }
@@ -446,7 +446,7 @@ class FriendsService {
    * Get friends list for current user
    */
   async getFriends(): Promise<FriendProfile[]> {
-    console.log('👥 FriendsService: Loading friends list');
+    // console.log('👥 FriendsService: Loading friends list');
 
     try {
       const currentUserId = this.getCurrentUserId();
@@ -456,7 +456,7 @@ class FriendsService {
       const snapshot = await get(friendshipsRef);
 
       if (!snapshot.exists()) {
-        console.log('👥 FriendsService: No friendships found');
+        // console.log('👥 FriendsService: No friendships found');
         return [];
       }
 
@@ -497,10 +497,10 @@ class FriendsService {
         });
       }
 
-      console.log('✅ FriendsService: Loaded', friends.length, 'friends');
+      // console.log('✅ FriendsService: Loaded', friends.length, 'friends');
       return friends;
     } catch (error) {
-      console.error('❌ FriendsService: Failed to load friends:', error);
+      // console.error('❌ FriendsService: Failed to load friends:', error);
       const friendsError = this.handleError(error);
       throw new Error(friendsError.message);
     }
@@ -513,7 +513,7 @@ class FriendsService {
     sent: FriendRequest[];
     received: FriendRequest[];
   }> {
-    console.log('📨 FriendsService: Loading friend requests');
+    // console.log('📨 FriendsService: Loading friend requests');
 
     try {
       const currentUserId = this.getCurrentUserId();
@@ -522,7 +522,7 @@ class FriendsService {
       const snapshot = await get(requestsRef);
 
       if (!snapshot.exists()) {
-        console.log('📨 FriendsService: No friend requests found');
+        // console.log('📨 FriendsService: No friend requests found');
         return { sent: [], received: [] };
       }
 
@@ -564,19 +564,19 @@ class FriendsService {
         }
       }
 
-      console.log(
-        '✅ FriendsService: Loaded',
-        sent.length,
-        'sent and',
-        received.length,
-        'received requests'
-      );
+      // console.log(
+      //   '✅ FriendsService: Loaded',
+      //   sent.length,
+      //   'sent and',
+      //   received.length,
+      //   'received requests'
+      // );
       return { sent, received };
     } catch (error) {
-      console.error(
-        '❌ FriendsService: Failed to load friend requests:',
-        error
-      );
+      // console.error(
+      //   '❌ FriendsService: Failed to load friend requests:',
+      //   error
+      // );
       const friendsError = this.handleError(error);
       throw new Error(friendsError.message);
     }
@@ -586,15 +586,15 @@ class FriendsService {
    * Remove friend
    */
   async removeFriend(friendshipId: string): Promise<void> {
-    console.log('💔 FriendsService: Removing friend:', friendshipId);
+    // console.log('💔 FriendsService: Removing friend:', friendshipId);
 
     try {
       const friendshipRef = ref(this.database, `friendships/${friendshipId}`);
       await remove(friendshipRef);
 
-      console.log('✅ FriendsService: Friend removed successfully');
+      // console.log('✅ FriendsService: Friend removed successfully');
     } catch (error) {
-      console.error('❌ FriendsService: Failed to remove friend:', error);
+      // console.error('❌ FriendsService: Failed to remove friend:', error);
       const friendsError = this.handleError(error);
       throw new Error(friendsError.message);
     }

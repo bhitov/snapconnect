@@ -46,7 +46,7 @@ class AuthService {
    * @returns {Promise<User>} User data
    */
   async login(email: string, password: string): Promise<User> {
-    console.log('🔐 AuthService: Starting login for email:', email);
+    // console.log('🔐 AuthService: Starting login for email:', email);
 
     try {
       const userCredential = await signInWithEmailAndPassword(
@@ -56,10 +56,10 @@ class AuthService {
       );
       const firebaseUser = userCredential.user;
 
-      console.log(
-        '✅ AuthService: Firebase login successful for UID:',
-        firebaseUser.uid
-      );
+      // console.log(
+      //   '✅ AuthService: Firebase login successful for UID:',
+      //   firebaseUser.uid
+      // );
 
       // Get user profile from database
       const userProfile = await this.getUserProfile(firebaseUser.uid);
@@ -74,10 +74,10 @@ class AuthService {
       // Update last active timestamp
       await this.updateLastActive(firebaseUser.uid);
 
-      console.log('✅ AuthService: Login completed successfully');
+      // console.log('✅ AuthService: Login completed successfully');
       return userProfile;
     } catch (error) {
-      console.error('❌ AuthService: Login failed:', error);
+      // console.error('❌ AuthService: Login failed:', error);
       throw this.handleAuthError(error);
     }
   }
@@ -95,12 +95,12 @@ class AuthService {
     password: string,
     username: string
   ): Promise<User> {
-    console.log(
-      '📝 AuthService: Starting registration for email:',
-      email,
-      'username:',
-      username
-    );
+    // console.log(
+    //   '📝 AuthService: Starting registration for email:',
+    //   email,
+    //   'username:',
+    //   username
+    // );
 
     try {
       // Check if username is available
@@ -120,10 +120,10 @@ class AuthService {
       );
       const firebaseUser = userCredential.user;
 
-      console.log(
-        '✅ AuthService: Firebase user created with UID:',
-        firebaseUser.uid
-      );
+      // console.log(
+      //   '✅ AuthService: Firebase user created with UID:',
+      //   firebaseUser.uid
+      // );
 
       // Create user profile data
       const userProfile: UserProfileData = {
@@ -145,10 +145,10 @@ class AuthService {
         displayName: username,
       });
 
-      console.log('✅ AuthService: Registration completed successfully');
+      // console.log('✅ AuthService: Registration completed successfully');
       return userProfile;
     } catch (error) {
-      console.error('❌ AuthService: Registration failed:', error);
+      // console.error('❌ AuthService: Registration failed:', error);
       throw this.handleAuthError(error);
     }
   }
@@ -157,7 +157,7 @@ class AuthService {
    * Logout current user
    */
   async logout(): Promise<void> {
-    console.log('🚪 AuthService: Starting logout');
+    // console.log('🚪 AuthService: Starting logout');
 
     try {
       if (auth.currentUser) {
@@ -165,9 +165,9 @@ class AuthService {
       }
 
       await signOut(auth);
-      console.log('✅ AuthService: Logout successful');
+      // console.log('✅ AuthService: Logout successful');
     } catch (error) {
-      console.error('❌ AuthService: Logout failed:', error);
+      // console.error('❌ AuthService: Logout failed:', error);
       throw this.handleAuthError(error);
     }
   }
@@ -178,13 +178,13 @@ class AuthService {
    * @param {string} email - User email
    */
   async resetPassword(email: string): Promise<void> {
-    console.log('🔄 AuthService: Sending password reset email to:', email);
+    // console.log('🔄 AuthService: Sending password reset email to:', email);
 
     try {
       await sendPasswordResetEmail(auth, email);
-      console.log('✅ AuthService: Password reset email sent');
+      // console.log('✅ AuthService: Password reset email sent');
     } catch (error) {
-      console.error('❌ AuthService: Password reset failed:', error);
+      // console.error('❌ AuthService: Password reset failed:', error);
       throw this.handleAuthError(error);
     }
   }
@@ -205,9 +205,9 @@ class AuthService {
 
     // If no user profile exists, create one automatically
     if (!userProfile) {
-      console.log(
-        '⚠️ AuthService: User profile not found in getCurrentUser, creating automatically'
-      );
+      // console.log(
+      //   '⚠️ AuthService: User profile not found in getCurrentUser, creating automatically'
+      // );
       throw new Error('User profile not found');
 
       //       try {
@@ -228,14 +228,14 @@ class AuthService {
    * @returns {Function} Unsubscribe function
    */
   onAuthStateChanged(callback: (user: User | null) => void) {
-    console.log('👂 AuthService: Setting up auth state listener');
+    // console.log('👂 AuthService: Setting up auth state listener');
 
     return onAuthStateChanged(auth, firebaseUser => {
       void (async () => {
-        console.log(
-          '🔄 AuthService: Auth state changed, user:',
-          firebaseUser?.uid || 'null'
-        );
+        // console.log(
+        //   '🔄 AuthService: Auth state changed, user:',
+        //   firebaseUser?.uid || 'null'
+        // );
 
         if (firebaseUser) {
           try {
@@ -250,10 +250,10 @@ class AuthService {
 
             callback(userProfile);
           } catch (error) {
-            console.error(
-              '❌ AuthService: Error getting/creating user profile:',
-              error
-            );
+            // console.error(
+            //   '❌ AuthService: Error getting/creating user profile:',
+            //   error
+            // );
             callback(null);
           }
         } else {
@@ -274,7 +274,7 @@ class AuthService {
     uid: string,
     profileData: ProfileSetupForm
   ): Promise<User> {
-    console.log('📝 AuthService: Completing profile setup for UID:', uid);
+    // console.log('📝 AuthService: Completing profile setup for UID:', uid);
 
     try {
       const updates: Partial<UserProfileData> = {
@@ -309,10 +309,10 @@ class AuthService {
         throw new Error('Failed to retrieve updated profile');
       }
 
-      console.log('✅ AuthService: Profile setup completed successfully');
+      // console.log('✅ AuthService: Profile setup completed successfully');
       return updatedProfile;
     } catch (error) {
-      console.error('❌ AuthService: Profile setup failed:', error);
+      // console.error('❌ AuthService: Profile setup failed:', error);
       throw this.handleAuthError(error);
     }
   }
@@ -325,7 +325,7 @@ class AuthService {
    * @returns {Promise<string>} Download URL
    */
   async uploadAvatar(uid: string, avatar: AvatarUpload): Promise<string> {
-    console.log('📸 AuthService: Uploading avatar for UID:', uid);
+    // console.log('📸 AuthService: Uploading avatar for UID:', uid);
 
     try {
       // Create storage reference
@@ -335,7 +335,7 @@ class AuthService {
       const response = await fetch(avatar.uri);
       const blob = await response.blob();
 
-      console.log('📤 AuthService: Uploading blob to Firebase Storage');
+      // console.log('📤 AuthService: Uploading blob to Firebase Storage');
 
       // Upload to Firebase Storage
       const uploadResult = await uploadBytes(avatarRef, blob);
@@ -343,13 +343,13 @@ class AuthService {
       // Get download URL
       const downloadURL = await getDownloadURL(uploadResult.ref);
 
-      console.log(
-        '✅ AuthService: Avatar uploaded successfully, URL:',
-        downloadURL
-      );
+      // console.log(
+      //   '✅ AuthService: Avatar uploaded successfully, URL:',
+      //   downloadURL
+      // );
       return downloadURL;
     } catch (error) {
-      console.error('❌ AuthService: Avatar upload failed:', error);
+      // console.error('❌ AuthService: Avatar upload failed:', error);
       throw this.handleAuthError(error);
     }
   }
@@ -365,7 +365,7 @@ class AuthService {
     uid: string,
     updates: Partial<UserProfileData>
   ): Promise<User> {
-    console.log('🔄 AuthService: Updating profile for UID:', uid);
+    // console.log('🔄 AuthService: Updating profile for UID:', uid);
 
     try {
       const profileUpdates = {
@@ -398,10 +398,10 @@ class AuthService {
         throw new Error('Failed to retrieve updated profile');
       }
 
-      console.log('✅ AuthService: Profile updated successfully');
+      // console.log('✅ AuthService: Profile updated successfully');
       return updatedProfile;
     } catch (error) {
-      console.error('❌ AuthService: Profile update failed:', error);
+      // console.error('❌ AuthService: Profile update failed:', error);
       throw this.handleAuthError(error);
     }
   }
@@ -446,24 +446,24 @@ class AuthService {
    * @returns {Promise<boolean>} True if available
    */
   private async checkUsernameAvailability(username: string): Promise<boolean> {
-    console.log('🔍 AuthService: Checking username availability:', username);
+    // console.log('🔍 AuthService: Checking username availability:', username);
 
     try {
       const usernamesRef = ref(database, `usernames/${username.toLowerCase()}`);
       const snapshot = await get(usernamesRef);
 
       const isAvailable = !snapshot.exists();
-      console.log(
-        '✅ AuthService: Username availability check result:',
-        isAvailable
-      );
+      // console.log(
+      //   '✅ AuthService: Username availability check result:',
+      //   isAvailable
+      // );
 
       return isAvailable;
     } catch (error) {
-      console.error(
-        '❌ AuthService: Username availability check failed:',
-        error
-      );
+      // console.error(
+      //   '❌ AuthService: Username availability check failed:',
+      //   error
+      // );
       throw new Error('Failed to check username availability');
     }
   }
@@ -475,10 +475,10 @@ class AuthService {
    * @returns {Promise<string>} Available username
    */
   private async generateAvailableUsername(baseName: string): Promise<string> {
-    console.log(
-      '🎯 AuthService: Generating available username from base:',
-      baseName
-    );
+    // console.log(
+    //   '🎯 AuthService: Generating available username from base:',
+    //   baseName
+    // );
 
     // Clean the base name - remove special characters and make lowercase
     const cleanBaseName = baseName
@@ -491,7 +491,7 @@ class AuthService {
 
     // Try the base name first
     if (await this.checkUsernameAvailability(finalBaseName)) {
-      console.log('✅ AuthService: Base username available:', finalBaseName);
+      // console.log('✅ AuthService: Base username available:', finalBaseName);
       return finalBaseName;
     }
 
@@ -503,7 +503,7 @@ class AuthService {
       const candidateUsername = `${finalBaseName}${attempt}`;
 
       if (await this.checkUsernameAvailability(candidateUsername)) {
-        console.log('✅ AuthService: Generated username:', candidateUsername);
+        // console.log('✅ AuthService: Generated username:', candidateUsername);
         return candidateUsername;
       }
 
@@ -513,10 +513,10 @@ class AuthService {
     // If we somehow can't find an available username after 100 attempts,
     // generate one with timestamp as a fallback
     const timestampUsername = `${finalBaseName}${Date.now().toString().slice(-6)}`;
-    console.log(
-      '⚠️ AuthService: Using timestamp-based username:',
-      timestampUsername
-    );
+    // console.log(
+    //   '⚠️ AuthService: Using timestamp-based username:',
+    //   timestampUsername
+    // );
     return timestampUsername;
   }
 
@@ -567,7 +567,7 @@ class AuthService {
    * @param {UserProfileData} profile - User profile data
    */
   private async createUserProfile(profile: UserProfileData): Promise<void> {
-    console.log('💾 AuthService: Creating user profile for UID:', profile.uid);
+    // console.log('💾 AuthService: Creating user profile for UID:', profile.uid);
 
     try {
       const updates = {
@@ -576,9 +576,9 @@ class AuthService {
       };
 
       await update(ref(database), updates);
-      console.log('✅ AuthService: User profile created successfully');
+      // console.log('✅ AuthService: User profile created successfully');
     } catch (error) {
-      console.error('❌ AuthService: Failed to create user profile:', error);
+      // console.error('❌ AuthService: Failed to create user profile:', error);
       throw new Error('Failed to create user profile');
     }
   }
@@ -590,23 +590,23 @@ class AuthService {
    * @returns {Promise<User | null>} User profile or null
    */
   private async getUserProfile(uid: string): Promise<User | null> {
-    console.log('📖 AuthService: Getting user profile for UID:', uid);
+    // console.log('📖 AuthService: Getting user profile for UID:', uid);
 
     try {
       const userRef = ref(database, `users/${uid}`);
       const snapshot = await get(userRef);
 
       if (!snapshot.exists()) {
-        console.log('⚠️ AuthService: User profile not found for UID:', uid);
+        // console.log('⚠️ AuthService: User profile not found for UID:', uid);
         return null;
       }
 
       const userData = snapshot.val() as User;
-      console.log('✅ AuthService: User profile retrieved successfully');
+      // console.log('✅ AuthService: User profile retrieved successfully');
 
       return userData;
     } catch (error) {
-      console.error('❌ AuthService: Failed to get user profile:', error);
+      // console.error('❌ AuthService: Failed to get user profile:', error);
       return null;
     }
   }
@@ -621,7 +621,7 @@ class AuthService {
       const userRef = ref(database, `users/${uid}/lastActive`);
       await set(userRef, Date.now());
     } catch (error) {
-      console.error('❌ AuthService: Failed to update last active:', error);
+      // console.error('❌ AuthService: Failed to update last active:', error);
       // Don't throw error for this non-critical operation
     }
   }
@@ -645,7 +645,7 @@ class AuthService {
       );
     };
 
-    console.error('🔥 AuthService: Handling auth error:', error);
+    // console.error('🔥 AuthService: Handling auth error:', error);
 
     if (isFirebaseError(error) && error.code) {
       switch (error.code) {
