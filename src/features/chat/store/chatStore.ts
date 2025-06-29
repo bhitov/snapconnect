@@ -22,6 +22,7 @@ import {
   analyzeTopicChampion,
   generateFriendshipCheckin,
   analyzeGroupEnergy,
+  analyzeTopicVibeCheck,
 } from '../services/coachService';
 
 import type {
@@ -732,6 +733,22 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     } catch (groupEnergyError) {
       console.error('❌ ChatStore: Failed to analyze group energy:', groupEnergyError);
       throw groupEnergyError;
+    }
+  },
+
+  analyzeTopicVibeCheck: async (coachCid: string, parentCid: string) => {
+    console.log('🌟 ChatStore: Analyzing topic vibes:', { coachCid, parentCid });
+
+    try {
+      await analyzeTopicVibeCheck(coachCid, parentCid);
+
+      // Reload messages to show the analysis
+      await get().silentLoadMessages(coachCid);
+
+      console.log('✅ ChatStore: Topic vibe check completed');
+    } catch (topicVibeError) {
+      console.error('❌ ChatStore: Failed to analyze topic vibes:', topicVibeError);
+      throw topicVibeError;
     }
   },
 

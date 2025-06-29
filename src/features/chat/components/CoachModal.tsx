@@ -11,7 +11,7 @@ import { useTheme } from '@/shared/hooks/useTheme';
 interface CoachModalProps {
   visible: boolean;
   onClose: () => void;
-  onOptionSelect: (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr' | 'sharedinterests' | 'topicchampion' | 'friendshipcheckin' | 'groupenergy') => void;
+  onOptionSelect: (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr' | 'sharedinterests' | 'topicchampion' | 'friendshipcheckin' | 'groupenergy' | 'topicvibecheck') => void;
   isRomantic?: boolean;
   isPlatonic?: boolean;
   isGroup?: boolean;
@@ -27,7 +27,7 @@ export function CoachModal({
 }: CoachModalProps) {
   const theme = useTheme();
 
-  const handleOptionPress = (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr' | 'sharedinterests' | 'topicchampion' | 'friendshipcheckin' | 'groupenergy') => {
+  const handleOptionPress = (option: 'ratio' | 'horsemen' | 'lovemap' | 'bids' | 'rupturerepair' | 'acr' | 'sharedinterests' | 'topicchampion' | 'friendshipcheckin' | 'groupenergy' | 'topicvibecheck') => {
     onOptionSelect(option);
     onClose();
   };
@@ -143,6 +143,33 @@ export function CoachModal({
                     </Text>
                   </View>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.option, { borderColor: theme.colors.border }]}
+                  onPress={() => handleOptionPress('topicvibecheck')}
+                  activeOpacity={0.7}
+                >
+                  <Text
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
+                  >
+                    🌟
+                  </Text>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Topic Vibe Check
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Discover which topics bring positive energy to your chats
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               </>
             ) : isGroup ? (
               // Group conversations show topic champion and group energy
@@ -197,6 +224,33 @@ export function CoachModal({
                       ]}
                     >
                       Check your group's current energy level and engagement
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.option, { borderColor: theme.colors.border }]}
+                  onPress={() => handleOptionPress('topicvibecheck')}
+                  activeOpacity={0.7}
+                >
+                  <Text
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
+                  >
+                    🌟
+                  </Text>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Topic Vibe Check
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Discover which topics bring positive energy to your chats
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -342,6 +396,33 @@ export function CoachModal({
                     </TouchableOpacity>
                   </>
                 )}
+
+                <TouchableOpacity
+                  style={[styles.option, { borderColor: theme.colors.border }]}
+                  onPress={() => handleOptionPress('topicvibecheck')}
+                  activeOpacity={0.7}
+                >
+                  <Text
+                    style={[styles.optionIcon, { color: theme.colors.primary }]}
+                  >
+                    🌟
+                  </Text>
+                  <View style={styles.optionContent}>
+                    <Text
+                      style={[styles.optionTitle, { color: theme.colors.text }]}
+                    >
+                      Topic Vibe Check
+                    </Text>
+                    <Text
+                      style={[
+                        styles.optionDescription,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
+                      Discover which topics bring positive energy to your chats
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               </>
             )}
           </View>

@@ -295,3 +295,25 @@ export async function analyzeGroupEnergy(
     throw new Error('Failed to analyze group energy');
   }
 }
+
+/**
+ * Analyze topic vibes
+ * @param coachCid - The coach conversation ID
+ * @param parentCid - The parent conversation ID
+ */
+export async function analyzeTopicVibeCheck(
+  coachCid: string,
+  parentCid: string
+): Promise<void> {
+  try {
+    const coachTopicVibeCheckFn = httpsCallable<
+      { coachCid: string; parentCid: string },
+      void
+    >(functions, 'coachTopicVibeCheck');
+
+    await coachTopicVibeCheckFn({ coachCid, parentCid });
+  } catch (error) {
+    console.error('Failed to analyze topic vibes:', error);
+    throw new Error('Failed to analyze topic vibes');
+  }
+}

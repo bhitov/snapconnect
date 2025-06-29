@@ -21,6 +21,11 @@ import {
   coachBids,
   coachRuptureRepair,
   coachACR,
+  coachSharedInterests,
+  coachTopicChampion,
+  coachFriendshipCheckin,
+  coachGroupEnergy,
+  coachTopicVibeCheck,
 } from './coach';
 
 import { coachAnalyzeAI } from './coach-ai';
@@ -36,5 +41,10 @@ export {
   coachBids,
   coachRuptureRepair,
   coachACR,
+  coachSharedInterests,
+  coachTopicChampion,
+  coachFriendshipCheckin,
+  coachGroupEnergy,
+  coachTopicVibeCheck,
   coachAnalyzeAI,
 };

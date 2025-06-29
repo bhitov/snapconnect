@@ -433,6 +433,16 @@ export function ChatScreen() {
     return otherUser?.uid === currentUser?.partnerId;
   }, [isCoach, parentCid, conversations, otherUser, currentUser]);
 
+  // Check if the parent conversation is a group (for coach chats)
+  const isParentGroup = React.useMemo(() => {
+    if (isCoach && parentCid) {
+      // Find the parent conversation
+      const parentConv = conversations.find(c => c.id === parentCid);
+      return parentConv?.isGroup || false;
+    }
+    return false;
+  }, [isCoach, parentCid, conversations]);
+
   // Chat actions
   const {
     loadMessages,
@@ -455,6 +465,7 @@ export function ChatScreen() {
     analyzeTopicChampion,
     generateFriendshipCheckin,
     analyzeGroupEnergy,
+    analyzeTopicVibeCheck,
   } = useChatStore();
 
   // Local state
@@ -630,12 +641,16 @@ export function ChatScreen() {
             await analyzeGroupEnergy(conversationId, parentCid || '');
             console.log('✅ Group energy analysis completed');
             break;
+          case 'topicvibecheck':
+            await analyzeTopicVibeCheck(conversationId, parentCid || '');
+            console.log('✅ Topic vibe check completed');
+            break;
         }
       } catch (analysisError) {
         console.error('❌ Failed to perform coach analysis:', analysisError);
       }
     },
-    [conversationId, parentCid, analyzeRatio, analyzeHorsemen, generateLoveMap, analyzeBids, analyzeRuptureRepair, analyzeACR, analyzeSharedInterests, analyzeTopicChampion, generateFriendshipCheckin, analyzeGroupEnergy]
+    [conversationId, parentCid, analyzeRatio, analyzeHorsemen, generateLoveMap, analyzeBids, analyzeRuptureRepair, analyzeACR, analyzeSharedInterests, analyzeTopicChampion, generateFriendshipCheckin, analyzeGroupEnergy, analyzeTopicVibeCheck]
   );
 
   /**
@@ -1237,8 +1252,8 @@ export function ChatScreen() {
           onClose={() => setShowCoachModal(false)}
           onOptionSelect={option => void handleCoachAnalysis(option)}
           isRomantic={isPartnerConversation}
-          isPlatonic={!isPartnerConversation && !isGroup}
-          isGroup={isGroup || false}
+          isPlatonic={!isPartnerConversation && !(isGroup || isParentGroup)}
+          isGroup={isGroup || isParentGroup}
         />
 
         {/* Send Error */}

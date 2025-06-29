@@ -24,6 +24,7 @@ import {
   analyzeConversationStats,
   formatPineconeMessages,
   DIM,
+  getTopicSentiment,
 } from './pinecone';
 import type { CallableRequest } from 'firebase-functions/v2/https';
 import { generateEmbeddings, cosineSimilarity } from './openai';
@@ -40,7 +41,9 @@ import {
   coachTopicChampionAI,
   coachFriendshipCheckinAI,
   coachGroupEnergyAI,
+  aiTopicVibeCheck,
   INITIAL_MESSAGE,
+  TOPIC_VIBE_TOPICS,
 } from './coach-ai';
 import type { FetchedData, RelationshipType } from './types';
 
@@ -603,7 +606,7 @@ export const coachTopicChampion = onCall<CoachTopicChampionData>(
 
     // Analyze each message
     for (const msg of allMessages) {
-      if (msg.type !== 'text' || !msg.text) continue;
+      // if (msg.type !== 'text' || !msg.text) continue;
 
       // Generate embedding for this message
       const msgEmbedding = await generateEmbeddings([msg.text]);
@@ -652,7 +655,7 @@ export const coachFriendshipCheckin = onCall<CoachFriendshipCheckinData>(
     const fetchedData = await fetchAllRequiredData(request);
 
     // Analyze message patterns
-    const messages = fetchedData.parentMessages;
+    const messages = fetchedData.parentMessages || [];
     const now = Date.now();
     const oneWeekAgo = now - 7 * 24 * 60 * 60 * 1000;
     const oneMonthAgo = now - 30 * 24 * 60 * 60 * 1000;
@@ -710,7 +713,7 @@ export const coachGroupEnergy = onCall<CoachGroupEnergyData>(async request => {
   // Fetch conversation data
   const fetchedData = await fetchAllRequiredData(request);
 
-  const messages = fetchedData.parentMessages;
+  const messages = fetchedData.parentMessages || [];
   const now = Date.now();
   const oneDayAgo = now - 24 * 60 * 60 * 1000;
   const oneWeekAgo = now - 7 * 24 * 60 * 60 * 1000;
@@ -784,6 +787,49 @@ export const coachGroupEnergy = onCall<CoachGroupEnergyData>(async request => {
 
   const response = await coachGroupEnergyAI(fetchedData, stats);
 
+  await sendCoachMessage(coachCid, response);
+  return { ok: true };
+});
+
+// 14) coachTopicVibeCheck - Topic Vibe Check (All types)
+interface CoachTopicVibeCheckData {
+  coachCid: string;
+  parentCid: string;
+}
+
+export const coachTopicVibeCheck = onCall<CoachTopicVibeCheckData>(async request => {
+  const { coachCid, parentCid } = request.data;
+  
+  if (!request.auth) {
+    throw new HttpsError('unauthenticated', 'Must be authenticated');
+  }
+
+  const fetchedData = await fetchAllRequiredData(request);
+
+  if (!fetchedData) {
+    throw new HttpsError('not-found', 'Required data not found');
+  }
+
+  // Generate embeddings for all topics
+  const embeddings = await generateEmbeddings(TOPIC_VIBE_TOPICS);
+  const topicEmbeddings = embeddings.map(({ text, embedding }) => ({
+    topic: text,
+    embedding
+  }));
+
+  // Get sentiment scores for each topic
+  const topicScores = await Promise.all(
+    topicEmbeddings.map(async ({ topic, embedding }) => {
+      const sentiment = await getTopicSentiment(embedding, parentCid);
+      return {
+        topic,
+        score: sentiment.avg
+      };
+    })
+  );
+
+
+  const response = await aiTopicVibeCheck(fetchedData, topicScores);
   await sendCoachMessage(coachCid, response);
   return { ok: true };
 });

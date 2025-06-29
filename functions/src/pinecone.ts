@@ -41,6 +41,54 @@ export interface HorsemanCounts {
   defensiveness: number;
 }
 
+export async function getTopicSentiment(
+  topicEmbedding: number[],
+  conversationId: string,
+  topK = 30,
+  similarityFloor = 0.3
+): Promise<{ avg: number; n: number; positives: number; negatives: number; }> {
+  const r = await index.query({
+    vector: topicEmbedding,
+    topK,
+    includeMetadata: true,
+    filter: { 
+      conversationId: conversationId
+    }
+  });
+
+  let wSum = 0, wTot = 0, pos = 0, neg = 0;
+  for (const m of r.matches) {
+    // Only process matches above similarity threshold
+    if (m.score && m.score >= similarityFloor) {
+      // Parse sentiment - it might be stored as string "positive", "negative", "neutral"
+      // or as a number
+      let sentimentScore = 0;
+      const sentimentValue = m.metadata?.sentiment;
+      
+      if (typeof sentimentValue === 'string') {
+        if (sentimentValue === 'positive') sentimentScore = 1;
+        else if (sentimentValue === 'negative') sentimentScore = -1;
+        else sentimentScore = 0; // neutral
+      } else if (typeof sentimentValue === 'number') {
+        sentimentScore = sentimentValue;
+      }
+      
+      const w = m.score;
+      wSum += sentimentScore * w;
+      wTot += w;
+      
+      if (sentimentScore > 0.3) pos++; 
+      else if (sentimentScore < -0.3) neg++;
+    }
+  }
+
+  return {
+    avg: wTot ? wSum / wTot : 0,
+    n: r.matches.filter(m => m.score && m.score >= similarityFloor).length,
+    positives: pos,
+    negatives: neg
+  };
+}
 /**
  * Query messages from Pinecone for a conversation
  */

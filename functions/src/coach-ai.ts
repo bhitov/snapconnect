@@ -3,6 +3,11 @@ import type { TextMessage } from './db';
 import type { FetchedData } from './types';
 import type { ConversationStats } from './pinecone';
 
+export const CHAT_TYPE = {
+  romantic: 'partner',
+  platonic: 'friend',
+  group: 'group',
+}
 
 
 export const INITIAL_MESSAGE =  {
@@ -25,6 +30,31 @@ You are analyzing their conversation with their partner and offering advice base
 };
 
 // Additional context for specific analysis types
+// Topic vibe check topics - broad conversation themes
+export const TOPIC_VIBE_TOPICS = [
+  "hobbies and interests",
+  "future plans and dreams",
+  "memories and nostalgia",
+  "entertainment and media",
+  "food and cooking",
+  "travel and adventures",
+  "home and living space",
+  "friends and social life",
+  "personal growth and learning",
+  "technology and gadgets",
+  "sports and fitness",
+  "music and arts",
+  "nature and outdoors",
+  "pets and animals",
+  "weekend activities",
+  "celebrations and holidays",
+  "achievements and successes",
+  "creative projects",
+  "favorite places",
+  "shared experiences",
+  "games and fun"
+];
+
 export const GOTTMAN_CONTEXT = {
   ratio: `Dr. John Gottman's research identified that successful couples maintain a 5:1 ratio of positive to negative interactions during conflict, 
 and even higher during everyday interactions. This 'magic ratio' is one of the strongest predictors of relationship success. 
@@ -101,7 +131,7 @@ export async function callCoachAI(
   const parentConvoHistory =
     parentLines.length > 0
       ? `Here are the last ${parentMessages.length} messages from ${options.displayName}'s chat` +
-        ` with their partner. (this may not be their full conversation):\n${parentLines}\n\n`
+        ` with their ${CHAT_TYPE[options.relationshipType]}. (this may not be their full conversation):\n${parentLines}\n\n`
       : '';
 
   const baseMessage = BASE_SYSTEM_MESSAGE[options.relationshipType] || BASE_SYSTEM_MESSAGE.romantic;
@@ -113,7 +143,8 @@ export async function callCoachAI(
     ${systemMessage}
 
     you are acting as a coach and therapist to ${options.displayName}, to whom you are talking. ` +
-    `address them directly not in the third person.  
+    `Refer to them in the second person ("You") not in the third person ("${options.displayName}").  
+    use a conversational tone and don't be too preachy
 
     ${parentConvoHistory}`;
 
@@ -516,4 +547,34 @@ Keep response under 150 words.`,
     { ...data, temperature: 0.5, coachMessages: undefined }
   );
 }
-EOF < /dev/null
+
+/**
+ * Analyze topic vibes for any conversation type
+ */
+export async function aiTopicVibeCheck(
+  data: FetchedData,
+  topicScores: Array<{ topic: string; score: number }>
+): Promise<string> {
+  const chatType = data.relationshipType;
+  const systemMessage = BASE_SYSTEM_MESSAGE[chatType];
+  
+  // Select a random topic from the top half
+  const sortedTopics = [...topicScores].sort((a, b) => b.score - a.score);
+  const topHalf = sortedTopics.slice(0, Math.ceil(sortedTopics.length / 2));
+  const selectedTopic = topHalf[Math.floor(Math.random() * topHalf.length)];
+  
+  const userMessage = `Explain to the user that an analysis of messsage sentiment in this conversation shows that the topic ${selectedTopic.topic} tends to lean positive.
+
+Then, please craft a brief message about this finding:
+1. Briefly explain why this might be (shared interest, mutual support, etc.)
+2. Suggest one way they could lean into this positive pattern
+
+Keep response under 100 words.`;
+
+  return callCoachAI(
+    systemMessage,
+    userMessage,
+    { ...data, temperature: 0.7, coachMessages: undefined, parentMessages: undefined }
+  );
+}
+
