@@ -5,7 +5,6 @@
  */
 
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Video, ResizeMode } from 'expo-av';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
@@ -69,7 +68,6 @@ export function SnapViewingScreen() {
 
   // Refs
   const timerRef = useRef<number | null>(null);
-  const videoRef = useRef<Video>(null);
   const pressStartTime = useRef<number>(0);
 
   /**
@@ -224,15 +222,10 @@ export function SnapViewingScreen() {
           pauseViewingSnap();
           setIsPaused(true);
           stopTimer();
-
-          // Pause video if it's a video snap
-          if (snap?.mediaType === 'video' && videoRef.current) {
-            void videoRef.current.pauseAsync();
-          }
         }
       }
     }, 100);
-  }, [isPaused, pauseViewingSnap, stopTimer, snap]);
+  }, [isPaused, pauseViewingSnap, stopTimer]);
 
   /**
    * Handle press end (resume functionality)
@@ -245,16 +238,11 @@ export function SnapViewingScreen() {
       resumeViewingSnap();
       setIsPaused(false);
       startTimer();
-
-      // Resume video if it's a video snap
-      if (snap?.mediaType === 'video' && videoRef.current) {
-        void videoRef.current.playAsync();
-      }
     } else if (pressDuration < 100) {
       // Quick tap - exit snap
       void handleSnapComplete();
     }
-  }, [isPaused, resumeViewingSnap, startTimer, snap, handleSnapComplete]);
+  }, [isPaused, resumeViewingSnap, startTimer, handleSnapComplete]);
 
   /**
    * Load snap on component mount
@@ -375,23 +363,11 @@ export function SnapViewingScreen() {
         onPressOut={handlePressOut}
       >
         <View style={styles.snapContainer}>
-          {snap.mediaType === 'photo' ? (
-            <Image
-              source={{ uri: resolveMediaUrl(snap.mediaUrl) }}
-              style={styles.media}
-              resizeMode='contain'
-            />
-          ) : (
-            <Video
-              ref={videoRef}
-              source={{ uri: resolveMediaUrl(snap.mediaUrl) }}
-              style={styles.media}
-              shouldPlay={!isPaused}
-              isLooping={false}
-              resizeMode={ResizeMode.CONTAIN}
-              useNativeControls={false}
-            />
-          )}
+          <Image
+            source={{ uri: resolveMediaUrl(snap.mediaUrl) }}
+            style={styles.media}
+            resizeMode='contain'
+          />
 
           {/* Text Overlay */}
           {snap.textOverlay && (

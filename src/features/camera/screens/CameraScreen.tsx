@@ -1,6 +1,6 @@
 /**
  * @file CameraScreen.tsx
- * @description Main camera screen for photo and video capture.
+ * @description Main camera screen for photo capture.
  * Handles permissions, camera state, and navigation to preview.
  */
 
@@ -55,15 +55,12 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
     error,
     mode,
     capturedMedia,
-    recording,
     controlsVisible,
     permissions,
 
     // Actions
     requestPermissions,
     capturePhoto,
-    startVideoRecording,
-    stopVideoRecording,
     clearError,
     setControlsVisible,
     hideCameraViewTemporarily,
@@ -86,13 +83,13 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
     useCallback(() => {
       console.log('📷 CameraScreen: Screen focused, requesting permissions');
 
-      const initializeCamera = async () => {
+      const initializeCamera = () => {
         try {
-          const granted = await requestPermissions();
+          const granted = requestPermissions();
           if (!granted) {
             Alert.alert(
               'Camera Permission Required',
-              'SnapConnect needs camera access to take photos and videos.',
+              'SnapConnect needs camera access to take photos.',
               [
                 {
                   text: 'Settings',
@@ -145,15 +142,7 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
     console.log('📷 CameraScreen: Handling capture, mode:', mode);
 
     try {
-      if (mode === 'photo') {
-        await capturePhoto(cameraRef);
-      } else if (mode === 'video') {
-        if (recording.isRecording) {
-          await stopVideoRecording(cameraRef);
-        } else {
-          await startVideoRecording(cameraRef);
-        }
-      }
+      await capturePhoto(cameraRef);
     } catch (captureError) {
       console.error('❌ CameraScreen: Capture failed:', captureError);
       Alert.alert(
@@ -162,14 +151,7 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
         [{ text: 'OK' }]
       );
     }
-  }, [
-    mode,
-    recording.isRecording,
-    capturePhoto,
-    startVideoRecording,
-    stopVideoRecording,
-    cameraRef,
-  ]);
+  }, [mode, capturePhoto, cameraRef]);
 
   /**
    * Handle tap to focus/hide controls
@@ -252,23 +234,8 @@ export function CameraScreen({ navigation }: CameraScreenProps) {
 
           {/* Bottom Controls */}
           <View style={styles.bottomControls}>
-            <CaptureButton
-              mode={mode}
-              isRecording={recording.isRecording}
-              recordingDuration={recording.duration}
-              onCapture={() => void handleCapture()}
-            />
+            <CaptureButton mode={mode} onCapture={() => void handleCapture()} />
           </View>
-        </View>
-      )}
-
-      {/* Recording Indicator */}
-      {recording.isRecording && (
-        <View style={styles.recordingIndicator}>
-          <View style={styles.recordingDot} />
-          <Text style={[styles.recordingText, { color: theme.colors.white }]}>
-            REC {Math.floor(recording.duration / 1000)}s
-          </Text>
         </View>
       )}
     </View>
@@ -340,31 +307,6 @@ const styles = StyleSheet.create({
     paddingBottom: 50, // Account for home indicator
     paddingHorizontal: 20,
     alignItems: 'center',
-  },
-
-  recordingIndicator: {
-    position: 'absolute',
-    top: 60,
-    left: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-
-  recordingDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#FF0000',
-    marginRight: 6,
-  },
-
-  recordingText: {
-    fontSize: 14,
-    fontWeight: '600',
   },
 
   hiddenCameraView: {

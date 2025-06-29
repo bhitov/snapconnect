@@ -876,11 +876,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
   },
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   updateGroupTitle: async (groupId: string, title: string) => {
     console.log('👥 ChatStore: Updating group title:', groupId, title);
     // TODO: Implement in chatService
   },
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   leaveGroup: async (groupId: string) => {
     console.log('👥 ChatStore: Leaving group:', groupId);
     // TODO: Implement in chatService

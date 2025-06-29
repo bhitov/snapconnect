@@ -6,7 +6,6 @@
 
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Video, ResizeMode } from 'expo-av';
 import * as MediaLibrary from 'expo-media-library';
 import { useState, useCallback } from 'react';
 import {
@@ -177,22 +176,11 @@ export function SnapPreviewScreen() {
 
       {/* Media Display */}
       <View style={styles.mediaContainer}>
-        {type === 'photo' ? (
-          <Image
-            source={{ uri: resolveMediaUrl(uri) }}
-            style={styles.media}
-            resizeMode='cover'
-          />
-        ) : (
-          <Video
-            source={{ uri: resolveMediaUrl(uri) }}
-            style={styles.media}
-            shouldPlay={false}
-            isLooping={false}
-            useNativeControls
-            resizeMode={ResizeMode.COVER}
-          />
-        )}
+        <Image
+          source={{ uri: resolveMediaUrl(uri) }}
+          style={styles.media}
+          resizeMode='cover'
+        />
 
         {/* Text Overlay */}
         {renderTextOverlay()}

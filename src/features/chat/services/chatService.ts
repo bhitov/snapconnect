@@ -198,7 +198,7 @@ class ChatService {
    */
   private async uploadMedia(
     mediaUri: string,
-    mediaType: 'photo' | 'video',
+    mediaType: 'photo',
     onProgress?: (progress: number) => void
   ): Promise<string> {
     console.log('📤 ChatService: Uploading media:', mediaType, mediaUri);

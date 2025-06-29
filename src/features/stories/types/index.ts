@@ -20,7 +20,7 @@ export type StoryPrivacy = 'all' | 'friends' | 'custom';
 /**
  * Media types for story posts
  */
-export type StoryMediaType = 'photo' | 'video';
+export type StoryMediaType = 'photo';
 
 /**
  * Story post status

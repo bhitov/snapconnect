@@ -12,11 +12,11 @@ export type RootStackParamList = {
   Main: undefined | { screen?: keyof MainTabParamList };
   SnapPreview: {
     uri: string;
-    type: 'photo' | 'video';
+    type: 'photo';
   };
   RecipientSelection: {
     mediaUri: string;
-    mediaType: 'photo' | 'video';
+    mediaType: 'photo';
     textOverlay?: string;
   };
   ViewSnap: {
@@ -95,7 +95,7 @@ export type StoriesStackParamList = {
   };
   CreateStory: {
     mediaUri: string;
-    mediaType: 'photo' | 'video';
+    mediaType: 'photo';
   };
 };
 

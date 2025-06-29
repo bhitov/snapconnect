@@ -13,7 +13,7 @@ export type MessageType = 'text' | 'snap';
 /**
  * Snap media type
  */
-export type SnapMediaType = 'photo' | 'video';
+export type SnapMediaType = 'photo';
 
 /**
  * Message status for both text and snaps

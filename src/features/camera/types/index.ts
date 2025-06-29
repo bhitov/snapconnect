@@ -10,7 +10,7 @@ import type React from 'react';
 /**
  * Camera mode type
  */
-export type CameraMode = 'photo' | 'video';
+export type CameraMode = 'photo';
 
 /**
  * Camera type (front/back)
@@ -25,7 +25,7 @@ export type FlashMode = 'auto' | 'on' | 'off' | 'torch';
 /**
  * Media type for captured content
  */
-export type MediaType = 'photo' | 'video';
+export type MediaType = 'photo';
 
 /**
  * Camera settings interface
@@ -36,7 +36,6 @@ export interface CameraSettings {
   quality: number; // 0-1
   ratio?: string; // e.g., '16:9', '4:3'
   enableAudio: boolean;
-  recordingTimeLimit: number; // in seconds
 }
 
 /**
@@ -48,7 +47,7 @@ export interface CapturedMedia {
   type: MediaType;
   width: number;
   height: number;
-  duration?: number; // for videos in milliseconds
+  duration?: number; // for future use
   size: number; // file size in bytes
   timestamp: number;
 }
@@ -63,23 +62,10 @@ export interface CameraPermissions {
 }
 
 /**
- * Recording state interface
- */
-export interface RecordingState {
-  isRecording: boolean;
-  duration: number; // current recording duration in milliseconds
-  startTime?: number;
-  maxDuration: number; // maximum allowed duration in milliseconds
-  intervalRef?: number; // reference to the recording timer interval (browser setInterval returns number)
-  recordingPromise?: Promise<{ uri: string } | undefined>; // promise from recordAsync
-}
-
-/**
  * Camera controls state
  */
 export interface CameraControlsState {
   isVisible: boolean;
-  isRecording: boolean;
   flashMode: FlashMode;
   cameraType: CameraType;
   isFlipping: boolean; // animation state for camera flip
@@ -142,7 +128,6 @@ export type CameraErrorType =
   | 'permission_denied'
   | 'camera_unavailable'
   | 'microphone_unavailable'
-  | 'recording_failed'
   | 'capture_failed'
   | 'processing_failed'
   | 'storage_full'
@@ -173,9 +158,6 @@ export interface CameraState {
   isLoading: boolean;
   error: CameraError | null;
 
-  // Recording
-  recording: RecordingState;
-
   // Captured media
   capturedMedia: CapturedMedia | null;
   processedMedia: ProcessedMedia | null;
@@ -200,8 +182,8 @@ export interface CameraState {
  */
 export interface CameraActions {
   // Permissions
-  requestPermissions: () => Promise<boolean>;
-  checkPermissions: () => Promise<CameraPermissions>;
+  requestPermissions: () => boolean;
+  checkPermissions: () => CameraPermissions;
 
   // Settings
   updateSettings: (settings: Partial<CameraSettings>) => void;
@@ -210,12 +192,6 @@ export interface CameraActions {
 
   // Media capture
   capturePhoto: (
-    cameraRef?: React.RefObject<CameraView | null>
-  ) => Promise<CapturedMedia>;
-  startVideoRecording: (
-    cameraRef?: React.RefObject<CameraView | null>
-  ) => Promise<void>;
-  stopVideoRecording: (
     cameraRef?: React.RefObject<CameraView | null>
   ) => Promise<CapturedMedia>;
 
@@ -271,8 +247,6 @@ export interface UseCameraReturn {
 
   // Actions
   capturePhoto: () => Promise<void>;
-  startRecording: () => Promise<void>;
-  stopRecording: () => Promise<void>;
   toggleCamera: () => void;
   setFlashMode: (mode: FlashMode) => void;
 

@@ -18,7 +18,6 @@ import type {
   FilterType,
   TextOverlay,
   MediaFilter,
-  RecordingState,
 } from '../types';
 import type { CameraView } from 'expo-camera';
 import type React from 'react';
@@ -32,7 +31,6 @@ const defaultSettings: CameraSettings = {
   quality: 0.8,
   ratio: '16:9',
   enableAudio: true,
-  recordingTimeLimit: 180, // 3 minutes
 };
 
 /**
@@ -42,15 +40,6 @@ const defaultPermissions: CameraPermissions = {
   camera: false,
   microphone: false,
   mediaLibrary: false,
-};
-
-/**
- * Default recording state
- */
-const defaultRecording: RecordingState = {
-  isRecording: false,
-  duration: 0,
-  maxDuration: 180000, // 3 minutes in milliseconds
 };
 
 /**
@@ -105,9 +94,6 @@ const initialState = {
   isLoading: false,
   error: null,
 
-  // Recording
-  recording: defaultRecording,
-
   // Captured media
   capturedMedia: null,
   processedMedia: null,
@@ -137,7 +123,8 @@ export const useCameraStore = create<CameraStore>()(
       ...initialState,
 
       // Permissions
-      requestPermissions: async () => {
+
+      requestPermissions: () => {
         console.log('📋 CameraStore: Requesting permissions');
 
         set(state => {
@@ -177,7 +164,7 @@ export const useCameraStore = create<CameraStore>()(
         }
       },
 
-      checkPermissions: async () => {
+      checkPermissions: () => {
         console.log('🔍 CameraStore: Checking permissions');
 
         // This will be implemented in the camera service
@@ -277,168 +264,6 @@ export const useCameraStore = create<CameraStore>()(
               message: 'Failed to capture photo. Please try again.',
             };
             state.isLoading = false;
-          });
-
-          throw error;
-        }
-      },
-
-      startVideoRecording: async (
-        cameraRef?: React.RefObject<CameraView | null>
-      ) => {
-        console.log('🎥 CameraStore: Starting video recording');
-
-        set(state => {
-          state.recording.isRecording = true;
-          state.recording.startTime = Date.now();
-          state.recording.duration = 0;
-          state.controlsVisible = false;
-          state.error = null;
-        });
-
-        try {
-          if (!cameraRef?.current) {
-            throw new Error('Camera reference not available');
-          }
-
-          console.log(
-            '🎥 CameraStore: Starting video recording with camera ref'
-          );
-
-          // Start the recording and store the promise
-          const recordingPromise = cameraRef.current.recordAsync({
-            maxDuration: 180, // 3 minutes in seconds
-          });
-
-          // Start recording timer
-          const recordingInterval = setInterval(() => {
-            const state = get();
-            if (!state.recording.isRecording || !state.recording.startTime) {
-              clearInterval(recordingInterval);
-              return;
-            }
-
-            const elapsed = Date.now() - state.recording.startTime;
-
-            set(currentState => {
-              currentState.recording.duration = elapsed;
-            });
-
-            // Auto-stop at max duration
-            if (elapsed >= state.recording.maxDuration) {
-              clearInterval(recordingInterval);
-              void get().stopVideoRecording(cameraRef);
-            }
-          }, 100);
-
-          // Store the interval reference and recording promise for cleanup
-          set({
-            recording: {
-              ...get().recording,
-              intervalRef: recordingInterval,
-              recordingPromise,
-            },
-          });
-
-          console.log('✅ CameraStore: Video recording started');
-        } catch (error) {
-          console.error(
-            '❌ CameraStore: Failed to start video recording:',
-            error
-          );
-
-          set(state => {
-            state.recording.isRecording = false;
-            state.controlsVisible = true;
-            state.error = {
-              type: 'recording_failed',
-              message: 'Failed to start video recording. Please try again.',
-            };
-          });
-
-          throw error;
-        }
-      },
-
-      stopVideoRecording: async (
-        cameraRef?: React.RefObject<CameraView | null>
-      ) => {
-        console.log('⏹️ CameraStore: Stopping video recording');
-
-        const state = get();
-
-        // Clear the recording interval
-        if (state.recording.intervalRef) {
-          clearInterval(state.recording.intervalRef);
-        }
-
-        set(currentState => {
-          currentState.recording.isRecording = false;
-          currentState.controlsVisible = true;
-          currentState.isLoading = true;
-        });
-
-        try {
-          if (!cameraRef?.current) {
-            throw new Error('Camera reference not available');
-          }
-
-          console.log(
-            '⏹️ CameraStore: Stopping video recording with camera ref'
-          );
-
-          // Stop the recording
-          cameraRef.current.stopRecording();
-
-          // Get the stored recording promise and await it for the video data
-          const recordingPromise = state.recording.recordingPromise;
-          if (!recordingPromise) {
-            throw new Error('No recording promise found');
-          }
-
-          const video = await recordingPromise;
-
-          console.log('⏹️ CameraStore: Video recording stopped:', video?.uri);
-
-          const capturedMedia: CapturedMedia = {
-            id: generateId(),
-            uri: video?.uri || '',
-            type: 'video',
-            width: 1080, // Default values since Expo doesn't provide them
-            height: 1920,
-            duration: state.recording.duration,
-            size: video?.uri ? video.uri.length * 0.75 : 0, // Rough estimate
-            timestamp: Date.now(),
-          };
-
-          set(currentState => {
-            currentState.capturedMedia = capturedMedia;
-            currentState.processedMedia = {
-              ...capturedMedia,
-              originalUri: capturedMedia.uri,
-              filter: currentState.selectedFilter,
-              textOverlays: [],
-              isProcessing: false,
-            };
-            currentState.recording = defaultRecording;
-            currentState.isLoading = false;
-          });
-
-          console.log(
-            '✅ CameraStore: Video recording completed, URI:',
-            capturedMedia.uri
-          );
-          return capturedMedia;
-        } catch (error) {
-          console.error('❌ CameraStore: Video recording failed:', error);
-
-          set(currentState => {
-            currentState.error = {
-              type: 'recording_failed',
-              message: 'Failed to save video recording. Please try again.',
-            };
-            currentState.recording = defaultRecording;
-            currentState.isLoading = false;
           });
 
           throw error;
@@ -718,7 +543,6 @@ export const useCameraStore = create<CameraStore>()(
 export const useCameraSettings = () => useCameraStore(state => state.settings);
 export const useCameraPermissions = () =>
   useCameraStore(state => state.permissions);
-export const useRecordingState = () => useCameraStore(state => state.recording);
 export const useCapturedMedia = () =>
   useCameraStore(state => state.capturedMedia);
 export const useProcessedMedia = () =>

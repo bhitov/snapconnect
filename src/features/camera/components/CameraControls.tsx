@@ -127,7 +127,7 @@ export function CameraControls() {
         ]}
       >
         <Text style={[styles.modeText, { color: theme.colors.primary }]}>
-          {mode.toUpperCase()}
+          PHOTO
         </Text>
       </View>
     </View>

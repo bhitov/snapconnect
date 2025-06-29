@@ -52,7 +52,7 @@ type RecipientSelectionScreenRouteProp = RouteProp<
 
 interface RouteParams {
   mediaUri: string;
-  mediaType: 'photo' | 'video';
+  mediaType: 'photo';
   textOverlay?: string;
 }
 

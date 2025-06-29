@@ -5,7 +5,6 @@
  */
 
 import { useFocusEffect } from '@react-navigation/native';
-import { Video, ResizeMode } from 'expo-av';
 import { getAuth } from 'firebase/auth';
 import React from 'react';
 import {
@@ -439,32 +438,6 @@ export function ViewStoryScreen({ navigation, route }: ViewStoryScreenProps) {
           <Text style={styles.mediaErrorText}>Failed to load media</Text>
           <Text style={styles.mediaErrorUrl}>{currentPost.mediaUrl}</Text>
         </View>
-      ) : currentPost.mediaType === 'video' ? (
-        <Video
-          source={{ uri: resolveMediaUrl(currentPost.mediaUrl) }}
-          style={styles.backgroundImage}
-          resizeMode={ResizeMode.COVER}
-          shouldPlay={isPlaying}
-          isLooping={false}
-          isMuted={false}
-          onLoadStart={() => {
-            console.log(
-              '🎥 ViewStoryScreen: Video loading started for:',
-              currentPost.mediaUrl
-            );
-            setMediaLoadError(false);
-          }}
-          onLoad={() =>
-            console.log('✅ ViewStoryScreen: Video loaded successfully')
-          }
-          onError={videoError => {
-            console.error(
-              '❌ ViewStoryScreen: Video failed to load:',
-              videoError
-            );
-            setMediaLoadError(true);
-          }}
-        />
       ) : (
         <Image
           source={{ uri: resolveMediaUrl(currentPost.mediaUrl) }}

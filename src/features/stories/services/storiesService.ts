@@ -108,7 +108,7 @@ class StoriesService {
    */
   private async uploadMediaToStorage(
     mediaUri: string,
-    mediaType: 'photo' | 'video',
+    mediaType: 'photo',
     postId: string,
     onProgress?: (progress: StoryUploadProgress) => void
   ): Promise<string> {

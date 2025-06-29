@@ -37,8 +37,8 @@ import {
 import { FriendRequest } from '../types';
 
 import type { FriendsStackParamList } from '@/shared/navigation/types';
-import type { StackNavigationProp } from '@react-navigation/stack';
 import type { RouteProp } from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
 
 interface FriendRequestsScreenProps {
   navigation: StackNavigationProp<FriendsStackParamList, 'FriendRequests'>;
@@ -742,31 +742,67 @@ export function FriendRequestsScreen({
       </View>
 
       {/* Requests list */}
-      <FlatList
-        data={currentRequests}
-        renderItem={
-          activeTab === 'received'
-            ? renderReceivedRequest
-            : activeTab === 'sent'
-              ? renderSentRequest
-              : (renderPartnerRequest as any)
-        }
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={renderEmptyState}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={() => {
-              void refreshFriends();
-              void loadFriendRequests();
-              void loadPartnerRequests();
-            }}
-            tintColor={theme.colors.primary}
-          />
-        }
-      />
+      {activeTab === 'received' ? (
+        <FlatList
+          data={receivedRequests}
+          renderItem={renderReceivedRequest}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.listContainer}
+          ListEmptyComponent={renderEmptyState}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={() => {
+                void refreshFriends();
+                void loadFriendRequests();
+                void loadPartnerRequests();
+              }}
+              tintColor={theme.colors.primary}
+            />
+          }
+        />
+      ) : activeTab === 'sent' ? (
+        <FlatList
+          data={sentRequests}
+          renderItem={renderSentRequest}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.listContainer}
+          ListEmptyComponent={renderEmptyState}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={() => {
+                void refreshFriends();
+                void loadFriendRequests();
+                void loadPartnerRequests();
+              }}
+              tintColor={theme.colors.primary}
+            />
+          }
+        />
+      ) : (
+        <FlatList
+          data={partnerRequests}
+          renderItem={renderPartnerRequest}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.listContainer}
+          ListEmptyComponent={renderEmptyState}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={() => {
+                void refreshFriends();
+                void loadFriendRequests();
+                void loadPartnerRequests();
+              }}
+              tintColor={theme.colors.primary}
+            />
+          }
+        />
+      )}
 
       {/* Error display */}
       {requestsError && (

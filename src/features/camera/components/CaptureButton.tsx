@@ -1,16 +1,15 @@
 /**
  * @file CaptureButton.tsx
- * @description Animated capture button for photo and video recording.
+ * @description Animated capture button for photo capture.
  * Features Snapchat-style interactions and visual feedback.
  */
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  withTiming,
   interpolate,
   interpolateColor,
   Extrapolate,
@@ -24,8 +23,6 @@ import type { CameraMode } from '../types';
 
 interface CaptureButtonProps {
   mode: CameraMode;
-  isRecording: boolean;
-  recordingDuration: number;
   onCapture: () => void;
 }
 
@@ -44,42 +41,13 @@ const ANIMATION_CONFIG = {
  * @param {CaptureButtonProps} props - Component props
  * @returns {JSX.Element} Capture button component
  */
-export function CaptureButton({
-  mode,
-  isRecording,
-  recordingDuration,
-  onCapture,
-}: CaptureButtonProps) {
+export function CaptureButton({ mode, onCapture }: CaptureButtonProps) {
   const theme = useTheme();
   const scale = useSharedValue(1);
   const innerScale = useSharedValue(1);
   const borderColor = useSharedValue(0);
 
-  console.log(
-    '📷 CaptureButton: Rendering, mode:',
-    mode,
-    'recording:',
-    isRecording
-  );
-
-  /**
-   * Animate button for recording state
-   */
-  useEffect(() => {
-    if (isRecording) {
-      // Animate to recording state
-      innerScale.value = withSpring(0.6, ANIMATION_CONFIG);
-      borderColor.value = withTiming(1, { duration: 300 });
-
-      // Pulse animation during recording
-      scale.value = withSpring(1.1, ANIMATION_CONFIG);
-    } else {
-      // Animate back to normal state
-      innerScale.value = withSpring(1, ANIMATION_CONFIG);
-      borderColor.value = withTiming(0, { duration: 300 });
-      scale.value = withSpring(1, ANIMATION_CONFIG);
-    }
-  }, [isRecording, innerScale, borderColor, scale]);
+  console.log('📷 CaptureButton: Rendering, mode:', mode);
 
   /**
    * Handle button press with animation
@@ -89,11 +57,11 @@ export function CaptureButton({
 
     // Quick press animation
     scale.value = withSpring(0.9, ANIMATION_CONFIG, () => {
-      scale.value = withSpring(isRecording ? 1.1 : 1, ANIMATION_CONFIG);
+      scale.value = withSpring(1, ANIMATION_CONFIG);
     });
 
     onCapture();
-  }, [onCapture, scale, isRecording]);
+  }, [onCapture, scale]);
 
   /**
    * Animated styles for outer button
@@ -120,22 +88,10 @@ export function CaptureButton({
     ),
   }));
 
-  /**
-   * Format recording duration
-   */
-  const formatDuration = (duration: number): string => {
-    const seconds = Math.floor(duration / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
-
   return (
     <View style={styles.container}>
       {/* Mode indicator */}
-      <Text style={[styles.modeText, { color: theme.colors.white }]}>
-        {mode === 'photo' ? 'TAP' : 'HOLD'}
-      </Text>
+      <Text style={[styles.modeText, { color: theme.colors.white }]}>TAP</Text>
 
       {/* Capture button */}
       <TouchableOpacity
@@ -160,19 +116,10 @@ export function CaptureButton({
         </Animated.View>
       </TouchableOpacity>
 
-      {/* Recording duration */}
-      {isRecording && (
-        <Text style={[styles.durationText, { color: theme.colors.white }]}>
-          {formatDuration(recordingDuration)}
-        </Text>
-      )}
-
       {/* Mode instruction */}
-      {!isRecording && (
-        <Text style={[styles.instructionText, { color: theme.colors.gray2 }]}>
-          {mode === 'photo' ? 'for photo' : 'for video'}
-        </Text>
-      )}
+      <Text style={[styles.instructionText, { color: theme.colors.gray2 }]}>
+        for photo
+      </Text>
     </View>
   );
 }
