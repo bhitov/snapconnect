@@ -82,28 +82,21 @@ interface CoachLoveMapData {
   parentCid: string;
 }
 
-interface FetchOptions {
-  includeCoachHistory?: boolean;
-  includeParentMessages?: number;
-}
-
 /**
  * Fetch all required data for coach operations
+ * Always fetches coach messages and last 100 parent messages
  */
 export async function fetchAllRequiredData(
-  request: CallableRequest<{ coachCid?: string; parentCid?: string }>,
-  options: FetchOptions = {}
+  request: CallableRequest<{ coachCid?: string; parentCid?: string }>
 ): Promise<FetchedData> {
   const data = await validateCoachParams(request);
   const result: FetchedData = { ...data };
   
-  if (options.includeCoachHistory && data.coachCid) {
-    result.coachMessages = await getAllMessages(data.coachCid);
-  }
+  // Always fetch coach messages
+  result.coachMessages = await getAllMessages(data.coachCid);
   
-  if (options.includeParentMessages && data.parentCid) {
-    result.parentMessages = await getRecentMessagesWithUserInfo(data.parentCid, options.includeParentMessages);
-  }
+  // Always fetch last 100 parent messages with user info
+  result.parentMessages = await getRecentMessagesWithUserInfo(data.parentCid, 100);
   
   return result;
 }
@@ -196,10 +189,7 @@ export const coachReply = onCall<CoachReplyData>(async request => {
   });
 
   // Fetch conversation data
-  const fetchedData = await fetchAllRequiredData(request, {
-    includeCoachHistory: true,
-    includeParentMessages: RECENT_PARENT
-  });
+  const fetchedData = await fetchAllRequiredData(request);
 
   // Get stats from parent chat (Pinecone)
   const parentMsgs = await queryConversationMessages(parentCid, RECENT_PARENT);
@@ -221,10 +211,7 @@ export const coachAnalyze = onCall<CoachAnalyzeData>(async request => {
   const { n = 30 } = request.data;
   
   // Fetch all required data including parent messages
-  const data = await fetchAllRequiredData(request, {
-    includeCoachHistory: false,
-    includeParentMessages: n
-  });
+  const data = await fetchAllRequiredData(request);
 
   // Query conversation and analyze stats
   const res = await queryConversationMessages(data.parentCid, n);
@@ -301,10 +288,7 @@ export const coachLoveMap = onCall<CoachLoveMapData>(async request => {
   const { coachCid, parentCid } = data;
 
   // Fetch conversation data
-  const fetchedData = await fetchAllRequiredData(request, {
-    includeCoachHistory: true,
-    includeParentMessages: 0
-  });
+  const fetchedData = await fetchAllRequiredData(request);
 
   // Query Pinecone to analyze topic coverage
   const res = await queryConversationMessages(parentCid, 100);
