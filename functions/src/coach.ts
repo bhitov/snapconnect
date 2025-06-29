@@ -7,10 +7,14 @@ import {
   saveTextMessage,
   getRecentMessages,
   getAllMessages,
+  getRecentMessagesWithUserInfo,
+  getAllMessagesWithUserInfo,
   formatMessagesForContext,
+  formatMessagesWithUserInfoForContext,
   getUserInfo,
   type UserInfo,
   type TextMessage,
+  type TextMessageWithUserInfo,
 } from './db';
 import {
   queryConversationMessages,
@@ -98,7 +102,7 @@ export async function fetchAllRequiredData(
   }
   
   if (options.includeParentMessages && data.parentCid) {
-    result.parentMessages = await getRecentMessages(data.parentCid, options.includeParentMessages);
+    result.parentMessages = await getRecentMessagesWithUserInfo(data.parentCid, options.includeParentMessages);
   }
   
   return result;

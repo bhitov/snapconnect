@@ -1,4 +1,4 @@
-import type { TextMessage } from "./db";
+import type { TextMessage, TextMessageWithUserInfo } from "./db";
 
 export interface FetchedData {
   uid: string;
@@ -7,5 +7,5 @@ export interface FetchedData {
   displayName: string;
   username: string;
   coachMessages?: TextMessage[];
-  parentMessages?: TextMessage[];
+  parentMessages?: TextMessageWithUserInfo[];
 }

@@ -70,10 +70,18 @@ export async function callCoachAI(
   let finalUserMessage = userMessage;
   if (parentMessages.length > 0) {
     const parentLines = parentMessages
-      .map(m => `${m.senderId}: ${m.text}`)
+      .map(m => {
+        // For messages with user info, use display name
+        if ('senderInfo' in m && m.senderInfo) {
+          const name = m.senderInfo.displayName || m.senderInfo.username || m.senderId;
+          return `${name}: ${m.text}`;
+        }
+        // Fallback for regular messages
+        return `${m.senderId}: ${m.text}`;
+      })
       .join('\n');
     finalUserMessage = `Here are the last ${parentMessages.length} messages from ${options.displayName}'s chat` +
-    `with their partner. Keep in mind that this may not be the full conversation:\n${parentLines}\n\n${userMessage}`;
+    ` with their partner. Keep in mind that this may not be the full conversation:\n${parentLines}\n\n${userMessage}`;
   }
   
   messages.push({ role: 'user', content: finalUserMessage });
