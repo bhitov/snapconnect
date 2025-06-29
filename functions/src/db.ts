@@ -105,11 +105,11 @@ export async function getRecentMessagesWithUserInfo(
 ): Promise<TextMessageWithUserInfo[]> {
   const messages = await getRecentMessages(conversationId, limit);
   const participantInfo = await getConversationParticipants(conversationId);
-  
+
   // Add user info to each message
   return messages.map(msg => ({
     ...msg,
-    senderInfo: participantInfo.get(msg.senderId)
+    senderInfo: participantInfo.get(msg.senderId),
   }));
 }
 
@@ -142,11 +142,11 @@ export async function getAllMessagesWithUserInfo(
 ): Promise<TextMessageWithUserInfo[]> {
   const messages = await getAllMessages(conversationId);
   const participantInfo = await getConversationParticipants(conversationId);
-  
+
   // Add user info to each message
   return messages.map(msg => ({
     ...msg,
-    senderInfo: participantInfo.get(msg.senderId)
+    senderInfo: participantInfo.get(msg.senderId),
   }));
 }
 
@@ -159,9 +159,7 @@ export function formatMessagesForContext(
   userLabel: string = 'You'
 ): string {
   return messages
-    .map(
-      m => `${m.senderId === 'coach' ? coachLabel : userLabel}: ${m.text}`
-    )
+    .map(m => `${m.senderId === 'coach' ? coachLabel : userLabel}: ${m.text}`)
     .join('\n');
 }
 
@@ -178,7 +176,8 @@ export function formatMessagesWithUserInfoForContext(
         return `${coachLabel}: ${m.text}`;
       }
       // Use display name if available, otherwise fall back to username or senderId
-      const name = m.senderInfo?.displayName || m.senderInfo?.username || m.senderId;
+      const name =
+        m.senderInfo?.displayName || m.senderInfo?.username || m.senderId;
       return `${name}: ${m.text}`;
     })
     .join('\n');
@@ -192,28 +191,30 @@ export async function getUserInfo(uid: string): Promise<UserInfo | null> {
   if (!snapshot.exists()) {
     return null;
   }
-  
+
   const userData = snapshot.val();
   return {
     displayName: userData.displayName || '',
-    username: userData.username || ''
+    username: userData.username || '',
   };
 }
 
 /**
  * Get user information for multiple uids
  */
-export async function getUsersInfo(uids: string[]): Promise<Map<string, UserInfo>> {
+export async function getUsersInfo(
+  uids: string[]
+): Promise<Map<string, UserInfo>> {
   const userMap = new Map<string, UserInfo>();
-  
+
   // Fetch all users in parallel
-  const promises = uids.map(async (uid) => {
+  const promises = uids.map(async uid => {
     const userInfo = await getUserInfo(uid);
     if (userInfo) {
       userMap.set(uid, userInfo);
     }
   });
-  
+
   await Promise.all(promises);
   return userMap;
 }
@@ -221,17 +222,19 @@ export async function getUsersInfo(uids: string[]): Promise<Map<string, UserInfo
 /**
  * Get conversation participants' information
  */
-export async function getConversationParticipants(conversationId: string): Promise<Map<string, UserInfo>> {
+export async function getConversationParticipants(
+  conversationId: string
+): Promise<Map<string, UserInfo>> {
   const convSnapshot = await db.ref(`conversations/${conversationId}`).get();
   if (!convSnapshot.exists()) {
     return new Map();
   }
-  
+
   const conversation = convSnapshot.val() as Conversation;
   const participants = conversation.participants || [];
-  
+
   // Filter out 'coach' from participants list as it's not a real user
   const userIds = participants.filter(p => p !== 'coach');
-  
+
   return getUsersInfo(userIds);
 }

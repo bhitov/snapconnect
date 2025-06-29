@@ -14,7 +14,7 @@ and even higher during everyday interactions. This 'magic ratio' is one of the s
 Positive interactions include expressions of interest, affection, humor, empathy, and acceptance, 
 while negative interactions include criticism, contempt, defensiveness, and stonewalling.
 I'll help you understand your ratio and provide strategies to improve it.`,
-  
+
   horsemen: `Dr. John Gottman identified these four communication patterns as the strongest predictors of relationship failure: 
 1) Criticism (attacking character vs. addressing behavior)
 2) Contempt (superiority, disrespect, mockery)
@@ -24,7 +24,7 @@ I'll help you understand your ratio and provide strategies to improve it.`,
 Each horseman has specific antidotes that you can practice: using "I" statements instead of criticism, 
 building appreciation to counter contempt, taking responsibility instead of being defensive, 
 and learning self-soothing techniques to prevent stonewalling.`,
-  
+
   loveMap: `Dr. John Gottman's Love Map concept refers to the part of your brain where you store all the relevant information 
 about your partner's life - their hopes, dreams, fears, stresses, and joys. 
 Having a detailed Love Map of your partner's inner world helps you both handle stressful events and conflict better. 
@@ -32,8 +32,8 @@ You can build your Love Map by asking open-ended questions and staying curious a
 };
 
 interface CallCoachAIOptions extends FetchedData {
-//   parentMessages?: TextMessage[];
-//   coachMessages?: TextMessage[];
+  //   parentMessages?: TextMessage[];
+  //   coachMessages?: TextMessage[];
   temperature?: number;
 }
 
@@ -45,41 +45,49 @@ export async function callCoachAI(
   userMessage: string,
   options: CallCoachAIOptions
 ): Promise<string> {
-  const { 
+  const {
     parentMessages = [],
     coachMessages = [],
-    temperature = 0.5
+    temperature = 0.5,
   } = options;
 
-  const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [];
+  const messages: Array<{
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+  }> = [];
   // const parentConvoHistory =  their partner. Keep in mind that this may not be the full conversation:\n${parentLines}\n\n${userMessage}`;
-    const parentLines = parentMessages
-      .map(m => {
-        // For messages with user info, use display name
-        if ('senderInfo' in m && m.senderInfo) {
-          const name = m.senderInfo.displayName || m.senderInfo.username || m.senderId;
-          return `${name}: ${m.text}`;
-        }
-        // Fallback for regular messages
-        return `${m.senderId}: ${m.text}`;
-      })
-      .join('\n');
+  const parentLines = parentMessages
+    .map(m => {
+      // For messages with user info, use display name
+      if ('senderInfo' in m && m.senderInfo) {
+        const name =
+          m.senderInfo.displayName || m.senderInfo.username || m.senderId;
+        return `${name}: ${m.text}`;
+      }
+      // Fallback for regular messages
+      return `${m.senderId}: ${m.text}`;
+    })
+    .join('\n');
 
-      const parentConvoHistory = parentLines.length > 0 ? 
-      `Here are the last ${parentMessages.length} messages from ${options.displayName}'s chat` +
-      ` with their partner. (this may not be their full conversation):\n${parentLines}\n\n` : '';
+  const parentConvoHistory =
+    parentLines.length > 0
+      ? `Here are the last ${parentMessages.length} messages from ${options.displayName}'s chat` +
+        ` with their partner. (this may not be their full conversation):\n${parentLines}\n\n`
+      : '';
 
-  const content = BASE_SYSTEM_MESSAGE +  `
+  const content =
+    BASE_SYSTEM_MESSAGE +
+    `
 
     ${systemMessage}
 
     you are acting as a coach and therapist to ${options.displayName}, to whom you are talking
 
-    ${parentConvoHistory}`
-  
+    ${parentConvoHistory}`;
+
   // Always add base system message
-  messages.push({ role: 'system', content});
-  
+  messages.push({ role: 'system', content });
+
   // Add coach chat history if provided
   coachMessages.forEach(msg => {
     if (msg.senderId === 'coach') {
@@ -88,27 +96,27 @@ export async function callCoachAI(
       messages.push({ role: 'user', content: msg.text });
     }
   });
-  
+
   // Build final user message with parent chat context if provided
   let finalUserMessage = userMessage;
-//   if (parentMessages.length > 0) {
-//     const parentLines = parentMessages
-//       .map(m => {
-//         // For messages with user info, use display name
-//         if ('senderInfo' in m && m.senderInfo) {
-//           const name = m.senderInfo.displayName || m.senderInfo.username || m.senderId;
-//           return `${name}: ${m.text}`;
-//         }
-//         // Fallback for regular messages
-//         return `${m.senderId}: ${m.text}`;
-//       })
-//       .join('\n');
-//     finalUserMessage = `Here are the last ${parentMessages.length} messages from ${options.displayName}'s chat` +
-//     ` with their partner. Keep in mind that this may not be the full conversation:\n${parentLines}\n\n${userMessage}`;
+  //   if (parentMessages.length > 0) {
+  //     const parentLines = parentMessages
+  //       .map(m => {
+  //         // For messages with user info, use display name
+  //         if ('senderInfo' in m && m.senderInfo) {
+  //           const name = m.senderInfo.displayName || m.senderInfo.username || m.senderId;
+  //           return `${name}: ${m.text}`;
+  //         }
+  //         // Fallback for regular messages
+  //         return `${m.senderId}: ${m.text}`;
+  //       })
+  //       .join('\n');
+  //     finalUserMessage = `Here are the last ${parentMessages.length} messages from ${options.displayName}'s chat` +
+  //     ` with their partner. Keep in mind that this may not be the full conversation:\n${parentLines}\n\n${userMessage}`;
   // }
-  
+
   messages.push({ role: 'user', content: finalUserMessage });
-  
+
   return callOpenAI(messages, { temperature });
 }
 
@@ -122,13 +130,12 @@ export async function coachAnalyzeAI(
     stats: ConversationStats;
   }
 ): Promise<string> {
-  
   return callCoachAI(
     `${data.displayName} has a P:N ratio of ${context.stats.ratio}, Horsemen ${JSON.stringify(context.stats.horsemen)}.\n\n` +
-    `${data.displayName} is unfamiliar with the Gottman method and any gottman concepts you use must be explained. Do
+      `${data.displayName} is unfamiliar with the Gottman method and any gottman concepts you use must be explained. Do
     not use a concept like the 4 horsemen without giving a brief explanation of what the concept of the 4 horsemen is`,
     'Give two observations and two action steps (≤ 400 words total).\n' +
-    'if they are relevant,use examples from the conversation to support your observations (positive or negative) and action steps.',
+      'if they are relevant,use examples from the conversation to support your observations (positive or negative) and action steps.',
     { temperature: 0.4, ...data, coachMessages: undefined }
   );
 }
@@ -144,11 +151,12 @@ export async function coachReplyAI(
     stats: ConversationStats;
   }
 ): Promise<string> {
-  return callCoachAI('',
+  return callCoachAI(
+    '',
     `${context.userText}"\n (Respond empathetically in ≤120 words.)`,
     {
       ...data,
-      temperature: 0.5
+      temperature: 0.5,
     }
   );
 }
@@ -175,16 +183,15 @@ Total messages analyzed: ${context.total}
 - Neutral interactions: ${context.stats.neutral} (${context.neuPercent}%)
 - Current positive-to-negative ratio: ${context.stats.ratio}:1
 
-**GOTTMAN CONTEXT:** ${GOTTMAN_CONTEXT.ratio}`,`
+**GOTTMAN CONTEXT:** ${GOTTMAN_CONTEXT.ratio}`,
+    `
 
 First, give a very short explanation of the gottman idea of the magic ratio. 1 or 2 short sentences.
 
-Then, give feedback. Include these statistics in your response and provide specific, actionable advice based `+
-`on Gottman Method principles to help improve the relationship ratio. Use positive and negative`+
-`examples from the conversation to support your advice if they are available. Keep this portion of the response under 150 words.`,
-    { ...data, temperature: 0.4,
-      coachMessages: undefined,
-     }
+Then, give feedback. Include these statistics in your response and provide specific, actionable advice based ` +
+      `on Gottman Method principles to help improve the relationship ratio. Use positive and negative` +
+      `examples from the conversation to support your advice if they are available. Keep this portion of the response under 150 words.`,
+    { ...data, temperature: 0.4, coachMessages: undefined }
   );
 }
 
@@ -208,18 +215,16 @@ Total messages analyzed: ${context.stats.totalMessages}
 - Defensiveness: ${context.stats.horsemen.defensiveness} instances
 - Total destructive patterns: ${context.horsemanTotal} (${context.horsemanPercent}% of messages)
 
-**GOTTMAN CONTEXT:** ${GOTTMAN_CONTEXT.horsemen}`,`
+**GOTTMAN CONTEXT:** ${GOTTMAN_CONTEXT.horsemen}`,
+    `
 
 First, give a very short explanation of the idea of the four horsemen. 1 or 2 short sentences.
 
 Then, give feedback. Include these specific statistics in your response. Explain what these patterns mean for the ` +
-`relationship and provide Gottman Method antidotes and strategies they can use to replace these ` +
-`with healthier communication. Use positive and negative examples from the conversation to support ` +
-`your advice if they are available. Keep this portion of the response under 250 words.`,
-    { ...data, temperature: 0.4,
-      coachMessages: undefined,
-
-    }
+      `relationship and provide Gottman Method antidotes and strategies they can use to replace these ` +
+      `with healthier communication. Use positive and negative examples from the conversation to support ` +
+      `your advice if they are available. Keep this portion of the response under 250 words.`,
+    { ...data, temperature: 0.4, coachMessages: undefined }
   );
 }
 
@@ -237,7 +242,8 @@ export async function coachLoveMapAI(
   return callCoachAI(
     `**TOPIC ANALYSIS:** Based on semantic analysis of their conversation, the topic "${context.selectedTopic}" appears to be under-explored (similarity score: ${context.topicScore.toFixed(3)}).
 
-**GOTTMAN CONTEXT:** ${GOTTMAN_CONTEXT.loveMap}`,`
+**GOTTMAN CONTEXT:** ${GOTTMAN_CONTEXT.loveMap}`,
+    `
 
 First, give a very short explanation of the idea of the love map. 1 or 2 short sentences.
 

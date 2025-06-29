@@ -24,12 +24,12 @@ import {
 } from './pinecone';
 import type { CallableRequest } from 'firebase-functions/v2/https';
 import { generateEmbeddings, cosineSimilarity } from './openai';
-import { 
-  coachAnalyzeAI, 
-  coachReplyAI, 
-  coachRatioAI, 
-  coachHorsemenAI, 
-  coachLoveMapAI 
+import {
+  coachAnalyzeAI,
+  coachReplyAI,
+  coachRatioAI,
+  coachHorsemenAI,
+  coachLoveMapAI,
 } from './coach-ai';
 import type { FetchedData } from './types';
 
@@ -48,7 +48,6 @@ const LOVE_MAP_TOPICS = [
   'future plans together',
   'personal growth goals',
 ];
-
 
 // Define interfaces for request data
 interface StartCoachChatData {
@@ -91,13 +90,16 @@ export async function fetchAllRequiredData(
 ): Promise<FetchedData> {
   const data = await validateCoachParams(request);
   const result: FetchedData = { ...data };
-  
+
   // Always fetch coach messages
   result.coachMessages = await getAllMessages(data.coachCid);
-  
+
   // Always fetch last 100 parent messages with user info
-  result.parentMessages = await getRecentMessagesWithUserInfo(data.parentCid, 100);
-  
+  result.parentMessages = await getRecentMessagesWithUserInfo(
+    data.parentCid,
+    100
+  );
+
   return result;
 }
 
@@ -106,7 +108,13 @@ export async function fetchAllRequiredData(
  */
 export async function validateCoachParams(
   request: CallableRequest<{ coachCid?: string; parentCid?: string }>
-): Promise<{ uid: string; coachCid: string; parentCid: string; displayName: string; username: string }> {
+): Promise<{
+  uid: string;
+  coachCid: string;
+  parentCid: string;
+  displayName: string;
+  username: string;
+}> {
   const uid = request.auth?.uid;
   const { coachCid, parentCid } = request.data;
 
@@ -119,7 +127,13 @@ export async function validateCoachParams(
     throw new HttpsError('not-found', 'User not found');
   }
 
-  return { uid, coachCid, parentCid, displayName: userInfo.displayName, username: userInfo.username };
+  return {
+    uid,
+    coachCid,
+    parentCid,
+    displayName: userInfo.displayName,
+    username: userInfo.username,
+  };
 }
 
 /**
@@ -136,8 +150,6 @@ export async function sendCoachMessage(
     createdAt: Date.now(),
   });
 }
-
-
 
 //--------------------------------------------------------------------------
 // 1) startCoachChat  (creates one coach chat per parentCid per user)
@@ -209,7 +221,7 @@ export const coachReply = onCall<CoachReplyData>(async request => {
 //--------------------------------------------------------------------------
 export const coachAnalyze = onCall<CoachAnalyzeData>(async request => {
   const { n = 30 } = request.data;
-  
+
   // Fetch all required data including parent messages
   const data = await fetchAllRequiredData(request);
 
@@ -233,20 +245,23 @@ export const coachRatio = onCall<CoachRatioData>(async request => {
   // Query Pinecone for sentiment analysis
   const res = await queryConversationMessages(parentCid, 100);
   const stats = analyzeConversationStats(res.matches);
-  
+
   const total = stats.totalMessages;
-  const posPercent = total > 0 ? ((stats.positive / total) * 100).toFixed(1) : '0';
-  const negPercent = total > 0 ? ((stats.negative / total) * 100).toFixed(1) : '0';
-  const neuPercent = total > 0 ? ((stats.neutral / total) * 100).toFixed(1) : '0';
+  const posPercent =
+    total > 0 ? ((stats.positive / total) * 100).toFixed(1) : '0';
+  const negPercent =
+    total > 0 ? ((stats.negative / total) * 100).toFixed(1) : '0';
+  const neuPercent =
+    total > 0 ? ((stats.neutral / total) * 100).toFixed(1) : '0';
 
   const data = await validateCoachParams(request);
-  
-  const analysis = await coachRatioAI(data, { 
-    stats, 
-    total, 
-    posPercent, 
-    negPercent, 
-    neuPercent 
+
+  const analysis = await coachRatioAI(data, {
+    stats,
+    total,
+    posPercent,
+    negPercent,
+    neuPercent,
   });
 
   await sendCoachMessage(coachCid, analysis);
@@ -263,17 +278,20 @@ export const coachHorsemen = onCall<CoachHorsemenData>(async request => {
   // Query Pinecone for horsemen analysis
   const res = await queryConversationMessages(parentCid, 100);
   const stats = analyzeConversationStats(res.matches);
-  
-  const horsemanTotal = stats.horsemen.criticism + stats.horsemen.contempt + stats.horsemen.defensiveness;
+
+  const horsemanTotal =
+    stats.horsemen.criticism +
+    stats.horsemen.contempt +
+    stats.horsemen.defensiveness;
   const horsemanPercent =
     stats.totalMessages > 0
       ? ((horsemanTotal / stats.totalMessages) * 100).toFixed(1)
       : '0';
-  
-  const analysis = await coachHorsemenAI(data, { 
-    stats, 
-    horsemanTotal, 
-    horsemanPercent 
+
+  const analysis = await coachHorsemenAI(data, {
+    stats,
+    horsemanTotal,
+    horsemanPercent,
   });
 
   await sendCoachMessage(coachCid, analysis);
@@ -333,9 +351,9 @@ export const coachLoveMap = onCall<CoachLoveMapData>(async request => {
     sortedTopics[Math.floor(Math.random() * sortedTopics.length)];
   const selectedTopic = selectedTopicData ? selectedTopicData[0] : 'general';
 
-  const response = await coachLoveMapAI(fetchedData, { 
-    selectedTopic, 
-    topicScore: topicScores[selectedTopic] || 0 
+  const response = await coachLoveMapAI(fetchedData, {
+    selectedTopic,
+    topicScore: topicScores[selectedTopic] || 0,
   });
 
   await sendCoachMessage(coachCid, response);

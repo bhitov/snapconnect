@@ -1,4 +1,4 @@
-import type { TextMessage, TextMessageWithUserInfo } from "./db";
+import type { TextMessage, TextMessageWithUserInfo } from './db';
 
 export interface FetchedData {
   uid: string;

@@ -18,11 +18,7 @@ export async function callOpenAI(
     maxTokens?: number;
   } = {}
 ): Promise<string> {
-  const {
-    model = 'gpt-4o-mini',
-    temperature = 0.5,
-    maxTokens,
-  } = options;
+  const { model = 'gpt-4o-mini', temperature = 0.5, maxTokens } = options;
 
   console.log('🤖 OpenAI Request:', {
     model,
@@ -49,10 +45,10 @@ export async function callOpenAI(
       response.choices[0]?.message?.content?.trim() ??
       'Unable to generate response at this time.';
 
-//     console.log('🤖 OpenAI Response:', {
-//       contentLength: content.length,
-//       usage: response.usage,
-//     });
+    //     console.log('🤖 OpenAI Response:', {
+    //       contentLength: content.length,
+    //       usage: response.usage,
+    //     });
 
     return content;
   } catch (error) {
@@ -73,7 +69,7 @@ export async function generateEmbedding(
       model,
       input: text,
     });
-    
+
     return response.data[0]?.embedding || [];
   } catch (error) {
     console.error('❌ OpenAI Embedding Error:', error);
@@ -90,12 +86,12 @@ export async function generateEmbeddings(
 ): Promise<Array<{ text: string; embedding: number[] }>> {
   try {
     const embeddings = await Promise.all(
-      texts.map(async (text) => {
+      texts.map(async text => {
         const embedding = await generateEmbedding(text, model);
         return { text, embedding };
       })
     );
-    
+
     return embeddings;
   } catch (error) {
     console.error('❌ OpenAI Embeddings Error:', error);
