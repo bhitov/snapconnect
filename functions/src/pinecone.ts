@@ -1,9 +1,11 @@
 import { Pinecone } from '@pinecone-database/pinecone';
 import type { QueryResponse } from '@pinecone-database/pinecone';
 
+import { config } from './config';
+
 // Initialize Pinecone
-const pineconeApiKey = process.env.PINECONE_API_KEY;
-const pineconeIndex = process.env.PINECONE_INDEX;
+const pineconeApiKey = config.PINECONE_API_KEY;
+const pineconeIndex = config.PINECONE_INDEX;
 
 if (!pineconeApiKey) {
   throw new Error('PINECONE_API_KEY environment variable is not set');

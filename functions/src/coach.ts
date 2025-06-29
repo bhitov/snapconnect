@@ -497,7 +497,7 @@ export const coachACR = onCall<CoachACRData>(async request => {
   const fetchedData = await fetchAllRequiredData(request);
 
   // Check message count requirement
-  const messageCount = fetchedData.parentMessages.length;
+  const messageCount = fetchedData.parentMessages?.length || 0;
   if (messageCount < 20) {
     await sendCoachMessage(
       coachCid,
@@ -830,7 +830,7 @@ export const coachTopicVibeCheck = onCall<CoachTopicVibeCheckData>(
     }
 
     // Check message count requirement
-    const messageCount = fetchedData.parentMessages.length;
+    const messageCount = fetchedData.parentMessages?.length || 0;
     if (messageCount < 50) {
       await sendCoachMessage(
         coachCid,

@@ -1,11 +1,9 @@
 import OpenAI from 'openai';
 import { HttpsError } from 'firebase-functions/v2/https';
-import { config } from 'dotenv';
-import { resolve } from 'path';
+import { config } from './config';
 
 // Initialize OpenAI client
-config({ path: resolve(__dirname, '../../.env.local') });
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+export const openai = new OpenAI({ apiKey: config.OPENAI_API_KEY });
 
 /**
  * Call OpenAI with consistent logging and error handling
