@@ -48,8 +48,8 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
     reset,
   } = useForm<LoginForm>({
     defaultValues: {
-      email: 'alex_chen@example.com',
-      password: 'pass123word',
+      email: '',
+      password: '',
     },
   });
 
@@ -122,9 +122,7 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.title}>BondSnap</Text>
-            <Text style={styles.subtitle}>
-              AI and Snaps to help you bond
-            </Text>
+            <Text style={styles.subtitle}>AI and Snaps to help you bond</Text>
           </View>
 
           {/* Form */}

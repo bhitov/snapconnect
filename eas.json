@@ -1,0 +1,29 @@
+{
+  "cli": {
+    "version": ">= 16.12.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyApF6c-ODLVpEsB7ztBxfgDwt7M7SiSnEg",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "snapconnect-d75c6.firebaseapp.com",
+        "EXPO_PUBLIC_FIREBASE_DATABASE_URL": "https://snapconnect-d75c6-default-rtdb.firebaseio.com",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "snapconnect-d75c6",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "snapconnect-d75c6.firebasestorage.app",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "983096107369"
+      }
+    },
+    "production": {
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

@@ -23,7 +23,6 @@ import { onTextMessageCreatedRTDB } from './ingestMessage';
 
 // Load environment variables from root project directory
 
-
 // Re-export coach functions
 export {
   startCoachChat,

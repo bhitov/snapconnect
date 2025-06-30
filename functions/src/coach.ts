@@ -838,16 +838,23 @@ export const coachTopicVibeCheck = onCall<CoachTopicVibeCheckData>(
       embedding,
     }));
 
-    // Get sentiment scores for each topic
-    const topicScores = await Promise.all(
-      topicEmbeddings.map(async ({ topic, embedding }) => {
-        const sentiment = await getTopicSentiment(embedding, parentCid);
-        return {
-          topic,
-          score: sentiment.avg,
-        };
-      })
-    );
+    // Get sentiment scores for each topic in batches to avoid timeout
+    const batchSize = 5;
+    const topicScores = [];
+    
+    for (let i = 0; i < topicEmbeddings.length; i += batchSize) {
+      const batch = topicEmbeddings.slice(i, i + batchSize);
+      const batchResults = await Promise.all(
+        batch.map(async ({ topic, embedding }) => {
+          const sentiment = await getTopicSentiment(embedding, parentCid);
+          return {
+            topic,
+            score: sentiment.avg,
+          };
+        })
+      );
+      topicScores.push(...batchResults);
+    }
 
     const response = await aiTopicVibeCheck(fetchedData, topicScores);
     await sendCoachMessage(coachCid, response);

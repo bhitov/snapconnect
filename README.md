@@ -1,30 +1,39 @@
-# SnapConnect
+# BondSnap
+
+BondSnap mixes Snapchat-style snaps with regular chat, then layers on an AI relationship coach. Tap the 🎓 button in any conversation to open a private “coach chat,” where GPT-4 trained on Gottman Method research reviews recent messages, measuring the 5 : 1 positivity ratio, detecting the Four Horsemen, surfacing Love-Map gaps, and more. It returns real-time, plain-English advice, follow-up questions, and optional multi-paragraph analyses, plus extras like balance meters and group-energy checks to suggest concrete next steps or activities—all visible only to you and your partner or group.
 
 A relationship-focused messaging app that combines ephemeral snaps with persistent text messaging and AI-powered relationship coaching.
 
-## LOOM VIDEO IS INACCURATE - NOTE TO REVIEWERS
+## quick start
 
-The app does run on an android phone
+### a) through expo go. the app behaves better but it is more complicated
 
-in my loom video I said the app wasn't able to run on an android phone but it started working a few minutes after I submitted. My firebase cloud functions said they had deployed successfully but I think they needed a few minutes to actually spin up. It should work on android now. Use the running the app on a real android device instructions
+install expo go on your android device
 
-## Running the app on a real android devie
+`npm install`
+`mv env.local.bak .env.local`
+`npm run start:firebase`
 
-install expo go on an android phone
+open expo go and scan the qr code on the screen
 
-download the `.env.local` file and put it in the root directory (send to ash over slack but I can send it to whoever is reviewing this directly if that is easier, just send me a message)
-install packages `npm install`
-run `npm run start:firebase`. scan the qr code in expo go. sometimes you have to hit the `r` key too? might as well to be safe
+### b) with an apk. easier, a moderately more glitchy
+
+https://drive.google.com/file/d/1791-wdE2-fIMm7dyYJ9CnuM1IcSvVZjI/view?usp=sharing
 
 
-## Running the app with firebase emulators and android emulators (fallback if first method doesn't work)
+### c) not recommended. Running the app with firebase emulators and android emulators
 
+`npm install`
+`mv env.local.bak .env.local`
 download the `.env.local` file and put it in the root directory
-install packages `npm install`
 build the firebase functions `cd functions. npm install. npm run build.`
 run the firebase emulator `npm run emulator` or `npm run emulator:persist` if you want the data to be stored when you close the emulator
 simultaneously, run expo go `npm run start`, then hit `a` to open up the android emulator.
 
+
+## Sample data
+
+I pregenerated a bunch of data to test out my AI responses. alex and emma are in a healthy relationship and jason and sarah are in an unhealthy relationship. Useful for making sure the ai responses are at least directionally correct
 
 use the example data:
 
@@ -37,21 +46,6 @@ jason_miller@example.com
 sarah_jones@example.com
 
 all passwords are `pass123word`
-
-*[Instructions for running the app will be added here]*
-
-
-## Purpose
-
-SnapConnect brings together the best of both worlds: the fun, spontaneous nature of disappearing snaps and the reliability of traditional text messaging. What makes it unique is the integrated AI relationship coach powered by the Gottman Method, helping users build stronger, healthier relationships through real-time analysis and personalized guidance.
-
-## Key Features
-
-- **Hybrid Messaging**: Send both ephemeral photo/video snaps and persistent text messages
-- **AI Relationship Coach**: Get personalized advice based on Gottman Method principles
-- **Group Chats**: Stay connected with friends and family
-- **Real-time Analysis**: Conversation sentiment tracking and relationship insights
-- **Love Map Questions**: Deepen your connection with thoughtful conversation starters
 
 ## User Stories
 
@@ -66,9 +60,9 @@ SnapConnect brings together the best of both worlds: the fun, spontaneous nature
 **As a partner who wants to improve communication**, I want to understand our positive-to-negative interaction ratio and receive specific advice on how to increase positive interactions, so that we can build a more supportive and loving relationship.
 
 ### Future Features
-**As someone seeking to improve platonic friendships** *(coming soon)*, I want relationship coaching that helps me navigate friend dynamics and resolve conflicts, so that I can maintain healthier long-term friendships.
+**As someone seeking to improve platonic friendships**  I want relationship coaching that helps me navigate friend dynamics and resolve conflicts, so that I can maintain healthier long-term friendships.
 
-**As a group chat member** *(coming soon)*, I want AI-powered insights about group dynamics and suggestions for improving communication within our friend group, so that we can avoid misunderstandings and strengthen our collective bond.
+**As a group chat member** I want AI-powered insights about group dynamics and suggestions for improving communication within our friend group, so that we can avoid misunderstandings and strengthen our collective bond.
 
 ## Tech Stack
 
@@ -77,7 +71,3 @@ SnapConnect brings together the best of both worlds: the fun, spontaneous nature
 - **AI**: OpenAI
 - **Search**: Pinecone vector database for conversation analysis
 - **Authentication**: Firebase Auth
-
-## Contributing
-
-This project implements research-backed relationship advice from the Gottman Institute, focusing on evidence-based approaches to improving communication and relationship satisfaction.
